@@ -1,0 +1,832 @@
+﻿
+
+/* GENERIC LAYOUT */
+
+#pageContainer 
+{
+    margin-left: auto; 
+    margin-right: auto;
+    width: 1024px;
+}
+
+#pageContainerSmall 
+{
+    margin-left: auto; 
+    margin-right: auto;
+    width: 800px;
+}
+
+
+#header 
+{
+    width: 100%;
+}
+
+#headerLeft 
+{
+    padding-top: 5px;
+    float: left;
+    width: 20%;
+}
+
+#headerRight
+{
+    padding-top: 5px;
+    float: left;
+    width: 19%;
+}
+
+#headerCentral 
+{
+    float: left;
+    width: 60%;
+    text-align: center;
+}
+
+#headerMenu 
+{
+    clear: both;
+    width: 100%;
+    height: 40px;
+}
+
+
+#newsTicker 
+{
+    clear: both;
+    width: 100%;
+    height: 15px;
+    border-bottom: solid 1px #96b58f;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.ntLatest 
+{
+    color: Red;
+    float: left;
+    padding-right: 5px;
+    font-weight: bold;
+}
+
+#newsTicker a 
+{
+    text-decoration: none;
+    color: Black;
+}
+
+#newsTicker li 
+{
+    list-style-type: none;
+}
+
+#news 
+{
+    padding: 0px;
+    margin: 0px;
+}
+
+.headerFixture 
+{
+    text-align:center;
+    font-size: 8pt;
+    
+}
+
+.hfTitle 
+{
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+#footer 
+{
+    clear: both;
+    width:100%;
+    height: 25px;
+    text-align: center;
+    border-top: solid 1px #96b58f;
+    border-bottom: solid 1px #96b58f;
+    font-size: 8pt;
+    line-height: 25px;
+}
+
+#mainContent 
+{
+    clear:both;
+   
+}
+.clearer 
+{
+    clear: both;
+    float: none;
+    height: 1px;
+    display: block;
+}
+
+.horizontalDivider 
+{
+    clear: both;
+    width: 100%;
+    border-bottom: solid 1px #96b58f;
+    height: 1px;
+}
+/* END GENERIC LAYOUT */
+
+/* HOMEPAGE STYLES */
+
+#pictureCar 
+{
+    width: 512px;
+    height: 400px;
+    padding: auto;
+    margin-top: 5px;
+    float: left;
+}
+
+#pictureCar li 
+{
+    list-style: none;
+}
+
+#introText 
+{
+    padding: 15px;
+    height: 350px;
+    width: 480px;
+    float: left;
+    
+    
+}
+
+#introTextInner 
+{
+    height: 330px;
+    overflow: hidden;
+}
+
+
+/* END HOMEPAGE STYLES */
+
+/* GENERIC STYLING */
+body 
+{
+    
+    font-family: Arial;
+    font-size: 10pt;
+}
+.standardText 
+{
+    padding: 10px;
+}
+
+table 
+{
+    border-style: none;
+    border-color: inherit;
+    border-width: 0px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+table td,th 
+{
+    border: none;
+}
+
+.fullWidth 
+{
+    width:100%;
+}
+
+.PageHeading 
+{
+    font-size: 12pt;
+    font-weight: bold;
+    width: 100%;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    text-align:center;
+}
+
+.SmallLink 
+{
+    font-size: 10pt;
+    font-weight: normal;
+}
+
+.Centered 
+{
+    margin-left: auto;
+    margin-right:auto;
+    text-align:center;
+}
+
+.RightAlign 
+{
+    text-align:right;
+}
+
+
+
+.Bold 
+{
+    font-weight:bold;
+}
+
+.SectionHeading 
+{
+    font-size: 12pt;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+/* END GENERIC STYLING */
+
+
+/* Chat Section */
+
+#ChatInputArea 
+{
+    width: 1004px;
+    clear: both;
+    height: 180px;
+    margin: 10px;
+}
+
+.ChatPhoto 
+{
+    height: 80px;
+    text-align: center;
+}
+
+#ChatInputPhoto 
+{
+    height: 125px;
+}
+
+.ChatName 
+{
+    height: 20px;
+    text-align: center;
+}
+
+.ChatLeftPanel 
+{
+    float: left;
+    width: 150px;
+    margin-right:10px;
+}
+
+#urlPopup
+{
+    position: absolute;
+    width: 500px;
+    height: 60px;
+    padding: 10px;
+    z-index: 1005;
+    display: none;
+    background-color: #ddd;
+    border: 1px solid black;
+    
+}
+
+#backgroundFilter
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    background-color: #000;
+    filter: alpha(opacity=60);
+    opacity: 0.5;
+    display: none;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+}
+
+#Chat 
+{
+    list-style-type: none;
+    list-style-image: none;
+    margin: 0px;
+    clear:both;
+    display: block;
+}
+
+#Chat .ChatItem 
+{
+    list-style-type: none;
+    padding: 10px;
+    
+}
+
+#ChatArea 
+{
+    clear: both;
+}
+
+.smallText 
+{
+    font-size: 8pt;
+}
+
+#PostWaiting
+{
+    display: none;
+}
+
+.floatLeft 
+{
+    float: left;
+}
+
+#hints 
+{
+    margin: 0px;
+    list-style-type: none;
+    list-style-image: none;
+    padding-left: 30px;
+}
+
+#hints li 
+{
+    list-style-type: none;
+}
+
+.infoImage 
+{
+    position: relative;
+    top: -2px;
+}
+
+.ChatInputBox 
+{
+    padding-left: 160px;
+}
+
+/* SHIT FROM THE OLD SITE */
+#page_title {
+	font-size: 14pt;
+	font-weight: bold;
+}
+ 
+#news_pane {
+	padding-top: 20px;
+	padding-left: 20px;
+	vertical-align: top;
+}
+
+#links_pane {
+	padding-top: 20px;
+	padding-right: 20px;
+	vertical-align: top;
+}
+
+#last_updated {
+	vertical-align: top; 
+}
+
+#next_fixture {
+	vertical-align: top;
+}
+
+
+
+.header {
+ text-align: center;
+ font-size: 14pt;
+ font-weight: bold;
+ padding-bottom: 20px;
+ 
+}
+
+.stats_table {
+  float: right;
+  align: center;
+  padding-right: 40px;
+}
+
+.stats_pane {
+ clear: both;
+ text-align: center;
+ padding-top: 30px;
+ font-size: 10pt;
+}
+
+.player_photo {
+ clear: both;
+ float: left;
+ align: center;
+ padding-left: 40px;
+}
+
+.graph_main {
+ float: left;
+ padding-left: 40px;
+ padding-top: 20px;
+
+}
+
+.graph {
+	padding-top: 10px;
+}
+
+.small_select {
+ font-size: 7pt;
+}
+
+.small_input {
+  font-size: 7pt;
+}
+
+.short_number 
+{
+    width: 40px !important;
+}
+
+#matches_to_create {
+	background-color: #CCCCCC;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	text-align: center;
+	padding: 10px;
+	padding-left: 30px;
+	padding-right: 30px;
+	font-size: 12px;
+}
+
+#matches_to_create table {
+	font-size: 12px;
+	cell-padding: 10px;
+}
+
+#matches_to_create table th {
+	text-align: left;
+}
+
+#matches_to_create table td {
+	padding-right: 20px;
+}
+
+#created_matches {
+	text-align: center;
+	padding: 10px;
+	padding-left: 30px;
+	padding-right: 30px;
+	font-size: 12px;
+}
+#created_matches table th {
+	text-align: left;
+}
+
+#created_matches table td {
+	padding-right: 20px;
+}
+
+
+
+.right_aligned_small {
+	text-align: right;
+}
+
+.right_aligned_small a {
+	font-size: 8pt;
+}
+
+#match_details {
+	font-size: 10pt;
+	text-align:left;
+	background-color: #efefde;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	padding: 15px;
+	
+}
+
+#match_details table {
+	font-size: 10pt;
+}
+
+#match_details table td {
+	padding: 10px;
+	vertical-align: middle;
+}
+
+#text_editor {
+	padding-top: 10px;
+}
+
+#main_report {
+	text-align: left;
+	font-size: 10pt; 
+}
+
+#pitch_conditions {
+	text-align: left; 
+	font-size: 10pt;
+}
+
+#weather_conditions {
+	text-align: left;
+	font-size: 10pt;
+}
+
+.report_title {
+	font-weight: bold;
+	font-size: 12pt;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.scorecards {
+	text-align:left;
+}
+
+.scorecard {
+	width: 100%;
+	font-size: 10pt;
+}
+
+.small_link {
+	font-size: 8pt;
+}
+
+
+#stats_filter {
+	background-color: #EEEEEE;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	text-align: center;
+	padding-top: 10px;
+	margin-left: 5%;
+	margin-right: 5%;
+	padding-left: 30px;
+	padding-right: 30px;
+	font-size: 12px;
+	margin-bottom: 20px;
+}
+
+.small_text {
+	font-size: 8pt;
+}
+
+.small_text td {
+	padding-right: 10px;
+}
+
+#player_data {
+	float: left;
+	padding-left: 30px;
+	text-align:left;
+}
+
+#player_photo {
+	text-align: right;
+	float: right;
+	padding-right: 30px;
+}
+
+#player_name {
+	font-weight: bold;
+	padding-bottom: 5px;
+}
+
+#team {
+	font-size: 10pt;
+	padding-bottom: 30px;
+}
+
+#stats_tables {
+	padding-left: 30px;
+	padding-right: 30px;
+	clear: both;
+	text-align:center;
+}
+
+#stats_tables table {
+	margin-top: 30px;
+	width:90%;
+	font-size: 8pt;
+	border-collapse: collapse;
+}
+
+.head_row {
+	background-color: #CC9966;
+	 
+}
+
+.head_row td {
+	padding-left:4px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	color: white;
+	font-weight: bold;
+	
+}
+
+.second_row {
+	background-color: #CCCCCC;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	
+	
+}
+
+.second_row td {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	
+}
+
+.underlined_row td {
+	border-bottom-style: solid;
+	border-bottom-color: #CCCCCC;
+	border-bottom-width: 1px;	
+}
+
+.warning {
+	color: red;
+	font-size: 10pt;
+}
+
+#extras {
+	
+}
+
+#fow {
+	clear: both;
+}
+
+#bowlingstats_input {
+	float: left;
+}
+
+.small_table_text table {
+	font-size: 8pt;
+}
+
+.stats_input_table {
+	border-collapse: true;
+	border-style: solid;
+	border-color: green;
+	border-width: 1px;
+	color: green;
+	margin: 2px;
+}
+
+.stats_input_table input {
+	color: green;
+}
+
+.stats_input_table select {
+	color: green;
+}
+
+/* END SHIT FROM OLD SITE */
+
+/* NEWS STYLES */
+
+.NewsHeadline 
+{
+    padding-top: 10px;
+    font-weight: bold;
+    padding-left:20px;
+    margin-left: 0px;
+    clear: both;
+    font-size: 12pt;
+    *padding-left: 4px;
+    
+}
+
+.NewsItem 
+{
+}
+
+.NewsDate 
+{
+    font-size: 8pt;
+    font-style: italic;
+    padding-left: 20px;
+    
+}
+
+.NewsStory 
+{
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+}
+
+#CreateAStory 
+{
+    position: absolute;
+    top: 187px;
+    right: 0px;
+    border: solid 1px #96b58f;
+    opacity: 0.5;
+    filter: alpha(0.5);
+    background-color: #CCCCCC;
+    padding: 10px;
+    *top: 188px;
+}
+
+#CreateAStory a 
+{
+    text-decoration: none;
+    font-style:italic;
+}
+
+
+/* END NEWS STYLES */
+
+/*FIXTURES STYLES */
+
+/*END FIXTURES STYLES */
+
+/* STATS WIZARD */
+
+.WizardContainer 
+{
+    height: 600px;
+    border-bottom: solid 1px #96b58f;
+    margin-bottom: 10px;
+}
+
+/* END STATS WIZARD */
+
+/* Scorecards */
+
+.BattingScoreCard 
+{
+    width: 800px;
+    font-size: 10pt;   
+}
+
+.BowlingScoreCard 
+{
+  width: 390px;   
+}
+
+.BattingScoreCard td 
+{
+    padding-top: 3px;
+    padding-bottom: 3px;
+    
+}
+
+.BowlingScoreCard td 
+{
+    padding-top: 3px;
+    padding-bottom: 3px;
+    
+}
+
+.scTotalRow 
+{
+    background-color: Black;
+    color: White;
+    font-weight: bold;
+}
+
+.scExtrasRow 
+{
+    font-weight: bold;
+}
+
+.scHeadingRow 
+{
+    font-weight: bold;
+}
+
+.scOddRow 
+{
+    background-color: #cde5d1;
+}
+
+.scEvenRow 
+{
+    background-color: #b8d5bd;
+}
+
+.scBowlingDiv 
+{
+    margin-right: 20px;
+    margin-left: 10px;
+}
+
+.scHeading 
+{
+    font-size: 12pt;
+    font-weight: bold;
+    padding-top: 20px;
+}
+
+/* End Scorecards */

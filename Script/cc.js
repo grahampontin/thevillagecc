@@ -1,0 +1,26 @@
+﻿$(document).ready(
+		function(){
+		    //Bind News Ticker
+		    var options = {
+            newsList: "#news",
+            startDelay: 10,
+            placeHolder1: " "
+            }
+            $().newsTicker(options);
+		
+		    //Bind Picture Carousel
+			$('#rotateThis').innerfade({
+				animationtype: 'fade',
+				speed: 1000,
+				timeout: 5000,
+				type: 'sequence',
+				containerheight: '100px'
+			});
+            
+            //Bind labels to input boxes
+            $("input").labelify();
+            
+			}
+	);
+
+

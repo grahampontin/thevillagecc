@@ -1,0 +1,103 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>New Page 1</title>
+<script language="JavaScript">
+<!--
+function FP_swapImg() {//v1.0
+ var doc=document,args=arguments,elm,n; doc.$imgSwaps=new Array(); for(n=2; n<args.length;
+ n+=2) { elm=FP_getObjectByID(args[n]); if(elm) { doc.$imgSwaps[doc.$imgSwaps.length]=elm;
+ elm.$src=elm.src; elm.src=args[n+1]; } }
+}
+
+function FP_preloadImgs() {//v1.0
+ var d=document,a=arguments; if(!d.FP_imgs) d.FP_imgs=new Array();
+ for(var i=0; i<a.length; i++) { d.FP_imgs[i]=new Image; d.FP_imgs[i].src=a[i]; }
+}
+
+function FP_getObjectByID(id,o) {//v1.0
+ var c,el,els,f,m,n; if(!o)o=document; if(o.getElementById) el=o.getElementById(id);
+ else if(o.layers) c=o.layers; else if(o.all) el=o.all[id]; if(el) return el;
+ if(o.id==id || o.name==id) return o; if(o.childNodes) c=o.childNodes; if(c)
+ for(n=0; n<c.length; n++) { el=FP_getObjectByID(id,c[n]); if(el) return el; }
+ f=o.forms; if(f) for(n=0; n<f.length; n++) { els=f[n].elements;
+ for(m=0; m<els.length; m++){ el=FP_getObjectByID(id,els[n]); if(el) return el; } }
+ return null;
+}
+// -->
+</script>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-797039-1";
+urchinTracker();
+</script>
+</head>
+
+<body onload="FP_preloadImgs(/*url*/'images/buttons/button7.jpg', /*url*/'images/buttons/button8.jpg', /*url*/'images/button4.jpg', /*url*/'images/button5.jpg', /*url*/'images/buttons/button9.jpg', /*url*/'images/buttons/buttonA.jpg', /*url*/'images/buttons/button1C.jpg', /*url*/'images/buttons/button1D.jpg', /*url*/'images/buttons/button821.jpg', /*url*/'images/buttons/button721.jpg', /*url*/'button2.jpg', /*url*/'button3.jpg')">
+<p align="center">
+						<font color="#000000" size="2" face="Arial">
+						<a href="index.asp">
+		<img border="0" id="img1" src="images/buttons/button9.jpg" height="20" width="100" alt="Home" fp-style="fp-btn: Metal Capsule 5" fp-title="Home" onmouseover="FP_swapImg(1,0,/*id*/'img1',/*url*/'images/buttons/buttonA.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img1',/*url*/'images/buttons/button9.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img1',/*url*/'images/buttons/buttonB.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img1',/*url*/'images/buttons/buttonA.jpg')"></a></font></p>
+		<p align="center">
+		<font face="Arial">
+		<a href="stats.asp">
+		<img border="0" id="img7" src="images/buttons/buttonC.jpg" height="20" width="100" alt="Stats" onmouseover="FP_swapImg(1,0,/*id*/'img7',/*url*/'images/buttons/buttonD.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img7',/*url*/'images/buttons/buttonC.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img7',/*url*/'images/buttons/buttonE.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img7',/*url*/'images/buttons/buttonD.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Stats"></a></font></p>
+		<p align="center">
+		<font face="Arial">
+		<a href="fixtures.asp">
+		<img border="0" id="img8" src="images/buttons/button12.jpg" height="20" width="100" alt="Results" onmouseover="FP_swapImg(1,0,/*id*/'img8',/*url*/'images/buttons/button13.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img8',/*url*/'images/buttons/button12.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img8',/*url*/'images/buttons/button14.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img8',/*url*/'images/buttons/button13.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Results"></a></font></p>
+		<p align="center">
+		<font face="Arial">
+		<a href="results.asp">
+		<img border="0" id="img9" src="images/buttons/button311.jpg" height="20" width="100" alt="Results" onmouseover="FP_swapImg(1,0,/*id*/'img9',/*url*/'images/buttons/button411.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img9',/*url*/'images/buttons/button311.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img9',/*url*/'images/buttons/button511.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img9',/*url*/'images/buttons/button411.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Results"></a></font></p>
+		<p align="center">
+		<font face="Arial">
+		<a href="training.asp">
+		<img border="0" id="img10" src="images/buttons/button18.jpg" height="20" width="100" alt="Training" onmouseover="FP_swapImg(1,0,/*id*/'img10',/*url*/'images/buttons/button19.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img10',/*url*/'images/buttons/button18.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img10',/*url*/'images/buttons/button1A.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img10',/*url*/'images/buttons/button19.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Training"></a></font></p>
+		<p align="center">
+		<font face="Arial">
+		<a href="committee.asp">
+		<img border="0" id="img101" src="images/buttons/button811.jpg" height="20" width="100" alt="Committee" onmouseover="FP_swapImg(1,0,/*id*/'img101',/*url*/'images/buttons/button911.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img101',/*url*/'images/buttons/button811.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img101',/*url*/'images/buttons/buttonA11.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img101',/*url*/'images/buttons/button911.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Committee"></a></font></p>
+		<p align="center">
+		<font face="Arial">
+		<a href="join.asp">
+		<img border="0" id="img11" src="images/buttons/button1B.jpg" height="20" width="100" alt="Join" onmouseover="FP_swapImg(1,0,/*id*/'img11',/*url*/'images/buttons/button1C.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img11',/*url*/'images/buttons/button1B.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img11',/*url*/'images/buttons/button1D.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img11',/*url*/'images/buttons/button1C.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Join"></a></font></p>
+		<p align="center">
+		<font face="Arial">
+		<a href="players.asp">
+		<img border="0" id="img16" src="images/buttons/button1E.jpg" height="20" width="100" alt="Players" onmouseover="FP_swapImg(1,0,/*id*/'img16',/*url*/'images/buttons/button1F.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img16',/*url*/'images/buttons/button1E.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img16',/*url*/'images/buttons/button20.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img16',/*url*/'images/buttons/button1F.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Players"></a></font></p>
+		<p align="center">
+		<font face="Arial">
+		<a href="wives.asp">
+		<img border="0" id="img17" src="images/buttons/button21.jpg" height="20" width="100" alt="Wives" onmouseover="FP_swapImg(1,0,/*id*/'img17',/*url*/'images/buttons/button22.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img17',/*url*/'images/buttons/button21.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img17',/*url*/'images/buttons/button23.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img17',/*url*/'images/buttons/button22.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Wives"></a></font></p>
+		<p align="center">
+		<font face="Arial">
+		<a href="gallery.asp">
+		<img border="0" id="img18" src="images/buttons/button24.jpg" height="20" width="100" alt="Spot the Ball" onmouseover="FP_swapImg(1,0,/*id*/'img18',/*url*/'images/buttons/button25.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img18',/*url*/'images/buttons/button24.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img18',/*url*/'images/buttons/button26.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img18',/*url*/'images/buttons/button25.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Spot the Ball"></a></font></p>
+		<p align="center">
+		<font face="Arial">
+		<a href="reports.asp">
+		<img border="0" id="img19" src="images/buttons/button27.jpg" height="20" width="100" alt="Match Report" onmouseover="FP_swapImg(1,0,/*id*/'img19',/*url*/'images/buttons/button28.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img19',/*url*/'images/buttons/button27.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img19',/*url*/'images/buttons/button29.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img19',/*url*/'images/buttons/button28.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Match Report"></a></font><p align="center">
+		<font face="Arial">
+		<a href="news.asp">
+		<img border="0" id="img21" src="images/buttons/buttonA1.jpg" height="20" width="100" alt="News in Depth" onmouseover="FP_swapImg(1,0,/*id*/'img21',/*url*/'images/buttons/buttonB10.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img21',/*url*/'images/buttons/buttonA1.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img21',/*url*/'images/buttons/buttonC1.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img21',/*url*/'images/buttons/buttonB10.jpg')" fp-style="fp-btn: Metal Capsule 5; fp-orig: 0" fp-title="News in Depth"></a></font><p align="center">
+		<font face="Arial">
+		<a href="guestbook.asp">
+		<img border="0" id="img22" src="images/buttons/button111.jpg" height="20" width="100" alt="Guestbook!" onmouseover="FP_swapImg(1,0,/*id*/'img22',/*url*/'images/buttons/button109.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img22',/*url*/'images/buttons/button111.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img22',/*url*/'images/buttons/button110.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img22',/*url*/'images/buttons/button109.jpg')" fp-style="fp-btn: Metal Capsule 5" fp-title="Guestbook!"></a></font>
+		<BR><BR><a href="top_trumps.asp">
+		<img border="0" id="img102" src="images/buttons/TSbutton1.jpg" height="20" width="100" alt="Top Stumps!" onmouseover="FP_swapImg(1,0,/*id*/'img102',/*url*/'images/buttons/TSbutton2.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img102',/*url*/'images/buttons/TSbutton1.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img102',/*url*/'images/buttons/TSbutton3.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img102',/*url*/'images/buttons/TSbutton2.jpg')" fp-style="fp-btn: Glass Capsule 5" fp-title="Top Stumps!"></a>
+		<a href=# onClick="MyWindow=window.open('./accounts/main.asp','MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=800,height=500'); return false;">
+		<BR><BR><img border="0" id="img23" src="images/buttons/button621.jpg" height="20" width="100" alt="Accounts" fp-style="fp-btn: Glass Capsule 5" fp-title="Accounts" onmouseover="FP_swapImg(1,0,/*id*/'img23',/*url*/'images/buttons/button721.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img23',/*url*/'images/buttons/button621.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img23',/*url*/'images/buttons/button821.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img23',/*url*/'images/buttons/button721.jpg')"></a></p>
+
+
+<p align="center"><font size="2" face="Arial"><a href="/sitemap.asp">site map</a></font></p>
+<iframe src="http://rcm-uk.amazon.co.uk/e/cm?t=thevillagecc-21&o=2&p=6&l=st1&mode=books&search=Cricket&fc1=&lt1=&lc1=&bg1=&f=ifr" marginwidth="0" marginheight="0" width="120" height="150" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe>
+<BR><BR><A HREF="http://www.cricinfo.com/">
+<IMG SRC="./images/CIblue150x40.gif" BORDER=0 ALT="CricInfo.com"></A> 		
+<BR>
+<iframe src="http://rcm-uk.amazon.co.uk/e/cm?t=thevillagecc-21&o=2&p=8&l=as1&asins=B000HG3JQ4&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+</body>
+
+</html>
