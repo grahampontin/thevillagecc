@@ -1,0 +1,971 @@
+<HTML>
+<HEAD>
+	<TITLE>Adobe Web Photo Gallery</TITLE>
+	<META name="generator" content="Adobe Photoshop(R) CS Web Photo Gallery">
+	<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link href="images/galleryStyle.css" rel="stylesheet" type="text/css">
+	<script language="javascript">
+	<!--
+	/******************** BROWSER DETECT  ********************************************/
+	/** List of all known user agent names */
+	var agentNames = new Array("msie ", "netscape6/", "netscape/", "mozilla/", "opera/");
+	
+	var isIE = (navigator.appName.indexOf("Explorer") > -1);
+	var isMac = (navigator.userAgent.indexOf("Mac") > -1);
+	var majorVersion = getMajorVersion();
+	var isIE5Mac = (isIE && majorVersion >= 5 && isMac);
+	
+	
+	function getMajorVersion() {
+	
+		var majorVersion = 0;
+		var verStart = 0;
+		var agent = navigator.userAgent;
+	
+		if (agent != null) {
+	
+	    		agent = agent.toLowerCase();
+	
+			for (var i = 0; i < agentNames.length; i++) {
+	
+				var name = agentNames[i];
+				var pos = agent.indexOf(name);
+	
+				if (pos > -1) {
+	
+					verStart = pos + name.length;
+					break;
+				}
+			}
+	
+			var verStop = agent.indexOf('.', verStart);
+	
+			if (verStart != -1 && verStop > verStart && (verStop - verStart) <= 2) {
+	
+				return parseInt(agent.substring(verStart, verStop));
+	
+			}
+		}
+	
+		return majorVersion;
+	}
+	
+	/******************** End BROWSER DETECT  ********************************************/
+	
+	//Keyed by image name. Value is the index position of image in the indexed array.
+	var myImages = new Object();
+	var myImagesIndexed = new Array();
+	//store images in.
+	var preloadObj = new Object();
+	//Int for position in myImagesIndexed array.
+	var currentImage = 0;
+	
+	//Set when bottom frame is loaded.
+	var isBottomFrameLoaded = false;
+	
+	function setTopFrameImage(imgName, imgPath) {
+		var theImage = top.TopFrame.document.images[imgName];
+		theImage.src = imgPath;
+		
+		//Mac IE 5.2 OSX does not want to update the image, set it to itself to get it to draw.
+		if (isIE5Mac) {
+			theImage.src = theImage.src;
+		}
+	}
+	
+	function setImage(imgName, imgPath) {
+		var theImage = top.document.images[imgName];
+		theImage.src = imgPath;
+	}
+	
+	function previousImage() {
+		if (currentImage >= 1) {
+			setTopFrameImage("theImage", ("../images/" + myImagesIndexed[--currentImage][0]));
+			setArrows();
+			updateMetaData();
+			if (autoAdvance) {
+				resetAutoAdvance();
+			}
+		}
+	}
+	
+	function autoNextImage() {
+		if (currentImage != (myImagesIndexed.length - 1) && myImagesIndexed.length > 1) {
+			//check to make sure image is ready to display
+			if ((top.TopFrame && top.TopFrame.isTopFrameLoaded) && preloadObj[myImagesIndexed[(currentImage+1)][0]]) {
+				setTopFrameImage("theImage", ("../images/" + myImagesIndexed[++currentImage][0]));
+				setArrows();
+				updateMetaData();
+			} else {
+				//Try again to see if image is loaded
+				setTimeout("autoNextImage()", 100);
+			}
+		//Set to -1 so auto advance can loop.
+		} else if (autoAdvance) {
+			currentImage = -1;
+			autoNextImage();
+		}
+	}
+	
+	function nextImage() {
+		if (currentImage != (myImagesIndexed.length - 1) && myImagesIndexed.length > 1) {
+			autoNextImage();
+			if (autoAdvance) {
+				resetAutoAdvance();
+			}
+		}
+	}
+	
+	var autoAdvance = false;
+	var intervalTimer = null;
+	
+	function startAutoAdvance() {
+		//1000 = 1 sec, 5000 = 5 secs, adjust as desired
+		var delay = 5000;
+		
+		//if (allImagesLoaded) {
+			intervalTimer = setInterval("autoNextImage()", delay);
+			autoAdvance = true;
+			setPausePlayImage();
+		//}
+	}
+	
+	function stopAutoAdvance() {
+		clearInterval(intervalTimer);
+		autoAdvance = false;
+		setPausePlayImage();
+	}
+	
+	function resetAutoAdvance() {
+		stopAutoAdvance();
+		startAutoAdvance();
+	}
+	
+	function setPausePlayImage() {
+		var theImg = null;
+		
+		if (top.isMainPageLoaded) {
+			if (preloadObj["pause"] && preloadObj["pause_over"] && preloadObj["play"] && preloadObj["play_over"]) {
+				if (autoAdvance) {
+					theImg = (overPlayPauseButton) ? "images/pause_over.gif" : "images/pause.gif";
+				} else {
+					theImg = (overPlayPauseButton) ? "images/play_over.gif" : "images/play.gif";
+				}
+				
+				setImage("pausePlay1", theImg);
+				setImage("pausePlay2", theImg);		
+			}
+		} else {
+			setTimeout("setPausePlayImage()", 10);
+		}	
+	}
+	
+	var allImagesLoaded = false;
+	function preloadMyImages() {
+		
+		if (document.images) {
+			preloadObj["pause_over"] = newImage("../images/pause_over.gif");
+			preloadObj["pause"] = newImage("../images/pause.gif");
+			preloadObj["play_over"] = newImage("../images/play_over.gif");
+			preloadObj["play"] = newImage("../images/play.gif");
+			
+			preloadObj["previous_disabled"] = newImage("../images/previous_disabled.gif");
+			preloadObj["previous"] = newImage("../images/previous.gif");
+			preloadObj["next_disabled"] = newImage("../images/next_disabled.gif");
+			preloadObj["next"] = newImage("../images/next.gif");
+		
+			for (var i=0; i < myImagesIndexed.length; i++) {
+				preloadObj[myImagesIndexed[i][0]] = newImage("../images/" + myImagesIndexed[i][0]);
+				//alert(myImagesIndexed[i][0] + "  " + preloadObj[myImagesIndexed[i][0]]);
+			}
+		}
+		
+		allImagesLoaded = true;
+	}
+	
+	function newImage(arg) {
+		if (document.images) {
+			rslt = new Image();
+			rslt.src = arg;
+			return rslt;
+		}
+	}
+	
+	function togglePlayPauseState() {
+		if (allImagesLoaded) {
+			if(autoAdvance) {
+				stopAutoAdvance();
+			} else {
+				startAutoAdvance();
+			}
+		}
+	}
+	
+	var overPlayPauseButton = false;
+	function togglePlayPauseImg(state) {
+		if (allImagesLoaded) {
+			overPlayPauseButton = (state.toLowerCase() == "over") ? true : false;
+			setPausePlayImage();
+		}
+	}
+	
+	function jumpToImage(imgName) {
+		if (top.TopFrame && top.TopFrame.isTopFrameLoaded) {
+			var index = myImages[imgName];
+			
+			setTopFrameImage("theImage", ("../images/" + myImagesIndexed[index][0]));
+
+			//reset timer to ensure full delay is used for the image
+			if (autoAdvance) {
+				resetAutoAdvance();
+			}
+		
+			currentImage = index;
+			setArrows();
+			updateMetaData();	
+		} else {
+			setTimeout("jumpToImage(imgName)" , 10);
+		}	
+	}
+	
+	/*
+		//Key to data structure
+		myImagesIndexed[currentImage][0] = FILENAMEURL
+		myImagesIndexed[currentImage][1] = CAPTIONTITLE
+		myImagesIndexed[currentImage][2] = FILEINFO
+		myImagesIndexed[currentImage][3] = CREDITS
+		myImagesIndexed[currentImage][4] = COPYRIGHT
+		myImagesIndexed[currentImage][5] = FILENAME
+	*/
+	function updateMetaData() {
+		if (top.TopFrame && top.TopFrame.isTopFrameLoaded) {
+			top.TopFrame.document.getElementById("fileName").innerHTML = myImagesIndexed[currentImage][5];
+			top.TopFrame.document.getElementById("captionTitle").innerHTML = myImagesIndexed[currentImage][1];
+			top.TopFrame.document.getElementById("fileInfo").innerHTML = myImagesIndexed[currentImage][2];
+			top.TopFrame.document.getElementById("credits").innerHTML = myImagesIndexed[currentImage][3];
+			top.TopFrame.document.getElementById("copyright").innerHTML = myImagesIndexed[currentImage][4];
+		} else {
+			setTimeout("updateMetaData()", 10);
+		}
+	}
+	
+	function setArrows() {
+		var prevImg = null;
+		var nextImg = null;
+		
+		if (top.isMainPageLoaded && preloadObj["previous"] && preloadObj["previous_disabled"] && preloadObj["next"] && preloadObj["next_disabled"]) {
+			prevImg = (currentImage > 0) ? "images/previous.gif" : "images/previous_disabled.gif";
+			nextImg = (currentImage < (myImagesIndexed.length-1)) ? "images/next.gif" : "images/next_disabled.gif";
+			
+			setImage("previous1", prevImg);	
+			setImage("previous2", prevImg);	
+			setImage("next1", nextImg);	
+			setImage("next2", nextImg);
+		} else {
+			setTimeout("setArrows()", 10);
+		}
+	}
+	
+	function replaceCharacter(str, oldCharacter, newCharacter) {
+		if(str != -1) {
+			var strArray = str.split(oldCharacter);
+			str = strArray.join(newCharacter);
+			//alert(str);
+		}
+		return str;
+	}
+
+	//-->
+	</script>
+</HEAD>
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0" bgcolor="#CCCCCC" onload="isBottomFrameLoaded = true; startAutoAdvance(); preloadMyImages();">
+	<div id="thumbnail" align="center">
+		<table height="82" border="0" cellpadding="4" cellspacing="0">
+			<tr align="center">				
+<!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2393.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2393.jpg', '%20', ''));"><img src="thumbnails/DSCF2393.jpg" width="75" height="56" border=0 alt="DSCF2393"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2393.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2393.jpg", "", "", "", "", "DSCF2393.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2394.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2394.jpg', '%20', ''));"><img src="thumbnails/DSCF2394.jpg" width="75" height="56" border=0 alt="DSCF2394"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2394.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2394.jpg", "", "", "", "", "DSCF2394.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2395.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2395.jpg', '%20', ''));"><img src="thumbnails/DSCF2395.jpg" width="56" height="75" border=0 alt="DSCF2395"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2395.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2395.jpg", "", "", "", "", "DSCF2395.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2396.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2396.jpg', '%20', ''));"><img src="thumbnails/DSCF2396.jpg" width="56" height="75" border=0 alt="DSCF2396"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2396.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2396.jpg", "", "", "", "", "DSCF2396.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2397.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2397.jpg', '%20', ''));"><img src="thumbnails/DSCF2397.jpg" width="75" height="56" border=0 alt="DSCF2397"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2397.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2397.jpg", "", "", "", "", "DSCF2397.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2398.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2398.jpg', '%20', ''));"><img src="thumbnails/DSCF2398.jpg" width="75" height="56" border=0 alt="DSCF2398"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2398.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2398.jpg", "", "", "", "", "DSCF2398.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2399.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2399.jpg', '%20', ''));"><img src="thumbnails/DSCF2399.jpg" width="56" height="75" border=0 alt="DSCF2399"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2399.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2399.jpg", "", "", "", "", "DSCF2399.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2400.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2400.jpg', '%20', ''));"><img src="thumbnails/DSCF2400.jpg" width="56" height="75" border=0 alt="DSCF2400"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2400.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2400.jpg", "", "", "", "", "DSCF2400.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2401.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2401.jpg', '%20', ''));"><img src="thumbnails/DSCF2401.jpg" width="56" height="75" border=0 alt="DSCF2401"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2401.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2401.jpg", "", "", "", "", "DSCF2401.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2402.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2402.jpg', '%20', ''));"><img src="thumbnails/DSCF2402.jpg" width="75" height="56" border=0 alt="DSCF2402"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2402.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2402.jpg", "", "", "", "", "DSCF2402.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2403.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2403.jpg', '%20', ''));"><img src="thumbnails/DSCF2403.jpg" width="56" height="75" border=0 alt="DSCF2403"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2403.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2403.jpg", "", "", "", "", "DSCF2403.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2404.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2404.jpg', '%20', ''));"><img src="thumbnails/DSCF2404.jpg" width="75" height="56" border=0 alt="DSCF2404"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2404.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2404.jpg", "", "", "", "", "DSCF2404.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2405.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2405.jpg', '%20', ''));"><img src="thumbnails/DSCF2405.jpg" width="75" height="56" border=0 alt="DSCF2405"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2405.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2405.jpg", "", "", "", "", "DSCF2405.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2406.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2406.jpg', '%20', ''));"><img src="thumbnails/DSCF2406.jpg" width="75" height="56" border=0 alt="DSCF2406"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2406.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2406.jpg", "", "", "", "", "DSCF2406.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2407.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2407.jpg', '%20', ''));"><img src="thumbnails/DSCF2407.jpg" width="75" height="56" border=0 alt="DSCF2407"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2407.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2407.jpg", "", "", "", "", "DSCF2407.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2408.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2408.jpg', '%20', ''));"><img src="thumbnails/DSCF2408.jpg" width="75" height="56" border=0 alt="DSCF2408"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2408.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2408.jpg", "", "", "", "", "DSCF2408.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2409.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2409.jpg', '%20', ''));"><img src="thumbnails/DSCF2409.jpg" width="56" height="75" border=0 alt="DSCF2409"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2409.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2409.jpg", "", "", "", "", "DSCF2409.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2410.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2410.jpg', '%20', ''));"><img src="thumbnails/DSCF2410.jpg" width="56" height="75" border=0 alt="DSCF2410"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2410.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2410.jpg", "", "", "", "", "DSCF2410.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2411.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2411.jpg', '%20', ''));"><img src="thumbnails/DSCF2411.jpg" width="56" height="75" border=0 alt="DSCF2411"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2411.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2411.jpg", "", "", "", "", "DSCF2411.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2412.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2412.jpg', '%20', ''));"><img src="thumbnails/DSCF2412.jpg" width="56" height="75" border=0 alt="DSCF2412"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2412.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2412.jpg", "", "", "", "", "DSCF2412.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2413.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2413.jpg', '%20', ''));"><img src="thumbnails/DSCF2413.jpg" width="75" height="56" border=0 alt="DSCF2413"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2413.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2413.jpg", "", "", "", "", "DSCF2413.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2414.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2414.jpg', '%20', ''));"><img src="thumbnails/DSCF2414.jpg" width="56" height="75" border=0 alt="DSCF2414"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2414.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2414.jpg", "", "", "", "", "DSCF2414.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2416.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2416.jpg', '%20', ''));"><img src="thumbnails/DSCF2416.jpg" width="56" height="75" border=0 alt="DSCF2416"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2416.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2416.jpg", "", "", "", "", "DSCF2416.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2417.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2417.jpg', '%20', ''));"><img src="thumbnails/DSCF2417.jpg" width="56" height="75" border=0 alt="DSCF2417"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2417.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2417.jpg", "", "", "", "", "DSCF2417.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2418.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2418.jpg', '%20', ''));"><img src="thumbnails/DSCF2418.jpg" width="56" height="75" border=0 alt="DSCF2418"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2418.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2418.jpg", "", "", "", "", "DSCF2418.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2419.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2419.jpg', '%20', ''));"><img src="thumbnails/DSCF2419.jpg" width="75" height="56" border=0 alt="DSCF2419"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2419.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2419.jpg", "", "", "", "", "DSCF2419.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2420.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2420.jpg', '%20', ''));"><img src="thumbnails/DSCF2420.jpg" width="75" height="56" border=0 alt="DSCF2420"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2420.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2420.jpg", "", "", "", "", "DSCF2420.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2421.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2421.jpg', '%20', ''));"><img src="thumbnails/DSCF2421.jpg" width="75" height="56" border=0 alt="DSCF2421"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2421.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2421.jpg", "", "", "", "", "DSCF2421.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2422.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2422.jpg', '%20', ''));"><img src="thumbnails/DSCF2422.jpg" width="56" height="75" border=0 alt="DSCF2422"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2422.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2422.jpg", "", "", "", "", "DSCF2422.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2423.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2423.jpg', '%20', ''));"><img src="thumbnails/DSCF2423.jpg" width="56" height="75" border=0 alt="DSCF2423"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2423.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2423.jpg", "", "", "", "", "DSCF2423.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2424.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2424.jpg', '%20', ''));"><img src="thumbnails/DSCF2424.jpg" width="56" height="75" border=0 alt="DSCF2424"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2424.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2424.jpg", "", "", "", "", "DSCF2424.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2425.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2425.jpg', '%20', ''));"><img src="thumbnails/DSCF2425.jpg" width="56" height="75" border=0 alt="DSCF2425"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2425.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2425.jpg", "", "", "", "", "DSCF2425.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2426.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2426.jpg', '%20', ''));"><img src="thumbnails/DSCF2426.jpg" width="75" height="56" border=0 alt="DSCF2426"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2426.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2426.jpg", "", "", "", "", "DSCF2426.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2427.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2427.jpg', '%20', ''));"><img src="thumbnails/DSCF2427.jpg" width="75" height="56" border=0 alt="DSCF2427"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2427.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2427.jpg", "", "", "", "", "DSCF2427.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2428.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2428.jpg', '%20', ''));"><img src="thumbnails/DSCF2428.jpg" width="75" height="56" border=0 alt="DSCF2428"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2428.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2428.jpg", "", "", "", "", "DSCF2428.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2429.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2429.jpg', '%20', ''));"><img src="thumbnails/DSCF2429.jpg" width="75" height="56" border=0 alt="DSCF2429"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2429.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2429.jpg", "", "", "", "", "DSCF2429.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2430.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2430.jpg', '%20', ''));"><img src="thumbnails/DSCF2430.jpg" width="75" height="56" border=0 alt="DSCF2430"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2430.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2430.jpg", "", "", "", "", "DSCF2430.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2431.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2431.jpg', '%20', ''));"><img src="thumbnails/DSCF2431.jpg" width="75" height="56" border=0 alt="DSCF2431"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2431.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2431.jpg", "", "", "", "", "DSCF2431.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2432.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2432.jpg', '%20', ''));"><img src="thumbnails/DSCF2432.jpg" width="75" height="56" border=0 alt="DSCF2432"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2432.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2432.jpg", "", "", "", "", "DSCF2432.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2433.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2433.jpg', '%20', ''));"><img src="thumbnails/DSCF2433.jpg" width="56" height="75" border=0 alt="DSCF2433"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2433.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2433.jpg", "", "", "", "", "DSCF2433.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2434.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2434.jpg', '%20', ''));"><img src="thumbnails/DSCF2434.jpg" width="75" height="56" border=0 alt="DSCF2434"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2434.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2434.jpg", "", "", "", "", "DSCF2434.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2435.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2435.jpg', '%20', ''));"><img src="thumbnails/DSCF2435.jpg" width="75" height="56" border=0 alt="DSCF2435"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2435.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2435.jpg", "", "", "", "", "DSCF2435.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2436.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2436.jpg', '%20', ''));"><img src="thumbnails/DSCF2436.jpg" width="75" height="56" border=0 alt="DSCF2436"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2436.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2436.jpg", "", "", "", "", "DSCF2436.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2437.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2437.jpg', '%20', ''));"><img src="thumbnails/DSCF2437.jpg" width="75" height="56" border=0 alt="DSCF2437"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2437.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2437.jpg", "", "", "", "", "DSCF2437.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2438.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2438.jpg', '%20', ''));"><img src="thumbnails/DSCF2438.jpg" width="56" height="75" border=0 alt="DSCF2438"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2438.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2438.jpg", "", "", "", "", "DSCF2438.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2439.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2439.jpg', '%20', ''));"><img src="thumbnails/DSCF2439.jpg" width="75" height="56" border=0 alt="DSCF2439"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2439.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2439.jpg", "", "", "", "", "DSCF2439.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2440.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2440.jpg', '%20', ''));"><img src="thumbnails/DSCF2440.jpg" width="56" height="75" border=0 alt="DSCF2440"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2440.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2440.jpg", "", "", "", "", "DSCF2440.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2441.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2441.jpg', '%20', ''));"><img src="thumbnails/DSCF2441.jpg" width="56" height="75" border=0 alt="DSCF2441"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2441.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2441.jpg", "", "", "", "", "DSCF2441.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2442.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2442.jpg', '%20', ''));"><img src="thumbnails/DSCF2442.jpg" width="56" height="75" border=0 alt="DSCF2442"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2442.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2442.jpg", "", "", "", "", "DSCF2442.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2443.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2443.jpg', '%20', ''));"><img src="thumbnails/DSCF2443.jpg" width="56" height="75" border=0 alt="DSCF2443"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2443.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2443.jpg", "", "", "", "", "DSCF2443.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2444.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2444.jpg', '%20', ''));"><img src="thumbnails/DSCF2444.jpg" width="56" height="75" border=0 alt="DSCF2444"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2444.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2444.jpg", "", "", "", "", "DSCF2444.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2445.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2445.jpg', '%20', ''));"><img src="thumbnails/DSCF2445.jpg" width="56" height="75" border=0 alt="DSCF2445"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2445.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2445.jpg", "", "", "", "", "DSCF2445.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2446.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2446.jpg', '%20', ''));"><img src="thumbnails/DSCF2446.jpg" width="75" height="56" border=0 alt="DSCF2446"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2446.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2446.jpg", "", "", "", "", "DSCF2446.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2447.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2447.jpg', '%20', ''));"><img src="thumbnails/DSCF2447.jpg" width="56" height="75" border=0 alt="DSCF2447"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2447.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2447.jpg", "", "", "", "", "DSCF2447.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2448.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2448.jpg', '%20', ''));"><img src="thumbnails/DSCF2448.jpg" width="75" height="56" border=0 alt="DSCF2448"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2448.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2448.jpg", "", "", "", "", "DSCF2448.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2449.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2449.jpg', '%20', ''));"><img src="thumbnails/DSCF2449.jpg" width="75" height="56" border=0 alt="DSCF2449"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2449.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2449.jpg", "", "", "", "", "DSCF2449.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2450.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2450.jpg', '%20', ''));"><img src="thumbnails/DSCF2450.jpg" width="56" height="75" border=0 alt="DSCF2450"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2450.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2450.jpg", "", "", "", "", "DSCF2450.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2451.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2451.jpg', '%20', ''));"><img src="thumbnails/DSCF2451.jpg" width="75" height="56" border=0 alt="DSCF2451"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2451.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2451.jpg", "", "", "", "", "DSCF2451.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2452.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2452.jpg', '%20', ''));"><img src="thumbnails/DSCF2452.jpg" width="75" height="56" border=0 alt="DSCF2452"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2452.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2452.jpg", "", "", "", "", "DSCF2452.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2453.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2453.jpg', '%20', ''));"><img src="thumbnails/DSCF2453.jpg" width="75" height="56" border=0 alt="DSCF2453"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2453.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2453.jpg", "", "", "", "", "DSCF2453.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2454.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2454.jpg', '%20', ''));"><img src="thumbnails/DSCF2454.jpg" width="56" height="75" border=0 alt="DSCF2454"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2454.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2454.jpg", "", "", "", "", "DSCF2454.jpg");
+	
+</script><!-- Thumbnails with hyperlinks -->
+<td align="center">
+<a onmouseover="window.status='DSCF2455.jpg';  return true;"  onmouseout="window.status='';  return true;" href="javascript:jumpToImage(replaceCharacter('DSCF2455.jpg', '%20', ''));"><img src="thumbnails/DSCF2455.jpg" width="75" height="56" border=0 alt="DSCF2455"></a>
+</td>
+<script language="javascript">
+	
+		var newIndex = myImagesIndexed.length;
+		myImages[replaceCharacter('DSCF2455.jpg', '%20', '')] = newIndex;
+		
+		myImagesIndexed[newIndex] = new Array("DSCF2455.jpg", "", "", "", "", "DSCF2455.jpg");
+	
+</script>			</tr>
+		</table>
+	</div>
+</BODY>
+</HTML>
