@@ -10,11 +10,16 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Xml.Linq;
+using System.IO;
 
 public partial class UserControls_PictureCarousel : System.Web.UI.UserControl
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-
+        DirectoryInfo dir = new DirectoryInfo(Server.MapPath("\\Images\\Carousel"));
+        var files = dir.GetFiles();
+        Pictures.DataSource = files;
+        Pictures.DataBind();
+        
     }
 }
