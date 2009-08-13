@@ -13,7 +13,7 @@
         <CC:LastResult id="LastResult" runat=server />
     </div>
     <div id=headerCentral>
-        <img src="./Images/logo.jpg" />
+        <img src="/Images/logo.jpg" />
     </div>
     
     <div id=headerRight>

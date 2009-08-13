@@ -26,6 +26,13 @@
             <div class="PageHeading">
                 <asp:Literal runat=server ID="PageHeading"></asp:Literal>
             </div>
+            <div class=Centered>
+                <a href="#Report">Report</a> | 
+                <a href="#Scorecards">Scorcards</a> | 
+                <a href="Gallery.aspx?MatchID=<asp:Literal ID=MatchID1 runat=server></asp:Literal>">Gallery</a> | 
+                <a href="Secure/UploadImages.aspx?MatchID=<asp:Literal ID=MatchID2 runat=server></asp:Literal>">Add Photos
+                </a>
+            </div>
             <div class=scHeading>
                 Summary
             </div>
@@ -42,7 +49,7 @@
             </div>
             
             <div class=scHeading>
-                Report
+                <a name=Report>Report</a>
             </div>
             <div class=standardText>
                 <asp:Literal runat=server ID="ReportText"></asp:Literal>
@@ -50,7 +57,7 @@
             </div>
             
             <div class=scHeading>
-                The Village CC Innings
+                <a name=Scorecards>The Village CC Innings</a>
             </div>
             <div class=standardText>
                 <CC:BattingScorecard ID=OurBatting runat=server />

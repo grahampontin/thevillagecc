@@ -21,7 +21,7 @@
         <!-- End Head -->
         <div class=clearer></div>
         <div id="mainContent">
-            <h1>The Village CC &raquo; Gallery Beta 1</h1>
+            <h3>The Village CC &raquo; Gallery Beta 1 &raquo; The Village vs <asp:Literal ID=oppo runat=server></asp:Literal> (<asp:Literal ID=matchdate runat=server></asp:Literal>)  </h3>
             <div id="gallery" class="content">
 
                 <div id="controls" class="controls"></div>
@@ -31,310 +31,29 @@
             </div>
             <div id="thumbs" class="navigation">
                 <ul class="thumbs noscript">
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                        <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                        <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    <li>
-                        <a class="thumb" href="match_reports/images/113/Keevil2.jpg" title="your image title">
-                            <img src="Handlers/ImageThumbnail.ashx?p=/match_reports/images/113/Keevil2.jpg" alt="your image title again for graceful degradation" />
-                        </a>
-                        <div class="caption">
-                            (Any html can go here)
-                        </div>
-                    </li>
-                    </li>
-                    </li>
+                    <asp:ListView ID="Pictures" runat="server" 
+                        onitemdatabound="Pictures_ItemDataBound">
+                        <LayoutTemplate>
+                            <asp:PlaceHolder runat="server" ID="itemPlaceholder"></asp:PlaceHolder>
+                        </LayoutTemplate>
+
+                       <ItemTemplate>
+                          <li>
+                                <a id=ThumbLink runat=server class="thumb" href="" title="">
+                                    <img id=ImageTag runat=server src="" alt="" />
+                                </a>
+                                <div class="caption">
+                                    <asp:Literal ID=ImageTitle runat=server></asp:Literal><br />
+                                    by <asp:Literal ID=ImageAuthor runat=server></asp:Literal>
+                                </div>
+                            </li>
+                          
+                          
+                          
+                       </ItemTemplate>
+                    </asp:ListView>
+                    
+                    
                 </ul>
 
             </div>

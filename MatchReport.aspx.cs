@@ -25,6 +25,8 @@ public partial class MatchReport : System.Web.UI.Page
 
         int MatchID = int.Parse(temp);
         Match match = new Match(MatchID);
+        MatchID1.Text = MatchID.ToString();
+        MatchID2.Text = MatchID.ToString();
         _PageTitle.Text = match.HomeTeamName + " vs " + match.AwayTeamName + " (" + match.MatchDate.ToShortDateString() + ")";
         PageHeading.Text = match.HomeTeamName + " ("+match.HomeTeamScore+") " + match.ResultText + " " + match.AwayTeamName +" ("+match.AwayTeamScore+") " + match.ResultMargin;
         OppositionName.Text = match.Opposition.Name;
