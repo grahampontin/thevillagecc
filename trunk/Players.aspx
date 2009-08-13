@@ -12,7 +12,7 @@
     <script type="text/javascript">
     $(document).ready(function()     
            {
-             $(".fullWidth").tablesorter( {sortList: [[2,1]]} );     
+             $("#playersGV").tablesorter( {sortList: [[7,1]], widgets: ['zebra']} );     
             } 
             );
 </script>

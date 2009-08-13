@@ -20,11 +20,12 @@ public partial class Players : System.Web.UI.Page
     private DateTime startDate;
     private DateTime endDate;
     private List<MatchType> MatchTypes = new List<MatchType>();
-    
+    int count = 0;
+
     protected void Page_Load(object sender, EventArgs e)
     {
-        
 
+        Header1.PageID = "Players";
         string fromDate = FromDate.Value;
         string toDate = ToDate.Value;
 
@@ -64,12 +65,14 @@ public partial class Players : System.Web.UI.Page
 
         playersGV.DataSource = Player.GetAll().Where(a => a.GetMatchesPlayed(startDate, endDate, MatchTypes) > 0);
         playersGV.DataBind();
-        playersGV.CssClass = "fullWidth";
-
+        playersGV.CssClass = "fullWidth tablesorter";
+        playersGV.HeaderRow.TableSection = TableRowSection.TableHeader;
+        playersGV.FooterRow.TableSection = TableRowSection.TableFooter;
     }
     protected void playersGV_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         TableCell number = e.Row.Cells[0];
+        TableCell name = e.Row.Cells[1];
         TableCell BatsAt = e.Row.Cells[2];
         TableCell Matches = e.Row.Cells[3];
         TableCell Innings = e.Row.Cells[4];
@@ -94,6 +97,7 @@ public partial class Players : System.Web.UI.Page
         number.Visible = false;
         if (e.Row.RowType == DataControlRowType.Header)
         {
+            HighScore.CssClass = HighScore.CssClass + "{sorter: 'digit'}";
             foreach (TableCell cell in e.Row.Cells)
             {
                 cell.HorizontalAlign = HorizontalAlign.Left;
@@ -126,12 +130,11 @@ public partial class Players : System.Web.UI.Page
 
         if (e.Row.RowType == DataControlRowType.DataRow)
         {
-            Player CurrentPlayer = (Player)e.Row.DataItem;
             
-
+            Player CurrentPlayer = (Player)e.Row.DataItem;
 
             Matches.Text = CurrentPlayer.GetMatchesPlayed(startDate, endDate, MatchTypes).ToString();
-            
+            name.Text = "<a href=Player_Detail.asp?player_id="+CurrentPlayer.ID+">"+CurrentPlayer.Name+"</a>";
             if (BattingCB.Checked)
             {
                 BatsAt.Text = CurrentPlayer.GetBattingPosition(startDate,endDate,MatchTypes).ToString();

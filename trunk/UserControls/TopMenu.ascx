@@ -9,7 +9,7 @@
 	            <li><a runat=server href="~/match_reports.asp" title=" ">Reports</a></li>
 	            <li><a runat=server href="~/Training.asp" title=" ">Nets</a></li>
 	            <li><a runat=server href="~/Committee.aspx" title="Committee & Offical Docs" id="Committee">Committee</a></li>
-	            <li><a runat=server href="~/Players.asp" title=" ">Players</a></li>
+	            <li><a runat=server id="Players" href="~/Players.aspx" title="Player Stats">Players</a></li>
 	            <li><a runat=server id="News" href="~/News.aspx" title=" ">News</a></li>
 	            <li><a runat=server id="Chat" href="~/Chat.aspx" title="Chat">Chat</a></li>
 	            <li><a runat=server href="~/Gallery.asp" title=" ">Gallery</a></li>
