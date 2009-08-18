@@ -7,9 +7,20 @@
     <title></title>
 </head>
 <body>
+    <div class=AdminPageHeader>
+        <div class=AdminPageLogo>
+            <img src="/Images/logo.jpg" />
+        </div>
+    </div>
+    <div class=AdminPageLeftMenu>
+    
+    </div>
+    <div class=AdminPageBody>
+    
+    </div>
     <form id="form1" runat="server">
     <div>
-    
+        
     </div>
     </form>
 </body>
