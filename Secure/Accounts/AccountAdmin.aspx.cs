@@ -79,6 +79,29 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
 
                 break;
             #endregion
+            #region UnconfirmedPayments
+            case "confirmPayments":
+                if (!IsPostBack)
+                {
+                    var payments = AccountEntry.GetAll().Where(a => a.Status == CricketClubDomain.PaymentStatus.Unconfirmed);
+                    UncomfirmedPayments.DataSource = payments;
+                    UncomfirmedPayments.DataBind();
+                }
+                ConfirmPayments.Visible = true;
+                Welcome.Visible = false;
+                break;
+            #endregion
+            #region AmmendPayments
+            case "ammendPayments":
+                AmmendPayment.Visible = true;
+                Welcome.Visible = false;
+                if (!IsPostBack)
+                {
+                    AmmendPaymentsPlayerList.DataSource = AllPlayers;
+                    AmmendPaymentsPlayerList.DataBind();
+                }
+                break;
+            #endregion
 
         }
         
@@ -130,5 +153,92 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
                 }
             }
         }
+    }
+    protected void UncomfirmedPayments_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            AccountEntry ae = ((AccountEntry)e.Row.DataItem);
+            Player p = new Player(ae.PlayerID);
+            e.Row.Cells[0].Text = p.Name;
+            e.Row.Cells[1].Text = ae.Type.ToString();
+            e.Row.Cells[2].Text = ae.Amount.ToString();
+            e.Row.Cells[3].Text = ae.Date.ToLongDateString();
+            e.Row.Cells[4].Text = ae.Description;
+            e.Row.Cells[5].Text = ae.Status.ToString();
+            
+            
+        }
+    }
+    protected void UncomfirmedPayments_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        int rowNumber = int.Parse(e.CommandArgument.ToString());
+
+        GridViewRow row = ((GridView)e.CommandSource).Rows[rowNumber];
+
+        int entryId = int.Parse(row.Cells[7].Text);
+
+        AccountEntry ae = new AccountEntry(entryId);
+        ae.Status = CricketClubDomain.PaymentStatus.Confirmed;
+        ae.Save();
+        var payments = AccountEntry.GetAll().Where(a => a.Status == CricketClubDomain.PaymentStatus.Unconfirmed);
+        UncomfirmedPayments.DataSource = payments;
+        UncomfirmedPayments.DataBind();
+                
+
+    }
+    protected void AmmendPaymentsPlayerList_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        string playerName = AmmendPaymentsPlayerList.SelectedItem.Text;
+        Player p = Player.GetAll().Where(a => a.Name == playerName).FirstOrDefault();
+
+        PlayerAccount pa = new PlayerAccount(p);
+        AmmendPaymentAccountSummary.DataSource = pa.GetStatement();
+        AmmendPaymentAccountSummary.DataBind();
+        
+
+
+    }
+    protected void AccountSummary_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            if (e.Row.RowIndex % 2 == 0)
+            {
+                e.Row.Style.Add("background-color", "#96B58F");
+            }
+            AccountEntry ae = ((AccountEntry)e.Row.DataItem);
+            e.Row.Cells[0].Text = ae.Type.ToString();
+            if (ae.CreditOrDebit == CricketClubDomain.CreditDebit.Credit)
+            {
+                e.Row.Cells[1].Text = "£" + ae.Amount;
+            }
+            else
+            {
+                e.Row.Cells[2].Text = "£" + ae.Amount;
+            }
+            e.Row.Cells[3].Text = ae.Status.ToString();
+            e.Row.Cells[4].Text = ae.Description;
+            if (ae.MatchID > 0)
+            {
+                Match m = new Match(ae.MatchID);
+                e.Row.Cells[5].Text = "vs " + m.Opposition.Name + " (" + m.MatchDateString + ")";
+            }
+        }
+    }
+    protected void AmmendPaymentAccountSummary_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        int paymentID = int.Parse(AmmendPaymentAccountSummary.Rows[e.RowIndex].Cells[8].Text);
+        AccountEntry ae = new AccountEntry(paymentID);
+        double previousAmount = ae.Amount;
+        ae.Amount = 0.00;
+        ae.Status = CricketClubDomain.PaymentStatus.Deleted;
+        ae.Description += " [Deleted by Administator, was £"+previousAmount+"]";
+        ae.Save();
+
+    }
+    protected void AmmendPaymentAccountSummary_RowEditing(object sender, GridViewEditEventArgs e)
+    {
+        //todo
     }
 }

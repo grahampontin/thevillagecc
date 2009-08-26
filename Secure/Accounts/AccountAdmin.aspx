@@ -26,10 +26,10 @@
                <a href=AccountAdmin.aspx?action=addPayments>Add New Payments</a>
             </li>
             <li>
-                <a href=AccountAdmin.aspx?action=confirmPayment>Confirm Payments</a>
+                <a href=AccountAdmin.aspx?action=confirmPayments>Confirm Payments</a>
             </li>
             <li>
-                <a href=AccountAdmin.aspx?action=changePayment>Ammend a Payment</a>
+                <a href=AccountAdmin.aspx?action=ammendPayments>Ammend a Payment</a>
             </li>
             <li>
                 <a href=AccountAdmin.aspx?action=listBalances>List Balances</a>
@@ -52,6 +52,7 @@
                 Welcome to the VCC Account System. Please choose from the options on
                 the left.
             </div>
+            
             <div id=ListBalances runat=server visible=false>
                 <div class=floatLeft>
                 <asp:GridView ID=BalancesGrid runat=server AutoGenerateColumns="False" 
@@ -128,6 +129,52 @@
                 <asp:Button ID=AddPaymentsButton runat=server Text="Add Payments" 
                 onclick="AddPaymentsButton_Click" />
                 
+                
+            </div>
+            
+            <div id=ConfirmPayments runat=server visible=false>
+                <asp:GridView ID=UncomfirmedPayments runat=server AutoGenerateColumns="False" 
+                    onrowdatabound="UncomfirmedPayments_RowDataBound" 
+                    onrowcommand="UncomfirmedPayments_RowCommand">
+                    <Columns>
+                        <asp:BoundField HeaderText="Name" />
+                        <asp:BoundField HeaderText="Type" />
+                        <asp:BoundField HeaderText="Amount" />
+                        <asp:BoundField HeaderText="Date" />
+                        <asp:BoundField HeaderText="Comments" />
+                        <asp:BoundField HeaderText="Status" />
+                        <asp:CommandField ButtonType="Button" SelectText="Confirm" 
+                            ShowSelectButton="True" />
+                        <asp:BoundField DataField="ID" HeaderText="ID (system use)" />
+                    </Columns>
+                </asp:GridView>
+                
+            </div>
+            
+            <div id=AmmendPayment visible=false runat=server>
+                <div id=AmmendPaymentChoosePlayer runat=server>
+                    Choose Player: <asp:DropDownList ID=AmmendPaymentsPlayerList runat=server 
+                        onselectedindexchanged="AmmendPaymentsPlayerList_SelectedIndexChanged" 
+                        AutoPostBack="True"></asp:DropDownList>
+                </div>
+                
+                <asp:GridView ID=AmmendPaymentAccountSummary runat=server AutoGenerateColumns="False" 
+                    onrowdatabound="AccountSummary_RowDataBound" 
+                    onrowdeleting="AmmendPaymentAccountSummary_RowDeleting" 
+                    onrowediting="AmmendPaymentAccountSummary_RowEditing">
+                    <Columns>
+                        <asp:BoundField HeaderText="Type" />
+                        <asp:BoundField HeaderText="Paid In" />
+                        <asp:BoundField HeaderText="Paid out" />
+                        <asp:BoundField HeaderText="Status" />
+                        <asp:BoundField HeaderText="Comments" />
+                        <asp:BoundField HeaderText="Match" />
+                        <asp:CommandField ButtonType="Button" SelectText="Edit" 
+                            ShowSelectButton="True" />
+                        <asp:CommandField ButtonType="Button" ShowDeleteButton="True" />
+                        <asp:BoundField DataField="ID" HeaderText="ID" />
+                    </Columns>
+                </asp:GridView>
                 
             </div>
             
