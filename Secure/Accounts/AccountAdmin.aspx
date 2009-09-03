@@ -91,14 +91,14 @@
                     </Columns>
                 </asp:GridView>
                 </div>
-                
+                <div class=clearer>
                 <div class=floatLeft>
                     <asp:HyperLink ID=previousLink runat=server><< Previous Page</asp:HyperLink>
                 </div>
                 <div class=floatRight>
                     <asp:HyperLink ID=NextLink runat=server>Next Page >></asp:HyperLink>
                 </div>
-                
+                </div>
             </div>
             
             <div id=AddPayments runat=server visible=false>
@@ -152,6 +152,7 @@
             </div>
             
             <div id=AmmendPayment visible=false runat=server>
+                <div id=AmmedPaymentListing runat=server>
                 <div id=AmmendPaymentChoosePlayer runat=server>
                     Choose Player: <asp:DropDownList ID=AmmendPaymentsPlayerList runat=server 
                         onselectedindexchanged="AmmendPaymentsPlayerList_SelectedIndexChanged" 
@@ -160,6 +161,7 @@
                 
                 <asp:GridView ID=AmmendPaymentAccountSummary runat=server AutoGenerateColumns="False" 
                     onrowdatabound="AccountSummary_RowDataBound" 
+                    onrowcommand="AmmendPaymentAccountSummary_RowCommand" 
                     onrowdeleting="AmmendPaymentAccountSummary_RowDeleting" 
                     onrowediting="AmmendPaymentAccountSummary_RowEditing">
                     <Columns>
@@ -169,15 +171,112 @@
                         <asp:BoundField HeaderText="Status" />
                         <asp:BoundField HeaderText="Comments" />
                         <asp:BoundField HeaderText="Match" />
-                        <asp:CommandField ButtonType="Button" SelectText="Edit" 
-                            ShowSelectButton="True" />
+                        <asp:CommandField ButtonType="Button" ShowCancelButton="False" 
+                            ShowEditButton="True" />
                         <asp:CommandField ButtonType="Button" ShowDeleteButton="True" />
                         <asp:BoundField DataField="ID" HeaderText="ID" />
                     </Columns>
                 </asp:GridView>
+            </div>
+            <div id=AmmendPaymentEditPayment runat=server visible=false>
+                <table>
+                    <tr>
+                        <td>Amount:</td>
+                        <td><asp:TextBox ID=AmmendAmount runat=server>0.00</asp:TextBox></td>
+                    </tr>
+                    <tr>
+                        <td>Type:</td>
+                        <td><asp:DropDownList ID=AmmendType runat=server></asp:DropDownList></td>
+                    </tr>
+                    <tr>
+                        <td>Status:</td>
+                        <td><asp:DropDownList ID=AmmendStatus runat=server></asp:DropDownList></td>
+                    </tr>
+                    <tr>
+                        <td>Credit / Debit:</td>
+                        <td><asp:DropDownList ID=AmmendCreditDebit runat=server></asp:DropDownList></td>
+                    </tr>                    
+                    <tr>
+                        <td>Comments:</td>
+                        <td><asp:TextBox ID=AmmendComment runat=server Height="108px" TextMode="MultiLine" 
+                                Width="285px"></asp:TextBox>
+                            
+                        </td>
+                    </tr>
+                </table>
+                <asp:TextBox ID="AmmendingPaymentID" runat="server" Visible="False"></asp:TextBox>
+                <asp:Button ID=AmmendPaymentSave runat=server onclick="AmmendPaymentSave_Click" 
+                    Text="Save" />
                 
+            
+            </div>    
             </div>
             
+            <div id=ManagePermissions runat=server visible=false>
+                Checked users have the indicated permissions:<br />
+                
+                
+                <br />
+                <asp:GridView ID="PermissionsGridView" runat="server" 
+                    AutoGenerateColumns="False" GridLines="None">
+                    <Columns>
+                        <asp:BoundField DataField="ID" HeaderText="ID" />
+                        <asp:BoundField DataField="DisplayName" HeaderText="Name" />
+                        <asp:TemplateField HeaderText="Accountant">
+                            <ItemTemplate>
+                                <asp:CheckBox ID="IsAccountantCB" runat="server" 
+                                    Checked='<%# Bind("IsAccountant") %>' Enabled="true" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Chat Admin">
+                            <ItemTemplate>
+                                <asp:CheckBox ID="IsChatAdminCB" runat="server" 
+                                    Checked='<%# Bind("IsChatAdmin") %>' Enabled="true" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
+                <asp:Button Text="Save Permissions" runat=server ID="SavePermissions" 
+                    onclick="SavePermissions_Click" />
+            </div>
+            
+            <div id=ManageEmailAddresses runat=server visible="False">
+                <asp:GridView ID="ManageEmailsListUsers" runat=server Visible=False 
+                    AutoGenerateColumns="False" onrowcommand="ManageEmailsListUsers_RowCommand">
+                    <Columns>
+                        <asp:BoundField DataField="ID" HeaderText="ID" />
+                        <asp:BoundField DataField="DisplayName" HeaderText="User Name" />
+                        <asp:BoundField DataField="EmailAddress" HeaderText="Email Address" />
+                        <asp:ButtonField ButtonType="Button" CommandName="LinkToUser" 
+                            Text="Link to This User" />
+                    </Columns>
+                    
+                </asp:GridView>
+            
+                <asp:GridView ID="ManageEmailsGridView" runat="server" 
+                    AutoGenerateColumns="False" onrowcommand="ManageEmailsGridView_RowCommand" 
+                    onrowdatabound="ManageEmailsGridView_RowDataBound" >
+                    <Columns>
+                        <asp:BoundField DataField="ID" HeaderText="ID" />
+                        <asp:BoundField DataField="Name" HeaderText="Player Name" />
+                        <asp:TemplateField HeaderText="Registered EmailAddress">
+                            <ItemTemplate>
+                                <asp:TextBox id=EmailAddressTB runat="server" Text='<%# Bind("EmailAddress") %>'>
+                                </asp:TextBox>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:BoundField HeaderText="Linked User Account" />
+                        <asp:ButtonField ButtonType="Button" Text="Mark as Inactive" 
+                            CommandName="MarkInactive" />
+                        <asp:ButtonField ButtonType="Button" Text="Link to Existing User" 
+                            CommandName="LinkToUser" />
+                    </Columns>
+                </asp:GridView>
+                
+                <asp:Button ID=ManageEmailsSaveButton runat=server Text="Save Changes" 
+                    onclick="ManageEmailsSaveButton_Click" />
+                
+            &nbsp;- <B>Please be patient, saving this screen can take up to a minute.</B></div>
             <!-- END BODY CONTENT -->
         </form>
     </div>

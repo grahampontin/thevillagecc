@@ -102,6 +102,32 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
                 }
                 break;
             #endregion
+            #region ManagePermissions
+            case "managePermissions":
+                
+                ManagePermissions.Visible = true;
+                Welcome.Visible = false;
+                if (!IsPostBack)
+                {
+                    PermissionsGridView.DataSource = CricketClubMiddle.Interactive.User.GetAll();
+                    PermissionsGridView.DataBind();
+                }
+
+                break;
+            #endregion
+            #region ManageEmailAddresses
+            case "manageEmails":
+                ManageEmailAddresses.Visible = true;
+                Welcome.Visible = false;
+
+                if (!IsPostBack)
+                {
+                    ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a => a.ID >= 0).OrderBy(a => a.Name);
+                    ManageEmailsGridView.DataBind();
+                }
+
+                break;
+            #endregion
 
         }
         
@@ -231,14 +257,192 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
         int paymentID = int.Parse(AmmendPaymentAccountSummary.Rows[e.RowIndex].Cells[8].Text);
         AccountEntry ae = new AccountEntry(paymentID);
         double previousAmount = ae.Amount;
-        ae.Amount = 0.00;
-        ae.Status = CricketClubDomain.PaymentStatus.Deleted;
-        ae.Description += " [Deleted by Administator, was £"+previousAmount+"]";
+        if (ae.Status != CricketClubDomain.PaymentStatus.Deleted)
+        {
+            ae.Amount = 0.00;
+            ae.Status = CricketClubDomain.PaymentStatus.Deleted;
+            ae.Description += " [Deleted by "+LoggedOnUser.DisplayName+", was £" + previousAmount + "]";
+            ae.Save();
+        }
+
+        string playerName = AmmendPaymentsPlayerList.SelectedItem.Text;
+        Player p = Player.GetAll().Where(a => a.Name == playerName).FirstOrDefault();
+
+        PlayerAccount pa = new PlayerAccount(p);
+        AmmendPaymentAccountSummary.DataSource = pa.GetStatement();
+        AmmendPaymentAccountSummary.DataBind();
+
+    }
+    protected void AmmendPaymentAccountSummary_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        if (e.CommandName == "Edit")
+        {
+            int paymentID = int.Parse(AmmendPaymentAccountSummary.Rows[int.Parse(e.CommandArgument.ToString())].Cells[8].Text);
+            AmmedPaymentListing.Visible = false;
+            AmmendPaymentEditPayment.Visible = true;
+            AccountEntry ae = new AccountEntry(paymentID);
+            AmmendAmount.Text = ae.Amount.ToString();
+            AmmendComment.Text = ae.Description;
+            AmmendCreditDebit.DataSource = Enum.GetValues(typeof(CricketClubDomain.CreditDebit));
+            AmmendCreditDebit.DataBind();
+            AmmendCreditDebit.SelectedValue = ae.CreditOrDebit.ToString();
+            AmmendType.DataSource = Enum.GetValues(typeof(CricketClubDomain.PaymentType));
+            AmmendType.DataBind();
+            AmmendType.SelectedValue = ae.Type.ToString();
+            AmmendStatus.DataSource = Enum.GetValues(typeof(CricketClubDomain.PaymentStatus));
+            AmmendStatus.DataBind();
+            AmmendStatus.SelectedValue = ae.Status.ToString();
+            AmmendingPaymentID.Text = paymentID.ToString();
+
+        }
+    }
+    protected void AmmendPaymentSave_Click(object sender, EventArgs e)
+    {
+        int paymentID = int.Parse(AmmendingPaymentID.Text);
+        AccountEntry ae = new AccountEntry(paymentID);
+        ae.Amount = double.Parse(AmmendAmount.Text);
+        ae.Description = AmmendComment.Text;
+        ae.Status = (CricketClubDomain.PaymentStatus)Enum.Parse(typeof(CricketClubDomain.PaymentStatus), AmmendStatus.Text);
+        ae.Type = (CricketClubDomain.PaymentType)Enum.Parse(typeof(CricketClubDomain.PaymentType), AmmendType.Text);
+        ae.CreditOrDebit = (CricketClubDomain.CreditDebit)Enum.Parse(typeof(CricketClubDomain.CreditDebit), AmmendCreditDebit.Text);
         ae.Save();
 
+        string playerName = AmmendPaymentsPlayerList.SelectedItem.Text;
+        Player p = Player.GetAll().Where(a => a.Name == playerName).FirstOrDefault();
+
+        PlayerAccount pa = new PlayerAccount(p);
+        AmmendPaymentAccountSummary.DataSource = pa.GetStatement();
+        AmmendPaymentAccountSummary.DataBind();
+
+
+        AmmedPaymentListing.Visible = true;
+        AmmendPaymentEditPayment.Visible = false;
+            
+            
     }
     protected void AmmendPaymentAccountSummary_RowEditing(object sender, GridViewEditEventArgs e)
     {
-        //todo
+        //not used but handler must remain in place - uses _RowCommand
+    }
+    protected void SavePermissions_Click(object sender, EventArgs e)
+    {
+        foreach (GridViewRow Row in PermissionsGridView.Rows)
+        {
+            int UserID = int.Parse(Row.Cells[0].Text); 
+            string name = Row.Cells[1].Text;
+            CheckBox IsAccountantCB = (CheckBox)Row.FindControl("IsAccountantCB");
+            CheckBox IsChatAdminCB = (CheckBox)Row.FindControl("IsChatAdminCB");
+            CricketClubMiddle.Interactive.User u = new CricketClubMiddle.Interactive.User(UserID);
+                
+
+            if (IsAccountantCB.Checked)
+            {
+                u.GrantPermission(Permissions.Accountant);
+            }
+            else
+            {
+                u.RevokePermission(Permissions.Accountant);
+            }
+
+            if (IsChatAdminCB.Checked)
+            {
+                u.GrantPermission(Permissions.ChatAdmin);
+            }
+            else
+            {
+                u.RevokePermission(Permissions.ChatAdmin);
+            }
+
+            PermissionsGridView.DataSource = CricketClubMiddle.Interactive.User.GetAll();
+            PermissionsGridView.DataBind();
+
+
+        }
+
+    }
+
+
+    protected void ManageEmailsGridView_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+    protected void ManageEmailsGridView_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        int playerID = int.Parse(ManageEmailsGridView.Rows[int.Parse(e.CommandArgument.ToString())].Cells[0].Text);
+        Player p = new Player(playerID);
+
+        if (e.CommandName == "MarkInactive")
+        {
+            p.IsActive = false;
+            p.Save();
+            ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a => a.ID >= 0).OrderBy(a => a.Name);
+            ManageEmailsGridView.DataBind();
+        }
+
+        if (e.CommandName == "LinkToUser")
+        {
+            ManageEmailsListUsers.Visible = true;
+            ManageEmailsGridView.Visible = false;
+            ManageEmailsListUsers.DataSource = CricketClubMiddle.Interactive.User.GetAll().Where(a => !Player.GetAll().Any(b => b.EmailAddress == a.EmailAddress));
+            ManageEmailsListUsers.DataBind();
+            Session["playerID"] = playerID;
+        }
+
+        
+        
+    }
+    protected void ManageEmailsGridView_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            string emailAddress = ((Player)e.Row.DataItem).EmailAddress;
+            CricketClubMiddle.Interactive.User u = CricketClubMiddle.Interactive.User.GetAll().Where(a => a.EmailAddress == emailAddress).FirstOrDefault();
+            if (u != null)
+            {
+                e.Row.Cells[3].Text = u.DisplayName;
+                e.Row.Cells[4].Visible = false;
+                e.Row.Cells[5].Visible = false;
+
+            }
+        }
+    }
+    protected void ManageEmailsSaveButton_Click(object sender, EventArgs e)
+    {
+        foreach (GridViewRow Row in ManageEmailsGridView.Rows)
+        {
+            if (Row.RowType == DataControlRowType.DataRow)
+            {
+                string emailAddress = ((TextBox)Row.FindControl("EmailAddressTB")).Text;
+                int playerID = int.Parse(Row.Cells[0].Text);
+                Player p = new Player(playerID);
+                if (p.EmailAddress != emailAddress)
+                {
+                    p.EmailAddress = emailAddress;
+                    p.Save();
+                }
+
+            }
+        }
+
+        ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a=>a.ID>=0).OrderBy(a => a.Name);
+        ManageEmailsGridView.DataBind();
+
+    }
+    protected void ManageEmailsListUsers_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        int userID = int.Parse(ManageEmailsListUsers.Rows[int.Parse(e.CommandArgument.ToString())].Cells[0].Text);
+        int playerID = (int)Session["playerID"];
+        Player p = new Player(playerID);
+        CricketClubMiddle.Interactive.User user = new CricketClubMiddle.Interactive.User(userID);
+        if (user.EmailAddress != null && user.EmailAddress.Length > 0)
+        {
+            p.EmailAddress = user.EmailAddress;
+            p.Save();
+        }
+
+        ManageEmailsListUsers.Visible = false;
+        ManageEmailsGridView.Visible = true;
+        ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a => a.ID >= 0).OrderBy(a => a.Name);
+        ManageEmailsGridView.DataBind();
     }
 }
