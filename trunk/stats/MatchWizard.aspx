@@ -471,11 +471,13 @@
             </asp:DropDownList>
             <br />
             <br />
-            Who captainen this match?
+            Who captained this match?
             <asp:DropDownList ID="Captain" runat="server">
             </asp:DropDownList>
             <br />
             <br />
+            What is the Match Fee for this Match? <i>You must complete this in order for players to billed!</i><br />
+            £<asp:TextBox ID=MatchFee runat=server Text="0.00"></asp:TextBox>
             Please choose a password for the match report:
             <asp:TextBox ID="MatchReportPassword" runat="server" Width="229px"></asp:TextBox>
             <br />

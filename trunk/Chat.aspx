@@ -2,6 +2,7 @@
 <%@ Register TagPrefix="CC" TagName="Header" Src="~/UserControls/Head.ascx" %>
 <%@ Register TagPrefix="CC" TagName="Footer" Src="~/UserControls/Footer.ascx" %>
 <%@ Register TagPrefix="CC" TagName="Styles" Src="~/UserControls/Styles.ascx" %>
+<%@ Register TagPrefix="CC" TagName="Interactive" Src="~/UserControls/InteractiveFooter.ascx" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -275,7 +276,7 @@
         
         </form>
         </div>
-        
+        <CC:Interactive ID=IntFooter runat=server />
         <!-- Footer -->
         <CC:Footer ID="Footer1" runat="server" />
         <!-- ENd Footer -->

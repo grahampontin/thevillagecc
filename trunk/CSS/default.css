@@ -920,3 +920,25 @@ table td,th
 
 
 /* End Admin Pages */
+
+/* Interactive Footer */
+
+#InteractiveFooter 
+{
+    height: 20px;
+    background-color: green;
+    width: 90%;
+    margin-left: 5%;
+    position: fixed;
+    bottom: 0px;
+}
+
+#InteractiveNotifications 
+{
+    float: right;
+}
+
+#InteractiveUserName 
+{
+    float: left;
+}
