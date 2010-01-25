@@ -66,8 +66,11 @@ public partial class Players : System.Web.UI.Page
         playersGV.DataSource = Player.GetAll().Where(a => a.GetMatchesPlayed(startDate, endDate, MatchTypes) > 0);
         playersGV.DataBind();
         playersGV.CssClass = "fullWidth tablesorter";
-        playersGV.HeaderRow.TableSection = TableRowSection.TableHeader;
-        playersGV.FooterRow.TableSection = TableRowSection.TableFooter;
+        if (playersGV.Rows.Count > 0)
+        {
+            playersGV.HeaderRow.TableSection = TableRowSection.TableHeader;
+            playersGV.FooterRow.TableSection = TableRowSection.TableFooter;
+        }
     }
     protected void playersGV_RowDataBound(object sender, GridViewRowEventArgs e)
     {

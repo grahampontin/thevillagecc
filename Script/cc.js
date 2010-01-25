@@ -1,26 +1,28 @@
 ﻿$(document).ready(
-		function(){
+		function() {
 		    //Bind News Ticker
-		    var options = {
-            newsList: "#news",
-            startDelay: 10,
-            placeHolder1: " "
-            }
-            $().newsTicker(options);
-		
+		    if ($("#news").length != 0) {
+		        var options = {
+		            newsList: "#news",
+		            startDelay: 10,
+		            placeHolder1: " "
+		        }
+		        $().newsTicker(options);
+		    }
 		    //Bind Picture Carousel
-			$('#rotateThis').innerfade({
-				animationtype: 'fade',
-				speed: 1000,
-				timeout: 5000,
-				type: 'sequence',
-				containerheight: '100px'
-			});
-            
-            //Bind labels to input boxes
-            $("input").labelify();
-            
-			}
+		    $('#rotateThis').innerfade({
+		        animationtype: 'fade',
+		        speed: 1000,
+		        timeout: 5000,
+		        type: 'sequence',
+		        containerheight: '100px'
+		    });
+
+		    //Bind labels to input boxes
+		    $("input").labelify();
+		    $(".datePicker").datepicker({ dateFormat: 'dd MM yy' }); ;
+
+		}
 	);
 
 

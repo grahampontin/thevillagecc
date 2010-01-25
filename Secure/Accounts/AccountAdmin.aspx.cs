@@ -19,10 +19,11 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
         else
         {
             //... Not allowed.
+            Response.Redirect("/NotAuthorized.aspx");
         }
         string action = Request["action"];
 
-        var AllPlayers = Player.GetAll().Where(a => a.IsActive).Where(a=>a.Name.Length>0).ToList().OrderBy(a => a.Name);
+        var AllPlayers = Player.GetAll().Where(a => a.IsActive).Where(a=>a.Name.Length>0).ToList().OrderBy(a => a.FormalName);
 
 
         switch (action)
@@ -122,12 +123,16 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
 
                 if (!IsPostBack)
                 {
-                    ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a => a.ID >= 0).OrderBy(a => a.Name);
+                    ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a => a.ID >= 0).OrderBy(a => a.FormalName);
                     ManageEmailsGridView.DataBind();
                 }
 
                 break;
             #endregion
+            case "sendEmails":
+                SendEmails.Visible = true;
+                Welcome.Visible = false;
+                break;
 
         }
         
@@ -163,7 +168,7 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
            
             if (li.Selected)
             {
-                Player p = Player.GetAll().Where(a=>a.Name == li.Text).FirstOrDefault();
+                Player p = Player.GetAll().Where(a=>a.FormalName == li.Text).FirstOrDefault();
                 PlayerAccount pa = new PlayerAccount(p);
                 double dAmount = 0.00;
                 bool success = double.TryParse(amount.Text,out dAmount);
@@ -216,7 +221,7 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
     protected void AmmendPaymentsPlayerList_SelectedIndexChanged(object sender, EventArgs e)
     {
         string playerName = AmmendPaymentsPlayerList.SelectedItem.Text;
-        Player p = Player.GetAll().Where(a => a.Name == playerName).FirstOrDefault();
+        Player p = Player.GetAll().Where(a => a.FormalName == playerName).FirstOrDefault();
 
         PlayerAccount pa = new PlayerAccount(p);
         AmmendPaymentAccountSummary.DataSource = pa.GetStatement();
@@ -266,7 +271,7 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
         }
 
         string playerName = AmmendPaymentsPlayerList.SelectedItem.Text;
-        Player p = Player.GetAll().Where(a => a.Name == playerName).FirstOrDefault();
+        Player p = Player.GetAll().Where(a => a.FormalName == playerName).FirstOrDefault();
 
         PlayerAccount pa = new PlayerAccount(p);
         AmmendPaymentAccountSummary.DataSource = pa.GetStatement();
@@ -308,7 +313,7 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
         ae.Save();
 
         string playerName = AmmendPaymentsPlayerList.SelectedItem.Text;
-        Player p = Player.GetAll().Where(a => a.Name == playerName).FirstOrDefault();
+        Player p = Player.GetAll().Where(a => a.FormalName == playerName).FirstOrDefault();
 
         PlayerAccount pa = new PlayerAccount(p);
         AmmendPaymentAccountSummary.DataSource = pa.GetStatement();
@@ -375,7 +380,7 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
         {
             p.IsActive = false;
             p.Save();
-            ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a => a.ID >= 0).OrderBy(a => a.Name);
+            ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a => a.ID >= 0).OrderBy(a => a.FormalName);
             ManageEmailsGridView.DataBind();
         }
 
@@ -424,7 +429,7 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
             }
         }
 
-        ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a=>a.ID>=0).OrderBy(a => a.Name);
+        ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a=>a.ID>=0).OrderBy(a => a.FormalName);
         ManageEmailsGridView.DataBind();
 
     }
@@ -442,7 +447,58 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
 
         ManageEmailsListUsers.Visible = false;
         ManageEmailsGridView.Visible = true;
-        ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a => a.ID >= 0).OrderBy(a => a.Name);
+        ManageEmailsGridView.DataSource = Player.GetAll().Where(a => a.IsActive).Where(a => a.Name.Length > 0).Where(a => a.ID >= 0).OrderBy(a => a.FormalName);
         ManageEmailsGridView.DataBind();
+    }
+    protected void SendEmailsButton_Click(object sender, EventArgs e)
+    {
+        if (EmailLimit.Text.Length > 0)
+        {
+            int amount = 0;
+            bool success = int.TryParse(EmailLimit.Text, out amount);
+            if (!success)
+            {
+                Message.Visible = true;
+                Message.InnerText = "Could not parse the amount - please enter an integer";
+            }
+            else
+            {
+                string PlayersWithNoEmailAddresses = "";
+                string FailedToEmail = "";
+                string Emailed = "";
+                foreach (Player p in Player.GetAll())
+                {
+                    PlayerAccount pa = new PlayerAccount(p);
+                    if (pa.GetBalance() * -1 > amount)
+                    {
+                        if (p.EmailAddress != null && p.EmailAddress.Contains('@'))
+                        {
+                            //Player has what seems to be a valid email address
+                            try
+                            {
+                                System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("thevillagecc@gmail.com", p.EmailAddress);
+                                mail.Bcc.Add("thevillagecc@gmail.com");
+                                mail.Subject = "Village CC Payment Request";        // put subject here	
+                                mail.Body = "Hi " + p.Name + ",<BR><BR> According to our records you now owe the club more than £" + amount.ToString() + ", in order for us to be able to meet payments through the season we would appreciate your payment. You can check the details of your account by visiting <a href=\"http://thevillagecc.org.uk/secure/Accounts/MyAccount.aspx\">My Account</a>.<BR><BR>If you do not currently have a VCC Online Account you will be directed to register for one in order to see your account. It is important that you register your account using <b>the email address that this mail was sent to.</b><BR><BR>Once you have transferred funds or sent a cheque, or indeed if you paid cash on the day please <b>complete the Register Payment form</b>, the Treasurer will then be notified and your account balance updated.<BR><BR>If you have any issues with this system, or want to delay payment for any reason please speak to the treasurer or email thevillagecc@gmail.com.<BR><BR>Thanks,<BR>The VCC Committee.";
+                                mail.IsBodyHtml = true;
+                                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
+                                smtp.Send(mail);
+                                Emailed += p.FormalName + ", ";
+                            }
+                            catch (Exception ex)
+                            {
+                                FailedToEmail += p.FormalName + ", ";
+                            }
+
+                        }
+                        else
+                        {
+                            PlayersWithNoEmailAddresses += p.FormalName + ", ";
+                        }
+                    }
+                    SendEmails.InnerHtml = "<B>Emailed:</b> " + Emailed + "<BR><BR><b>Failed to Email (Errors):</b> " + FailedToEmail + "<BR><BR><b>No Email Address:</b>" + PlayersWithNoEmailAddresses;
+                }
+            }
+        }
     }
 }

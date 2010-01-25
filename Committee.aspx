@@ -20,7 +20,7 @@
         <div class=clearer></div>
         <div id="mainContent">
             <div class=standardText>
-                Here you have found the home page of the tedious beurocracy that is the Village Cricket
+                Here you have found the home page of the tedious bureaucracy that is the Village Cricket
                 Club Committee. Its current occupants are as follows:
                 
                 <br />
@@ -32,7 +32,7 @@
 				<font face="Arial" size="2">Paul Bowman</font></td>
 				<td style="border-left-style: solid; border-left-width: 1px"><b>
 				<font face="Arial" size="2">&nbsp; (Miami) Vice Captain</font></b></td>
-				<td>Marcus Littlejohns</td>
+				<td>Eklavya Gupte</td>
 			</tr>
 			<tr>
 				<td><b><font face="Arial" size="2">Director of Cricket</font></b></td>
@@ -53,7 +53,7 @@
 			<tr>
 				<td><b><font face="Arial" size="2">Social Secretary</font></b></td>
 				<td style="border-right-style: solid; border-right-width: 1px">
-				<font face="Arial" size="2">John Lucarotti </font></td>
+				    Craig Woodhouse<font face="Arial" size="2"> </font></td>
 				<td style="border-left-style: solid; border-left-width: 1px"><b>
 				<font face="Arial" size="2">&nbsp; Webmaster</font></b></td>
 				<td><font face="Arial" size="2">Graham Pontin</font></td>
@@ -65,9 +65,9 @@
                     And they look like this bunch of fools:
                 </p>
 		        <p align="center">
-		            <img src="Images/VCC Committee 2009.jpg"><br>
-		            Back Row(Left to Right): John Lucarotti, Marcus Littlejohns, Alex Page, PK Bowman<BR>
-		            Front Row: Alan White, Graham Pontin, Parp!
+		            <img alt="Committee" src="Images/VCC%20Committee%202010.jpg" width=500px /><br>
+		            Back Row(Left to Right): Parp!, PK Bowman, Craig Woodhouse, Alan White, Alex Page<BR>
+		            Front Row: Eklavya Gupte, Graham Pontin
 		            <BR>
 		            <br>
 		            <a href = ./documents/constitutionSEPT2006.pdf>Constitution</a>
@@ -98,13 +98,16 @@
                             		<a href = ./documents/AGM2006.pdf>3rd AGM - 30/9/2006</a>
 		                            <br>
 		                            <a href = ./documents/AGM2007.pdf>4th AGM - 17/11/2007</a>
-		                		</td>
+                                    <br />
+                                    5th AGM - Lost to the mists of time<br />
+                                    6th AGM - 3/12/2009</td>
 				                <td align="center">
 		                            <a href = ./documents/Minutes_18_4_2004.rtf>08/04/2004</a>
 		                            <br>
 		                            <a href = ./documents/Minutes_15_1_2006.doc>15/1/2006</a>
                             		<br>
                             		<a href = ./documents/endofseason2007mins_B.pdf>18/10/2007 (The infamous pre-AGM Meeting)</a>
+                                    <br />
 		                        </td>
 		                	</tr>
 		            </table>

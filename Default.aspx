@@ -53,12 +53,12 @@
             that they wanted to continue their summer passtime beyond the end of their university days.
             </p>
             <p>
-            One bizarre meeting in Stamford Hill's Birdcage later and the Village CC was formed, and enrolled
-            in the North East London Cricket League which sustained it for it's first few seasons.
+            One bizarre meeting in Stamford Hill&#39;s Birdcage later, the Village CC was formed and enrolled
+            in the North East London Cricket League which sustained it for its first few seasons.
             </p>
             <p>
             Since then, much has changed, the club has grown and left the league behind, perferring to follow
-            it's instincts in the world of friendly London cricket.
+            its instincts in the world of friendly London cricket.
             </p>
             <p>
             We tend to play our home games at the Albert Road Recreation ground near Bounds Green tube and are
