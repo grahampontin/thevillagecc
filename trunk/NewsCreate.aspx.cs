@@ -22,20 +22,24 @@ public partial class NewsCreate : System.Web.UI.Page
     }
     protected void SubmitButton_Click(object sender, EventArgs e)
     {
+        Message.Visible = false;
         string storyText = Request["FckEditor1"];
         if (storyText.Length > 10 * 254)
         {
+            Message.InnerHtml = "Story is too long. Your Text was:<BR><BR><BR>" + storyText;
+            Message.Visible = true;
             //story is too long.
         }
         else
         {
             NewsItem story = new NewsItem();
-            story.Date = DateTime.Today;
+            story.Date = DateTime.Now;
             story.Headline = Headline.Text;
             story.ShortHeadline = ShortHeadline.Text;
             story.Story = storyText;
             story.Teaser = Teaser.Text;
             CricketClubMiddle.News.SubmitNewStory(story);
+            Response.Redirect("/News.aspx");
         }
 
     }

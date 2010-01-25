@@ -749,6 +749,13 @@ table td,th
     font-style:italic;
 }
 
+.message 
+{
+    border: solid 1px red;
+    color: Red;
+    padding: 10px;
+}
+
 
 /* END NEWS STYLES */
 
@@ -903,7 +910,7 @@ table td,th
     border-left: solid 1px #96b58f;
     min-height: 450px;
     padding: 10px;
-    min-width: 950px;
+    /*min-width: 950px;*/
     margin-bottom: 10px;
     margin-left: 200px;
 }

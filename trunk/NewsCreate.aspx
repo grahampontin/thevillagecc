@@ -21,6 +21,9 @@
         <div class=clearer></div>
         <div id="mainContent">
         <form id="form1" runat="server">
+            <div class=message runat=server id=Message visible=false>
+            
+            </div>
             <div class=NewsStory>
             Headline:
             
@@ -37,6 +40,7 @@
                     oFCKeditor.Value	= '' ;
                     oFCKeditor.Create() ;
 		        </script>
+	            	        
             </div>
             </div>
             <div class=NewsStory>
@@ -48,7 +52,7 @@
             <asp:TextBox ID=Teaser runat=server Width=600px Height=100px></asp:TextBox>
             </div>
             
-            <asp:Button ID=SubmitButton runat=server onclick="SubmitButton_Click"/>
+            <asp:Button ID=SubmitButton runat=server onclick="SubmitButton_Click" BorderStyle="NotSet" ToolTip="Submit Story" Text="Submit Story" />
             
         </form>
         </div>

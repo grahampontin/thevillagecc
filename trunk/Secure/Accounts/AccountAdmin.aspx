@@ -40,6 +40,12 @@
             <li>
                 <a href=AccountAdmin.aspx?action=manageEmails>Manage Email Addresses</a>
             </li>
+            <li>
+                <a href=AccountAdmin.aspx?action=sendEmails>Email Debtors</a>
+            </li>
+            <li>
+                <a href="../StatsAdmin/Home.aspx">Go to Stats Admin</a>
+            </li>
         </ul>
         <!-- END MENU -->
     </div>
@@ -58,7 +64,7 @@
                 <asp:GridView ID=BalancesGrid runat=server AutoGenerateColumns="False" 
                     onrowdatabound="BalancesGrid_RowDataBound">
                     <Columns>
-                        <asp:BoundField DataField="Name" HeaderText="Name" />
+                        <asp:BoundField DataField="FormalName" HeaderText="Name" />
                         <asp:BoundField HeaderText="Balance" NullDisplayText="£0" />
                     </Columns>
                 </asp:GridView>
@@ -68,7 +74,7 @@
                 <asp:GridView ID=BalancesGrid2 runat=server AutoGenerateColumns="False" 
                     onrowdatabound="BalancesGrid_RowDataBound">
                     <Columns>
-                        <asp:BoundField DataField="Name" HeaderText="Name" />
+                        <asp:BoundField DataField="FormalName" HeaderText="Name" />
                         <asp:BoundField HeaderText="Balance" NullDisplayText="£0" />
                     </Columns>
                 </asp:GridView>
@@ -77,7 +83,7 @@
                 <asp:GridView ID=BalancesGrid3 runat=server AutoGenerateColumns="False" 
                     onrowdatabound="BalancesGrid_RowDataBound">
                     <Columns>
-                        <asp:BoundField DataField="Name" HeaderText="Name" />
+                        <asp:BoundField DataField="FormalName" HeaderText="Name" />
                         <asp:BoundField HeaderText="Balance" NullDisplayText="£0" />
                     </Columns>
                 </asp:GridView>
@@ -86,7 +92,7 @@
                 <asp:GridView ID=BalancesGrid4 runat=server AutoGenerateColumns="False" 
                     onrowdatabound="BalancesGrid_RowDataBound">
                     <Columns>
-                        <asp:BoundField DataField="Name" HeaderText="Name" />
+                        <asp:BoundField DataField="FormalName" HeaderText="Name" />
                         <asp:BoundField HeaderText="Balance" NullDisplayText="£0" />
                     </Columns>
                 </asp:GridView>
@@ -277,6 +283,15 @@
                     onclick="ManageEmailsSaveButton_Click" />
                 
             &nbsp;- <B>Please be patient, saving this screen can take up to a minute.</B></div>
+            
+            <div id=SendEmails visible=false runat=server>
+                Email all users whose debt is over:
+                £<asp:TextBox ID=EmailLimit runat=server></asp:TextBox><br />
+                <asp:Button ID=SendEmailsButton runat=server Text="Send Emails" onclick="SendEmailsButton_Click" />
+                <br /><br />
+                <div class=message id=Message runat=server visible=false></div>
+            </div>
+            
             <!-- END BODY CONTENT -->
         </form>
     </div>
