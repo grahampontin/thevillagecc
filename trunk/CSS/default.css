@@ -242,6 +242,15 @@ table td,th
     padding-bottom: 5px;
 }
 
+.Alert 
+{
+    width: 90%;
+    border: 1px solid red;
+    color: Red;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
 /* END GENERIC STYLING */
 
 
