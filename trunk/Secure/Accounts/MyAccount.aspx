@@ -38,7 +38,9 @@
     <div class=AdminPageBody>
         <form id="form1" runat="server">
             <!-- BODY CONTENT HERE -->
-            
+            <div class="Alert">
+                Please remember to register your payments using the link on the left of this page. Parp! is getting grumpy.
+            </div>
             <div id=Statement runat=server>
                 <asp:GridView ID=AccountSummary runat=server AutoGenerateColumns="False" 
                     onrowdatabound="AccountSummary_RowDataBound">
@@ -62,8 +64,16 @@
                 <div id=inDebt runat=server visible=false>
                     According to our records you owe the club money. Please make a transfer to
                     the club account or if you have already sent money / paid in cash or posted
-                    a cheque, please complete the "Register Payment" form using the link on the
-                    left to let the treasurer know.
+                    a cheque, please <b>complete the "Register Payment" form using the link on the
+                    left to let the treasurer know.</b>
+                    <br /><br />
+                    <b>Payment Details:</b><br />
+                    The Village CC<br />
+                    s/c: 40-07-13<br />
+                    acc no: 11606654
+                    
+                    
+                    
                 </div>
             </div>
             
