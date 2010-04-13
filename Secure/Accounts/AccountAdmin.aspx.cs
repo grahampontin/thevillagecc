@@ -36,8 +36,19 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
                 int offset = 0;
                 string sOffset = Request["offset"];
                 int.TryParse(sOffset, out offset);
+                string showDebtors = Request["showdebtors"];
 
                 var Players2 = AllPlayers.Skip(offset);
+                if (showDebtors == "true")
+                {
+                    Players2 = AllPlayers.Where(a => (new PlayerAccount(a)).GetBalance() < 0);
+                    ShowDebtors.NavigateUrl = "./accountadmin.aspx?action=listBalances";
+                    ShowDebtors.Text = "Show All Players";
+                }
+                else
+                {
+                    ShowDebtors.NavigateUrl = "./accountadmin.aspx?action=listBalances&showdebtors=true";
+                }
 
                 BalancesGrid.DataSource = Players2.Take(10);
                 BalancesGrid2.DataSource = Players2.Skip(10).Take(10);
@@ -48,6 +59,8 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
                 BalancesGrid2.DataBind();
                 BalancesGrid3.DataBind();
                 BalancesGrid4.DataBind();
+
+                
 
                 if (offset >= 40)
                 {
@@ -100,7 +113,22 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
                 {
                     AmmendPaymentsPlayerList.DataSource = AllPlayers;
                     AmmendPaymentsPlayerList.DataBind();
+
+                    int PlayerID = 0;
+                    string pID = Request["playerid"];
+                    if (int.TryParse(pID, out PlayerID))
+                    {
+                        Player p = new Player(PlayerID);
+
+                        PlayerAccount pa = new PlayerAccount(p);
+                        AmmendPaymentAccountSummary.DataSource = pa.GetStatement();
+                        AmmendPaymentAccountSummary.DataBind();
+                        AmmendPaymentsPlayerList.SelectedIndex = AmmendPaymentsPlayerList.Items.IndexOf(AmmendPaymentsPlayerList.Items.FindByText(p.FormalName));
+                    }
                 }
+                
+
+
                 break;
             #endregion
             #region ManagePermissions
@@ -144,7 +172,8 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
         {
             Player p = ((Player)(e.Row.DataItem));
             PlayerAccount pa = new PlayerAccount(p);
-            double balance = pa.GetBalance(); 
+            double balance = pa.GetBalance();
+            e.Row.Cells[0].Text = "<a href=./accountadmin.aspx?action=ammendPayments&playerid=" + p.ID + ">" + p.FormalName + "</a>";
             e.Row.Cells[1].Text = "£" + balance.ToString();
             if (balance < 0)
             {
@@ -500,5 +529,10 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
                 }
             }
         }
+    }
+
+    protected void ShowDebtors_Click(object sender, EventArgs e)
+    {
+
     }
 }

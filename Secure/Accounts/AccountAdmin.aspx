@@ -97,6 +97,9 @@
                     </Columns>
                 </asp:GridView>
                 </div>
+                <div class="clearer Centered">
+                    <asp:HyperLink ID=ShowDebtors runat=server>Show Only Debtors</asp:HyperLink><br /><br />
+                </div>
                 <div class=clearer>
                 <div class=floatLeft>
                     <asp:HyperLink ID=previousLink runat=server><< Previous Page</asp:HyperLink>
@@ -111,11 +114,11 @@
                 <table>
                     <tr>
                         <td>Amount:</td>
-                        <td><asp:TextBox ID=amount runat=server>0.00</asp:TextBox></td>
+                        <td><asp:TextBox ID=amount runat=server Height="21px">0.00</asp:TextBox></td>
                     </tr>
                     <tr>
                         <td>Type:</td>
-                        <td><asp:DropDownList ID=PaymentType runat=server></asp:DropDownList></td>
+                        <td><asp:DropDownList ID=PaymentType runat=server ></asp:DropDownList></td>
                     </tr>
                     <tr>
                         <td>Credit or Debit:</td>
