@@ -14,7 +14,7 @@
 
            <ItemTemplate>
               <tr id=TableRow runat=server>
-                <td><%#Eval("Batsman") %> <asp:Literal ID=CaptainWK runat=server></asp:Literal></td>
+                <td><%#Eval("PlayerName") %> <asp:Literal ID=CaptainWK runat=server></asp:Literal></td>
                 <td><%#Eval("FieldingDismissalText") %></td>
                 <td><%#Eval("BowlingDismissalText") %></td>
                 <td><%#Eval("Score") %></td>

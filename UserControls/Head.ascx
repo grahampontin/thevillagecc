@@ -2,6 +2,8 @@
 <%@ Register TagName="NextFixture" TagPrefix="CC" Src="~/UserControls/NextMatch.ascx" %>
 <%@ Register TagName="LastResult" TagPrefix="CC" Src="~/UserControls/LastResult.ascx" %>
 <%@ Register TagName="NewsTicker" TagPrefix="CC" Src="~/UserControls/NewsTicker.ascx" %>
+<%@ Register TagName="Interactive" TagPrefix="CC" Src="~/UserControls/InteractiveFooter.ascx" %>
+
 
 <%@ Register TagName="Menu" TagPrefix="CC" Src="~/UserControls/TopMenu.ascx" %>
 
@@ -28,3 +30,4 @@
     </div>
 
 </div>
+<%--<CC:Interactive runat=server ID=interactive />--%>
