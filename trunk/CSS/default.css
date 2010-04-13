@@ -109,6 +109,7 @@
     border-bottom: solid 1px #96b58f;
     font-size: 8pt;
     line-height: 25px;
+    margin-bottom: 40px;
 }
 
 #mainContent 
@@ -933,11 +934,11 @@ table td,th
 #InteractiveFooter 
 {
     height: 20px;
-    background-color: green;
-    width: 90%;
-    margin-left: 5%;
+    background-color: #96b58f;
+    width: 1024px;
     position: fixed;
     bottom: 0px;
+    padding: 5px;
 }
 
 #InteractiveNotifications 
@@ -948,4 +949,12 @@ table td,th
 #InteractiveUserName 
 {
     float: left;
+}
+
+.InteractiveFooterLink 
+{
+    margin-left: 20px;
+    color: White;
+    font-weight: bold;
+    float:left;
 }
