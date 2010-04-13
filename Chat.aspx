@@ -276,7 +276,6 @@
         
         </form>
         </div>
-        <CC:Interactive ID=IntFooter runat=server />
         <!-- Footer -->
         <CC:Footer ID="Footer1" runat="server" />
         <!-- ENd Footer -->
