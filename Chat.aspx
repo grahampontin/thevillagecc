@@ -49,8 +49,9 @@
                 });
     
         var lastupdate = new Date();
-        
+
         function update() {
+            lastupdate = new Date();
             $.post("ChatAjaxHandler.aspx", {timestamp: lastupdate.getTime()}, function(data){
             if(data.length >0) {
                 $('#Chat').prepend(data);
@@ -63,7 +64,7 @@
                                 
             }
         });
-           lastupdate = new Date();
+           
            setTimeout("$('.fadeIn').recover(); recoverClearType($('.fadeIn')); $('.fadeIn').removeClass(\"fadeIn\");", 3000); 
         }
      
