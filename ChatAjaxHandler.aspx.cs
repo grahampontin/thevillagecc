@@ -75,10 +75,21 @@ public partial class ChatAjaxHandler : System.Web.UI.Page
             fromTime = DateTime.Today;
         }
         DateTime toTime = fromTime.AddDays(1);
-        
-        IEnumerable<ChatItem> comments = CricketClubMiddle.Chat.GetAllBetween(fromTime, toTime).OrderBy(a=>a.Date).Reverse();
+        string LastChatID = Request["lastchatid"];
+        int LastID = 0;
+        IEnumerable<ChatItem> comments;
+        if (int.TryParse(LastChatID, out LastID)) 
+        {
+            comments = CricketClubMiddle.Chat.GetAllCommentsAfter(LastID).OrderBy(a => a.Date).Reverse();
+        } else {
+            comments = CricketClubMiddle.Chat.GetAllBetween(fromTime, toTime).OrderBy(a => a.Date).Reverse();
+        }
+         
         commentsView.DataSource = comments;
         commentsView.DataBind();
+        if (comments.Count() >0) {
+            lastID.Text = comments.ToList()[0].ID.ToString(); 
+        }
 
     }
 }

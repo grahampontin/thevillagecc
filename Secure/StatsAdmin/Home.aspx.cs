@@ -18,11 +18,8 @@ public partial class Secure_StatsAdmin_Home : CricketClubMiddle.Web.SecurePage
                 EditPlayer.Visible = true;
                 if (!IsPostBack)
                 {
-                    List<Player> players = new List<Player>();
-                    players.Add(new Player("Please Select..."));
-                    players.AddRange(Player.GetAll().OrderBy(a => a.FormalName));
-                    EditPlayerListPlayers.DataSource = players;
-                    EditPlayerListPlayers.DataBind();
+                    EditPlayerListPlayers.Items.Add(new ListItem("Please Select..."));
+                    EditPlayerListPlayers.Items.AddRange(Player.GetAll().OrderBy(a => a.FormalName).Select(a => new ListItem(a.FormalName)).ToArray());
                 }
                 break;
             case "editVenue":

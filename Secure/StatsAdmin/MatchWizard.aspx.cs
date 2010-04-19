@@ -49,7 +49,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         InternalCache playersCache = InternalCache.GetInstance();
         if (playersCache.Get("players") == null)
         {
-            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.Name), new TimeSpan(0, 5, 0));
+            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.FormalName), new TimeSpan(0, 5, 0));
         }
         IEnumerable<Player> players = (IEnumerable<Player>)playersCache.Get("players");
         foreach (Player p in players)
@@ -289,7 +289,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
             List<Player> batsmen = new List<Player>();
             foreach (string key in test)
             {
-                batsmen.Add(players.Where(a => a.Name == Request[key]).FirstOrDefault());
+                batsmen.Add(players.Where(a => a.FormalName == Request[key]).FirstOrDefault());
             }
 
             if (batsmen.Where(a => a.Name.Length > 0).Distinct().Count() != batsmen.Where(b => b.Name.Length > 0).Count())
@@ -843,13 +843,13 @@ public partial class stats_MatchWizard : System.Web.UI.Page
             List<Player> Fielders = new List<Player>();
             foreach (string name in FielderNames)
             {
-                Fielders.Add(players.Where(a => a.Name == name).FirstOrDefault());
+                Fielders.Add(players.Where(a => a.FormalName == name).FirstOrDefault());
             }
 
             List<Player> Bowlers = new List<Player>();
             foreach (string name in BowlerNames)
             {
-                Bowlers.Add(players.Where(a => a.Name == name).FirstOrDefault());
+                Bowlers.Add(players.Where(a => a.FormalName == name).FirstOrDefault());
             }
 
             var howouts = Request.Params.Keys.Cast<string>().Where(a => a.Contains("howOutSelect"));
@@ -1034,7 +1034,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                 List<Player> bowlers = new List<Player>();
                 foreach (string name in bowlerNames)
                 {
-                    bowlers.Add(players.Where(a => a.Name == name).FirstOrDefault());
+                    bowlers.Add(players.Where(a => a.FormalName == name).FirstOrDefault());
                 }
 
                 foreach (Player bowler in bowlers)
@@ -1412,9 +1412,9 @@ public partial class stats_MatchWizard : System.Web.UI.Page
             try
             {
                 string wkName = WicketKeeper.SelectedValue;
-                Player wicketKeeper = (from a in p where a.Name == wkName select a).FirstOrDefault();
+                Player wicketKeeper = (from a in p where a.FormalName == wkName select a).FirstOrDefault();
                 string captainName = Captain.SelectedValue;
-                Player captain = (from a in p where a.Name == captainName select a).FirstOrDefault();
+                Player captain = (from a in p where a.FormalName == captainName select a).FirstOrDefault();
                 selectedMatch.Captain = captain;
                 selectedMatch.WicketKeeper = wicketKeeper;
                 selectedMatch.Save();
@@ -1553,7 +1553,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         InternalCache playersCache = InternalCache.GetInstance();
         if (playersCache.Get("players") == null)
         {
-            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.Name), new TimeSpan(0, 5, 0));
+            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.FormalName), new TimeSpan(0, 5, 0));
         }
         BattingCardLine line = (BattingCardLine)((ListViewDataItem)e.Item).DataItem;
 
@@ -1597,7 +1597,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         InternalCache playersCache = InternalCache.GetInstance();
         if (playersCache.Get("players") == null)
         {
-            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.Name), new TimeSpan(0, 5, 0));
+            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.FormalName), new TimeSpan(0, 5, 0));
         }
         BattingCardLine line = (BattingCardLine)((ListViewDataItem)e.Item).DataItem;
 
@@ -1671,7 +1671,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         InternalCache playersCache = InternalCache.GetInstance();
         if (playersCache.Get("players") == null)
         {
-            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.Name), new TimeSpan(0, 5, 0));
+            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.FormalName), new TimeSpan(0, 5, 0));
         }
         
         IEnumerable<Player> players = (IEnumerable<Player>)playersCache.Get("players");
