@@ -5,7 +5,11 @@ http://developer.yahoo.net/yui/license.txt
 version: 2.6.0
 */
 html{color:#000;background:#FFF;}
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{padding:0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+}
 table{border-collapse:collapse;border-spacing:0;}
 fieldset,img{border:0;}
 address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}
@@ -19,7 +23,9 @@ sup {vertical-align:text-top;}
 sub {vertical-align:text-bottom;}
 input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;}
 /*to enable resizing for IE*/
-input,textarea,select{*font-size:100%;}
+input,textarea,select{*font-size:100%;
+    height: 26px;
+}
 /*because legend doesn't inherit in IE */
 legend{color:#000;}
 del,ins{text-decoration:none;}

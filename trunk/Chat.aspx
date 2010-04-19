@@ -15,55 +15,65 @@
     
     <script language="javascript" type="text/javascript">
         $(document).ready(function() {
-                    var startDateQS = $.getQueryString({id:"startDate", defaultvalue:0}) 
-                    var startDate;
-                    if (startDateQS!=0) {
-                        var mySplitResult = startDateQS.split("/")
-                        startDate = Date.UTC(mySplitResult[2],mySplitResult[1]-1,mySplitResult[0],0,0,0);
-                    } else {
-                        startDate = 0;
+            var startDateQS = $.getQueryString({ id: "startDate", defaultvalue: 0 })
+            var startDate;
+            if (startDateQS != 0) {
+                var mySplitResult = startDateQS.split("/")
+                startDate = Date.UTC(mySplitResult[2], mySplitResult[1] - 1, mySplitResult[0], 0, 0, 0);
+            } else {
+                startDate = 0;
+            }
+            var now = new Date();
+            var TodayUtc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+            if (startDate < TodayUtc && startDate != 0) {
+                $("#hints").html("<li>You are looking at chat history - go back to today's chat to post</li>");
+                $("#ChatInputArea").hide();
+            } else {
+                window.setInterval("update()", 10000);
+            }
+
+
+            $.post("ChatAjaxHandler.aspx", { timestamp: startDate }, function(data) {
+                if (data.length > 0) {
+                    $('#Chat').html(data);
+                    $('.fadeIn').show().removeClass("fadeIn");
+                    var regex = "<lastID>[0-9]+";
+                    if (data.match(regex) != null && data.match(regex).length > 0) {
+                        lastchatid = data.match(regex)[0];
+                        lastchatid = lastchatid.replace("<lastID>", "");
                     }
-                    var now = new Date();
-                    var TodayUtc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0,0,0,0);
-                    if (startDate < TodayUtc && startDate != 0) 
-                    {
-                        $("#hints").html("<li>You are looking at chat history - go back to today's chat to post</li>");
-                        $("#ChatInputArea").hide();
-                    } else {
-                        window.setInterval("update()", 10000);
-                    }
-                    
-                    
-                    $.post("ChatAjaxHandler.aspx", {timestamp: startDate}, function(data){
-                        if(data.length >0) {
-                            $('#Chat').html(data);
-                            $('.fadeIn').show().removeClass("fadeIn");
-                        }
-                        checkPhotos();
-                        resizeNewPhoto();
-                    });
-                    
-                    $("#hints").innerfade({
-                            speed: 1000,
-				            timeout: 10000});
-                });
-    
-        var lastupdate = new Date();
+                }
+                checkPhotos();
+                resizeNewPhoto();
+            });
+
+            $("#hints").innerfade({
+                speed: 1000,
+                timeout: 10000
+            });
+        });
+
+                var lastupdate = new Date();
+                var lastchatid = "";
 
         function update() {
-            lastupdate = new Date();
-            $.post("ChatAjaxHandler.aspx", {timestamp: lastupdate.getTime()}, function(data){
-            if(data.length >0) {
-                $('#Chat').prepend(data);
-                checkPhotos();
-                ShowSayIt();
-                $('.fadeIn').slideDown('slow').pulse({
-                    speed: 500,
-                    opacityRange: [0.4,0.9]
-                });
-                                
-            }
-        });
+            $.post("ChatAjaxHandler.aspx", { lastchatid: lastchatid }, function(data) {
+                if (data.length > 0) {
+                    var regex = "<lastID>[0-9]+";
+                    if (data.match(regex) != null && data.match(regex).length > 0) {
+                        lastchatid = data.match(regex)[0];
+                        lastchatid = lastchatid.replace("<lastID>", "");
+                    }
+                    $('#Chat').prepend(data);
+                    checkPhotos();
+                    ShowSayIt();
+                    $('.fadeIn').slideDown('slow').pulse({
+                        speed: 500,
+                        opacityRange: [0.4, 0.9]
+                    });
+
+                }
+            });
            
            setTimeout("$('.fadeIn').recover(); recoverClearType($('.fadeIn')); $('.fadeIn').removeClass(\"fadeIn\");", 3000); 
         }
