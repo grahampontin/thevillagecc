@@ -26,6 +26,7 @@
 		        with you VCC Account. Once you have logged on your credentials will be stored in 
                 your browser for a month.
                 </div>
+                <div id=subcontent runat=server>
                 <br />
                 <BR />Username:
                 <asp:TextBox ID="Username" runat="server" Width="250px"></asp:TextBox>
@@ -43,6 +44,7 @@
                 Forgotten you password? Click
                 <asp:Button ID="Button2" runat="server" onclick="Button2_Click" Text="here" />
 &nbsp;to resend it to your email address.<br />
+</div>
 		        
 		        
 		        

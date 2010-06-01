@@ -30,6 +30,7 @@ public partial class _Default : System.Web.UI.Page
         {
             lenght = reportText.Length;
         }
+        reportText = reportText.Replace("<div>", "").Replace("</div>", "");
         ReportBody.Text = reportText.Substring(0, lenght);
 
         ReportID.Text = report.MatchID.ToString();

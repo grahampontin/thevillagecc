@@ -13,7 +13,9 @@
 <body>
     <div class=AdminPageHeader>
         <div class=AdminPageLogo>
+            <a href="/Default.aspx">
             <img src="/Images/logo.jpg" width="200px" />
+            </a>
         </div>
         <div class="AdminPageTitle">
             My Account
@@ -56,6 +58,8 @@
                 <span id=BalanceSpan runat=server>
                 <b>Balance: <asp:Literal ID=Balance runat=server></asp:Literal></b>
                 </span>
+                <br /><br />
+                If you think any of the above payments are incorrect please <a href='mailto:thevillagecc@gmail.com?subject=Payment Dispute'>email the treasurer</a>.
                 <br /><br />
                 <div id=inCredit runat=server>
                     You are in credit, you don't <i>need</i> to do anything right now.

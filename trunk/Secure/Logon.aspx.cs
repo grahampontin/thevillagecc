@@ -18,6 +18,13 @@ public partial class Secure_Logon : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         string url = Request["destination"];
+        string uname = Request["username"];
+        if (!string.IsNullOrEmpty(uname))
+        {
+            Username.Text = uname;
+            subcontent.Visible = false;
+            Button2_Click(null, null);
+        }
         if (string.IsNullOrEmpty(url))
         {
             welcomeMessage.InnerHtml = "Logon with your VCC Account.";

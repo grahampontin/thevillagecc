@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using CricketClubMiddle.Security;
 using CricketClubMiddle;
 using CricketClubAccounts;
+using CricketClubMiddle.Utility;
 
 public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.SecurePage
 {
@@ -157,10 +158,24 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
 
                 break;
             #endregion
+            #region SendEmails
             case "sendEmails":
                 SendEmails.Visible = true;
                 Welcome.Visible = false;
                 break;
+            #endregion
+            #region ManageSettings
+            case "manageSettings":
+                ManageSettings.Visible = true;
+                Welcome.Visible = false;
+                
+                if (!IsPostBack)
+                {
+                    SettingsGridview.DataSource = SettingsWrapper.GetAll();
+                    SettingsGridview.DataBind();
+                }
+                break;
+            #endregion
 
         }
         
@@ -509,6 +524,13 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
                                 mail.Bcc.Add("thevillagecc@gmail.com");
                                 mail.Subject = "Village CC Payment Request";        // put subject here	
                                 mail.Body = "Hi " + p.Name + ",<BR><BR> According to our records you now owe the club more than £" + amount.ToString() + ", in order for us to be able to meet payments through the season we would appreciate your payment. You can check the details of your account by visiting <a href=\"http://thevillagecc.org.uk/secure/Accounts/MyAccount.aspx\">My Account</a>.<BR><BR>If you do not currently have a VCC Online Account you will be directed to register for one in order to see your account. It is important that you register your account using <b>the email address that this mail was sent to.</b><BR><BR>Once you have transferred funds or sent a cheque, or indeed if you paid cash on the day please <b>complete the Register Payment form</b>, the Treasurer will then be notified and your account balance updated.<BR><BR>If you have any issues with this system, or want to delay payment for any reason please speak to the treasurer or email thevillagecc@gmail.com.<BR><BR>Thanks,<BR>The VCC Committee.";
+
+                                CricketClubMiddle.Interactive.User u = CricketClubMiddle.Interactive.User.GetAll().Where(a => a.EmailAddress == p.EmailAddress).FirstOrDefault();
+                                if (u != null)
+                                {
+                                    mail.Body = mail.Body + "<BR><BR>Forgotten your logon details? Click <a href='http://thevillagecc.org.uk/Secure/Logon.aspx?username="+u.Name+"'>here</a> for a reminder email";
+                                }
+
                                 mail.IsBodyHtml = true;
                                 System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
                                 smtp.Send(mail);
@@ -534,5 +556,37 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
     protected void ShowDebtors_Click(object sender, EventArgs e)
     {
 
+    }
+    protected void SettingsGridview_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+    protected void SettingsGridview_RowEditing(object sender, GridViewEditEventArgs e)
+    {
+        SettingsGridview.EditIndex = e.NewEditIndex;
+        SettingsGridview.DataSource = SettingsWrapper.GetAll();
+        SettingsGridview.DataBind();
+    }
+    protected void SettingsGridview_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+
+    }
+    protected void SettingsGridview_RowUpdating(object sender, GridViewUpdateEventArgs e)
+    {
+        string key = ((Label)SettingsGridview.Rows[e.RowIndex].Cells[0].FindControl("Label1")).Text;
+        string value = ((TextBox)SettingsGridview.Rows[e.RowIndex].Cells[1].FindControl("Textbox2")).Text;
+        string desc = ((Label)SettingsGridview.Rows[e.RowIndex].Cells[2].FindControl("Label3")).Text;
+
+        SettingsWrapper.Set(key, value, desc);
+        SettingsGridview.EditIndex = -1;
+        SettingsGridview.DataSource = SettingsWrapper.GetAll();
+        SettingsGridview.DataBind();
+    
+    }
+    protected void SettingsGridview_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+    {
+        SettingsGridview.EditIndex = -1;
+        SettingsGridview.DataSource = SettingsWrapper.GetAll();
+        SettingsGridview.DataBind();
     }
 }

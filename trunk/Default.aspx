@@ -39,7 +39,7 @@
             <p>
             The Village Cricket Club is a small club based loosely around its roots in North East London.
             We were formed in 2004 by a bunch of singularly talentless but enthusiastic cricketers who decided
-            that they wanted to continue their summer passtime beyond the end of their university days.
+            that they wanted to continue their summer pastime beyond the end of their university days.
             </p>
             <p>
             One bizarre meeting in Stamford Hill&#39;s Birdcage later, the Village CC was formed and enrolled
@@ -50,8 +50,8 @@
             its instincts in the world of friendly London cricket.
             </p>
             <p>
-            We tend to play our home games at the Albert Road Recreation ground near Bounds Green tube and are
-            always on the lookout for new members of any ability - enthusiasm for the game is our only selection
+            We play most of our matches in central London but we also make yearly trips to Cambridge, Oxford and the West Country. 
+            We are always on the lookout for new members of any ability - enthusiasm for the game is our only selection
             criteria. You can contact us via the "Join" link up above, or a few of us hang out in the "chat" section
             when work isn't keeping us too busy.
             </p>

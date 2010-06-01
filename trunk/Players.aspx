@@ -10,10 +10,14 @@
     <title>The Village Cricket Club Online | Players</title>
     <CC:Styles runat=server ID=styles />    
     <script type="text/javascript">
-    $(document).ready(function()     
-           {
-             $("#playersGV").tablesorter( {sortList: [[7,1]], widgets: ['zebra']} );     
-            } 
+        $(document).ready(function () {
+            var test = $("#BattingCB")[0].checked;
+            if (test) {
+                $("#playersGV").tablesorter({ sortList: [[5, 1]], widgets: ['zebra'] });
+            } else {
+                $("#playersGV").tablesorter({ sortList: [[4, 1]], widgets: ['zebra'] });
+            }
+        }
             );
 </script>
 </head>
