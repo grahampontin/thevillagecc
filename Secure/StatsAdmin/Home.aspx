@@ -13,7 +13,9 @@
 <body>
     <div class=AdminPageHeader>
         <div class=AdminPageLogo>
+            <a href="/Default.aspx">
             <img src="/Images/logo.jpg" width="200px" />
+            </a>
         </div>
         <div class="AdminPageTitle">
             VCC Account System Admin

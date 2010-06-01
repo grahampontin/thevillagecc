@@ -54,7 +54,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         IEnumerable<Player> players = (IEnumerable<Player>)playersCache.Get("players");
         foreach (Player p in players)
         {
-            batsman_select += "<option value='"+p.ID+"'>"+p.Name+"</option>";
+            batsman_select += "<option value='"+p.ID+"'>"+p.FormalName+"</option>";
         }
 
         #endregion
@@ -199,6 +199,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
             if (AbandonendYes.Checked)
             {
                 selectedMatch.Abandoned = true;
+                selectedMatch.Save();
                 step = 11;
                 NextStep.Text = "12";
                 Step3.Visible = false;
@@ -1478,7 +1479,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                                 {
                                     System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("thevillagecc@gmail.com", "thevillagecc@gmail.com");
                                     mail.Subject = "Village CC Payment Request";        // put subject here	
-                                    mail.Body = "Hi " + PlayerToBeBilled.Name + ",<BR><BR> According to our records you now owe the club more than £" + SettingsWrapper.GetSettingString("MaximDebtBeforeEmail", "20") + ", in order for us to be able to meet payments through the season we would appreciate your payment. You can check the details of your account by visiting <a href=\"http://thevillagecc.org.uk/secure/Accounts/MyAccount.aspx\">My Account</a>.<BR><BR>If you do not currently have a VCC Online Account you will be directed to register for one in order to see your account. It is important that you register your account using <b>the email address that this mail was sent to.<\\B><BR><BR>Once you have transferred funds or sent a cheque, or indeed if you paid cash on the day please <b>complete the Register Payment form<\\b>, the Treasurer will then be notified and your account balance updated.<BR><BR>If you have any issues with this system, or want to delay payment for any reason please speak to the treasurer or email thevillagecc@gmail.com.<BR><BR>Thanks,<BR>The VCC Committee.";
+                                    mail.Body = "Hi " + PlayerToBeBilled.Name + ",<BR><BR> According to our records you now owe the club more than £" + SettingsWrapper.GetSettingString("MaximDebtBeforeEmail", "20").Replace("-", "") +", in order for us to be able to meet payments through the season we would appreciate your payment. You can check the details of your account by visiting <a href=\"http://thevillagecc.org.uk/secure/Accounts/MyAccount.aspx\">My Account</a>.<BR><BR>If you do not currently have a VCC Online Account you will be directed to register for one in order to see your account. It is important that you register your account using <b>the email address that this mail was sent to.<\\B><BR><BR>Once you have transferred funds or sent a cheque, or indeed if you paid cash on the day please <b>complete the Register Payment form<\\b>, the Treasurer will then be notified and your account balance updated.<BR><BR>If you have any issues with this system, or want to delay payment for any reason please speak to the treasurer or email thevillagecc@gmail.com.<BR><BR>Thanks,<BR>The VCC Committee.";
                                     mail.IsBodyHtml = true;
                                     System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
                                     smtp.Send(mail);
@@ -1562,7 +1563,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         batsmen.DataBind();
         if (line.Batsman.Name != null)
         {
-            batsmen.Items.FindByText(line.Batsman.Name).Selected = true;
+            batsmen.Items.FindByText(line.Batsman.FormalName).Selected = true;
         }
         howOut.DataSource = Enum.GetValues(typeof(ModesOfDismissal));
         howOut.DataBind();
@@ -1609,11 +1610,11 @@ public partial class stats_MatchWizard : System.Web.UI.Page
 
         if (line.Bowler.Name != null)
         {
-            bowlers.Items.FindByText(line.Bowler.Name).Selected = true;
+            bowlers.Items.FindByText(line.Bowler.FormalName).Selected = true;
         }
         if (line.Fielder!=null && line.Fielder.Name != null)
         {
-            fielders.Items.FindByText(line.Bowler.Name).Selected = true;
+            fielders.Items.FindByText(line.Fielder.FormalName).Selected = true;
         }
         howOut.DataSource = Enum.GetValues(typeof(ModesOfDismissal));
         howOut.DataBind();
@@ -1680,7 +1681,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
 
         if (line.Bowler != null && !string.IsNullOrEmpty(line.Bowler.Name))
         {
-            bowler.Items.FindByText(line.Bowler.Name).Selected = true;
+            bowler.Items.FindByText(line.Bowler.FormalName).Selected = true;
         }
         HtmlInputText overs = (HtmlInputText)e.Item.FindControl("overs");
         overs.Value = line.Overs.ToString();

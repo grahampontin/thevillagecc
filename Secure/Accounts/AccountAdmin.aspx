@@ -13,7 +13,9 @@
 <body>
     <div class=AdminPageHeader>
         <div class=AdminPageLogo>
+            <a href="/Default.aspx">
             <img src="/Images/logo.jpg" width="200px" />
+            </a>
         </div>
         <div class="AdminPageTitle">
             VCC Account System Admin
@@ -42,6 +44,9 @@
             </li>
             <li>
                 <a href=AccountAdmin.aspx?action=sendEmails>Email Debtors</a>
+            </li>
+            <li>
+                <a href=AccountAdmin.aspx?action=manageSettings>Manage Settings</a>
             </li>
             <li>
                 <a href="../StatsAdmin/Home.aspx">Go to Stats Admin</a>
@@ -293,6 +298,46 @@
                 <asp:Button ID=SendEmailsButton runat=server Text="Send Emails" onclick="SendEmailsButton_Click" />
                 <br /><br />
                 <div class=message id=Message runat=server visible=false></div>
+            </div>
+
+            <div id="ManageSettings" visible=false runat=server>
+                Configure Website Settings. These settings control various aspects of site behaviour.
+                <asp:GridView ID=SettingsGridview runat=server AutoGenerateColumns="False" 
+                    EnableModelValidation="True" onrowdeleting="SettingsGridview_RowDeleting" 
+                    onrowediting="SettingsGridview_RowEditing" 
+                    onrowupdating="SettingsGridview_RowUpdating" 
+                    onselectedindexchanged="SettingsGridview_SelectedIndexChanged" 
+                    onrowcancelingedit="SettingsGridview_RowCancelingEdit">
+                    <Columns>
+                        <asp:TemplateField HeaderText="Setting Name">
+                            <ItemTemplate>
+                                <asp:Label ID="Label1" runat="server" Text='<%# Bind("Name") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                 <asp:Label ID="Label1" runat="server" Text='<%# Bind("Name") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Value">
+                            <ItemTemplate>
+                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("Value") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("Value") %>'></asp:TextBox>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Description">
+                            <ItemTemplate>
+                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("Description") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("Description") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
+                        <asp:CommandField ButtonType="Button" ShowEditButton="True" />
+                    </Columns>
+                    
+                </asp:GridView>
+            
             </div>
             
             <!-- END BODY CONTENT -->
