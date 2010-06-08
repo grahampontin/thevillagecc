@@ -7,7 +7,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
-    <title>The Village Cricket Club Online | Admin</title>
+    <title>The Village Cricket Club Online | Multimedia</title>
     <CC:Styles runat=server ID=styles />    
     
 </head>

@@ -49,12 +49,12 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         InternalCache playersCache = InternalCache.GetInstance();
         if (playersCache.Get("players") == null)
         {
-            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.FormalName), new TimeSpan(0, 5, 0));
+            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.Name), new TimeSpan(0, 5, 0));
         }
         IEnumerable<Player> players = (IEnumerable<Player>)playersCache.Get("players");
         foreach (Player p in players)
         {
-            batsman_select += "<option value='"+p.ID+"'>"+p.FormalName+"</option>";
+            batsman_select += "<option value='"+p.ID+"'>"+p.Name+"</option>";
         }
 
         #endregion
@@ -199,7 +199,6 @@ public partial class stats_MatchWizard : System.Web.UI.Page
             if (AbandonendYes.Checked)
             {
                 selectedMatch.Abandoned = true;
-                selectedMatch.Save();
                 step = 11;
                 NextStep.Text = "12";
                 Step3.Visible = false;
@@ -290,7 +289,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
             List<Player> batsmen = new List<Player>();
             foreach (string key in test)
             {
-                batsmen.Add(players.Where(a => a.FormalName == Request[key]).FirstOrDefault());
+                batsmen.Add(players.Where(a => a.Name == Request[key]).FirstOrDefault());
             }
 
             if (batsmen.Where(a => a.Name.Length > 0).Distinct().Count() != batsmen.Where(b => b.Name.Length > 0).Count())
@@ -844,13 +843,13 @@ public partial class stats_MatchWizard : System.Web.UI.Page
             List<Player> Fielders = new List<Player>();
             foreach (string name in FielderNames)
             {
-                Fielders.Add(players.Where(a => a.FormalName == name).FirstOrDefault());
+                Fielders.Add(players.Where(a => a.Name == name).FirstOrDefault());
             }
 
             List<Player> Bowlers = new List<Player>();
             foreach (string name in BowlerNames)
             {
-                Bowlers.Add(players.Where(a => a.FormalName == name).FirstOrDefault());
+                Bowlers.Add(players.Where(a => a.Name == name).FirstOrDefault());
             }
 
             var howouts = Request.Params.Keys.Cast<string>().Where(a => a.Contains("howOutSelect"));
@@ -1035,7 +1034,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                 List<Player> bowlers = new List<Player>();
                 foreach (string name in bowlerNames)
                 {
-                    bowlers.Add(players.Where(a => a.FormalName == name).FirstOrDefault());
+                    bowlers.Add(players.Where(a => a.Name == name).FirstOrDefault());
                 }
 
                 foreach (Player bowler in bowlers)
@@ -1413,9 +1412,9 @@ public partial class stats_MatchWizard : System.Web.UI.Page
             try
             {
                 string wkName = WicketKeeper.SelectedValue;
-                Player wicketKeeper = (from a in p where a.FormalName == wkName select a).FirstOrDefault();
+                Player wicketKeeper = (from a in p where a.Name == wkName select a).FirstOrDefault();
                 string captainName = Captain.SelectedValue;
-                Player captain = (from a in p where a.FormalName == captainName select a).FirstOrDefault();
+                Player captain = (from a in p where a.Name == captainName select a).FirstOrDefault();
                 selectedMatch.Captain = captain;
                 selectedMatch.WicketKeeper = wicketKeeper;
                 selectedMatch.Save();
@@ -1464,7 +1463,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                         pa.AddPayment(dMatchFee, "Match fees", selectedMatch.MatchDate, selectedMatch, PaymentStatus.Confirmed, PaymentType.MatchFee, CreditDebit.Debit);
                         List<MatchType> allMatches = new List<MatchType>();
                         allMatches.Add(MatchType.All);
-                        if (PlayerToBeBilled.GetMatchesPlayed(new DateTime(DateTime.Now.Year, 4, 1), new DateTime(DateTime.Now.Year + 1, 4, 1), allMatches, null) == SettingsWrapper.GetSettingInt("SubsNumberOfGames", 3))
+                        if (PlayerToBeBilled.GetMatchesPlayed(new DateTime(DateTime.Now.Year, 4, 1), new DateTime(DateTime.Now.Year + 1, 4, 1), allMatches) == SettingsWrapper.GetSettingInt("SubsNumberOfGames", 3))
                         {
                             //this is the player's 3rd match of the season - charge subs.
                             pa.AddPayment(SettingsWrapper.GetSettingDouble("SubsAmount", 30.0), "Subs - 3 Matches played", DateTime.Today, null, PaymentStatus.Confirmed, PaymentType.Other, CreditDebit.Debit);
@@ -1479,7 +1478,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                                 {
                                     System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("thevillagecc@gmail.com", "thevillagecc@gmail.com");
                                     mail.Subject = "Village CC Payment Request";        // put subject here	
-                                    mail.Body = "Hi " + PlayerToBeBilled.Name + ",<BR><BR> According to our records you now owe the club more than £" + SettingsWrapper.GetSettingString("MaximDebtBeforeEmail", "20").Replace("-", "") +", in order for us to be able to meet payments through the season we would appreciate your payment. You can check the details of your account by visiting <a href=\"http://thevillagecc.org.uk/secure/Accounts/MyAccount.aspx\">My Account</a>.<BR><BR>If you do not currently have a VCC Online Account you will be directed to register for one in order to see your account. It is important that you register your account using <b>the email address that this mail was sent to.<\\B><BR><BR>Once you have transferred funds or sent a cheque, or indeed if you paid cash on the day please <b>complete the Register Payment form<\\b>, the Treasurer will then be notified and your account balance updated.<BR><BR>If you have any issues with this system, or want to delay payment for any reason please speak to the treasurer or email thevillagecc@gmail.com.<BR><BR>Thanks,<BR>The VCC Committee.";
+                                    mail.Body = "Hi " + PlayerToBeBilled.Name + ",<BR><BR> According to our records you now owe the club more than £" + SettingsWrapper.GetSettingString("MaximDebtBeforeEmail", "20") + ", in order for us to be able to meet payments through the season we would appreciate your payment. You can check the details of your account by visiting <a href=\"http://thevillagecc.org.uk/secure/Accounts/MyAccount.aspx\">My Account</a>.<BR><BR>If you do not currently have a VCC Online Account you will be directed to register for one in order to see your account. It is important that you register your account using <b>the email address that this mail was sent to.<\\B><BR><BR>Once you have transferred funds or sent a cheque, or indeed if you paid cash on the day please <b>complete the Register Payment form<\\b>, the Treasurer will then be notified and your account balance updated.<BR><BR>If you have any issues with this system, or want to delay payment for any reason please speak to the treasurer or email thevillagecc@gmail.com.<BR><BR>Thanks,<BR>The VCC Committee.";
                                     mail.IsBodyHtml = true;
                                     System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
                                     smtp.Send(mail);
@@ -1554,7 +1553,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         InternalCache playersCache = InternalCache.GetInstance();
         if (playersCache.Get("players") == null)
         {
-            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.FormalName), new TimeSpan(0, 5, 0));
+            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.Name), new TimeSpan(0, 5, 0));
         }
         BattingCardLine line = (BattingCardLine)((ListViewDataItem)e.Item).DataItem;
 
@@ -1563,7 +1562,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         batsmen.DataBind();
         if (line.Batsman.Name != null)
         {
-            batsmen.Items.FindByText(line.Batsman.FormalName).Selected = true;
+            batsmen.Items.FindByText(line.Batsman.Name).Selected = true;
         }
         howOut.DataSource = Enum.GetValues(typeof(ModesOfDismissal));
         howOut.DataBind();
@@ -1598,7 +1597,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         InternalCache playersCache = InternalCache.GetInstance();
         if (playersCache.Get("players") == null)
         {
-            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.FormalName), new TimeSpan(0, 5, 0));
+            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.Name), new TimeSpan(0, 5, 0));
         }
         BattingCardLine line = (BattingCardLine)((ListViewDataItem)e.Item).DataItem;
 
@@ -1610,11 +1609,11 @@ public partial class stats_MatchWizard : System.Web.UI.Page
 
         if (line.Bowler.Name != null)
         {
-            bowlers.Items.FindByText(line.Bowler.FormalName).Selected = true;
+            bowlers.Items.FindByText(line.Bowler.Name).Selected = true;
         }
         if (line.Fielder!=null && line.Fielder.Name != null)
         {
-            fielders.Items.FindByText(line.Fielder.FormalName).Selected = true;
+            fielders.Items.FindByText(line.Bowler.Name).Selected = true;
         }
         howOut.DataSource = Enum.GetValues(typeof(ModesOfDismissal));
         howOut.DataBind();
@@ -1672,7 +1671,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
         InternalCache playersCache = InternalCache.GetInstance();
         if (playersCache.Get("players") == null)
         {
-            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.FormalName), new TimeSpan(0, 5, 0));
+            playersCache.Insert("players", Player.GetAll().Where(a => a.IsActive).OrderBy(a => a.Name), new TimeSpan(0, 5, 0));
         }
         
         IEnumerable<Player> players = (IEnumerable<Player>)playersCache.Get("players");
@@ -1681,7 +1680,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
 
         if (line.Bowler != null && !string.IsNullOrEmpty(line.Bowler.Name))
         {
-            bowler.Items.FindByText(line.Bowler.FormalName).Selected = true;
+            bowler.Items.FindByText(line.Bowler.Name).Selected = true;
         }
         HtmlInputText overs = (HtmlInputText)e.Item.FindControl("overs");
         overs.Value = line.Overs.ToString();
