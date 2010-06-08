@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Stats.aspx.cs" Inherits="Stats" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Stats.aspx.cs" Inherits="Stats" EnableViewStateMac="false" ViewStateEncryptionMode="Never" %>
 <%@ Register TagPrefix="CC" TagName="Header" Src="~/UserControls/Head.ascx" %>
 <%@ Register TagPrefix="CC" TagName="Footer" Src="~/UserControls/Footer.ascx" %>
 <%@ Register TagPrefix="CC" TagName="Styles" Src="~/UserControls/Styles.ascx" %>
@@ -19,7 +19,12 @@
                    }
                },
                spinner: '<img src="/img/ajax-loader.gif"/>',
-               load: function(event, ui) { $( ".spinner" ).html(''); }
+               load: function (event, ui) {
+                   $(".spinner").html('');
+                   $("#tabs").find("#__VIEWSTATE").remove();
+                   $("#playersGV").tablesorter({ sortList: [[5, 1]] });
+                   
+               }
            });
        });
     </script>
@@ -32,20 +37,43 @@
         <!-- End Head -->
         <div class=clearer></div>
         <div id="mainContent">
+            <form runat=server id=StatsForm>
             <div class=PageHeading>Club Statistics</div>
+            <div class="ui-widget ui-widget-content">
+                 <div class=Centered>
+                    <br />
+                    <asp:CheckBox ID="LeagueCB" runat="server" Text="League" Checked="True"/>
+                    <asp:CheckBox ID="FriendlyCB" runat="server" Text="Friendly" Checked="True" />
+                    <asp:CheckBox ID="TourCB" runat="server" Text="Tour" Checked="True" />
+                    <asp:CheckBox ID="DeclarationCB" runat="server" Text="Declaration" 
+                        Checked="True" />
+                    <asp:CheckBox ID="Twenty20CB" runat="server" Checked="True" Text="Twenty20" />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Between:                 
+                    <input id="FromDate" class="datePicker" type="text" runat=server/> and <input id="ToDate" class="datePicker" type="text" runat=server/>&nbsp; 
+                     at&nbsp;
+                     <asp:DropDownList ID="VenuesDropDown" runat="server">
+                     </asp:DropDownList>
+                     <br />
+                    <br />
+                    <asp:Button ID="Button1" runat="server" Text="Filter Data" />
+                    <br />
+                    <br />
+                </div>
+            </div>
             <div id="tabs">
 	            <ul>
-		            <li><a href="ajax/content3-slow.php">Batsmen <span class=spinner></span></a></li>
-		            <li><a href="ajax/content3-slow.php">Bowlers <span class=spinner></span></a></li>
-		            <li><a href="ajax/content3-slow.php">Teams <span class=spinner></span></a></li>
-		            <li><a href="ajax/content3-slow.php">Grounds</a></li>
-		            <li><a href="ajax/content4-broken.php">Captains</a></li>
-                    <li><a href="ajax/content4-broken.php">Keepers</a></li>
+		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Batting<%=test %>" >Batsmen <span class=spinner></span></a></li>
+		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Bowling<%=test %>">Bowlers <span class=spinner></span></a></li>
+		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Teams<%=test %>">Teams <span class=spinner></span></a></li>
+		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Grounds<%=test %>">Grounds <span class=spinner></span></a></li>
+		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Captains<%=test %>">Captains <span class=spinner></span></a></li>
+                    <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Keepers<%=test %>">Keepers <span class=spinner></span></a></li>
 
 	            </ul>
 	            
             </div>
-
+            </form>
         </div>
         <!-- Footer -->
         <CC:Footer ID="Footer1" runat="server" />

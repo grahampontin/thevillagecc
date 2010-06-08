@@ -1,69 +1,67 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Xml.Linq;
-using CricketClubMiddle;
 using CricketClubDomain;
-using System.Collections.Generic;
+using CricketClubMiddle;
 
-public partial class Players : System.Web.UI.Page
+public partial class Stats_StatsGrid : System.Web.UI.Page
 {
 
     private DateTime startDate;
     private DateTime endDate;
     private List<MatchType> MatchTypes = new List<MatchType>();
-    int count = 0;
+    private Venue venue = null;
+
+    protected override void OnInit(EventArgs e)
+    {
+        this.EnableViewState = false;
+        base.OnInit(e);
+    }
 
     protected void Page_Load(object sender, EventArgs e)
     {
-
-        Header1.PageID = "Players";
-        string fromDate = FromDate.Value;
-        string toDate = ToDate.Value;
-
-        if (!DateTime.TryParse(fromDate, out startDate))
+        if (!DateTime.TryParse(Request["fromDate"], out startDate))
         {
             startDate = new DateTime(DateTime.Today.Year, 4, 1);
         }
-        if (!DateTime.TryParse(toDate, out endDate))
+        if (!DateTime.TryParse(Request["toDate"], out endDate))
         {
-            endDate = new DateTime(DateTime.Today.Year+1, 3, 30);
+            endDate = new DateTime(DateTime.Today.Year + 1, 3, 30);
         }
+     
+        
 
-        FromDate.Value = startDate.ToLongDateString();
-        ToDate.Value = endDate.ToLongDateString();
-
-        if (FriendlyCB.Checked)
+        if (Request["Friendly"]=="1")
         {
             MatchTypes.Add(MatchType.Friendly);
         }
-        if (TourCB.Checked)
+        if (Request["Tour"] == "1")
         {
             MatchTypes.Add(MatchType.Tour);
         }
-        if (DeclarationCB.Checked)
+        if (Request["Declaration"] == "1")
         {
             MatchTypes.Add(MatchType.Declaration);
         }
-        if (LeagueCB.Checked)
+        if (Request["League"] == "1")
         {
             MatchTypes.Add(MatchType.NELCL);
             MatchTypes.Add(MatchType.NELCL_Cup);
         }
-        if (Twenty20CB.Checked)
+        if (Request["Twenty20"] == "1")
         {
             MatchTypes.Add(MatchType.Twenty20);
         }
 
-        playersGV.DataSource = Player.GetAll().Where(a => a.GetMatchesPlayed(startDate, endDate, MatchTypes) > 0);
+        if (Request["Venue"] != "")
+        {
+            venue = Venue.GetByName(Request["Venue"]);
+        }
+
+        playersGV.DataSource = Player.GetAll().Where(a => a.GetMatchesPlayed(startDate, endDate, MatchTypes, venue) > 0);
         playersGV.DataBind();
         playersGV.CssClass = "fullWidth tablesorter";
         if (playersGV.Rows.Count > 0)
@@ -71,7 +69,10 @@ public partial class Players : System.Web.UI.Page
             playersGV.HeaderRow.TableSection = TableRowSection.TableHeader;
             playersGV.FooterRow.TableSection = TableRowSection.TableFooter;
         }
+
+
     }
+
     protected void playersGV_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         TableCell number = e.Row.Cells[0];
@@ -105,7 +106,7 @@ public partial class Players : System.Web.UI.Page
             {
                 cell.HorizontalAlign = HorizontalAlign.Left;
             }
-            if (BattingCB.Checked)
+            if (Request["Tab"] == "Batting")
             {
                 BBM.Visible = false;
                 Economy.Visible = false;
@@ -115,7 +116,7 @@ public partial class Players : System.Web.UI.Page
                 ThreeFers.Visible = false;
                 Wickets.Visible = false;
             }
-            else
+            else if (Request["Tab"] == "Bowling")
             {
                 BatsAt.Visible = false;
                 Innings.Visible = false;
@@ -133,26 +134,26 @@ public partial class Players : System.Web.UI.Page
 
         if (e.Row.RowType == DataControlRowType.DataRow)
         {
-            
+
             Player CurrentPlayer = (Player)e.Row.DataItem;
 
-            Matches.Text = CurrentPlayer.GetMatchesPlayed(startDate, endDate, MatchTypes).ToString();
-            name.Text = "<a href=Player_Detail.asp?player_id="+CurrentPlayer.ID+">"+CurrentPlayer.Name+"</a>";
-            if (BattingCB.Checked)
+            Matches.Text = CurrentPlayer.GetMatchesPlayed(startDate, endDate, MatchTypes, venue).ToString();
+            name.Text = "<a href=Player_Detail.asp?player_id=" + CurrentPlayer.ID + ">" + CurrentPlayer.Name + "</a>";
+            if (Request["Tab"] == "Batting")
             {
-                BatsAt.Text = CurrentPlayer.GetBattingPosition(startDate,endDate,MatchTypes).ToString();
-                Average.Text = CurrentPlayer.GetBattingAverage(startDate, endDate, MatchTypes).ToString();
-                Innings.Text = CurrentPlayer.GetInnings(startDate, endDate, MatchTypes).ToString();
-                NotOuts.Text = CurrentPlayer.GetNotOuts(startDate, endDate, MatchTypes).ToString();
-                Hundreds.Text = CurrentPlayer.Get100sScored(startDate, endDate, MatchTypes).ToString();
-                Fifties.Text = CurrentPlayer.Get50sScored(startDate, endDate, MatchTypes).ToString();
-                Fours.Text = CurrentPlayer.Get4s(startDate, endDate, MatchTypes).ToString();
-                Sixes.Text = CurrentPlayer.Get6s(startDate, endDate, MatchTypes).ToString();
-                Catches.Text = CurrentPlayer.GetCatchesTaken(startDate, endDate, MatchTypes).ToString();
-                Stumpings.Text = CurrentPlayer.GetStumpings(startDate, endDate, MatchTypes).ToString();
-                RunOuts.Text = CurrentPlayer.GetRunOuts(startDate, endDate, MatchTypes).ToString();
-                HighScore.Text = CurrentPlayer.GetHighScore(startDate, endDate, MatchTypes).ToString();
-                Runs.Text = CurrentPlayer.GetRunsScored(startDate, endDate, MatchTypes).ToString();
+                BatsAt.Text = CurrentPlayer.GetBattingPosition(startDate, endDate, MatchTypes, venue).ToString();
+                Average.Text = CurrentPlayer.GetBattingAverage(startDate, endDate, MatchTypes, venue).ToString();
+                Innings.Text = CurrentPlayer.GetInnings(startDate, endDate, MatchTypes, venue).ToString();
+                NotOuts.Text = CurrentPlayer.GetNotOuts(startDate, endDate, MatchTypes, venue).ToString();
+                Hundreds.Text = CurrentPlayer.Get100sScored(startDate, endDate, MatchTypes, venue).ToString();
+                Fifties.Text = CurrentPlayer.Get50sScored(startDate, endDate, MatchTypes, venue).ToString();
+                Fours.Text = CurrentPlayer.Get4s(startDate, endDate, MatchTypes, venue).ToString();
+                Sixes.Text = CurrentPlayer.Get6s(startDate, endDate, MatchTypes, venue).ToString();
+                Catches.Text = CurrentPlayer.GetCatchesTaken(startDate, endDate, MatchTypes, venue).ToString();
+                Stumpings.Text = CurrentPlayer.GetStumpings(startDate, endDate, MatchTypes, venue).ToString();
+                RunOuts.Text = CurrentPlayer.GetRunOuts(startDate, endDate, MatchTypes, venue).ToString();
+                HighScore.Text = CurrentPlayer.GetHighScore(startDate, endDate, MatchTypes, venue).ToString();
+                Runs.Text = CurrentPlayer.GetRunsScored(startDate, endDate, MatchTypes, venue).ToString();
                 if (CurrentPlayer.GetHighScoreWasNotOut())
                 {
                     HighScore.Text += "*";
