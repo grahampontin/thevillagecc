@@ -39,7 +39,48 @@
                     <asp:BoundField HeaderText="3fers" />
                     <asp:BoundField HeaderText="5fers" />
                 </Columns>
+                <EmptyDataTemplate>
+                    No data in the database matches your filters.
+                </EmptyDataTemplate>
             </asp:GridView>
+
+            <asp:GridView ID=TeamsGridView runat=server AutoGenerateColumns="False" 
+            EnableModelValidation="True" onrowdatabound="TeamsGridView_RowDataBound">
+                <Columns>
+                    <asp:BoundField HeaderText="Team Name" />
+                    <asp:BoundField HeaderText="Matches" />
+                    <asp:BoundField HeaderText="Wins" />
+                    <asp:BoundField HeaderText="Losses" />
+                    <asp:BoundField HeaderText="Draws" />
+                    <asp:BoundField HeaderText="Ave Batting Score" />
+                    <asp:BoundField HeaderText="Ave Score Conceeded" />
+                    <asp:BoundField HeaderText="Wickets Taken" />
+                    <asp:BoundField HeaderText="Wickets Lost" />
+                    <asp:BoundField HeaderText="LBWs Given" />
+                    <asp:BoundField HeaderText="LBWs Conceeded" />
+                </Columns>
+                
+            </asp:GridView>
+
+
+            <asp:GridView ID=VenuesGridView runat=server AutoGenerateColumns="False" 
+            EnableModelValidation="True" onrowdatabound="VenuesGridView_RowDataBound">
+                <Columns>
+                    <asp:BoundField HeaderText="Venue" />
+                    <asp:BoundField HeaderText="Matches Played" />
+                    <asp:BoundField HeaderText="Village Wins" />
+                    <asp:BoundField HeaderText="Village Losses" />
+                    <asp:BoundField HeaderText="Ave Village Score" />
+                    <asp:BoundField HeaderText="Ave Oppo Score" />
+                    <asp:BoundField HeaderText="Percent Toss Winner Bats" />
+                    <asp:BoundField HeaderText="Percent Team Batting First Wins" />
+                    <asp:BoundField HeaderText="Ave Wickets Taken By Village" />
+                    <asp:BoundField HeaderText="Ave Wickets Taken By Oppo" />
+                    <asp:BoundField HeaderText="Ave LBWs per Innings" />
+                    <asp:BoundField HeaderText="Ave Catches per Innings" />
+                    <asp:BoundField HeaderText="Ave Bowleds per Innings" />
+                </Columns>
+        </asp:GridView>
     </div>
     </form>
 </body>

@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using CricketClubDomain;
 using CricketClubMiddle;
+using CricketClubMiddle.Stats;
 
 public partial class Stats_StatsGrid : System.Web.UI.Page
 {
@@ -61,20 +62,55 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
             venue = Venue.GetByName(Request["Venue"]);
         }
 
-        playersGV.DataSource = Player.GetAll().Where(a => a.GetMatchesPlayed(startDate, endDate, MatchTypes, venue) > 0);
-        playersGV.DataBind();
-        playersGV.CssClass = "fullWidth tablesorter";
-        if (playersGV.Rows.Count > 0)
-        {
-            playersGV.HeaderRow.TableSection = TableRowSection.TableHeader;
-            playersGV.FooterRow.TableSection = TableRowSection.TableFooter;
-        }
+        string tab = Request["Tab"];
+        if (tab == "") tab = "Batting";
+
+        switch (tab) {
+            case "Batting":
+            case "Bowling":
+                playersGV.DataSource = Player.GetAll().Where(a => a.GetMatchesPlayed(startDate, endDate, MatchTypes, venue) > 0);
+                playersGV.DataBind();
+                playersGV.CssClass = "fullWidth tablesorter";
+                if (playersGV.Rows.Count > 0)
+                {
+                    playersGV.HeaderRow.TableSection = TableRowSection.TableHeader;
+                    playersGV.FooterRow.TableSection = TableRowSection.TableFooter;
+                }
+                break;
+            case "Teams":
+                playersGV.Visible = false;
+                TeamsGridView.DataSource = Team.GetAll().Select(a=>a.GetStats(startDate, endDate, MatchTypes, venue)).Where(a=>a.GetMatchesPlayed()>0);
+                TeamsGridView.DataBind();
+                TeamsGridView.CssClass = "fullWidth tablesorter";
+                if (TeamsGridView.Rows.Count > 0)
+                {
+                    TeamsGridView.HeaderRow.TableSection = TableRowSection.TableHeader;
+                    TeamsGridView.FooterRow.TableSection = TableRowSection.TableFooter;
+                
+                }
+                break;
+            case "Venues":
+                VenuesGridView.DataSource = Venue.GetAll().Select(a=>a.GetStats(startDate, endDate, MatchTypes)).Where(a=>a.GetMatchesPlayed()>0);
+                VenuesGridView.DataBind();
+                VenuesGridView.CssClass = "fullWidth tablesorter";
+                if (VenuesGridView.Rows.Count > 0)
+                {
+                    VenuesGridView.HeaderRow.TableSection = TableRowSection.TableHeader;
+                    VenuesGridView.FooterRow.TableSection = TableRowSection.TableFooter;
+                
+                }
+                break;
+    }
 
 
     }
 
     protected void playersGV_RowDataBound(object sender, GridViewRowEventArgs e)
     {
+        if (e.Row.RowType == DataControlRowType.EmptyDataRow)
+        {
+            return;
+        }
         TableCell number = e.Row.Cells[0];
         TableCell name = e.Row.Cells[1];
         TableCell BatsAt = e.Row.Cells[2];
@@ -190,6 +226,72 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
             }
 
 
+        }
+    }
+    protected void TeamsGridView_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+
+        TableCell name = e.Row.Cells[0];
+        TableCell matches = e.Row.Cells[1];
+        TableCell wins = e.Row.Cells[2];
+        TableCell losses = e.Row.Cells[3];
+        TableCell draws = e.Row.Cells[4];
+        TableCell aveBatScore = e.Row.Cells[5];
+        TableCell aveBowlScore = e.Row.Cells[6];
+        TableCell wicketsTaken = e.Row.Cells[7];
+        TableCell wicketsLost = e.Row.Cells[8];
+        TableCell lbwsGiven = e.Row.Cells[9];
+        TableCell lbwsConceeded = e.Row.Cells[10];
+
+        
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            TeamStats CurrentTeamStats = (TeamStats)e.Row.DataItem;
+            name.Text = CurrentTeamStats.Team.Name;
+            wins.Text = CurrentTeamStats.GetVictories().ToString();
+            losses.Text = CurrentTeamStats.GetDefeats().ToString();
+            draws.Text = CurrentTeamStats.GetDraws().ToString();
+            aveBatScore.Text = CurrentTeamStats.GetAverageBattingScore().ToString();
+            aveBowlScore.Text = CurrentTeamStats.GetAverageBowlingScore().ToString();
+            wicketsTaken.Text = CurrentTeamStats.GetWicketsTaken().ToString();
+            wicketsLost.Text = CurrentTeamStats.GetWicketsLost().ToString();
+            lbwsGiven.Text = CurrentTeamStats.GetNumberOfDismissals(ModesOfDismissal.LBW).ToString();
+            lbwsConceeded.Text = CurrentTeamStats.GetNumberOfWickets(ModesOfDismissal.LBW).ToString();
+            matches.Text = CurrentTeamStats.GetMatchesPlayed().ToString();
+        }
+    }
+    protected void VenuesGridView_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        TableCell venueName = e.Row.Cells[0];
+        TableCell matches = e.Row.Cells[1];
+        TableCell wins = e.Row.Cells[2];
+        TableCell losses = e.Row.Cells[3];
+        TableCell aveVccScore = e.Row.Cells[4];
+        TableCell aveOppoScore = e.Row.Cells[5];
+        TableCell pcTossWinnerBats = e.Row.Cells[6];
+        TableCell pcBatFirstWins = e.Row.Cells[7];
+        TableCell aveWicketsVCC = e.Row.Cells[8];
+        TableCell aveWicketsOppo = e.Row.Cells[9];
+        TableCell aveLBW = e.Row.Cells[10];
+        TableCell aveCatch = e.Row.Cells[11];
+        TableCell aveBowled = e.Row.Cells[12];
+
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            VenueStats CurrentVenueStats = (VenueStats)e.Row.DataItem;
+            venueName.Text = CurrentVenueStats.Venue.Name;
+            wins.Text = CurrentVenueStats.GetVillagWins().ToString();
+            losses.Text = CurrentVenueStats.GetVillagLosses().ToString();
+            aveVccScore.Text = CurrentVenueStats.GetAverageVillageScore().ToString();
+            aveOppoScore.Text = CurrentVenueStats.GetAverageOpponentScore().ToString();
+            pcTossWinnerBats.Text = CurrentVenueStats.GetPercentageTossWinnerBats().ToString() + "%";
+            pcBatFirstWins.Text = CurrentVenueStats.GetPercentageTeamBattingFirstWins().ToString() + "%";
+            aveWicketsVCC.Text = CurrentVenueStats.GetAverageWicketsTakenByVillage().ToString();
+            aveWicketsOppo.Text = CurrentVenueStats.GetAverageWicketsTakenByOpposition().ToString();
+            aveLBW.Text = CurrentVenueStats.GetNumberOfWicketsPerInnings(ModesOfDismissal.LBW).ToString();
+            aveCatch.Text = CurrentVenueStats.GetNumberOfWicketsPerInnings(ModesOfDismissal.Caught).ToString();
+            aveBowled.Text = CurrentVenueStats.GetNumberOfWicketsPerInnings(ModesOfDismissal.Bowled).ToString();
+            matches.Text = CurrentVenueStats.GetMatchesPlayed().ToString();
         }
     }
 }

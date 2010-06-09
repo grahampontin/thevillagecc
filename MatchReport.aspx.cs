@@ -32,7 +32,7 @@ public partial class MatchReport : System.Web.UI.Page
         OppositionName.Text = match.Opposition.Name;
         MatchSummary.Text = match.TossWinner.Name + " won the toss and elected to " + match.TossWinnerElectedTo;
         OurBatting.Card = match.GetOurBattingScoreCard();
-        TheirBatting.Card = match.GetThierBattingScoreCard();
+        TheirBatting.Card = match.GetTheirBattingScoreCard();
         OurBowling.stats = match.GetOurBowlingStats();
         TheirBowing.stats = match.GetThierBowlingStats();
         OurFoWCard.stats = new FoWStats(match.ID, CricketClubDomain.ThemOrUs.Us);

@@ -9,6 +9,7 @@
     <script language="javascript" src="/Script/jquery-1.4.2.min.js" type="text/javascript"></script>
     <script language="javascript" src="/Script/jquery-ui-1.8.1.custom.min.js" type="text/javascript"></script>
     
+    <script language="javascript" src="/Script/jquery.cookie.js" type="text/javascript"></script>
     <script language="javascript" src="/Script/jquery.newsTicker.js" type="text/javascript"></script>
     <script language="javascript" src="/Script/jquery.innerfade.js" type="text/javascript"></script>
     <script language="javascript" src="/Script/jquery.labelify.js" type="text/javascript"></script>

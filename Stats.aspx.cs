@@ -20,6 +20,8 @@ public partial class Stats : System.Web.UI.Page
         {
             VenuesDropDown.DataSource = Venue.GetAll().OrderBy(a => a.Name);
             VenuesDropDown.DataBind();
+            FromDate.Value = (new DateTime(DateTime.Today.Year, 4, 1)).ToString("dd MMMM yyyy");
+            ToDate.Value = (new DateTime(DateTime.Today.Year + 1, 4, 1)).ToString("dd MMMM yyyy");
         }
 
         if (VenuesDropDown.SelectedItem.Text != "")

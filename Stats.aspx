@@ -13,6 +13,7 @@
    <script type="text/javascript">
        $(function () {
            $("#tabs").tabs({
+               cookie: {},
                ajaxOptions: {
                    error: function (xhr, status, index, anchor) {
                        $(anchor.hash).html("Coming soon...");
@@ -22,8 +23,11 @@
                load: function (event, ui) {
                    $(".spinner").html('');
                    $("#tabs").find("#__VIEWSTATE").remove();
+                   $("#TeamsGridView").tablesorter({ sortList: [[0, 0]] });
+                   $("#VenuesGridView").tablesorter({ sortList: [[0, 0]] });
                    $("#playersGV").tablesorter({ sortList: [[5, 1]] });
-                   
+
+
                }
            });
        });
@@ -66,7 +70,7 @@
 		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Batting<%=test %>" >Batsmen <span class=spinner></span></a></li>
 		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Bowling<%=test %>">Bowlers <span class=spinner></span></a></li>
 		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Teams<%=test %>">Teams <span class=spinner></span></a></li>
-		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Grounds<%=test %>">Grounds <span class=spinner></span></a></li>
+		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Venues<%=test %>">Grounds <span class=spinner></span></a></li>
 		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Captains<%=test %>">Captains <span class=spinner></span></a></li>
                     <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Keepers<%=test %>">Keepers <span class=spinner></span></a></li>
 
