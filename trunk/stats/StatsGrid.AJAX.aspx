@@ -81,6 +81,35 @@
                     <asp:BoundField HeaderText="Ave Bowleds per Innings" />
                 </Columns>
         </asp:GridView>
+
+        <asp:GridView ID=CaptainsGridView runat=server AutoGenerateColumns="False" 
+            EnableModelValidation="True" onrowdatabound="CaptainsGridView_RowDataBound">
+            <Columns>
+                <asp:BoundField HeaderText="Name" />
+                <asp:BoundField HeaderText="Matches in charge" />
+                <asp:BoundField HeaderText="Wins" />
+                <asp:BoundField HeaderText="Losses" />
+                <asp:BoundField HeaderText="% Won" />
+                <asp:BoundField HeaderText="% Tosses won" />
+                <asp:BoundField HeaderText="% Chose to Bat" />
+                <asp:BoundField HeaderText="Batting ave as Captain" />
+                <asp:BoundField HeaderText="Batting ave not as Capt" />
+            </Columns>
+        </asp:GridView>
+
+        <asp:GridView ID=KeepersGridView runat=server AutoGenerateColumns="False" 
+            EnableModelValidation="True" onrowdatabound="KeepersGridView_RowDataBound">
+            <Columns>
+                <asp:BoundField HeaderText="Name" />
+                <asp:BoundField HeaderText="Matches" />
+                <asp:BoundField HeaderText="Catches Per Game" />
+                <asp:BoundField HeaderText="Stumpings Per Game" />
+                <asp:BoundField HeaderText="Byes Conceeded Per Game" />
+                <asp:BoundField HeaderText="Batting Average with Gloves" />
+                <asp:BoundField HeaderText="Batting Average Witout Gloves" />
+            </Columns>
+        </asp:GridView>
+
     </div>
     </form>
 </body>
