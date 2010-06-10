@@ -100,6 +100,28 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
                 
                 }
                 break;
+            case "Captains":
+                CaptainsGridView.DataSource = CaptainStats.GetAll(startDate, endDate, MatchTypes, venue);
+                CaptainsGridView.DataBind();
+                CaptainsGridView.CssClass = "fullWidth tablesorter";
+                if (CaptainsGridView.Rows.Count > 0)
+                {
+                    CaptainsGridView.HeaderRow.TableSection = TableRowSection.TableHeader;
+                    CaptainsGridView.FooterRow.TableSection = TableRowSection.TableFooter;
+                
+                }
+                break;
+            case "Keepers":
+                KeepersGridView.DataSource = KeeperStats.GetAll(startDate, endDate, MatchTypes, venue);
+                KeepersGridView.DataBind();
+                KeepersGridView.CssClass = "fullWidth tablesorter";
+                if (KeepersGridView.Rows.Count > 0)
+                {
+                    KeepersGridView.HeaderRow.TableSection = TableRowSection.TableHeader;
+                    KeepersGridView.FooterRow.TableSection = TableRowSection.TableFooter;
+                
+                }
+                break;
     }
 
 
@@ -292,6 +314,59 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
             aveCatch.Text = CurrentVenueStats.GetNumberOfWicketsPerInnings(ModesOfDismissal.Caught).ToString();
             aveBowled.Text = CurrentVenueStats.GetNumberOfWicketsPerInnings(ModesOfDismissal.Bowled).ToString();
             matches.Text = CurrentVenueStats.GetMatchesPlayed().ToString();
+        }
+    }
+    protected void CaptainsGridView_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        TableCell playerName = e.Row.Cells[0];
+        TableCell matches = e.Row.Cells[1];
+        TableCell wins = e.Row.Cells[2];
+        TableCell losses = e.Row.Cells[3];
+        TableCell pcWins = e.Row.Cells[4];
+        TableCell pcTossesWon = e.Row.Cells[5];
+        TableCell pcChoseToBat = e.Row.Cells[6];
+        TableCell aveAsCapt = e.Row.Cells[7];
+        TableCell aveNotCapt = e.Row.Cells[8];
+
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            CaptainStats CurrentStats = (CaptainStats)e.Row.DataItem;
+
+            playerName.Text = CurrentStats.Player.FormalName;
+            matches.Text = CurrentStats.GetGamesInCharge().ToString();
+            wins.Text = CurrentStats.GetWins().ToString();
+            losses.Text = CurrentStats.GetLosses().ToString();
+            pcWins.Text = CurrentStats.GetPercentageGamesWon().ToString() + "%";
+            pcTossesWon.Text = CurrentStats.GetPercentageTossWon().ToString() + "%";
+            pcChoseToBat.Text = CurrentStats.GetPercentageChooseToBat().ToString() + "%";
+            aveAsCapt.Text = CurrentStats.GetBattingAverageAsCaptain().ToString();
+            aveNotCapt.Text = CurrentStats.GetBattingAverageNotAsCaptain().ToString();
+
+        }
+    }
+    protected void KeepersGridView_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        TableCell playerName = e.Row.Cells[0];
+        TableCell matches = e.Row.Cells[1];
+        TableCell catches = e.Row.Cells[2];
+        TableCell stumpings = e.Row.Cells[3];
+        TableCell byes = e.Row.Cells[4];
+        TableCell aveWithGloves = e.Row.Cells[5];
+        TableCell aveWithoutGloves = e.Row.Cells[6];
+        
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            KeeperStats CurrentStats = (KeeperStats)e.Row.DataItem;
+
+            playerName.Text = CurrentStats.Player.FormalName;
+            matches.Text = CurrentStats.GetGames().ToString();
+            catches.Text = CurrentStats.GetCatchesPerMatch().ToString();
+            stumpings.Text = CurrentStats.GetStumpingsPerMatch().ToString();
+            byes.Text = CurrentStats.GetAverageByesPerMatch().ToString();
+            aveWithGloves.Text = CurrentStats.GetBattingAverageAsKeeper().ToString();
+            aveWithoutGloves.Text = CurrentStats.GetBattingAverageNotAsKeeper().ToString();
+            
+
         }
     }
 }

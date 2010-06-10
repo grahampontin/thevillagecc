@@ -25,6 +25,9 @@
                    $("#tabs").find("#__VIEWSTATE").remove();
                    $("#TeamsGridView").tablesorter({ sortList: [[0, 0]] });
                    $("#VenuesGridView").tablesorter({ sortList: [[0, 0]] });
+                   $("#CaptainsGridView").tablesorter({ sortList: [[0, 0]] });
+                   $("#KeepersGridView").tablesorter({ sortList: [[0, 0]] });
+
                    $("#playersGV").tablesorter({ sortList: [[5, 1]] });
 
 
