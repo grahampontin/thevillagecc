@@ -967,3 +967,126 @@ table td,th
     font-weight: bold;
     float:left;
 }
+
+/* Players Page */
+
+ul#grid li {
+    float:left;
+    height:265px;
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    margin-bottom:20px;
+    margin-right:10px;
+    width:174px;
+    margin-left:10px;
+}
+
+.playerProfileSmall 
+{
+    width: 154px;
+    height: 256px;
+    padding: 10px;
+}
+
+.playerProfileName 
+{
+    font-size:1.2em;
+    font-weight:bold;
+    padding-bottom:5px;
+    text-align:center;
+}
+
+.playerProfileStats 
+{
+    padding-top: 10px;
+    height: 130px;
+}
+
+.playerProfileStat 
+{
+    padding-bottom: 5px;
+}
+
+.playerProfileStat span 
+{
+    display:inline-block;
+    font-weight:bold;
+    padding-right:5px;
+    width:80px;
+}
+
+.playerProfileMoreLink 
+{
+    text-align: right;
+    
+}
+
+.playerProfileImageLarge 
+{
+    margin-right: 10px;
+}
+
+.leftColumn 
+{
+    float: left;
+    width: 226px;
+    height: 430px;
+    padding-right: 10px;
+    margin-top: 5px;
+    border-right: solid 1px #DFD9C3;
+}
+
+.rightColumn 
+{
+    margin-top: 5px;
+    padding-left: 10px;
+    float:left;
+    display: inline;
+    max-width: 400px;
+}
+
+.bioTitle 
+{
+    font-weight: bold;
+    padding-bottom: 10px;
+}
+
+.playerProfileStat input 
+{
+    width: 220px;
+}
+
+.playerEditButtons 
+{
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: solid 1px #DFD9C3;
+}
+
+.playerEditButtons button 
+{
+    float: right;
+    margin-left: 10px;
+}
+
+.playerProfileEditLink 
+{
+    position: absolute;
+    bottom: 10px;
+}
+
+.ImageOverlay 
+{
+   color:green;
+font-size:12pt;
+font-weight:bold;
+left:20px;
+position:absolute;
+top:100px; 
+}
+
+
+/* End Players Page */
+
+
