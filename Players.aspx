@@ -9,17 +9,140 @@
 <head id="Head1" runat="server">
     <title>The Village Cricket Club Online | Players</title>
     <CC:Styles runat=server ID=styles />    
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var test = $("#BattingCB")[0].checked;
-            if (test) {
-                $("#playersGV").tablesorter({ sortList: [[5, 1]], widgets: ['zebra'] });
-            } else {
-                $("#playersGV").tablesorter({ sortList: [[4, 1]], widgets: ['zebra'] });
-            }
+    
+    <link href="CSS/default.css" rel="stylesheet" type="text/css" />
+    <script src="Script/jHtmlArea-0.7.0.min.js" type="text/javascript"></script>
+    <script src="Script/jHtmlArea.ColorPickerMenu-0.7.0.min.js" type="text/javascript"></script>
+    <link href="Plugins/jHTMLArea/jHtmlArea.ColorPickerMenu.css" rel="stylesheet" type="text/css" />
+    <link href="Plugins/jHTMLArea/jHtmlArea.Editor.css" rel="stylesheet" type="text/css" />
+    <link href="Plugins/jHTMLArea/jHtmlArea.css" rel="stylesheet" type="text/css" />
+    <script src="Plugins/Uploadify/jquery.uploadify.v2.1.0.min.js" type="text/javascript"></script>
+    <link href="Plugins/Uploadify/uploadify.css" rel="stylesheet" type="text/css" />
+    <script src="Plugins/Uploadify/swfobject.js" type="text/javascript"></script>
+    <link href="CSS/jquery.Jcrop.css" rel="stylesheet" type="text/css" />
+    <script src="Script/jquery.Jcrop.min.js" type="text/javascript"></script>
+
+    <script language=javascript>
+
+        $.fx.speeds._default = 1000;
+        $(function () {
+            $('#dialog').dialog({
+                autoOpen: false,
+                modal: 'true',
+                width: 690,
+                height: 490,
+                resizable: false
+
+            });
+
+           
+        });
+
+
+        function OpenDetails(PlayerID, Name) 
+        {
+            $('#dialog').dialog("option", "title", Name);
+            $('#dialog').html('<img src="/img/loading_big.gif">');
+            $('#dialog').dialog('open');
+            $.post('PlayerProfileAJAX.aspx', { PlayerID: PlayerID }, function(data) {
+                $('#dialog').html(data);
+            });
+
+
         }
-            );
-</script>
+
+        function updateCoords(c) {
+            $('#X').val(c.x);
+            $('#Y').val(c.y);
+            $('#W').val(c.w);
+            $('#H').val(c.h);
+        };
+
+
+        function EditPlayer(PlayerID, Name) {
+            $.post('PlayerProfileEditAJAX.aspx', { PlayerID: PlayerID }, function (data) {
+                $('#dialog').html(data);
+                $("#bioInput").htmlarea({
+                    toolbar: [
+                    ["bold", "italic", "underline", "strikeThrough"],
+                    ["orderedList", "unorderedList", "|", "superscript", "subscript"],
+                    ["increaseFontSize", "decreaseFontSize", "|", "justifyLeft", "justifyCenter", "justifyRight"],
+                    ["link", "unlink", "indent", "outdent", "html"]
+                        ]
+                }
+
+                    );
+
+                $("button").button();
+
+                $('#saveButton').click(function () {
+                    $.post('PlayerProfileEditAJAX.aspx',
+                        { Action: 'save',
+                            PlayerID: PlayerID,
+                            Name: $("#name").val(),
+                            DOB: $("#dob").val(),
+                            Education: $("#education").val(),
+                            Nickname: $("#nickname").val(),
+                            Role: $("#role").val(),
+                            BattingStyle: $("#battingstyle").val(),
+                            BowlingStyle: $("#bowlingstyle").val(),
+                            Bio: $("#bioInput").htmlarea("toHtmlString")
+                        },
+                        function (data) {
+                            OpenDetails(PlayerID, Name);
+                        }
+                          );
+                    return false;
+                });
+
+                $('#cancelButton').click(function () {
+                    OpenDetails(PlayerID, Name);
+                });
+
+                $(".playerProfileImageLarge").click(function () {
+
+                    $.post('PlayerImageUploaderAJAX.aspx', { PlayerID: PlayerID }, function (data) {
+                        $('#dialog').html(data);
+                        $('#uploader').uploadify({
+                            'uploader': '/plugins/uploadify/uploadify.swf',
+                            'script': '/Plugins/Uploadify/upload.ashx',
+                            'folder': '/Players/pictures/uploads/',
+                            'cancelImg': '/plugins/uploadify/cancel.png',
+                            'auto': true,
+                            'onError': function (event, queueID, fileObj, errorObj) {
+                                alert('error');
+                            },
+                            'onComplete': function (event, queueID, fileObj, response, data) {
+                                $.post('PlayerImageUploaderAJAX.aspx', { PlayerID: PlayerID, ImageName: fileObj.name, FilePath: fileObj.filepath, Action: 'uploadComplete' }, function (data) {
+                                    $('#dialog').html(data);
+                                    $("#tempImage").Jcrop({ aspectRatio: 16 / 9, setSelect: [0, 0, 160, 90], onSelect: updateCoords, onChange: updateCoords });
+                                    $("#CropButton").button();
+                                    $("#CancelButton").button();
+                                    $("#CropButton").click(function () {
+                                        $.post('PlayerImageUploaderAJAX.aspx', { PlayerID: PlayerID, ImageName: fileObj.name, X: $("#X").val(), Y: $("#Y").val(), W: $("#W").val(), H: $("#H").val(), Action: 'CropAndSave' }, function (data) {
+                                            OpenDetails(PlayerID, Name);
+
+                                        });
+                                        return false;
+                                    });
+
+                                    $("#CancelButton").click(function () { OpenDetails(PlayerID, Name); });
+                                });
+                            }
+
+
+                        });
+                    });
+
+
+
+                });
+
+            });
+            
+        }
+
+    </script>
 </head>
 <body>
         <form id="form1" runat="server">
@@ -33,63 +156,51 @@
             
         </div>
         <div id="mainContent">
-        
-            <div class=Centered>
-                <br />
-                <asp:RadioButton ID="BattingCB" runat="server" Checked="True" Text="Batting" GroupName=BatBowl />
-                <asp:RadioButton ID="BowlingCB" runat="server" Checked="False" Text="Bowling" GroupName=BatBowl />
-                <br />
-                <br />
-                <asp:CheckBox ID="LeagueCB" runat="server" Text="League" Checked="True"/>
-                <asp:CheckBox ID="FriendlyCB" runat="server" Text="Friendly" Checked="True" />
-                <asp:CheckBox ID="TourCB" runat="server" Text="Tour" Checked="True" />
-                <asp:CheckBox ID="DeclarationCB" runat="server" Text="Declaration" 
-                    Checked="True" />
-                <asp:CheckBox ID="Twenty20CB" runat="server" Checked="True" Text="Twenty20" />
-                <br />
-                <br />
-                Between:                 
-                <input id="FromDate" type="text" runat=server/> and <input id="ToDate" type="text" runat=server/><br />
-                <br />
-                <asp:Button ID="Button1" runat="server" Text="Filter Data" />
-                <br />
-                <br />
+            <div class="PageHeading">
+                Village CC Playing Squad
             </div>
+
+           <asp:ListView ID="PlayersGrid" runat="server" 
+                onitemdatabound="PlayersGrid_ItemDataBound">
+           <LayoutTemplate>
+            <ul id="grid">
+                    <asp:PlaceHolder runat="server" ID="itemPlaceholder"></asp:PlaceHolder>
+            </ul>
+           </LayoutTemplate>
+
+           <ItemTemplate>
+                  <li class=floatRight>
+                    <div class="ui-widget ui-widget-content ui-corner-all playerProfileSmall">
+                        <div class=playerProfileName>
+                            <%#Eval("name") %>  
+                        </div>
+                        <div class=playerProfilePhoto>
+                            <asp:Image ID=PlayerImage runat=server Width=154px Height=86px /> 
+                        </div>
+                        <div class="playerProfileStats">
+                            <div class="playerProfileStat">
+                                <span>Playing Role:</span><%#Eval("PlayingRole") %></div>
+                            <div class="playerProfileStat">
+                                <span>Batting Style:</span><%#Eval("BattingStyle") %></div>
+                            <div class="playerProfileStat">
+                                <span>Bowling Style:</span><%#Eval("BowlingStyle") %></div>
+                            <div class="playerProfileStat">
+                                <span>Debut:</span><%#Eval("Debut", "{0:dd MMM yyyy}") %></div>
+                            <div class="playerProfileStat">
+                                <span>Caps:</span><%#Eval("Caps")%>
+                            </div>
+                        </div>
+                        <div class="playerProfileMoreLink"><a href="javascript:OpenDetails(<%#Eval("ID") %>,'<%#Eval("FullName") %>' )">more...</a></div>
+                    </div> 
+                  </li>
+            </ItemTemplate>
+        </asp:ListView>
             
-            <div class=horizontalDivider></div>
             
-            <asp:GridView ID=playersGV runat=server AutoGenerateColumns="False" 
-                onrowdatabound="playersGV_RowDataBound">
-                <Columns>
-                    <asp:BoundField HeaderText="No." >
-                        <HeaderStyle HorizontalAlign="Left" />
-                    </asp:BoundField>
-                    <asp:BoundField DataField="Name" HeaderText="Name" ReadOnly="True" 
-                        SortExpression="Name" />
-                    <asp:BoundField HeaderText="Bats" />
-                    <asp:BoundField HeaderText="Mat" />
-                    <asp:BoundField HeaderText="Inns" />
-                    <asp:BoundField HeaderText="NO" />
-                    <asp:BoundField HeaderText="Ovs" />
-                    <asp:BoundField HeaderText="Runs" />
-                    <asp:BoundField HeaderText="Wkts" />
-                    <asp:BoundField HeaderText="HS" />
-                    <asp:BoundField HeaderText="BBM" />
-                    <asp:BoundField HeaderText="Ave" />
-                    <asp:BoundField HeaderText="100s" />
-                    <asp:BoundField HeaderText="50s" />
-                    <asp:BoundField HeaderText="4s" />
-                    <asp:BoundField HeaderText="6s" />
-                    <asp:BoundField HeaderText="Ct" />
-                    <asp:BoundField HeaderText="St" />
-                    <asp:BoundField HeaderText="RO" />
-                    <asp:BoundField HeaderText="Econ" />
-                    <asp:BoundField HeaderText="SR" />
-                    <asp:BoundField HeaderText="3fers" />
-                    <asp:BoundField HeaderText="5fers" />
-                </Columns>
-            </asp:GridView>
+        <div id=dialog></div>
+
         </div>
+        <div class=clearer></div>
         <!-- Footer -->
         <CC:Footer ID="Footer1" runat="server" />
         <!-- ENd Footer -->
