@@ -774,14 +774,14 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                 StepTitle.Text = selectedMatch.Opposition.Name + " Batting Data";
 
                 selectedMatch.ClearCache();
-                List<BattingCardLine> lines = selectedMatch.GetThierBattingScoreCard().ScorecardData;
+                List<BattingCardLine> lines = selectedMatch.GetTheirBattingScoreCard().ScorecardData;
                 while (lines.Count < 11)
                 {
                     lines.Add(new BattingCardLine(new BattingCardLineData()));
                 }
                 TheirBattingScoreCardLV.DataSource = lines;
                 TheirBattingScoreCardLV.DataBind();
-                step7Extras.Text = selectedMatch.GetThierBattingScoreCard().Extras.ToString();
+                step7Extras.Text = selectedMatch.GetTheirBattingScoreCard().Extras.ToString();
                 TheirInningsOvers.Text = selectedMatch.TheirInningsLength.ToString();
                 if (selectedMatch.TheyDeclared)
                 {
@@ -818,7 +818,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
             Step4.Visible = true;
             StepTitle.Text = selectedMatch.Opposition.Name + " extras data";
 
-            BattingCard thierBatting = selectedMatch.GetThierBattingScoreCard();
+            BattingCard thierBatting = selectedMatch.GetTheirBattingScoreCard();
 
             if (TheirInningsDeclared.Checked)
             {
@@ -921,7 +921,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
             if (!wasError)
             {
                 //Step8 Stuff
-                step4Extras.Text = selectedMatch.GetThierBattingScoreCard().Extras.ToString();
+                step4Extras.Text = selectedMatch.GetTheirBattingScoreCard().Extras.ToString();
                 Extras extras = new Extras(selectedMatch.ID, ThemOrUs.Us);
                 step4byes.Value = extras.Byes.ToString();
                 step4leg_byes.Value = extras.LegByes.ToString();
@@ -971,7 +971,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                 extras.NoBalls = NoBalls;
                 extras.Penalty = Penalty;
                 extras.LegByes = LegByes;
-                if (Byes + Wides + NoBalls + Penalty + LegByes == selectedMatch.GetThierBattingScoreCard().Extras)
+                if (Byes + Wides + NoBalls + Penalty + LegByes == selectedMatch.GetTheirBattingScoreCard().Extras)
                 {
                     extras.Save();
                 }
@@ -1463,7 +1463,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                         pa.AddPayment(dMatchFee, "Match fees", selectedMatch.MatchDate, selectedMatch, PaymentStatus.Confirmed, PaymentType.MatchFee, CreditDebit.Debit);
                         List<MatchType> allMatches = new List<MatchType>();
                         allMatches.Add(MatchType.All);
-                        if (PlayerToBeBilled.GetMatchesPlayed(new DateTime(DateTime.Now.Year, 4, 1), new DateTime(DateTime.Now.Year + 1, 4, 1), allMatches) == SettingsWrapper.GetSettingInt("SubsNumberOfGames", 3))
+                        if (PlayerToBeBilled.GetMatchesPlayed(new DateTime(DateTime.Now.Year, 4, 1), new DateTime(DateTime.Now.Year + 1, 4, 1), allMatches, null) == SettingsWrapper.GetSettingInt("SubsNumberOfGames", 3))
                         {
                             //this is the player's 3rd match of the season - charge subs.
                             pa.AddPayment(SettingsWrapper.GetSettingDouble("SubsAmount", 30.0), "Subs - 3 Matches played", DateTime.Today, null, PaymentStatus.Confirmed, PaymentType.Other, CreditDebit.Debit);
