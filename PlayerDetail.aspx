@@ -39,9 +39,8 @@
     function plotWithOptions() {
         $.plot($("#placeholder"), [ d1, d2, d3 ], {
             series: {
-                stack: stack,
-                lines: { show: lines, steps: steps },
-                bars: { show: bars, barWidth: 0.6 }
+                "stack": "stack",
+                "bars": { "show": "bars", "barWidth": 0.6 }
             }
         });
     }

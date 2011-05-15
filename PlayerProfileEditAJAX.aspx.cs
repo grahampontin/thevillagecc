@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using CricketClubMiddle;
 using System.IO;
 using CricketClubDomain;
@@ -14,9 +9,9 @@ public partial class PlayerProfileEditAJAX : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        int PlayerID = int.Parse(Request["playerID"]);
+        int playerId = int.Parse(Request["playerID"]);
 
-        p = new Player(PlayerID);
+        p = new Player(playerId);
 
         if (Request["Action"] == "save")
         {
