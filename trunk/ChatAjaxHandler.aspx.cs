@@ -84,9 +84,21 @@ public partial class ChatAjaxHandler : System.Web.UI.Page
         } else {
             comments = CricketClubMiddle.Chat.GetAllBetween(fromTime, toTime).OrderBy(a => a.Date).Reverse();
         }
-         
-        commentsView.DataSource = comments;
-        commentsView.DataBind();
+
+        string isMobileView = Request["mobileView"];
+        if (!string.IsNullOrEmpty(isMobileView) && isMobileView.ToLower() == "true")
+        {
+            commentsMobileView.DataSource = comments;
+            commentsMobileView.DataBind();
+            commentsView.Visible = false;
+            commentsMobileView.Visible = true;
+
+        } else
+        {
+            commentsView.DataSource = comments;
+            commentsView.DataBind();
+        }
+
         if (comments.Count() >0) {
             lastID.Text = comments.ToList()[0].ID.ToString(); 
         }

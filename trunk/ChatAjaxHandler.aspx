@@ -10,7 +10,7 @@
            </LayoutTemplate>
 
            <ItemTemplate>
-              <li class="fadeIn ChatItem">
+              <li class="fadeIn ChatItem" data-theme="c">
                 <div>
                     <div class=ChatLeftPanel>
                         <div class="ChatPhoto">
@@ -25,6 +25,31 @@
                     </div>
                     <div class="ChatInputBox">
                         <%#Eval("Comment") %>
+                    </div>
+                
+                </div>
+                <div class="horizontalDivider"></div>
+              
+              </li>
+           </ItemTemplate>
+        </asp:ListView>  
+
+        <asp:ListView ID="commentsMobileView" runat="server" Visible="false">
+           <LayoutTemplate>
+                    <asp:PlaceHolder runat="server" ID="itemPlaceholder"></asp:PlaceHolder>
+           </LayoutTemplate>
+
+           <ItemTemplate>
+              <li class="fadeIn ChatItem" data-theme="c">
+                <div>
+                    <div class="ChatComment">
+                        <%#Eval("Comment") %>
+                    </div>
+                    <div class="ChatNameDate">
+                        <%#Eval("Name") %>
+                        <span class="ChatDate">
+                             <%#Eval("Date") %>
+                        </span>
                     </div>
                 
                 </div>

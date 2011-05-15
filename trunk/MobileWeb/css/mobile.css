@@ -1,0 +1,82 @@
+﻿body 
+{
+    font-size: 0.8em;
+}
+
+.ButtonRow 
+{
+    padding-bottom: 5px;
+}
+
+.ui-widget {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: 1.7em !important;
+}
+
+.ChatContent 
+{
+    margin: 0px;
+    padding: 0px;
+}
+
+.ChatItem 
+{
+    padding: 5px;
+    background-color: #FFFFFF;
+}
+
+
+.ui-bar-b {
+    background: -moz-linear-gradient(center top , #006400, #228B22) repeat scroll 0 0 #EEEEEE;
+    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#006400),color-stop(1,#228B22));
+    border: 1px solid #006400;
+    color: #FFFFFF;
+    font-weight: bold;
+    text-shadow: 0 -1px 1px #006400;
+}
+
+.ui-btn-up-b {
+    background: -moz-linear-gradient(center top , #228B22, #006400) repeat scroll 0 0 #EEEEEE;
+    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#228B22),color-stop(1,#006400));
+
+    border: 1px solid #006400;
+    color: #FFFFFF;
+    font-weight: bold;
+    text-shadow: 0 -1px 1px #006400;
+}
+
+textarea.ui-input-text 
+{
+    height: 200px;
+}
+
+.ChatPhoto 
+{
+    display: none;
+    
+}
+
+.ChatNameDate 
+{
+    margin-top: 5px;
+}
+
+.ChatComment 
+{
+    
+}
+
+.ChatDate 
+{
+    font-style: italic;
+}
+
+.footer-btn-fix
+{
+    right: 40px !important;
+}
+
+.next-button 
+{
+    display: none;
+}
