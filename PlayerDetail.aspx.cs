@@ -14,6 +14,7 @@ using CricketClubMiddle;
 using System.IO;
 using CricketClubDomain;
 using System.Collections.Generic;
+using jqPlot;
 
 public partial class PlayerDetail : System.Web.UI.Page
 {
@@ -58,6 +59,8 @@ public partial class PlayerDetail : System.Web.UI.Page
         VenuesList.DataSource = Venue.GetAll();
         VenuesList.DataBind();
 
+        
+        
 
     }
     protected void BattingStats_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -92,7 +95,8 @@ public partial class PlayerDetail : System.Web.UI.Page
             NotOuts.Text = p.GetNotOuts(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
             Runs.Text = p.GetRunsScored(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
             HS.Text = p.GetHighScore(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Ducks.Text = p.GetDucks(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();             Tons.Text = p.Get100sScored(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
+            Ducks.Text = p.GetDucks(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();             
+            Tons.Text = p.Get100sScored(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
             Fifties.Text = p.Get50sScored(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
             Fours.Text = p.Get4s(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
             Sixes.Text = p.Get6s(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();

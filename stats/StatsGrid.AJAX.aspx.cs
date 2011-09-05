@@ -196,7 +196,7 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
             Player CurrentPlayer = (Player)e.Row.DataItem;
 
             Matches.Text = CurrentPlayer.GetMatchesPlayed(startDate, endDate, MatchTypes, venue).ToString();
-            name.Text = "<a href=Player_Detail.asp?player_id=" + CurrentPlayer.ID + ">" + CurrentPlayer.Name + "</a>";
+            name.Text = "<a href=PlayerDetail.aspx?playerid=" + CurrentPlayer.ID + ">" + CurrentPlayer.Name + "</a>";
             if (Request["Tab"] == "Batting")
             {
                 BatsAt.Text = CurrentPlayer.GetBattingPosition(startDate, endDate, MatchTypes, venue).ToString();
