@@ -1463,7 +1463,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                         pa.AddPayment(dMatchFee, "Match fees", selectedMatch.MatchDate, selectedMatch, PaymentStatus.Confirmed, PaymentType.MatchFee, CreditDebit.Debit);
                         List<MatchType> allMatches = new List<MatchType>();
                         allMatches.Add(MatchType.All);
-                        if (PlayerToBeBilled.GetMatchesPlayed(new DateTime(DateTime.Now.Year, 4, 1), new DateTime(DateTime.Now.Year + 1, 4, 1), allMatches) == SettingsWrapper.GetSettingInt("SubsNumberOfGames", 3))
+                        if (PlayerToBeBilled.GetMatchesPlayed(new DateTime(DateTime.Now.Year, 4, 1), new DateTime(DateTime.Now.Year + 1, 4, 1), allMatches, null) == SettingsWrapper.GetSettingInt("SubsNumberOfGames", 3))
                         {
                             //this is the player's 3rd match of the season - charge subs.
                             pa.AddPayment(SettingsWrapper.GetSettingDouble("SubsAmount", 30.0), "Subs - 3 Matches played", DateTime.Today, null, PaymentStatus.Confirmed, PaymentType.Other, CreditDebit.Debit);

@@ -154,7 +154,7 @@
 {
     padding: 15px;
     height: 350px;
-    width: 480px;
+    width: 450px;
     float: left;
     
     
@@ -1128,7 +1128,7 @@ top:100px;
 
 .PlayerDetailsRightColumn 
 {
-    width: 742px;
+    width: 740px;
 }
 
 .StatsTable 
@@ -1153,4 +1153,20 @@ top:100px;
 
 /* End Players Page */
 
+/* PLayer Details Page */
+
+.ChartLoadingMessage 
+{
+    text-align: center;
+    margin-top: 30px;
+}
+
+.ChartLoadingIcon 
+{
+    margin-left: 330px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+/* End Player Details Page */
 

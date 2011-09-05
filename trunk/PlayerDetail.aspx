@@ -12,42 +12,62 @@
     <CC:Styles runat=server ID=styles />   
     <!--[if IE]><script language="javascript" type="text/javascript" src="Script/excanvas.min.js"></script><![endif]-->
 
-    <script src="Script/jquery.flot.js" type="text/javascript"></script>
-    <script src="Script/jquery.flot.stack.js" type="text/javascript"></script>
+    <script src="Script/jqplot/jquery.jqplot.min.js" type="text/javascript"></script>
+    <script src="Script/jqplot/plugins/jqplot.barRenderer.min.js" type="text/javascript"></script>
+    <script src="Script/jqplot/plugins/jqplot.categoryAxisRenderer.min.js" type="text/javascript"></script>
+    <script src="Script/jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js" type="text/javascript"></script>
+    <script src="Script/jqplot/plugins/jqplot.canvasTextRenderer.min.js" type="text/javascript"></script>
+    <script src="Script/jqplot/plugins/jqplot.enhancedLegendRenderer.min.js" type="text/javascript"></script>
+    <script src="Script/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js" type="text/javascript"></script>
+    <script src="Script/jqplot/plugins/jqplot.pieRenderer.min.js" type="text/javascript"></script>
+
+
+    <link href="/CSS/jqplot/jquery.jqplot.min.css" rel="stylesheet" type="text/css" media="screen" />
+
 
     <script language=javascript>
-    $(function () {
-        $(".StatsTable tr:last").addClass('Bold');
-        $("#FilterButton").button();
-        });
-        
         $(function () {
-    var d1 = [];
-    for (var i = 0; i <= 10; i += 1)
-        d1.push([i, parseInt(Math.random() * 30)]);
- 
-    var d2 = [];
-    for (var i = 0; i <= 10; i += 1)
-        d2.push([i, parseInt(Math.random() * 30)]);
- 
-    var d3 = [];
-    for (var i = 0; i <= 10; i += 1)
-        d3.push([i, parseInt(Math.random() * 30)]);
- 
-    var stack = 0, bars = true, lines = false, steps = false;
-    
-    function plotWithOptions() {
-        $.plot($("#placeholder"), [ d1, d2, d3 ], {
-            series: {
-                "stack": "stack",
-                "bars": { "show": "bars", "barWidth": 0.6 }
-            }
+            $(".StatsTable tr:last").addClass('Bold');
+            $("#FilterButton").button();
+            $("#battingChartSelect").change(onBattingSelectChange);
+            $("#bowlingChartSelect").change(onBowlingSelectChange);
+            LoadBattingGraph(<%=p.ID %>, 'battingTimeline');
+            LoadBowlingGraph(<%=p.ID %>, 'bowlingEconomyTimeline');
         });
-    }
- 
-    plotWithOptions();
-});
+
+        function LoadBattingGraph(playerId, chartName) 
+        {
+            $('#battingChart').html('');
+            $('#battingChartLoading').show();
+            $.post('/ChartRendererAJAX.aspx', { 'chartName': chartName, 'playerid' : playerId }, function(data) {
+              $('#battingChart').html(data);
+              $('#battingChartLoading').hide();
+            });
+        }
         
+        function LoadBowlingGraph(playerId, chartName) 
+        {
+            $('#bowlingChart').html('');
+            $('#bowlingChartLoading').show();
+            $.post('/ChartRendererAJAX.aspx', { 'chartName': chartName, 'playerid' : playerId }, function(data) {
+              $('#bowlingChart').html(data);
+              $('#bowlingChartLoading').hide();
+            });
+        }
+
+        function onBattingSelectChange(){
+            var selected = $("#battingChartSelect option:selected");    
+            if(selected.val() != 0){
+                LoadBattingGraph(<%=p.ID %>, selected.val());
+            }
+        }
+        function onBowlingSelectChange(){
+            var selected = $("#bowlingChartSelect option:selected");    
+            if(selected.val() != 0){
+                LoadBowlingGraph(<%=p.ID %>, selected.val());
+            }
+        }
+
     </script>
 </head>
 <body>
@@ -156,18 +176,26 @@
                         <div class="WidgetTitleBlock ui-widget-header ui-helper-clearfix">
                             Batting Analysis
                             <div class=floatRight>
-                                <select>
-                                    <option>Timeline (Scores)</option>
-                                    <option>Timeline (Modes of Dismissal)</option>
-                                    <option>Positions</option>
-                                    <option>Score Buckets</option>
-                                    <option>Modes of Dismissal</option>
-                                    <option>Scoring Types</option>
+                                <select id="battingChartSelect">
+                                    <option value="battingTimeline">Timeline (Scores)</option>
+                                    <option value="battingTimelineDismissals">Timeline (Modes of Dismissal)</option>
+                                    <option value="positions">Positions</option>
+                                    <option value="averageBySeason">Ave By Season</option>
+                                    <option value="averageByPosition">Ave By Position</option>
+                                    <option value="scoreBuckets">Score Buckets</option>
+                                    <option value="battingDismissals">Modes of Dismissal</option>
+                                    <option value="scoringTypesTimeline">Scoring Types</option>
                                 </select>
                             </div>
                         </div>
-                        Graph Loads Here
-                        <div id=placeholder style="height:200px"></div>
+                        <div id="battingChartLoading">
+                            <div class='ChartLoadingMessage'>Computing stats, please wait...</div>
+                            <div class='ChartLoadingIcon'><img src='Images/loading-icon.gif' /></div>
+
+                        </div>
+                        <div id=battingChart>
+                            <!-- A place holder - gets AJAX filled -->
+                        </div>
                     </div>
                     
                     <%--Bowling Stats--%>
@@ -203,14 +231,23 @@
                         <div class="WidgetTitleBlock ui-widget-header ui-helper-clearfix">
                             Bowling Analysis
                             <div class=floatRight>
-                                <select>
-                                    <option>Timeline (Wickets)</option>
-                                    <option>Timeline (Runs)</option>
-                                    <option>Dismissal Types</option>
+                                <select id = "bowlingChartSelect">
+                                    <option value="bowlingEconomyTimeline">Econ Timeline</option>
+                                    <option value="bowlingAverageTimeline">Average Timeline</option>
+                                    <option value="bowlingSRTimeline">Strike Rate Timeline</option>
+                                    <option value="bowlingDismissalsTimeline">Dismissal Types</option>
+                                    <option value="batsmenDismissed">Batsmen Dismissed</option>
                                 </select>
                             </div>
                         </div>
-                        Graph Loads Here
+                         <div id="bowlingChartLoading">
+                            <div class='ChartLoadingMessage'>Computing stats, please wait...</div>
+                            <div class='ChartLoadingIcon'><img src='Images/loading-icon.gif' /></div>
+
+                        </div>
+                        <div id=bowlingChart>
+                            <!-- A place holder - gets AJAX filled -->
+                        </div>
                     </div>
                     
                 </div>
