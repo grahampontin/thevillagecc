@@ -18,7 +18,8 @@
         <!-- End Head -->
         <div class=clearer></div>
         <div id="mainContent">
-            Coming soon...
+            <a href='Secure/StatsAdmin/Home.aspx'>Stats Admin</a><br/>
+            <A href='Secure/Accounts/AccountAdmin.aspx'>Accounts Admin</A> <br />
         </div>
         <!-- Footer -->
         <CC:Footer ID="Footer1" runat="server" />
