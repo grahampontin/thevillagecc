@@ -20,11 +20,10 @@
         <div id="mainContent">
         <form id="form1" runat="server">
             <div id=Form runat=server visible=true class="standardText">
-            New for the 2009 Season VCC Online has teamed up with <a href="http://www.customsports.co.uk" target=_blank>Custom Sports</a>
-            to bring you a streamlined online club kit ordering service. Simply click on the banner below
-            to be directed to our very own online store where you can order from a range of branded gear.
-            <br /><br />
-                <a href="http://www.customsports.co.uk/v2_clubbrowse.php?cid=777&sid=1" target=_blank><img src="http://www.customsports.co.uk/linkbanners/02.gif" alt="Custom Sports" border="0" /></a>
+            New for the 2012 Season VCC Online has teamed up with <a target=_blank href="http://www.willowsportswearshop.co.uk/products/all/Village+Cricket+Club" target=_blank>
+                Willow Sports</a>
+            to bring you a streamlined online club kit ordering service. Just follow this 
+                <a target=_blank href="http://www.willowsportswearshop.co.uk/products/all/Village+Cricket+Club">link</a>, use the password "VCC" and get ready for 2012 with some spanking new club kit.
                 <br />
             <br />
             <i>&quot;Though a well-turned out team is not necessarily a good one, the best teams are 

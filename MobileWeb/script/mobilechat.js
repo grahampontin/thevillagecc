@@ -28,12 +28,12 @@ $('div[data-role*="page"]').live('pagebeforeshow', function (event, ui) {
 });
 
 function loadChat(startTime, startDate) {
-    $.mobile.pageLoading();
+    $.mobile.showPageLoadingMsg();
     $.post("/ChatAjaxHandler.aspx", { timestamp: startTime, mobileView: true }, function (data) {
         if (data.length > 0) {
             $('.ChatContent').html(data);
             $(".ChatItem").addClass("ui-listview ui-listview-inset ui-corner-all ui-shadow");
-            $.mobile.pageLoading(true);
+            $.mobile.hidePageLoadingMsg();
             var now = new Date();
             var hours = now.getHours();
             var minutes = now.getMinutes();
@@ -72,7 +72,7 @@ function post() {
         $.mobile.changePage("chat.aspx", "slide", true, true);
         return true;
     }
-    $.mobile.pageLoading();
+    $.mobile.showPageLoadingMsg();
     $.post("/ChatAjaxHandler.aspx", { action: 'post', name: name, comment: comment, imageUrl: "" }, 
         function (data) {
             $.mobile.changePage("chat.aspx", "slide", true, true);

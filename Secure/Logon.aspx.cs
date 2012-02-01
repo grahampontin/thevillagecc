@@ -23,7 +23,6 @@ public partial class Secure_Logon : System.Web.UI.Page
         {
             Username.Text = uname;
             subcontent.Visible = false;
-            Button2_Click(null, null);
         }
         if (string.IsNullOrEmpty(url))
         {
@@ -93,11 +92,11 @@ public partial class Secure_Logon : System.Web.UI.Page
             }
             else
             {
-                System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("thevillagecc@gmail.com", u.EmailAddress);
+                System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("admin@thevillagecc.org.uk", u.EmailAddress);
                 mail.Subject = "VCC User Account Password Reminder";        // put subject here	
                 mail.Body = "Your VCC Account is Registered as Follows:<BR><BR> Username: " + u.Name + "<BR><BR>Password: " + u.Password;
                 mail.IsBodyHtml = true;
-                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
+                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("mail.thevillagecc.org.uk");
                 smtp.Send(mail);
                 welcomeMessage.InnerHtml = "Email sent. Check your inbox.";
             }
