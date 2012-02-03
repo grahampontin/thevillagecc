@@ -43,11 +43,11 @@ public partial class Secure_Register : System.Web.UI.Page
                 string password = Helpers.CreateRandomPassword(6);
                 try
                 {
-                    System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("thevillagecc@gmail.com", EmailAddress);
+                    System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("admin@thevillagecc.org.uk", EmailAddress);
                     mail.Subject = "New VCC User Account";        // put subject here	
                     mail.Body = "Your VCC Account is Created as Follows:<BR><BR> Username: " + Username + "<BR><BR>Password: " + password;
                     mail.IsBodyHtml = true;
-                    System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
+                    System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("mail.thevillagecc.org.uk");
                     smtp.Send(mail);
                     CricketClubMiddle.Interactive.User.CreateNew(Username, password, EmailAddress, DisplayName);
                     form1.InnerHtml = "New account created. Check your email for a password.";
