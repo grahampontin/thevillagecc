@@ -520,7 +520,7 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
                             //Player has what seems to be a valid email address
                             try
                             {
-                                System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("thevillagecc@gmail.com", p.EmailAddress);
+                                System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("admin@thevillagecc.org.uk", p.EmailAddress); 
                                 mail.Bcc.Add("thevillagecc@gmail.com");
                                 mail.Subject = "Village CC Payment Request";        // put subject here	
                                 mail.Body = "Hi " + p.Name + ",<BR><BR> According to our records you now owe the club more than £" + amount.ToString() + ", in order for us to be able to meet payments through the season we would appreciate your payment. You can check the details of your account by visiting <a href=\"http://thevillagecc.org.uk/secure/Accounts/MyAccount.aspx\">My Account</a>.<BR><BR>If you do not currently have a VCC Online Account you will be directed to register for one in order to see your account. It is important that you register your account using <b>the email address that this mail was sent to.</b><BR><BR>Once you have transferred funds or sent a cheque, or indeed if you paid cash on the day please <b>complete the Register Payment form</b>, the Treasurer will then be notified and your account balance updated.<BR><BR>If you have any issues with this system, or want to delay payment for any reason please speak to the treasurer or email thevillagecc@gmail.com.<BR><BR>Thanks,<BR>The VCC Committee.";
@@ -532,7 +532,7 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
                                 }
 
                                 mail.IsBodyHtml = true;
-                                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
+                                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("mail.thevillagecc.org.uk");
                                 smtp.Send(mail);
                                 Emailed += p.FormalName + ", ";
                             }

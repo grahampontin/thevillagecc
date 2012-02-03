@@ -1434,11 +1434,11 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                 report.Save();
                 try
                 {
-                    System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("thevillagecc@gmail.com", emailAddress);
+                    System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("admin@thevillagecc.org.uk", emailAddress);
                     mail.Subject = "Match Report Request";        // put subject here	
                     mail.Body = "You are requested to provide a match report for the match against " + selectedMatch.Opposition.Name + " on " + selectedMatch.MatchDate.ToLongDateString() + ". You can do this by visiting http://www.thevillagecc.org.uk/CreateMatchReport.aspx?MatchID="+selectedMatch.ID+ " and using the password: "+ pass;
                     mail.IsBodyHtml = true;
-                    System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
+                    System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("mail.thevillagecc.org.uk");
                     smtp.Send(mail);
                 }
                 catch (Exception ex)
@@ -1476,11 +1476,11 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                                 //Player has what seems to be a valid email address
                                 try
                                 {
-                                    System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("thevillagecc@gmail.com", "thevillagecc@gmail.com");
-                                    mail.Subject = "Village CC Payment Request";        // put subject here	
+                                    System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("admin@thevillagecc.org.uk", "thevillagecc@gmail.com");
+                                    mail.Subject = "Village CC Payment Request - AUTOMATION TEST";        // put subject here	
                                     mail.Body = "Hi " + PlayerToBeBilled.Name + ",<BR><BR> According to our records you now owe the club more than £" + SettingsWrapper.GetSettingString("MaximDebtBeforeEmail", "20") + ", in order for us to be able to meet payments through the season we would appreciate your payment. You can check the details of your account by visiting <a href=\"http://thevillagecc.org.uk/secure/Accounts/MyAccount.aspx\">My Account</a>.<BR><BR>If you do not currently have a VCC Online Account you will be directed to register for one in order to see your account. It is important that you register your account using <b>the email address that this mail was sent to.<\\B><BR><BR>Once you have transferred funds or sent a cheque, or indeed if you paid cash on the day please <b>complete the Register Payment form<\\b>, the Treasurer will then be notified and your account balance updated.<BR><BR>If you have any issues with this system, or want to delay payment for any reason please speak to the treasurer or email thevillagecc@gmail.com.<BR><BR>Thanks,<BR>The VCC Committee.";
                                     mail.IsBodyHtml = true;
-                                    System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
+                                    System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("mail.thevillagecc.org.uk");
                                     smtp.Send(mail);
                                 }
                                 catch (Exception ex)
