@@ -7,47 +7,40 @@
     <h1>Ball By Ball Updates</h1>
 </div><!-- /header -->
 
-<div data-role="content">	
-
-
-<button type="submit" data-theme="a">Dot Ball</button>
-
+<div data-role="content">
+    <label for="flip-a">On strike:</label>
+    <select name="striker" id="flip-a" data-role="slider">
+	    <option value="off">G Pontin</option>
+	    <option value="on">O Morgans</option>
+    </select> 
 <hr />
-
-	<fieldset data-role="controlgroup" data-type="horizontal">
-    	
-         	<input type="radio" name="radio-choice-1" id="radio-choice-1" value="choice-1" checked="checked" />
-         	<label for="radio-choice-1">1</label>
-
-         	<input type="radio" name="radio-choice-1" id="radio-choice-2" value="choice-2"  />
-         	<label for="radio-choice-2">2</label>
-
-         	<input type="radio" name="radio-choice-1" id="radio-choice-3" value="choice-3"  />
-         	<label for="radio-choice-3">3</label>
-            
-         	<input type="radio" name="radio-choice-1" id="radio1" value="choice-4" />
-         	<label for="radio-choice-4">4</label>
-
-         	<input type="radio" name="radio-choice-1" id="radio2" value="choice-5"  />
-         	<label for="radio-choice-5">5</label>
-
-         	<input type="radio" name="radio-choice-1" id="radio3" value="choice-6"  />
-         	<label for="radio-choice-6">6</label>
-    </fieldset>
-
-<div data-role="controlgroup" data-type="horizontal">
-	<button type="submit" data-theme="a">4</button>
-	<button type="submit" data-theme="a">5</button>
-	<button type="submit" data-theme="a">6</button>	   
-</div>
+<div id="overSoFar" style="text-align: center">
+    . 2 . W 4 6 .
+</div>    
+<hr />
+<button type="submit" data-theme="b">Dot Ball</button>
 <hr />
 <fieldset class="ui-grid-a">
-	<div class="ui-block-a"><button type="submit" data-theme="a">Runs</button></div>
-	<div class="ui-block-b"><button type="submit" data-theme="a">Extras</button></div>
+	<input type="range" name="slider-2" id="slider-2" value="1" min="1" max="6" data-theme="b" data-track-theme="b" />
+    <div class="ui-block-a"><button type="submit" data-theme="b">Runs</button></div>
+	<div class="ui-block-b">
+    <select name="select-choice-0" id="select-choice-1" data-native-menu="false" >
+       <option value="extras" data-placeholder="true">Extras</option>
+       <option value="byes">Byes</option>
+       <option value="legbyes">Leg Byes</option>
+       <option value="wides">Wides</option>
+       <option value="noballs">No Balls</option>
+       <option value="penalty">Penalty</option>
+    </select>
+    </div>
 </fieldset>
 <hr />
-<button type="submit" data-theme="a">Wicket!</button>
-
+<button type="submit" data-theme="b">Wicket!</button>
+<hr />
+<fieldset class="ui-grid-a">
+<div class="ui-block-a"><button type="submit" data-theme="b" data-icon="check">End of Over</button></div>
+<div class="ui-block-b"><button type="submit" data-theme="b" data-icon="back">Undo Last</button></div>
+</fieldset>
 </div><!-- /content -->
 
 <div data-role="footer">
