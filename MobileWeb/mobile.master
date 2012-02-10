@@ -24,6 +24,7 @@
         </asp:ContentPlaceHolder>
 </div><!-- /page -->
 <script language="javascript" src="script/jquery.json-2.3.min.js" type="text/javascript"></script>
+<script language="javascript" src="script/jquery.Storage.js" type="text/javascript"></script>
 <script language="javascript" src="script/mobilechat.js" type="text/javascript"></script>
 <script language="javascript" src="script/ballbyball.js" type="text/javascript"></script>
 </body>
