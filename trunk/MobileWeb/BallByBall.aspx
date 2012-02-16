@@ -38,7 +38,7 @@
 <a href=Wicket.aspx id="wicketButton" data-theme="b" data-role="button" data-rel="dialog">Wicket!</a>
 <hr />
 <fieldset class="ui-grid-a">
-<div class="ui-block-a"><button type="submit" data-theme="b" data-icon="check">End of Over</button></div>
+<div class="ui-block-a"><a href=EndOfOver.aspx id="endOfOverButton" data-theme="b" data-role="button" data-icon="check" data-rel="dialog">End of Over</a></div>
 <div class="ui-block-b"><button id="undoButton" data-theme="b" data-icon="back">Undo Last</button></div>
 </fieldset>
 </div><!-- /content -->
