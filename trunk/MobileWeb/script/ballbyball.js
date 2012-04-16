@@ -45,6 +45,15 @@ function bindEndOfOverHandlers() {
     $("#inningsRunRate").html(over.totalScore() + ".00");
     $("#overPlaceHolder").replaceWith(over.toHtml());
     $("#overDetailUl").listview('refresh');
+    $("#submitToServerButton").click(function () {
+        //Post to server and handle response.
+        over = new Over();
+        $('.ui-dialog').dialog('close');
+
+        write();
+
+
+    });
 }
 
 $("#runsButton").click(function () {
