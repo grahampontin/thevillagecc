@@ -24,7 +24,7 @@ public partial class UserControls_BattingScorecard : System.Web.UI.UserControl
         if (Card != null)
         {
 
-            match = new Match(Card.MatchID);
+            match = new Match(Card.MatchId);
             if (Card.ScorecardData.Count >0 && Card.ScorecardData[0].Batsman.ID > 0)
             {
                 Overs.Text = match.OurInningsLength.ToString();

@@ -108,7 +108,7 @@
                 <tr>
                     <th class="style1">2008</th>
                     <td class="style1">Eklavya Gupte</td>
-                    <td></td>
+                    <td>?</td>
                     <td class="style1">Marcus Littlejohns
                         <br />
                         (204 runs @ 20.4)</td>
@@ -116,7 +116,7 @@
                         <br />
                         (23 wkts @ 12.8)</td>
                     <td class="style1">Graham Pontin</td>
-                    <td></td>
+                    <td>?</td>
                 </tr>
                 <tr>
                     <th class="style1">2009</th>
@@ -130,6 +130,24 @@
                         </td>
                     <td class="style1">Graham Pontin</td>
                     <td class="style1">Martin Koder</td>
+                </tr>
+                <tr>
+                    <th class="style1">2011</th>
+                    <td class="style1">Steve Harty</td>
+                    <td class="style1">?</td>
+                    <td class="style1">Steve Harty</td>
+                    <td class="style1">?</td>
+                    <td class="style1">?</td>
+                    <td class="style1">?</td>
+                </tr>
+                <tr>
+                    <th class="style1">2012</th>
+                    <td class="style1">Nick Troja</td>
+                    <td class="style1">?</td>
+                    <td class="style1">Nick Troja</td>
+                    <td class="style1">?</td>
+                    <td class="style1">?</td>
+                    <td class="style1">Ben Hampton</td>
                 </tr>
             </table>
             <br />
