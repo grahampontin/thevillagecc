@@ -29,31 +29,31 @@
 			<tr>
 				<td><b><font face="Arial" size="2">Captain</font></b></td>
 				<td style="border-right-style: solid; border-right-width: 1px">
-				<font face="Arial" size="2">Paul Bowman</font></td>
+				    Eklavya Gupte</td>
 				<td style="border-left-style: solid; border-left-width: 1px"><b>
 				<font face="Arial" size="2">&nbsp; (Miami) Vice Captain</font></b></td>
-				<td>Eklavya Gupte</td>
+				<td>Nick Troja</td>
 			</tr>
 			<tr>
 				<td><b><font face="Arial" size="2">Director of Cricket</font></b></td>
 				<td style="border-right-style: solid; border-right-width: 1px">
-				    Alex Page</td>
+				    Paul Bowman</td>
 				<td><b><font face="Arial" size="2">&nbsp; Secretary</font></b></td>
 				<td>
-				    Alan White</td>
+				    Chris Pitcher</td>
 			</tr>
 			<tr>
 				<td><b>
 				<font face="Arial" size="2">Treasurer</font></b></td>
-				<td><font face="Arial" size="2">Alex Hanson</font></td>
+				<td>Mat Boa</td>
 				<td style="border-left-style: solid; border-left-width: 1px"><b>
 				<font face="Arial" size="2">&nbsp; Fixtures Secretary</font></b></td>
-				<td>Alan White</td>
+				<td>Chris Pitcher</td>
 			</tr>
 			<tr>
 				<td><b><font face="Arial" size="2">Social Secretary</font></b></td>
 				<td style="border-right-style: solid; border-right-width: 1px">
-				    Craig Woodhouse<font face="Arial" size="2"> </font></td>
+				    Oliver Morgans</td>
 				<td style="border-left-style: solid; border-left-width: 1px"><b>
 				<font face="Arial" size="2">&nbsp; Webmaster</font></b></td>
 				<td><font face="Arial" size="2">Graham Pontin</font></td>
@@ -65,9 +65,7 @@
                     And they look like this bunch of fools:
                 </p>
 		        <p align="center">
-		            <img alt="Committee" src="Images/VCC%20Committee%202010.jpg" width=500px /><br>
-		            Back Row(Left to Right): Parp!, PK Bowman, Craig Woodhouse, Alan White, Alex Page<BR>
-		            Front Row: Eklavya Gupte, Graham Pontin
+		            Coming (probably not that) soon...
 		            <BR>
 		            <br>
 		            <a href = ./documents/constitutionSEPT2006.pdf>Constitution</a>
@@ -100,7 +98,10 @@
 		                            <a href = ./documents/AGM2007.pdf>4th AGM - 17/11/2007</a>
                                     <br />
                                     5th AGM - Lost to the mists of time<br />
-                                    6th AGM - 3/12/2009</td>
+                                    6th AGM - 3/12/2009<br />
+                                    7th AGM - 2010 sometime<br />
+                                    8th AGM - 2011 sometime<br />
+                                    9th AGM - 2012 sometime</td>
 				                <td align="center">
 		                            <a href = ./documents/Minutes_18_4_2004.rtf>08/04/2004</a>
 		                            <br>

@@ -1445,7 +1445,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                 catch (Exception ex)
                 {
                     wasError = true;
-                    errorText = "Email was not sent!<BR><BR>" + ex.Message + "<BR><BR>" + ex.StackTrace;
+                    errorText = "Email was not sent - ACCOUNTS HAVE NOT BEEN UPDATED!<BR><BR>" + ex.Message + "<BR><BR>" + ex.StackTrace;
                 }
 
             }
