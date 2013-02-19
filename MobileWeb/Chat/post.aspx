@@ -18,7 +18,10 @@
     </div><!-- /content -->
 
 	<div data-role="footer" >
-		<script language="javascript" src="script/mobilechat.js" type="text/javascript"></script>
+		<script language="javascript" src="~/MobileWeb/script/mobilechat.js" type="text/javascript"></script>
 	</div><!-- /footer -->
+</asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">
+    <script language="javascript" src="~/MobileWeb/script/mobilechat.js" type="text/javascript"></script>
 </asp:Content>
 

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="BallByBall.aspx.cs" Inherits="MobileWeb_BallByBall" MasterPageFile="mobile.master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="BallByBall.aspx.cs" Inherits="MobileWeb_BallByBall" MasterPageFile="~/MobileWeb/mobile.master" %>
 
 <asp:Content runat="server" ID="Head" ContentPlaceHolderID="head"></asp:Content>
 
@@ -47,4 +47,8 @@
     <h1>(c) The Village CC 2011</h1>
 </div><!-- /footer -->
 
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">
+    <script language="javascript" src="~/MobileWeb/script/ballbyball.js" type="text/javascript"></script>
 </asp:Content>

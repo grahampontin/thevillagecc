@@ -1474,57 +1474,57 @@ public partial class stats_MatchWizard : System.Web.UI.Page
 
     private void ProcessMatchFees()
     {
-        if (!wasError)
-        {
-            string sMatchFee = MatchFee.Text;
-            double dMatchFee = 0.00;
-            bool success = double.TryParse(sMatchFee, out dMatchFee);
-            if (success && dMatchFee > 0.00)
-            {
-                var PlayersInThisMatch = Player.GetAll().Where(a => a.PlayedInMatch(selectedMatch.ID)).Where(a=>a.ID>0);
-                foreach (Player PlayerToBeBilled in PlayersInThisMatch)
-                {
-                    PlayerAccount pa = new PlayerAccount(PlayerToBeBilled);
-                    pa.AddPayment(dMatchFee, "Match fees", selectedMatch.MatchDate, selectedMatch, PaymentStatus.Confirmed, PaymentType.MatchFee, CreditDebit.Debit);
-                    List<MatchType> allMatches = new List<MatchType>();
-                    allMatches.Add(MatchType.All);
-                    if (PlayerToBeBilled.GetMatchesPlayed(new DateTime(DateTime.Now.Year, 4, 1), new DateTime(DateTime.Now.Year + 1, 4, 1), allMatches, null) == SettingsWrapper.GetSettingInt("SubsNumberOfGames", 3))
-                    {
+//        if (!wasError)
+//        {
+//            string sMatchFee = MatchFee.Text;
+//            double dMatchFee = 0.00;
+//            bool success = double.TryParse(sMatchFee, out dMatchFee);
+//            if (success && dMatchFee > 0.00)
+//            {
+//                var PlayersInThisMatch = Player.GetAll().Where(a => a.PlayedInMatch(selectedMatch.ID)).Where(a=>a.ID>0);
+//                foreach (Player PlayerToBeBilled in PlayersInThisMatch)
+//                {
+//                    PlayerAccount pa = new PlayerAccount(PlayerToBeBilled);
+//                    pa.AddPayment(dMatchFee, "Match fees", selectedMatch.MatchDate, selectedMatch, PaymentStatus.Confirmed, PaymentType.MatchFee, CreditDebit.Debit);
+//                    List<MatchType> allMatches = new List<MatchType>();
+//                    allMatches.Add(MatchType.All);
+//                    if (PlayerToBeBilled.GetMatchesPlayed(new DateTime(DateTime.Now.Year, 4, 1), new DateTime(DateTime.Now.Year + 1, 4, 1), allMatches, null) == SettingsWrapper.GetSettingInt("SubsNumberOfGames", 3))
+//                    {
                         //this is the player's 3rd match of the season - charge subs.
-                        pa.AddPayment(SettingsWrapper.GetSettingDouble("SubsAmount", 30.0), "Subs - 3 Matches played", DateTime.Today, null, PaymentStatus.Confirmed, PaymentType.Other, CreditDebit.Debit);
-                    }
-                    if (pa.GetBalance() < SettingsWrapper.GetSettingDouble("MaximDebtBeforeEmail", -20.0) )
-                    {
+//                        pa.AddPayment(SettingsWrapper.GetSettingDouble("SubsAmount", 30.0), "Subs - 3 Matches played", DateTime.Today, null, PaymentStatus.Confirmed, PaymentType.Other, CreditDebit.Debit);
+//                    }
+//                    if (pa.GetBalance() < SettingsWrapper.GetSettingDouble("MaximDebtBeforeEmail", -20.0) )
+//                    {
                         //Player owes more than £20
-                        if (PlayerToBeBilled.EmailAddress != null && PlayerToBeBilled.EmailAddress.Contains('@'))
-                        {
+//                        if (PlayerToBeBilled.EmailAddress != null && PlayerToBeBilled.EmailAddress.Contains('@'))
+//                        {
                             //Player has what seems to be a valid email address
-                            try
-                            {
-                                System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("admin@thevillagecc.org.uk", "thevillagecc@gmail.com");
-                                mail.Subject = "Village CC Payment Request - AUTOMATION TEST";        // put subject here	
-                                mail.Body = "Hi " + PlayerToBeBilled.Name + ",<BR><BR> According to our records you now owe the club more than £" + SettingsWrapper.GetSettingString("MaximDebtBeforeEmail", "20").Replace("-", "") +", in order for us to be able to meet payments through the season we would appreciate your payment. You can check the details of your account by visiting <a href=\"http://thevillagecc.org.uk/secure/Accounts/MyAccount.aspx\">My Account</a>.<BR><BR>If you do not currently have a VCC Online Account you will be directed to register for one in order to see your account. It is important that you register your account using <b>the email address that this mail was sent to.<\\B><BR><BR>Once you have transferred funds or sent a cheque, or indeed if you paid cash on the day please <b>complete the Register Payment form<\\b>, the Treasurer will then be notified and your account balance updated.<BR><BR>If you have any issues with this system, or want to delay payment for any reason please speak to the treasurer or email thevillagecc@gmail.com.<BR><BR>Thanks,<BR>The VCC Committee.";
-                                mail.IsBodyHtml = true;
-                                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
-                                smtp.Send(mail);
-                            }
-                            catch (Exception ex)
-                            {
-                                wasError = true;
-                                errorText += "Email to " + PlayerToBeBilled.Name + " ("+PlayerToBeBilled.EmailAddress+")  was not sent!<BR><BR>" + ex.Message + "<BR><BR>" + ex.StackTrace;
-                            }
-                        }
-
-                    }
-                }
-            }
-            else
-            {
-                wasError = true;
-                errorText += "Either the Match Fee amount could not be parsed (not a valid number) or it was <= 0<BR><BR>";
-            }
-                
-        }
+//                            try
+//                            {
+//                                System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("admin@thevillagecc.org.uk", "thevillagecc@gmail.com");
+//                                mail.Subject = "Village CC Payment Request - AUTOMATION TEST";        // put subject here	
+//                                mail.Body = "Hi " + PlayerToBeBilled.Name + ",<BR><BR> According to our records you now owe the club more than £" + SettingsWrapper.GetSettingString("MaximDebtBeforeEmail", "20").Replace("-", "") +", in order for us to be able to meet payments through the season we would appreciate your payment. You can check the details of your account by visiting <a href=\"http://thevillagecc.org.uk/secure/Accounts/MyAccount.aspx\">My Account</a>.<BR><BR>If you do not currently have a VCC Online Account you will be directed to register for one in order to see your account. It is important that you register your account using <b>the email address that this mail was sent to.<\\B><BR><BR>Once you have transferred funds or sent a cheque, or indeed if you paid cash on the day please <b>complete the Register Payment form<\\b>, the Treasurer will then be notified and your account balance updated.<BR><BR>If you have any issues with this system, or want to delay payment for any reason please speak to the treasurer or email thevillagecc@gmail.com.<BR><BR>Thanks,<BR>The VCC Committee.";
+//                                mail.IsBodyHtml = true;
+//                                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("localhost");
+//                                smtp.Send(mail);
+//                            }
+//                            catch (Exception ex)
+//                            {
+//                                wasError = true;
+//                                errorText += "Email to " + PlayerToBeBilled.Name + " ("+PlayerToBeBilled.EmailAddress+")  was not sent!<BR><BR>" + ex.Message + "<BR><BR>" + ex.StackTrace;
+//                            }
+//                        }
+//
+//                    }
+//                }
+//            }
+//            else
+//            {
+//                wasError = true;
+//                errorText += "Either the Match Fee amount could not be parsed (not a valid number) or it was <= 0<BR><BR>";
+//            }
+//                
+//        }
     }
 
     protected void MatchesDropDown_SelectedIndexChanged(object sender, EventArgs e)
