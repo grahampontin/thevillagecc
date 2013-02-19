@@ -8,8 +8,8 @@
 
 <div data-role="content">	
 		<ul data-role="listview" data-inset="true">
-            <li><a href="./chat.aspx">Chat</a></li>
-            <li><a href="./BallByBall.aspx">Ball By Ball</a></li>
+            <li><a href="Chat/chat.aspx">Chat</a></li>
+            <li><a href="BallByBall/BallByBall.aspx">Ball By Ball</a></li>
             <li><a href="/home.aspx?mobileRedirect=false">Main Website</a></li>
         </ul>
 </div><!-- /content -->
