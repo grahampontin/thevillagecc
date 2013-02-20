@@ -80,3 +80,5 @@ textarea.ui-input-text
 {
     display: none;
 }
+
+.ui-slider-switch { width: 100% !important }
