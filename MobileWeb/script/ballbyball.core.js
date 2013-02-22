@@ -1,6 +1,7 @@
 ﻿var matchState;
 //ugh
 var choosingBatsmen = false;
+var recordingWicket = false;
 
 $(document).ready(
 		function () {
@@ -22,6 +23,7 @@ $(document).ready(
 		    $('div').live('pageshow', function (event, ui) {
 		        bindWicketHandlers();
 		        bindEndOfOverHandlers();
+		        bindChooseBatsmenHandlers();
 		    });
 
 		}
@@ -31,14 +33,44 @@ $(document).ready(
 		    if (choosingBatsmen) {
 		        choosingBatsmen = false;
 		        populateBatsmenSelects();
-		        bindChooseBatsmenHandlers();
 		    }
+
+		    if (recordingWicket) {
+		        recordingWicket = false;
+		        populateOutBatsmanSelect();
+		        populateNextManInSelect();
+		    }
+
 		});
+
+		function populateOutBatsmanSelect() {
+		    var outBatsmanSelect = $("#outBatsmanSelect");
+		    outBatsmanSelect.empty();
+		    $.each(matchState.getBattingPlayers(), function (index, player) {
+		        outBatsmanSelect
+                     .append($("<option></option>")
+                     .attr("value", player.PlayerId)
+                     .attr("playerId", player.PlayerId)
+                     .text(player.PlayerName));
+
+		    });
+		    outBatsmanSelect.val(getOnStrikeBatsman());
+		    outBatsmanSelect.selectmenu('refresh', true);
+		}
+
+		function populateNextManInSelect() {
+		    populateSelectWithAllWaitingBatsmen($("#nextManInSelect"), 1);
+		}
 
 		function chooseBatsmen() {
 		    choosingBatsmen = true;
 		    $.mobile.changePage("ChooseBatsmen.aspx", { role: "dialog" });
 
+		}
+        
+        function recordWicket() {
+            recordingWicket = true;
+		    $.mobile.changePage("Wicket.aspx", { role: "dialog" });
 		}
 
 		function populateBatsmenSelects() {
@@ -58,6 +90,7 @@ $(document).ready(
 		}
 
 		function populateSelectWithAllWaitingBatsmen(batsmanSelect, value) {
+		    batsmanSelect.empty();
 		    batsmanSelect
                  .append($("<option></option>")
                  .attr("data-placeholder", true)
@@ -75,65 +108,128 @@ $(document).ready(
 		}
 
 		function bindChooseBatsmenHandlers() {
+		    $("#batsman1select").on("change", updateChooseBatsmenSaveButtoEnabled);
+		    $("#batsman2select").on("change", updateChooseBatsmenSaveButtoEnabled);
+		    updateChooseBatsmenSaveButtoEnabled();
 		    $("#chooseBatsmenSaveButton").click(function () {
                 var playerId1 = $("#batsman1select").find('option:selected').attr("playerId");
                 var playerId2 = $("#batsman2select").find('option:selected').attr("playerId");
-                if (playerId1 == -1 || playerId2 == -1) {
-                    showError("You must select both batsmen");
-                    return;
-                }
-                if (playerId1==playerId2) {
-                    showError("Choose 2 different players");
-                    return;
-                }
-                matchState.SetPlayerBatting(playerId1, 1);
-		        matchState.SetPlayerBatting(playerId2, 2);
+                
+                matchState.setPlayerBatting(playerId1, 1);
+		        matchState.setPlayerBatting(playerId2, 2);
                 write();
                 $('.ui-dialog').dialog('close');
-		    });  
-		}
+		    });
+        }
 
-		function bindWicketHandlers() {
-		    $("#saveWicketButton").click(function () {
-		        var scoreForWicketBall = $("#scoreForWicketBallAmount").val();
-		        var thingForWicketBall = $("#wicketRunsSelect").val();
-		        if (scoreForWicketBall == 0) {
-		            thingForWicketBall = "";
-		        }
+        function updateChooseBatsmenSaveButtoEnabled() {
+            var playerId1 = $("#batsman1select").find('option:selected').attr("playerId");
+            var playerId2 = $("#batsman2select").find('option:selected').attr("playerId");
+            if (playerId1 == -1 || playerId2 == -1 || playerId1 == playerId2) {
+                $("#chooseBatsmenSaveButton").button('disable');
+            } else {
+                $("#chooseBatsmenSaveButton").button('enable');
+            }
+            $("#chooseBatsmenSaveButton").button('refresh');
+        }
 
-		        addBall(new Ball(scoreForWicketBall, thingForWicketBall, getBatsman(), $("#bowler").val(), new Wicket($("#outBatsmanSelect").val(),
-                                            $("#modeOfDismissal").val(),
-                                            $("#scoreSelect").val(),
-                                            $("#bowler").val(),
+        function getOutBatsman() {
+            return $("#outBatsmanSelect option:selected").attr("playerId");
+        }
+
+        function getNextManIn() {
+            return $("#nextManInSelect option:selected").attr("playerId");
+        }
+
+        function bindWicketHandlers() {
+            
+            $("#saveWicketButton").unbind("click", handleSaveWicket);
+            $("#saveWicketButton").bind("click", handleSaveWicket);
+            
+            $("#modeOfDismissal").unbind("change", handleModeOfDismissalChanged);
+            $("#modeOfDismissal").bind("change", handleModeOfDismissalChanged);
+            handleModeOfDismissalChanged();
+            
+            $("#modeOfDismissal").unbind("change", updateSaveWicketButtonIsEnabled);
+            $("#modeOfDismissal").bind("change", updateSaveWicketButtonIsEnabled);
+            $("#nextManInSelect").unbind("change", updateSaveWicketButtonIsEnabled);
+            $("#nextManInSelect").bind("change", updateSaveWicketButtonIsEnabled);
+            updateSaveWicketButtonIsEnabled();
+
+        }
+
+        function updateSaveWicketButtonIsEnabled() {
+            //validateWicketInputs
+            if (getNextManIn() == -1 || getModeOfDismissal() == " ") {
+                $("#saveWicketButton").button('disable');
+            } else {
+                $("#saveWicketButton").button('enable');
+            }
+            $("#saveWicketButton").button('refresh');
+        }
+
+        function handleModeOfDismissalChanged() {
+            if (getModeOfDismissal() == "ro" || getModeOfDismissal() == "st") {
+                $("#runsForThisBallContainer").show('fast');
+            } else {
+                $("#runsForThisBallContainer").hide('fast');
+                $("#scoreForWicketBallAmount").val(0);
+            }
+        }
+
+        function getModeOfDismissal() {
+            return $("#modeOfDismissal").val();
+        }
+
+		function handleSaveWicket() {
+		    
+		    var scoreForWicketBall = $("#scoreForWicketBallAmount").val();
+		    var thingForWicketBall = $("#wicketRunsSelect").val();
+		    if (scoreForWicketBall == 0) {
+		        thingForWicketBall = "";
+		    }
+
+		    addBall(new Ball(scoreForWicketBall, thingForWicketBall, getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler(), new Wicket(getOutBatsman(),
+                                            getModeOfDismissal(),
+                                            getBowler(),
                                             $("#fielder").val(),
                                             $("#wicketDescription").val())
                                             ));
-		        history.back();
-		        return false;
-		    });
+
+		    matchState.setPlayerOut(getOutBatsman());
+		    matchState.setPlayerBatting(getNextManIn(), matchState.getNextBattingPosition());
+		    write();
+		    $('.ui-dialog').dialog('close');
 		}
 
 		function bindEndOfOverHandlers() {
-		    $("#overTotalScore").html(formatScore(matchState.Over.totalScore()));
+		    $("#overTotalScore").html(formatScore(matchState.Over.totalScore() * 1 + matchState.Score*1));
 		    $("#inningsWickets").html(matchState.Over.wickets());
 		    $("#inningsScore").html(matchState.Over.totalScore());
 		    $("#inningsRunRate").html(matchState.Over.totalScore() + ".00");
-		    $("#overPlaceHolder").replaceWith(matchState.Over.toHtml());
+		    $("#overPlaceHolder").replaceWith(matchState.Over.toHtml(matchState.LastCompletedOver));
 		    $("#overDetailUl").listview('refresh');
 		    $("#submitToServerButton").click(function () {
+		        var matchId = $.url().param('matchId');
+		        var postData = { 'command': "submitOver", 'matchId': matchId , 'payload' : matchState};
 		        //Post to server and handle response.
-		        matchState.Over = new Over();
+		        $.post('./CommandHandler.ashx', JSON.stringify(postData), function (data) {
+		            //success
+		            matchState = matchStateFromData(data);
+		            write();
+		        }, 'json')
+                 .fail(function (data) {
+                     showError(data.responseText);
+                 });
 		        $('.ui-dialog').dialog('close');
 
 		        write();
-
-
 		    });
 		}
 
 		$("#runsButton").click(function () {
 		    var amount = $("#amountSelect").val();
-		    addBall(new Ball(amount, "", getBatsman(), getBowler()));
+		    addBall(new Ball(amount, "", getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
 		});
 
         
@@ -142,18 +238,22 @@ $("#extrasSelect").change(function () {
     var amount = $("#amountSelect").val();
     var extra = $(this).val();
 
-    addBall(new Ball(amount, extra, getBatsman(), getBowler()));
+    addBall(new Ball(amount, extra, getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
     $(this).val("extras")
 });
 
 $("#dotBallButton").click(function () {
-    addBall(new Ball(0, "", getBatsman(), getBowler()));
+    addBall(new Ball(0, "", getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
 });
 
 $("#undoButton").click(function () {
     var undone = matchState.Over.balls.pop();
     write();
     evaluateShouldSwitchStrikerAfter(undone);
+});
+
+$("#wicketButton").click(function () {
+    recordWicket();
 });
 
 
@@ -167,9 +267,12 @@ function formatScore(score) {
     
 }
         
-function getBatsman() {
-    return $('#strikerSelect :selected').text()
-;
+function getOnStrikeBatsman() {
+    return $('#strikerSelect').children().not(':selected').attr("playerId");
+}
+
+function getOnStrikeBatsmanName() {
+    return $('#strikerSelect').children().not(':selected').text();
 }
 
 function getBowler() {
@@ -205,6 +308,16 @@ function evaluateShouldSwitchStrikerAfter(ball) {
 
 function write() {
     $("#overSoFar").html(matchState.Over.toPrettyString());
+
+    if (matchState.getBattingPlayers().length == 2) {
+        var batsman1 = matchState.getBattingPlayers()[0];
+        var batsman2 = matchState.getBattingPlayers()[1];
+        $("#batsman1").text(batsman1.PlayerName).attr("playerId", batsman1.PlayerId);
+        $(".ui-slider-label-a").text(batsman1.PlayerName);
+        $("#batsman2").text(batsman2.PlayerName).attr("playerId", batsman2.PlayerId);
+        $(".ui-slider-label-b").text(batsman2.PlayerName);
+        $("#strikerSelect").slider('refresh');
+    }
 }
 
 

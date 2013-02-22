@@ -1,16 +1,18 @@
-﻿function Ball(number, thing, batsman, bowler) {
+﻿function Ball(number, thing, batsman, batsmanName, bowler) {
     this.amount = number;
     this.thing = thing;
     this.batsman = batsman;
+    this.batsmanName = batsmanName;
     this.bowler = bowler;
     this.wicket = null;
     this.toBallString = toBallString;
 }
 
-function Ball(number, thing, batsman, bowler, wicket) {
+function Ball(number, thing, batsman, batsmanName, bowler, wicket) {
     this.amount = number;
     this.thing = thing;
     this.batsman = batsman;
+    this.batsmanName = batsmanName;
     this.bowler = bowler;
     this.wicket = wicket;
     this.toBallString = toBallString;
