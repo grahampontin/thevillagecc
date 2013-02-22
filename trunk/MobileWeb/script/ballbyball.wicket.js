@@ -1,7 +1,6 @@
-﻿function Wicket(player, modeOfDismissal, score, bowler, fielder, description) {
+﻿function Wicket(player, modeOfDismissal, bowler, fielder, description) {
     this.player = player;
-    this.modeOfDismissal = modeOfDismissal;
-    this.score = score;
+    this.modeOfDismissal = modeOfDismissal
     this.bowler = bowler;
     this.fielder = fielder;
     this.description = description;

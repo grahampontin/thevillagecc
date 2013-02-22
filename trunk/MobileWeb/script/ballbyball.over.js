@@ -4,6 +4,7 @@
     this.totalScore = totalScore;
     this.wickets = wickets;
     this.toHtml = toHtml;
+    this.ballNumber = ballNumber;
 }
 
 function toPrettyString() {
@@ -13,6 +14,17 @@ function toPrettyString() {
         output += this.balls[i].toBallString() + " ";
     }
     return output;
+}
+
+function ballNumber(ballIndex) {
+    var out = ballIndex;
+    for (q = 0; q < ballIndex; q++) {
+        var ball = this.balls[q];
+        if (ball.thing == "nb") {
+            out--;
+        }
+    }
+    return out+1;
 }
 
 function totalScore() {
@@ -35,12 +47,12 @@ function wickets() {
     return wkts;
 }
 
-function toHtml() {
+function toHtml(overNumber) {
     var html = "";
     for (i = 0; i < this.balls.length; i++) {
         var ball = this.balls[i];
         html += "<li>";
-        html += ball.bowler + " to " + ball.batsman + ", ";
+        html += overNumber + "."+this.ballNumber(i) + " " + ball.bowler + " to " + ball.batsmanName + ", ";
         switch (ball.thing) {
             case "":
                 if (ball.wicket != null) {

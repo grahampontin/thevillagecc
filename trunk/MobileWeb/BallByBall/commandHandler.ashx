@@ -25,7 +25,7 @@ public class CommandHandler : IHttpHandler
             switch (genericBallByBallCommand.command)
             {
                 case "startMatch":
-                    match.StartBallByBallCoverage(GetPlayerIds(genericBallByBallCommand.data));
+                    match.StartBallByBallCoverage(GetPlayerIds(genericBallByBallCommand.payload));
                     break;
                 case "matchState":
                     MatchState state = match.GetCurrentBallByBallState();
@@ -34,8 +34,12 @@ public class CommandHandler : IHttpHandler
                     context.Response.StatusCode = 200;
                     context.Response.Write(json);
                     break;
+                case "submitOver":
+                    var stateFromClient = javaScriptSerializer.Deserialize<MatchState>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                    match.UpdateCurrentBallByBallState(stateFromClient);
+                    break;    
                 default:
-                    context.Response.ContentType = "text/json";
+                    context.Response.ContentType = "text/plain";
                     context.Response.Write("Command: " + genericBallByBallCommand.command + " is not supported");
                     context.Response.StatusCode = 400;
                     break;
@@ -78,6 +82,6 @@ public class CommandHandler : IHttpHandler
 public class GenericBallByBallCommand
 {
     public string command;
-    public object data;
+    public object payload;
     public int matchId;
 }

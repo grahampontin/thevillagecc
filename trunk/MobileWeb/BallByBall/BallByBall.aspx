@@ -20,9 +20,9 @@
     <hr />
     <button id="dotBallButton" data-theme="b">Dot Ball</button>
     <hr />
+    <input type="range" name="slider-2" id="amountSelect" value="1" min="1" max="6" data-theme="b" data-track-theme="b" />
     <fieldset class="ui-grid-a">
-	    <input type="range" name="slider-2" id="amountSelect" value="1" min="1" max="6" data-theme="b" data-track-theme="b" />
-        <div class="ui-block-a"><button id="runsButton" data-theme="b">Runs</button></div>
+	    <div class="ui-block-a"><button id="runsButton" data-theme="b">Runs</button></div>
 	    <div class="ui-block-b">
         <select name="select-choice-0" id="extrasSelect" data-native-menu="false" >
            <option value="extras" data-placeholder="true">Extras</option>
@@ -35,7 +35,7 @@
         </div>
     </fieldset>
     <hr />
-    <a href=Wicket.aspx id="wicketButton" data-theme="b" data-role="button" data-rel="dialog">Wicket!</a>
+    <button id="wicketButton" data-theme="b" data-icon="back">Wicket!</button>
     <hr />
     <fieldset class="ui-grid-a">
     <div class="ui-block-a"><a href=EndOfOver.aspx id="endOfOverButton" data-theme="b" data-role="button" data-icon="check" data-rel="dialog">End of Over</a></div>

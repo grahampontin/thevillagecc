@@ -28,6 +28,7 @@
            <option value="hw">Hit Wicket</option>
            <option value="htb">Handled the Ball</option>
         </select>
+        <div id="runsForThisBallContainer">
         <hr />
         <label for="select-choice-3">Score for this ball:</label>
         <fieldset class="ui-grid-a">
@@ -43,19 +44,31 @@
                 </select>
             </div>
         </fieldset>
-        <hr />
-        <label for="bowler">Bowler:</label>
-        <input type="text" name="bowler" id="bowler" />
+        </div>
         <hr />
         <label for="fielder">Fielder:</label>
         <input type="text" name="fielder" id="fielder" />
-        <hr />
+        <%--<hr />
             <label for="slider-3">Score:</label>
-            <input type="range" name="slider-3" id="scoreSelect" value="30" min="0" max="150" data-theme="b" data-track-theme="b" />
+            <input type="range" name="slider-3" id="scoreSelect" value="30" min="0" max="150" data-theme="b" data-track-theme="b" />--%>
         <hr />
         <textarea id="wicketDescription"></textarea>
+        <hr />
+        <label for="select-choice-2">Next in:</label>
+        <select name="select-choice-2" id="nextManInSelect" data-native-menu="false" >
+        </select>
+        <hr />
         <button id="saveWicketButton">Done</button>
         <hr />
     </div>
+
+    <div data-role="popup" id="errorMessage">
+		<div data-role="header">
+			<h1>Error</h1>
+		</div>
+		<div data-role="content" id="errorMessageContent">
+			Place holder
+		</div>
+	</div>
 </asp:Content>
 
