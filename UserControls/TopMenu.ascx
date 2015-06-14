@@ -6,7 +6,7 @@
 	            <li><a runat=server href="~/Awards.aspx" title=" " id="Awards">Info & Awards</a></li>
 	            <li><a runat=server href="~/Fixtures.aspx" title="Fixtures" id="Fixtures">Fixtures</a></li>
 	            <li><a runat=server href="~/Results.aspx" title=" " id="Results">Results</a></li>
-	            <li><a runat=server href="~/Multimedia.aspx" title="Mostly Villagers being idiots on Youtube" id="Multimedia">Multimedia</a></li>
+	            <li><a runat=server href="~/Tours.aspx" title="Cisk fueled fun" id="Tours">Tours</a></li>
 	            <li><a runat=server href="~/Committee.aspx" title="Committee & Official Docs" id="Committee">Committee</a></li>
 	            <li><a runat=server id="Players" href="~/Players.aspx" title="Player Stats">Squad</a></li>
                 <li><a id="Stats" runat=server href="~/Stats.aspx" title=" ">Stats</a></li>

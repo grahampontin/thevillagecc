@@ -7,5 +7,5 @@
 
 
 <div id=footer>
-    (c) Graham Pontin / The Village CC 2008 - 2011. All Rights reserved. Best viewed at 1024 x 768 and above. 
+    (c) Graham Pontin / The Village CC 2008 - 2015. All Rights reserved. Best viewed at 1024 x 768 and above. 
 </div>
