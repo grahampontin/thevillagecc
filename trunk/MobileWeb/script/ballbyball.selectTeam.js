@@ -10,7 +10,7 @@
     } else {
         var playerIds = jQuery.makeArray(selectedPlayers);
         var matchId = $.url().param('matchId');
-        var postData = { 'command': "startMatch", 'matchId': matchId, 'data': playerIds };
+        var postData = { 'command': "startMatch", 'matchId': matchId, 'payload': playerIds };
         $.post('./CommandHandler.ashx', JSON.stringify(postData), function (data) {
             //success
             $.mobile.changePage("ballbyball.aspx?matchId=" + matchId, { transition: "fade" });

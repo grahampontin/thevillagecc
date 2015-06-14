@@ -28,10 +28,10 @@ public partial class SQLAdmin : System.Web.UI.Page
         string SQL = TextBox1.Text;
         if (password.Text == "jsx833n")
         {
-            Db myDB = new Db();
+            DB myDB = new DB();
             try
             {
-                SQlResults.DataSource = myDB.ExecuteSqlAndReturnAllRows(SQL);
+                SQlResults.DataSource = myDB.ExecuteSQLAndReturnAllRows(SQL);
                 SQlResults.DataBind();
             }
             catch (Exception ex)
