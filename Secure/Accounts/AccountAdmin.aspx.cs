@@ -536,7 +536,7 @@ public partial class Secure_Accounts_AccountAdmin : CricketClubMiddle.Web.Secure
                                 smtp.Send(mail);
                                 Emailed += p.FormalName + ", ";
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
                                 FailedToEmail += p.FormalName + ", ";
                             }
