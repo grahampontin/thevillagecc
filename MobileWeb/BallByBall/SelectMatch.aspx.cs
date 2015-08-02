@@ -10,7 +10,10 @@ public partial class MobileWeb_BallByBall_SelectMatch : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        MatchesListView.DataSource = Match.GetResults();
-        MatchesListView.DataBind();
+        InProgressMatchesListView.DataSource = Match.GetInProgressGames();
+        InProgressMatchesListView.DataBind();
+
+        FutureMatchesListView.DataSource = Match.GetFixtures();
+        FutureMatchesListView.DataBind();
     }
 }

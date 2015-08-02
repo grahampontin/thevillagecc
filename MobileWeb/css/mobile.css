@@ -1,9 +1,4 @@
-﻿body 
-{
-    font-size: 0.8em;
-}
-
-.ButtonRow 
+﻿.ButtonRow 
 {
     padding-bottom: 5px;
 }
@@ -81,4 +76,36 @@ textarea.ui-input-text
     display: none;
 }
 
-.ui-slider-switch { width: 100% !important }
+#full-width-radio {
+    font-size: 84%;
+}
+#full-width-radio .ui-controlgroup-label{
+    float: none;
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+#full-width-radio .ui-controlgroup-label legend{
+    font-weight: bold;
+    font-size: 130%;   
+    width: 100%;
+    margin-bottom: 8px;
+    text-align: center;
+}
+#full-width-radio .ui-controlgroup-controls {
+    float: none; 
+    display: block;
+    width: 100%;
+}
+#full-width-radio .ui-radio{
+    width: 50%;
+}
+
+#full-width-radio .ui-radio-off {
+    color: #a9a9a9;
+}
+
+#full-width-radio .ui-radio label{
+    text-align: center;
+    white-space: nowrap;
+}

@@ -19,24 +19,29 @@ public class CommandHandler : IHttpHandler
         var stringReader = new StreamReader(context.Request.InputStream);
         string postData = stringReader.ReadToEnd();
         var genericBallByBallCommand = javaScriptSerializer.Deserialize<GenericBallByBallCommand>(postData);
+        context.Response.ContentType = "text/json";
+        context.Response.StatusCode = 200;
+        
         try
         {
             var match = new Match(genericBallByBallCommand.matchId);
             switch (genericBallByBallCommand.command)
             {
                 case "startMatch":
+                    if (match.GetIsBallByBallInProgress())
+                    {
+                        throw new InvalidOperationException("Coverage for match vs " + match.Opposition.Name + " has already been started");
+                    }
                     match.StartBallByBallCoverage(GetPlayerIds(genericBallByBallCommand.payload));
+                    context.Response.Write("{}");
                     break;
                 case "matchState":
-                    MatchState state = match.GetCurrentBallByBallState();
-                    string json = javaScriptSerializer.Serialize(state);
-                    context.Response.ContentType = "text/json";
-                    context.Response.StatusCode = 200;
-                    context.Response.Write(json);
+                    ReturnCurrentMatchState(context, match);
                     break;
                 case "submitOver":
                     var stateFromClient = javaScriptSerializer.Deserialize<MatchState>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
                     match.UpdateCurrentBallByBallState(stateFromClient);
+                    ReturnCurrentMatchState(context, match);
                     break;    
                 default:
                     context.Response.ContentType = "text/plain";
@@ -55,6 +60,15 @@ public class CommandHandler : IHttpHandler
         
 
 
+    }
+
+    private void ReturnCurrentMatchState(HttpContext context, Match match)
+    {
+        MatchState state = match.GetCurrentBallByBallState();
+        string json = javaScriptSerializer.Serialize(state);
+        context.Response.ContentType = "text/json";
+        context.Response.StatusCode = 200;
+        context.Response.Write(json);
     }
 
     private static void ReportError(HttpContext context, Exception ex, int statusCode)

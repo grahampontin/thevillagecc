@@ -5,6 +5,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="page_content" Runat="Server">
     <div data-role="header">
+        <a href="BallByBall.aspx" data-icon="back" data-mini="true">Cancel</a>
         <h1>End of Over</h1>
     </div><!-- /header -->
     <div data-role="content">
@@ -17,10 +18,14 @@
 	</ul>
 
 
-     
-    
-            <button id="submitToServerButton">Submit to Server</button>
+    <textarea id="overCommentery" placeholder="Fancy adding a spot of chit chat? Do it here."></textarea>
+    <label><input type="checkbox" id="tweetThis" />Tweet this?</label>
+    <button id="submitToServerButton">Submit to Server</button>
         <hr />
     </div>
 </asp:Content>
 
+
+<asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">
+    <script language="javascript" src="../script/ballbyball.endofover.js" type="text/javascript"></script>
+</asp:Content>

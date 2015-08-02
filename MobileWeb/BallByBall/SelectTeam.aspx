@@ -13,14 +13,14 @@
         <asp:ListView ID="PlayersListView" runat="server">
                 <LayoutTemplate>
                  <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup">
+                    <fieldset data-role="controlgroup" data-filter="true">
 	                    <div id="itemPlaceholder" runat=server>Something went wrong</div>
                     </fieldset>
                 </div>
                 </LayoutTemplate>
                 <ItemTemplate runat=server>
                     <input type="checkbox" name="checkbox-<%#Eval("ID") %>" id="checkbox-<%#Eval("ID") %>" class="custom" playerId="<%#Eval("ID") %>" />
-	                <label for="checkbox-<%#Eval("ID") %>"><%#Eval("FormalName") %></label>
+	                <label for="checkbox-<%#Eval("ID") %>"><%#Eval("FirstName") %> <%#Eval("Surname") %> (<%#Eval("NumberOfMatchesPlayedThisSeason") %>)</label>
                 </ItemTemplate>       
         </asp:ListView>
 

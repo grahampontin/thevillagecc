@@ -32,7 +32,7 @@
         <hr />
         <label for="select-choice-3">Score for this ball:</label>
         <fieldset class="ui-grid-a">
-            <div class="ui-block-a"><input type="number" id="scoreForWicketBallAmount" value=0 /></div>
+            <div class="ui-block-a"><input type="range" name="slider-2" id="scoreForWicketBallAmount" value="1" min="1" max="6" data-theme="b" data-track-theme="b" /></div>
 	        <div class="ui-block-b">
                 <select name="select-choice-0" id="wicketRunsSelect" data-native-menu="false" >
                    <option value=" ">Runs</option>
@@ -48,15 +48,14 @@
         <hr />
         <label for="fielder">Fielder:</label>
         <input type="text" name="fielder" id="fielder" />
-        <%--<hr />
-            <label for="slider-3">Score:</label>
-            <input type="range" name="slider-3" id="scoreSelect" value="30" min="0" max="150" data-theme="b" data-track-theme="b" />--%>
         <hr />
-        <textarea id="wicketDescription"></textarea>
+        <textarea id="wicketDescription" placeholder="What the hell happened?"></textarea>
         <hr />
         <label for="select-choice-2">Next in:</label>
         <select name="select-choice-2" id="nextManInSelect" data-native-menu="false" >
         </select>
+        <hr />
+        <label><input type="checkbox" id="tweetThis" checked />Tweet this?</label>
         <hr />
         <button id="saveWicketButton">Done</button>
         <hr />
@@ -70,5 +69,9 @@
 			Place holder
 		</div>
 	</div>
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">
+    <script language="javascript" src="../script/ballbyball.wicket.page.js" type="text/javascript"></script>
 </asp:Content>
 

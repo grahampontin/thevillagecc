@@ -56,19 +56,20 @@ function toHtml(overNumber) {
         switch (ball.thing) {
             case "":
                 if (ball.wicket != null) {
-                    html += "<strong>OUT!</strong>, " + ball.wicket.description;
+                    html += "<strong>OUT!</strong>, " + ball.wicket.description + ", " + ball.wicket.playerName
+                    ;
                 } else {
                     switch (ball.amount) {
                         case 0:
                             html += "no run";
                             break;
-                        case "4":
+                        case 4:
                             html += "<strong>FOUR</strong>";
                             break;
-                        case "6":
+                        case 6:
                             html += "<strong>SIX!</strong>";
                             break;
-                        case "1":
+                        case 1:
                             html += "1 run";
                             break;
                         default:

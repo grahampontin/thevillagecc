@@ -9,15 +9,10 @@
 <div data-role="content">	
 		<ul data-role="listview" data-inset="true">
             <li><a href="Chat/chat.aspx">Chat</a></li>
-            <li><a href="BallByBall/BallByBall.aspx">Ball By Ball</a></li>
+            <li><a href="BallByBall/SelectMatch.aspx">Ball By Ball</a></li>
             <li><a href="/home.aspx?mobileRedirect=false">Main Website</a></li>
         </ul>
 </div><!-- /content -->
-
-<div data-role="footer" class="ui-bar ui-header">
-    <h1>(c) The Village CC 2011</h1>
-</div><!-- /footer -->
-
 
 
 </asp:Content>
