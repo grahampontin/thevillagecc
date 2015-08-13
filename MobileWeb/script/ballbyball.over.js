@@ -1,6 +1,7 @@
 ﻿function Over() {
     this.balls = new Array();
     this.toPrettyString = toPrettyString;
+    this.scoreForPlayer = scoreForPlayer;
     this.totalScore = totalScore;
     this.wickets = wickets;
     this.toHtml = toHtml;
@@ -14,6 +15,24 @@ function toPrettyString() {
         output += this.balls[i].toBallString() + " ";
     }
     return output;
+}
+
+function scoreForPlayer(playerId) {
+    var score = 0;
+    for (i = 0; i < this.balls.length; i++) {
+        var ball = this.balls[i];
+        if (ball.batsman == playerId) {
+            switch(ball.thing) {
+                case "":
+                    score += ball.amount;
+                    break;
+                case "nb":
+                    score += ball.amount - 1;
+                    break;
+            }
+        }
+    }
+    return score;
 }
 
 function ballNumber(ballIndex) {

@@ -13,7 +13,7 @@
         $.post('./CommandHandler.ashx', JSON.stringify(postData), function (data) {
             //success
             matchState = matchStateFromData(data);
-            $.mobile.changePage("BallByBall.aspx", "slide", true, true);
+            $("body").pagecontainer("change", "BallByBall.aspx", { transition: "fade" });
 
             write();
         }, 'json')

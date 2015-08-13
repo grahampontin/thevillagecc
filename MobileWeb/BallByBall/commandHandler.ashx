@@ -7,12 +7,11 @@ using System.Web;
 using System.Web.Script.Serialization;
 using CricketClubDomain;
 using CricketClubMiddle;
+using CricketClubMiddle.Stats;
 
 public class CommandHandler : IHttpHandler
 {
     private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
-
-    #region IHttpHandler Members
 
     public void ProcessRequest(HttpContext context)
     {
@@ -64,8 +63,8 @@ public class CommandHandler : IHttpHandler
 
     private void ReturnCurrentMatchState(HttpContext context, Match match)
     {
-        MatchState state = match.GetCurrentBallByBallState();
-        string json = javaScriptSerializer.Serialize(state);
+        BallByBallMatch ballByBallMatch = match.GetCurrentBallByBallState();
+        string json = javaScriptSerializer.Serialize(ballByBallMatch.GetMatchState());
         context.Response.ContentType = "text/json";
         context.Response.StatusCode = 200;
         context.Response.Write(json);
@@ -89,8 +88,6 @@ public class CommandHandler : IHttpHandler
     {
         get { return false; }
     }
-
-    #endregion
 }
 
 public class GenericBallByBallCommand

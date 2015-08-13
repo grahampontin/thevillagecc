@@ -1,4 +1,4 @@
-﻿var matchState;
+var matchState;
 
 function initialiseBallByBallCore() {
     if (matchState == null) {
@@ -18,6 +18,7 @@ function initialiseBallByBallCore() {
                 if (matchState.getBowlers().length < 2) {
                     chooseNewBowler();
                 }
+                evaluatePlayerScores();
                 write();
             }, 'json')
             .fail(function(data) {
@@ -27,6 +28,7 @@ function initialiseBallByBallCore() {
         if (matchState.getBowlers().length < 2) {
             chooseNewBowler();
         }
+        evaluatePlayerScores();
         write();
     }
 
@@ -140,7 +142,7 @@ function updateChooseBatsmenSaveButtoEnabled() {
 		
 
 $("#runsButton").click(function () {
-	var amount = $("#amountSelect").val();
+	var amount = parseInt($("#amountSelect").val());
 	addBall(new Ball(amount, "", getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
 });
 
@@ -176,6 +178,7 @@ $("#sixButton").click(function () {
 
 $("#undoButton").click(function () {
     var undone = matchState.Over.balls.pop();
+    evaluatePlayerScores();
     write();
     evaluateShouldSwitchStrikerAfter(undone);
 });
@@ -212,8 +215,18 @@ function getBowler() {
 
 function addBall(aball) {
     matchState.Over.balls.push(aball);
+    evaluatePlayerScores();
     write();
     evaluateShouldSwitchStrikerAfter(aball);
+    
+}
+
+function evaluatePlayerScores() {
+    var batsman1 = matchState.getBattingPlayers()[0];
+    var batsman2 = matchState.getBattingPlayers()[1];
+
+    batsman1.Score = batsman1.CurrentScore + matchState.Over.scoreForPlayer(batsman1.PlayerId);
+    batsman2.Score = batsman2.CurrentScore + matchState.Over.scoreForPlayer(batsman2.PlayerId);
 }
 
 function evaluateShouldSwitchStrikerAfter(ball) {
@@ -249,9 +262,9 @@ function write() {
     if (matchState.getBattingPlayers().length == 2) {
         var batsman1 = matchState.getBattingPlayers()[0];
         var batsman2 = matchState.getBattingPlayers()[1];
-        $("#batsman1Label").text(batsman1.PlayerName);
+        $("#batsman1Label").text(batsman1.PlayerName + " ("+batsman1.Score+")");
         $("#batsman1").attr("playerId", batsman1.PlayerId).attr("playerName", batsman1.PlayerName);
-        $("#batsman2Label").text(batsman2.PlayerName);
+        $("#batsman2Label").text(batsman2.PlayerName + " (" + batsman2.Score + ")");
         $("#batsman2").attr("playerId", batsman2.PlayerId).attr("playerName", batsman2.PlayerName);
     }
 }
