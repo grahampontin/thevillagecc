@@ -7,8 +7,13 @@ function getOutBatsmanName() {
 }
 
 function getOutBatsmanScore() {
-    return 0;
+    return getCurrentScoreForPlayer(getOutBatsman());
 }
+
+function getCurrentScoreForPlayer(playerId) {
+    return matchState.getPlayer(playerId).Score;
+}
+
 
 function getNextManIn() {
     return $("#nextManInSelect option:selected").attr("playerId");
@@ -21,7 +26,7 @@ function initialiseWicketPage() {
     handleModeOfDismissalChanged();
 
     $("#saveWicketButton").on("buttoncreate", function (event, ui) {
-        updateSaveWicketButtonIsEnabled()
+        updateSaveWicketButtonIsEnabled();
     });
 
     populateOutBatsmanSelect();

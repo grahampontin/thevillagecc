@@ -8,6 +8,10 @@
     font-size: 1.7em !important;
 }
 
+.ui-title {
+    margin: 0 20% !important; 
+}
+
 .ChatContent 
 {
     margin: 0px;

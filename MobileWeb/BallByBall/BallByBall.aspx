@@ -94,6 +94,17 @@
         </div>
     </div>
 
+    <div data-role="popup" id="wagonWheel" data-dismissible="false" data-overlay-theme="b">
+        <div data-role="header">
+            <h1>Wagon Wheel</h1>
+        </div>
+        <div data-role="content">
+            <div id="wagonWheelCanvas">
+
+            </div>
+        </div>    
+    </div>
+
 </div><!-- /content -->
 
 

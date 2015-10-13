@@ -75,7 +75,7 @@ function toHtml(overNumber) {
         switch (ball.thing) {
             case "":
                 if (ball.wicket != null) {
-                    html += "<strong>OUT!</strong>, " + ball.wicket.description + ", " + ball.wicket.playerName
+                    html += "<strong>OUT!</strong>, " + ball.wicket.description + ", " + ball.wicket.toString();
                     ;
                 } else {
                     switch (ball.amount) {

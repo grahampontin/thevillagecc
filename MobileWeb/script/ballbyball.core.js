@@ -43,8 +43,31 @@ function initialiseBallByBallCore() {
         matchState.OnStrikeBatsmanName = getOnStrikeBatsmanName();
         matchState.OnStrikeBatsmanId = getOnStrikeBatsman();
     });
+    $("#wagonWheel").on("popupafteropen", function () {
+        var paper = Raphael("wagonWheelCanvas", 204,202);
+        var imageElement = paper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", 0, 0, 204, 202);
+        paper.text(30, 100, 'Off\nSide').attr({ fill: '#fff' });
+        paper.text(170, 100, 'Leg\nSide').attr({ fill: '#fff' });
+
+        var line;
+        imageElement.touchstart(function (e) {
+            line = paper.path(buildPath(e)).attr({stroke: '#ff0', 'stroke-width': 3 });
+        });
+        imageElement.touchend(function () {
+            line.remove();
+        });
+        imageElement.touchmove(function (e) {
+            line.attr({path: buildPath(e)});
+        });
+    });
 };
 		
+function buildPath(e) {
+    var scoreForBall =  matchState.Over.balls[matchState.Over.balls.length - 1].amount;
+    var x = e.touches[0].pageX - $(document).scrollLeft() - $('#wagonWheelCanvas').offset().left;
+    var y = e.touches[0].pageY - $('#wagonWheelCanvas').offset().top;
+    return "M102 90L" + x + " " + y;
+}
 
 function chooseBatsmen() {
 	populateBatsmenSelects();
@@ -161,6 +184,7 @@ $("#dotBallButton").click(function () {
 });
 
 function addSimpleRunsBall(runs) {
+    $("#wagonWheel").popup("open");
     addBall(new Ball(runs, "", getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
 }
 
