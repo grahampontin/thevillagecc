@@ -94,7 +94,7 @@
         </div>
     </div>
 
-    <div data-role="popup" id="wagonWheel" data-dismissible="false" data-overlay-theme="b">
+    <div data-role="popup" id="wagonWheel" data-dismissible="false" data-overlay-theme="b" style="min-width:328px; min-height:300px">
         <div data-role="header">
             <h1>Wagon Wheel</h1>
         </div>
@@ -102,6 +102,7 @@
             <div id="wagonWheelCanvas">
 
             </div>
+            <div id="wagonWheelSaveButton" data-role="button">Done</div>
         </div>    
     </div>
 

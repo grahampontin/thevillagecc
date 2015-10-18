@@ -1,4 +1,8 @@
 var matchState;
+var wagonWheelImage;
+var wagonWheelPaper;
+var line;
+
 
 function initialiseBallByBallCore() {
     if (matchState == null) {
@@ -34,7 +38,7 @@ function initialiseBallByBallCore() {
 
     bindChooseBatsmenHandlers();
     bindChooseBowlerHandlers();
-
+    initializeWagonWheel();
     $("#batsman1").change(function() {
         matchState.OnStrikeBatsmanName = getOnStrikeBatsmanName();
         matchState.OnStrikeBatsmanId = getOnStrikeBatsman();
@@ -44,29 +48,118 @@ function initialiseBallByBallCore() {
         matchState.OnStrikeBatsmanId = getOnStrikeBatsman();
     });
     $("#wagonWheel").on("popupafteropen", function () {
-        var paper = Raphael("wagonWheelCanvas", 204,202);
-        var imageElement = paper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", 0, 0, 204, 202);
-        paper.text(30, 100, 'Off\nSide').attr({ fill: '#fff' });
-        paper.text(170, 100, 'Leg\nSide').attr({ fill: '#fff' });
+        $("#wagonWheelSaveButton").button();
+        $("#wagonWheelSaveButton").button('disable');
+        
+        
+        wagonWheelImage.touchstart(function (e) {
+            if (line != null) {
+                line.remove();
+            }
+            var lastBall = matchState.Over.balls[matchState.Over.balls.length - 1];
+            line = wagonWheelPaper.path(buildPath(e)).attr({ stroke: getColour(lastBall.amount), 'stroke-width': 3 });
+            var x = e.touches[0].pageX - $(document).scrollLeft() - $('#wagonWheelCanvas').offset().left;
+            var y = e.touches[0].pageY - $('#wagonWheelCanvas').offset().top;
+            var angleRadians = angleBetweenTwoPointsWithFixedPoint(x, y, 150, 0, 150, 125);
+            lastBall.angle = (Math.round(angleRadians * 10000) / 10000);
+            $("#wagonWheelSaveButton").text(lastBall.amount + " to " + getScoringArea(angleRadians));
+        });
 
-        var line;
-        imageElement.touchstart(function (e) {
-            line = paper.path(buildPath(e)).attr({stroke: '#ff0', 'stroke-width': 3 });
+        wagonWheelImage.touchend(function () {
+            $("#wagonWheelSaveButton").button('enable');
         });
-        imageElement.touchend(function () {
-            line.remove();
-        });
-        imageElement.touchmove(function (e) {
-            line.attr({path: buildPath(e)});
+        wagonWheelImage.touchmove(function (e) {
+            var x = e.touches[0].pageX - $(document).scrollLeft() - $('#wagonWheelCanvas').offset().left;
+            var y = e.touches[0].pageY - $('#wagonWheelCanvas').offset().top;
+            var angleRadians = angleBetweenTwoPointsWithFixedPoint(x, y, 150, 0, 150, 125);
+            var lastBall = matchState.Over.balls[matchState.Over.balls.length - 1];
+            lastBall.angle = (Math.round(angleRadians * 10000) / 10000);
+            line.attr({ path: buildPath(e) });
+            $("#wagonWheelSaveButton").text(lastBall.amount + " to " + getScoringArea(angleRadians));
         });
     });
 };
+
+function getColour(score) {
+    if (score < 4) {
+        return '#ff0';
+    }
+    if (score < 6) {
+        return '#fff';
+    }
+    return '#f00';
+}
+
+function initializeWagonWheel() {
+    wagonWheelPaper = Raphael("wagonWheelCanvas", 300, 296);
+    wagonWheelImage = wagonWheelPaper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", 0, 0, 300, 296);
+    wagonWheelPaper.text(60, 150, 'Off\nSide').attr({ fill: '#fff', 'font-size': 20 });
+    wagonWheelPaper.text(240, 150, 'Leg\nSide').attr({ fill: '#fff', 'font-size': 20 });
+}
+
+function getScoringArea(angleInRadians) {
+    if (angleInRadians < (Math.PI * 0.25)) {
+        return "Fine Leg";
+    }
+    if (angleInRadians < (Math.PI * 0.5)) {
+        return "Square Leg";
+    }
+    if (angleInRadians < (Math.PI * 0.75)) {
+        return "Mid-wicket";
+    }
+    if (angleInRadians < (Math.PI)) {
+        return "Mid-on";
+    }
+    if (angleInRadians < (Math.PI * 1.25)) {
+        return "Mid-off";
+    }
+    if (angleInRadians < (Math.PI * 1.5)) {
+        return "Cover";
+    }
+    if (angleInRadians < (Math.PI * 1.75)) {
+        return "Point";
+    }
+    return "Third Man";
+}
 		
 function buildPath(e) {
     var scoreForBall =  matchState.Over.balls[matchState.Over.balls.length - 1].amount;
     var x = e.touches[0].pageX - $(document).scrollLeft() - $('#wagonWheelCanvas').offset().left;
     var y = e.touches[0].pageY - $('#wagonWheelCanvas').offset().top;
-    return "M102 90L" + x + " " + y;
+    var angleRadians = angleBetweenTwoPointsWithFixedPoint(x, y, 150, 0, 150, 125);
+    var result = findNewPoint(150, 125, angleRadians, getDistance(scoreForBall, angleRadians));
+    return "M150 125L" + result.x + " " + result.y;
+}
+
+function getDistance(scoreForBall, angleRadians) {
+    var distance = scoreForBall * 35;
+    if (angleRadians > (Math.PI / 2) && angleRadians <= (Math.PI)) {
+        distance = distance + (scoreForBall * 10) * ((angleRadians - (Math.PI / 2)) / (Math.PI / 2));
+    }
+    if (angleRadians > (Math.PI) && angleRadians <= (Math.PI*1.5)) {
+        distance = distance + (scoreForBall * 10) * (((Math.PI*1.5)-angleRadians) / (Math.PI/2));
+    }
+    return distance;
+}
+
+function angleBetweenTwoPointsWithFixedPoint(point1X, point1Y, point2X, point2Y, fixedX, fixedY) {
+
+    var angle1 = Math.atan2(point1Y - fixedY, point1X - fixedX);
+    var angle2 = Math.atan2(point2Y - fixedY, point2X - fixedX);
+    var result = angle1 - angle2;
+    if (result < 0) {
+        result = (2*Math.PI) + result;
+    }
+    return result; 
+}
+
+function findNewPoint(x, y, angle, distance) {
+    var result = {};
+
+    result.x = Math.round(Math.cos(angle - (Math.PI / 2)) * distance + x);
+    result.y = Math.round(Math.sin(angle - (Math.PI / 2)) * distance + y);
+
+    return result;
 }
 
 function chooseBatsmen() {
@@ -166,7 +259,7 @@ function updateChooseBatsmenSaveButtoEnabled() {
 
 $("#runsButton").click(function () {
 	var amount = parseInt($("#amountSelect").val());
-	addBall(new Ball(amount, "", getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
+    addSimpleRunsBall(amount);
 });
 
         
@@ -176,7 +269,14 @@ $("#extrasSelect").change(function () {
     var extra = $(this).val();
 
     addBall(new Ball(amount, extra, getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
-    $(this).val("extras")
+    $(this).val("extras");
+});
+
+$("#wagonWheelSaveButton").click(function () {
+    if (line != null) {
+        line.remove();
+    }
+    $("#wagonWheel").popup("close");
 });
 
 $("#dotBallButton").click(function () {
@@ -184,7 +284,9 @@ $("#dotBallButton").click(function () {
 });
 
 function addSimpleRunsBall(runs) {
-    $("#wagonWheel").popup("open");
+    if (runs > 0) {
+        $("#wagonWheel").popup("open");
+    }
     addBall(new Ball(runs, "", getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
 }
 

@@ -20,7 +20,6 @@ function getNextManIn() {
 }
 
 function initialiseWicketPage() {
-
     $("#modeOfDismissal").unbind("change", handleModeOfDismissalChanged);
     $("#modeOfDismissal").bind("change", handleModeOfDismissalChanged);
     handleModeOfDismissalChanged();

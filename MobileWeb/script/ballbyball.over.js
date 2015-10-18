@@ -83,16 +83,16 @@ function toHtml(overNumber) {
                             html += "no run";
                             break;
                         case 4:
-                            html += "<strong>FOUR</strong>";
+                            html += "<strong>FOUR</strong> through " + getScoringArea(ball.angle);
                             break;
                         case 6:
-                            html += "<strong>SIX!</strong>";
+                            html += "<strong>SIX!</strong> over " + getScoringArea(ball.angle);
                             break;
                         case 1:
-                            html += "1 run";
+                            html += "1 run to " + getScoringArea(ball.angle);
                             break;
                         default:
-                            html += ball.amount + " runs";
+                            html += ball.amount + " runs to " + getScoringArea(ball.angle);
                     }
                 }
                 break;

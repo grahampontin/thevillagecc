@@ -5,6 +5,7 @@
     this.batsmanName = batsmanName;
     this.bowler = bowler;
     this.wicket = null;
+    this.angle = null;
     this.toBallString = toBallString;
 }
 
@@ -15,6 +16,7 @@ function Ball(number, thing, batsman, batsmanName, bowler, wicket) {
     this.batsmanName = batsmanName;
     this.bowler = bowler;
     this.wicket = wicket;
+    this.angle = null;
     this.toBallString = toBallString;
 }
 

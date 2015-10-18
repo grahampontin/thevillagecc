@@ -84,11 +84,13 @@ function getCurrentScoreForBatsman(playerId) {
 }
 
 function getPlayer(playerId) {
+    var theRightPlayer;
     $.each(matchState.Players, function (index, player) {
         if (player.PlayerId == playerId) {
-            return player;
+            theRightPlayer = player;
         }
     });
+    return theRightPlayer;
 }
 
 function getNextBattingPosition() {
