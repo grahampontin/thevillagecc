@@ -1,7 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MobileWeb/mobile.master" AutoEventWireup="true" CodeFile="SelectTeam.aspx.cs" Inherits="MobileWeb_BallByBall_SelectTeam" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="page_content" Runat="Server">
@@ -24,7 +23,7 @@
                 </ItemTemplate>       
         </asp:ListView>
 
-        <button id="confirmTeamSelection">Confirm Selection and start match</button>
+        <button id="confirmTeamSelection">Confirm Selection</button>
 
     </div>    
 

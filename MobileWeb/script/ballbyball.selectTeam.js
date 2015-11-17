@@ -16,9 +16,9 @@
                 return;
             }
             var postData = { 'command': "startMatch", 'matchId': matchId, 'payload': playerIds };
-            $.post('./CommandHandler.ashx', JSON.stringify(postData), function (data) {
+            $.post('./CommandHandler.ashx', JSON.stringify(postData), function () {
                 //success
-                $("body").pagecontainer( "change", "BallByBall.aspx?matchId=" + matchId, { transition: "fade" } );
+                $("body").pagecontainer( "change", "MatchConditions.aspx?matchId=" + matchId, { transition: "fade" } );
             }, 'json')
             .fail(function (data) {
                 showError(data.responseText);

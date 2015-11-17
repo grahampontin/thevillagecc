@@ -189,6 +189,15 @@
                     <td class="style1">Graham Pontin</td>
                     <td class="style1">James de Mellow</td>
                 </tr>
+                <tr>
+                    <th class="style1">2015</th>
+                    <td class="style1">Nick Troja</td>
+                    <td class="style1">Toby de Mellow</td>
+                    <td class="style1">Nick Troja<br /> (582 runs @ 48.5)</td>
+                    <td class="style1">Eklavya Gupte<br />(34 wkts @ 15)</td>
+                    <td class="style1">Oliver Morgans</td>
+                    <td class="style1">Bilal Hussain</td>
+                </tr>
             </table>
             <br />
             <span class="SectionHeading">The Hall of Fame (Corridor of Uncertainty):<br />

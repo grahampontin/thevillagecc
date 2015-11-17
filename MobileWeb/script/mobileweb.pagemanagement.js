@@ -11,6 +11,9 @@
             case 'SelectTeam.aspx':
                 initialiseSelectTeam();
                 break;
+            case 'MatchConditions.aspx':
+                initialiseMatchConditions();
+                break;
             case 'Wicket.aspx':
                 initialiseWicketPage();
                 break;
@@ -20,4 +23,3 @@
         }
     });
 });
-

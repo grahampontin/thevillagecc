@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+***********************************************************************************************
+website.publishproj
+
+WARNING: DO NOT MODIFY this file, it is used for the web publish process.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+***********************************************************************************************
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.30319</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{b9a23f03-a911-40df-a752-5e48e98b9e34}</ProjectGuid>
+    <SourceWebPhysicalPath>$(MSBuildThisFileDirectory)</SourceWebPhysicalPath>
+    <SourceWebVirtualPath>/thevillagecc</SourceWebVirtualPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SourceWebProject>http://localhost:53619</SourceWebProject>
+    <SourceWebMetabasePath>/IISExpress/7.5/LM/W3SVC/3/ROOT</SourceWebMetabasePath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <!-- for VS2010 we need to use 10.5 but for VS2012+ we should use VisualStudioVersion -->
+    <WebPublishTargetsVersion Condition=" '$(WebPublishTargetsVersion)' =='' and '$(VisualStudioVersion)' == 10.0 ">10.5</WebPublishTargetsVersion>
+    <WebPublishTargetsVersion Condition=" '$(WebPublishTargetsVersion)'=='' ">$(VisualStudioVersion)</WebPublishTargetsVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(WebPublishTargetsVersion)</VSToolsPath>
+    <_WebPublishTargetsPath Condition=" '$(_WebPublishTargetsPath)'=='' ">$(VSToolsPath)</_WebPublishTargetsPath>
+    <AssemblyFileVersion Condition="'$(AssemblyFileVersion)' == ''">1.0.0.0</AssemblyFileVersion>
+    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">1.0.0.0</AssemblyVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttributes Include="AssemblyFileVersion">
+      <Value>$(AssemblyFileVersion)</Value>
+    </AssemblyAttributes>
+    <AssemblyAttributes Include="AssemblyVersion">
+      <Value>$(AssemblyVersion)</Value>
+    </AssemblyAttributes>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\cricketclub\CricketClubDAL\CricketClubDAL\CricketClubDAL.csproj">
+      <Project>{1CC6DF73-AC0E-43C9-8B78-7F8023E3AD40}</Project>
+      <Name>CricketClubDAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\cricketclub\CricketClubDomain\CricketClubDomain.csproj">
+      <Project>{44A25B27-75C4-4F75-B6C1-DF3203229E59}</Project>
+      <Name>CricketClubDomain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\cricketclub\CricketClubMiddle\CricketClubAccounts\CricketClubAccounts.csproj">
+      <Project>{109FD55B-E2E7-4014-A932-4DF5DEB23C71}</Project>
+      <Name>CricketClubAccounts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\cricketclub\CricketClubMiddle\CricketClubMiddle\CricketClubMiddle.csproj">
+      <Project>{CD12D113-CEEC-4D3B-B258-7B647D8F83E9}</Project>
+      <Name>CricketClubMiddle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\jqplotforcsharp\jqPlot\jqPlot.csproj">
+      <Project>{60CBD334-7816-432D-ADBD-EB00933F12E5}</Project>
+      <Name>jqPlot</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(_WebPublishTargetsPath)\Web\Microsoft.WebSite.Publishing.targets" />
+</Project>
