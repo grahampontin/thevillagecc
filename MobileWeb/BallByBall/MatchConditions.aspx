@@ -48,7 +48,8 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">
-    <script language="javascript" src="../script/ballbyball.selectTeam.js" type="text/javascript"></script>
+    <script language="javascript" src="../script/ballbyball.matchConditions.js" type="text/javascript"></script>
+    <script language="javascript" src="../script/ballbyball.matchConditionsType.js" type="text/javascript"></script>
     <script language="javascript" src="../script/ballbyball.functions.js" type="text/javascript"></script>
 </asp:Content>
 

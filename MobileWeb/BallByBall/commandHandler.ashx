@@ -31,7 +31,7 @@ public class CommandHandler : IHttpHandler
                     {
                         throw new InvalidOperationException("Coverage for match vs " + match.Opposition.Name + " has already been started");
                     }
-                    match.StartBallByBallCoverage(GetPlayerIds(genericBallByBallCommand.payload));
+                    match.StartBallByBallCoverage(GetMatchConditions(genericBallByBallCommand.payload));
                     context.Response.Write("{}");
                     break;
                 case "matchState":
@@ -77,11 +77,10 @@ public class CommandHandler : IHttpHandler
         context.Response.StatusCode = statusCode;
     }
 
-    private IEnumerable<int> GetPlayerIds(object data)
+    private BallByBallMatchConditions GetMatchConditions(object data)
     {
         var serialize = javaScriptSerializer.Serialize(data);
-        var playerIds = javaScriptSerializer.Deserialize<int[]>(serialize);
-        return playerIds;
+        return javaScriptSerializer.Deserialize<BallByBallMatchConditions>(serialize);
     }
 
     public bool IsReusable

@@ -13,7 +13,7 @@ public partial class MobileWeb_BallByBall_SelectMatch : System.Web.UI.Page
         InProgressMatchesListView.DataSource = Match.GetInProgressGames();
         InProgressMatchesListView.DataBind();
 
-        FutureMatchesListView.DataSource = Match.GetFixtures();
+        FutureMatchesListView.DataSource = Match.GetResults(new DateTime(2015,4,4), DateTime.Now);
         FutureMatchesListView.DataBind();
     }
 }

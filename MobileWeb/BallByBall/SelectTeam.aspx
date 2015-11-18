@@ -18,7 +18,7 @@
                 </div>
                 </LayoutTemplate>
                 <ItemTemplate runat=server>
-                    <input type="checkbox" name="checkbox-<%#Eval("ID") %>" id="checkbox-<%#Eval("ID") %>" class="custom" playerId="<%#Eval("ID") %>" />
+                    <input type="checkbox" name="checkbox-<%#Eval("ID") %>" id="checkbox-<%#Eval("ID") %>" class="custom" playerId="<%#Eval("ID") %>" playerName ="<%#Eval("FirstName") %> <%#Eval("Surname") %>" />
 	                <label for="checkbox-<%#Eval("ID") %>"><%#Eval("FirstName") %> <%#Eval("Surname") %> (<%#Eval("NumberOfMatchesPlayedThisSeason") %>)</label>
                 </ItemTemplate>       
         </asp:ListView>
@@ -31,6 +31,7 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">
+    <script language="javascript" src="../script/ballbyball.playerStub.js" type="text/javascript"></script>
     <script language="javascript" src="../script/ballbyball.selectTeam.js" type="text/javascript"></script>
     <script language="javascript" src="../script/ballbyball.functions.js" type="text/javascript"></script>
 </asp:Content>
