@@ -29,8 +29,7 @@
 			<tr>
 				<td><b><font face="Arial" size="2">Captain</font></b></td>
 				<td style="border-right-style: solid; border-right-width: 1px">
-				    <span style="color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 13px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); display: inline !important; float: none;">
-                    Nick Thompson</td>
+				    Nick Thompson</td>
 				<td style="border-left-style: solid; border-left-width: 1px"><b>
 				<font face="Arial" size="2">&nbsp; (Miami) Vice Captain</font></b></td>
 				<td>Toby de Mellow</td>
@@ -38,8 +37,7 @@
 			<tr>
 				<td><b><font face="Arial" size="2">Director of Cricket</font></b></td>
 				<td style="border-right-style: solid; border-right-width: 1px">
-				    <span style="color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 13px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); display: inline !important; float: none;">
-                    Nicholas Troja</span></td>
+				    Nicholas Troja</td>
 				<td><b><font face="Arial" size="2">&nbsp; Tour Secretary</font></b></td>
 				<td>
 				    Oliver Morgans</td>

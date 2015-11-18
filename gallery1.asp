@@ -194,7 +194,7 @@ function FP_getObjectByID(id,o) {//v1.0
 
 			</script>
 </layer>
-<hr style="height:1" />
+<hr style="height:1px" />
 </td>
 </tr>
 </table>

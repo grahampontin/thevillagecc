@@ -200,7 +200,7 @@
                 </tr>
             </table>
             <br />
-            <span class="SectionHeading">The Hall of Fame (Corridor of Uncertainty):<br />
+            <span class="SectionHeading">The Hall of Fame (Corridor of Uncertainty):</span><br />
                <br />
                <table>
                 <tr>

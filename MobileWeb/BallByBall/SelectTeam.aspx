@@ -17,7 +17,7 @@
                     </fieldset>
                 </div>
                 </LayoutTemplate>
-                <ItemTemplate runat=server>
+                <ItemTemplate>
                     <input type="checkbox" name="checkbox-<%#Eval("ID") %>" id="checkbox-<%#Eval("ID") %>" class="custom" playerId="<%#Eval("ID") %>" playerName ="<%#Eval("FirstName") %> <%#Eval("Surname") %>" />
 	                <label for="checkbox-<%#Eval("ID") %>"><%#Eval("FirstName") %> <%#Eval("Surname") %> (<%#Eval("NumberOfMatchesPlayedThisSeason") %>)</label>
                 </ItemTemplate>       
