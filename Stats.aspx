@@ -8,32 +8,99 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>The Village Cricket Club Online | Stats</title>
-    <CC:Styles runat=server ID=styles />    
+    <CC:Styles runat=server ID=styles /> 
+       
     
    <script type="text/javascript">
-       $(function () {
-           $("#tabs").tabs({
-               cookie: {},
-               ajaxOptions: {
-                   error: function (xhr, status, index, anchor) {
-                       $(anchor.hash).html("Coming soon...");
-                   }
-               },
-               spinner: '<img src="/img/ajax-loader.gif"/>',
-               load: function (event, ui) {
-                   $(".spinner").html('');
-                   $("#tabs").find("#__VIEWSTATE").remove();
-                   $("#TeamsGridView").tablesorter({ sortList: [[0, 0]] });
-                   $("#VenuesGridView").tablesorter({ sortList: [[0, 0]] });
-                   $("#CaptainsGridView").tablesorter({ sortList: [[0, 0]] });
-                   $("#KeepersGridView").tablesorter({ sortList: [[0, 0]] });
-
-                   $("#playersGV").tablesorter({ sortList: [[5, 1]] });
+       var baseURL = 'stats/StatsGrid.Ajax.aspx?Tab=';
 
 
-               }
+       function getFilter() {
+           var filterText = '&fromDate=' + $("#fromDate input").val().replace(' ', '%20').replace(' ', '%20');
+           filterText += '&toDate=' + $("#toDate input").val().replace(' ', '%20').replace(' ', '%20');
+           if ($('#friendlyCB').prop('checked')) {
+               filterText += '&Friendly=1';
+           }
+           if ($('#tourCB').prop('checked')) {
+               filterText += '&Tour=1';
+           }
+           if ($('#declarationCB').prop('checked')) {
+               filterText += '&Declaration=1';
+           }
+           if ($('#leagueCB').prop('checked')) {
+               filterText += '&League=1';
+           }
+           if ($('#twenty20CB').prop('checked')) {
+               filterText += '&Twenty20=1';
+           }
+           filterText += '&Venue=' + replaceAll($("#VenuesDropDown option:selected").text(),' ', '%20');
+
+           return filterText;
+       }
+
+       function replaceAll(str, find, replace) {
+           return str.replace(new RegExp(find, 'g'), replace);
+       }
+
+       function sortTable() {
+           applyTableSorter($("#TeamsGridView"), 0, 0);
+           applyTableSorter($("#VenuesGridView") ,0, 0);
+           applyTableSorter($("#CaptainsGridView"), 0, 0);
+           applyTableSorter($("#KeepersGridView"), 0, 0);
+           applyTableSorter($("#playersGV"), 5, 1);
+       }
+
+       function applyTableSorter(table, sortColumn, sortOrder) {
+           table.tablesorter({
+               sortList: [[sortColumn, sortOrder]],
+               theme: 'bootstrap',
+               widthFixed: true,
+               headerTemplate: '{content} {icon}',
+               widgets: ["uitheme", "zebra"],
            });
-       });
+       } 
+
+       $(function () {
+            $('#fromDate').datetimepicker({
+                defaultDate: new Date(new Date().getUTCFullYear(), 3, 1),
+                format: 'DD MMMM YYYY'
+            });
+            $('#toDate').datetimepicker({
+                defaultDate: new Date(new Date().getUTCFullYear()+1, 3, 1),
+                format: 'DD MMMM YYYY'
+            });
+            $('#tabs').tab();
+            //load content for first tab and initialize
+            $('#Batting').load(baseURL + 'Batting' + getFilter(), function () {
+                $('#tabs').tab(); //initialize tabs
+                sortTable();
+            });
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var pattern = /#.+/gi //use regex to get anchor(==selector)
+                var contentID = e.target.toString().match(pattern)[0]; //get anchor         
+                loadTab($(contentID))
+            });
+            $('#filterButton').click(function () {
+                var btn = $(this);
+                btn.button('loading');
+                var activeTab = $('.tab-pane.active');
+                loadTab(activeTab);
+
+            });
+        });
+
+       function loadTab(tab) {
+           tab.html('<img alt="loading..." src="img/loading_big.gif"/>');
+           //load content for selected tab
+           tab.load(baseURL + tab.prop('id').replace('#','') + getFilter(), function () {
+               $('#tabs').tab(); //reinitialize tabs
+               sortTable();
+               $('#filterButton').button('reset');
+
+           });
+
+       }
+        
     </script>
  
 </head>
@@ -44,42 +111,77 @@
         <!-- End Head -->
         <div class=clearer></div>
         <div id="mainContent">
-            <form runat=server id=StatsForm>
+            <form runat=server id=StatsForm class="form-horizontal">
             <div class=PageHeading>Club Statistics</div>
-            <div class="ui-widget ui-widget-content">
-                 <div class=Centered>
-                    <br />
-                    <asp:CheckBox ID="LeagueCB" runat="server" Text="League" Checked="True"/>
-                    <asp:CheckBox ID="FriendlyCB" runat="server" Text="Friendly" Checked="True" />
-                    <asp:CheckBox ID="TourCB" runat="server" Text="Tour" Checked="True" />
-                    <asp:CheckBox ID="DeclarationCB" runat="server" Text="Declaration" 
-                        Checked="True" />
-                    <asp:CheckBox ID="Twenty20CB" runat="server" Checked="True" Text="Twenty20" />
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    Between:                 
-                    <input id="FromDate" class="datePicker" type="text" runat=server/> and <input id="ToDate" class="datePicker" type="text" runat=server/>&nbsp; 
-                     at&nbsp;
-                     <asp:DropDownList ID="VenuesDropDown" runat="server">
-                     </asp:DropDownList>
-                     <br />
-                    <br />
-                    <asp:Button ID="Button1" runat="server" Text="Filter Data" />
-                    <br />
-                    <br />
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Filter Statistics
+                </div>
+                 <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">Match type:</label>
+                        <div class="col-xs-6">
+                            <div class="input-group">
+                                <label class="checkbox-inline"><input type="checkbox" id="leagueCB" checked="checked"/>League</label>
+                                <label class="checkbox-inline"><input type="checkbox" id="friendlyCB" checked="checked"/>Friendly</label>
+                                <label class="checkbox-inline"><input type="checkbox" id="tourCB" checked="checked"/>Tour</label>
+                                <label class="checkbox-inline"><input type="checkbox" id="declarationCB" checked="checked"/>Declaration</label>
+                                <label class="checkbox-inline"><input type="checkbox" id="twenty20CB" checked="checked"/>Twenty20</label>
+                            </div>
+                         </div>
+                    </div>
+                    <div class="form-group">
+                         <label class="col-xs-3 control-label">Start date:</label>
+                         <div class="col-xs-5">
+                             <div class='input-group date datepicker' id='fromDate'>
+                                <input type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="form-group">
+                         <label class="col-xs-3 control-label">End date:</label> 
+                         <div class="col-xs-5">
+                            <div class='input-group date datepicker' id='toDate'>
+                                <input type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>    
+                         </div>
+                             
+                     </div>                 
+                     <div class="form-group">
+                         <label class="col-xs-3 control-label">At:</label> 
+                         <div class="col-xs-5">
+                            <asp:DropDownList ID="VenuesDropDown" runat="server" class="form-control"></asp:DropDownList>    
+                         </div>
+                     </div>                 
+                     <div class="Centered">
+                        <button id="filterButton"  type="button" data-loading-text="Crunching the numbers..." class="btn btn-primary" autocomplete="off">Apply filter</button>                         
+                     </div>
                 </div>
             </div>
-            <div id="tabs">
-	            <ul>
-		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Batting<%=test %>" >Batsmen <span class=spinner></span></a></li>
-		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Bowling<%=test %>">Bowlers <span class=spinner></span></a></li>
-		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Teams<%=test %>">Teams <span class=spinner></span></a></li>
-		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Venues<%=test %>">Grounds <span class=spinner></span></a></li>
-		            <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Captains<%=test %>">Captains <span class=spinner></span></a></li>
-                    <li><a href="stats/StatsGrid.Ajax.aspx?Tab=Keepers<%=test %>">Keepers <span class=spinner></span></a></li>
+                    <ul id="tabs" class="nav nav-tabs">
+		                <li class="active"><a href="#Batting" role="tab" data-toggle="tab">Batsmen</a></li>
+		                <li><a href="#Bowling" role="tab" data-toggle="tab">Bowling</a></li>
+		                <li><a href="#Teams" role="tab" data-toggle="tab">Teams</a></li>
+		                <li><a href="#Venues" role="tab" data-toggle="tab">Venues</a></li>
+		                <li><a href="#Captains" role="tab" data-toggle="tab">Captains</a></li>
+		                <li><a href="#Keepers" role="tab" data-toggle="tab">Keepers</a></li>
+		            </ul>
+                    
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="Batting"><img alt="loading..." src="img/loading_big.gif"/></div>
+                        <div role="tabpanel" class="tab-pane" id="Bowling"><img alt="loading..." src="img/loading_big.gif"/></div>
+                        <div role="tabpanel" class="tab-pane" id="Teams"><img alt="loading..." src="img/loading_big.gif"/></div>
+                        <div role="tabpanel" class="tab-pane" id="Venues"><img alt="loading..." src="img/loading_big.gif"/></div>
+                        <div role="tabpanel" class="tab-pane" id="Captains"><img alt="loading..." src="img/loading_big.gif"/></div>
+                        <div role="tabpanel" class="tab-pane" id="Keepers"><img alt="loading..." src="img/loading_big.gif"/></div>
+                    </div>
 
-	            </ul>
-	            
-            </div>
             </form>
         </div>
         <!-- Footer -->

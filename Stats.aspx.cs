@@ -9,7 +9,7 @@ using CricketClubDomain;
 
 public partial class Stats : System.Web.UI.Page
 {
-    protected string test = "";
+    protected string filter = "";
     private DateTime startDate;
     private DateTime endDate;
 
@@ -20,49 +20,47 @@ public partial class Stats : System.Web.UI.Page
         {
             VenuesDropDown.DataSource = Venue.GetAll().OrderBy(a => a.Name);
             VenuesDropDown.DataBind();
-            FromDate.Value = (new DateTime(DateTime.Today.Year, 4, 1)).ToString("dd MMMM yyyy");
-            ToDate.Value = (new DateTime(DateTime.Today.Year + 1, 4, 1)).ToString("dd MMMM yyyy");
         }
 
-        if (VenuesDropDown.SelectedItem.Text != "")
-        {
-            test+= "&Venue="+Server.UrlEncode(VenuesDropDown.SelectedItem.Text);
-        }
-
-        if (!DateTime.TryParse(FromDate.Value, out startDate))
-        {
-            startDate = new DateTime(DateTime.Today.Year, 4, 1);
-            
-        }
-        test += "&fromDate=" + Server.UrlEncode(startDate.ToString());
-        if (!DateTime.TryParse(ToDate.Value, out endDate))
-        {
-            endDate = new DateTime(DateTime.Today.Year + 1, 3, 30);
-            
-        }
-        test += "&toDate=" + Server.UrlEncode(endDate.ToString());
-
-
-        if (FriendlyCB.Checked)
-        {
-            test += "&Friendly=1";
-        }
-        if (TourCB.Checked)
-        {
-            test += "&Tour=1";
-        }
-        if (DeclarationCB.Checked)
-        {
-            test += "&Declaration=1";
-        }
-        if (LeagueCB.Checked)
-        {
-            test += "&League=1";
-        }
-        if (Twenty20CB.Checked)
-        {
-            test += "&Twenty20=1";
-        }
+//        if (VenuesDropDown.SelectedItem.Text != "")
+//        {
+//            filter+= "&Venue="+Server.UrlEncode(VenuesDropDown.SelectedItem.Text);
+//        }
+//
+//        if (!DateTime.TryParse(FromDate.Value, out startDate))
+//        {
+//            startDate = new DateTime(DateTime.Today.Year, 4, 1);
+//            
+//        }
+//        filter += "&fromDate=" + Server.UrlEncode(startDate.ToString());
+//        if (!DateTime.TryParse(ToDate.Value, out endDate))
+//        {
+//            endDate = new DateTime(DateTime.Today.Year + 1, 3, 30);
+//            
+//        }
+//        filter += "&toDate=" + Server.UrlEncode(endDate.ToString());
+//
+//
+//        if (FriendlyCB.Checked)
+//        {
+//            filter += "&Friendly=1";
+//        }
+//        if (TourCB.Checked)
+//        {
+//            filter += "&Tour=1";
+//        }
+//        if (DeclarationCB.Checked)
+//        {
+//            filter += "&Declaration=1";
+//        }
+//        if (LeagueCB.Checked)
+//        {
+//            filter += "&League=1";
+//        }
+//        if (Twenty20CB.Checked)
+//        {
+//            filter += "&Twenty20=1";
+//        }
 
     }
 }

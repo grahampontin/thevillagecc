@@ -53,7 +53,7 @@
 			<tr>
 				<td><b><font face="Arial" size="2">Social Secretary</font></b></td>
 				<td style="border-right-style: solid; border-right-width: 1px">
-				    Rich Cressy</td>
+				    Richard Cressey</td>
 				<td style="border-left-style: solid; border-left-width: 1px"><b>
 				<font face="Arial" size="2">&nbsp; Webmaster</font></b></td>
 				<td><font face="Arial" size="2">Graham Pontin</font></td>

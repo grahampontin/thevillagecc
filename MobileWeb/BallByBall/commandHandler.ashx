@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Script.Serialization;
 using CricketClubDomain;
 using CricketClubMiddle;
+using CricketClubMiddle.Logging;
 using CricketClubMiddle.Stats;
 
 public class CommandHandler : IHttpHandler
@@ -75,6 +76,7 @@ public class CommandHandler : IHttpHandler
         context.Response.ContentType = "text/plain";
         context.Response.Write(ex.Message);
         context.Response.StatusCode = statusCode;
+        Logger.Log(ex.Message, ex, Severity.Error);
     }
 
     private BallByBallMatchConditions GetMatchConditions(object data)

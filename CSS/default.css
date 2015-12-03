@@ -1173,3 +1173,32 @@ top:100px;
 
 /* End Player Details Page */
 
+/* Awards */
+
+.HonorsBoardList 
+{
+    float: left;
+    width: 31%;
+    display: block;
+    padding: 10px;
+      
+}
+
+.HonorsBoardList th {
+    background-color: green;
+    
+}
+
+.HonorsBoardList table {
+    width: 100%;
+}
+
+/* End awards */
+
+/* Stats */
+
+.tablesorter td, th {
+    font-size: 8pt !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+}
