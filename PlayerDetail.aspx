@@ -3,9 +3,9 @@
 <%@ Register TagPrefix="CC" TagName="Footer" Src="~/UserControls/Footer.ascx" %>
 <%@ Register TagPrefix="CC" TagName="Styles" Src="~/UserControls/Styles.ascx" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head id="Head1" runat="server">
     <title>The Village Cricket Club Online | Squad | <%=PlayerName %></title>
@@ -26,7 +26,17 @@
 
 
     <script language=javascript>
+       
         $(function () {
+            $('#fromDate').datetimepicker({
+                defaultDate: new Date(new Date().getUTCFullYear(), 3, 1),
+                format: 'DD MMMM YYYY'
+            });
+            $('#toDate').datetimepicker({
+                defaultDate: new Date(new Date().getUTCFullYear()+1, 3, 1),
+                format: 'DD MMMM YYYY'
+            });
+
             $(".StatsTable tr:last").addClass('Bold');
             $("#FilterButton").button();
             $("#battingChartSelect").change(onBattingSelectChange);
@@ -40,8 +50,8 @@
             $('#battingChart').html('');
             $('#battingChartLoading').show();
             $.post('/ChartRendererAJAX.aspx', { 'chartName': chartName, 'playerid' : playerId }, function(data) {
-              $('#battingChart').html(data);
-              $('#battingChartLoading').hide();
+                $('#battingChart').html(data);
+                $('#battingChartLoading').hide();
             });
         }
         
@@ -50,8 +60,8 @@
             $('#bowlingChart').html('');
             $('#bowlingChartLoading').show();
             $.post('/ChartRendererAJAX.aspx', { 'chartName': chartName, 'playerid' : playerId }, function(data) {
-              $('#bowlingChart').html(data);
-              $('#bowlingChartLoading').hide();
+                $('#bowlingChart').html(data);
+                $('#bowlingChartLoading').hide();
             });
         }
 
@@ -77,84 +87,105 @@
         <!-- End Head -->
         <div class=clearer></div>
         <div id="mainContent">
-        <form id="form1" runat="server">
-            <div class="WidgetContainer ui-widget ui-widget-content">
-                <div class="WidgetTitleBlock ui-widget-header ui-helper-clearfix"><%=PlayerName %></div>
-                <div class="WidgetColumnLeft PlayerDetailsLeftColumn">
+        <form id="form1" runat="server" class="form-horizontal">
+                <h1 ><%=PlayerName %>&nbsp;<small>Player Profile</small></h1>
+                <div class="col-sm-3">
                     <div class=playerProfileImageLarge>
                         <asp:Image ID=PlayerImage Width=220 Height=124 runat=server />
                     </div>
                     <div class="playerProfileStats">
                         <div class=playerProfileStat>
-                            <span>Full Name: </span><%=p.FullName %>
+                            <strong>Full Name: </strong><br/><%=p.FullName %>
                         </div>
                         <div class=playerProfileStat>
-                            <span>Born: </span><%=p.DOB %>
+                            <strong>Born: </strong><br /><%=p.DOB %>
                         </div>
                         <div class=playerProfileStat>
-                            <span>Current Age: </span>
+                            <strong>Current Age: </strong>
                         </div>
                         <div class=playerProfileStat>
-                            <span>Education: </span><%=p.Education %>
+                            <strong>Education: </strong><br /><%=p.Education %>
                         </div>
                         <div class=playerProfileStat>
-                            <span>Nickname: </span><%=p.Nickname %>
+                            <strong>Nickname: </strong><br /><%=p.Nickname %>
                         </div>
                         <div class=playerProfileStat>
-                            <span>Playing Role: </span><%=p.PlayingRole %>
+                            <strong>Playing Role: </strong><br/><%=p.PlayingRole %>
                         </div>
                         <div class=playerProfileStat>
-                            <span>Batting Style: </span><%=p.BattingStyle %>
+                            <strong>Batting Style: </strong><br /><%=p.BattingStyle %>
                         </div>
                         <div class=playerProfileStat>
-                            <span>Bowling Style: </span><%=p.BowlingStyle %>
+                            <strong>Bowling Style: </strong><br /><%=p.BowlingStyle %>
                         </div>
                         <div class=playerProfileStat>
-                            <span>Debut: </span><%=p.Debut.ToString("dd MMM yyyy") %>
+                            <strong>Debut: </strong><br /><%=p.Debut.ToString("dd MMM yyyy") %>
                         </div>
                         <div class=playerProfileStat>
-                            <span>Caps: </span><%=p.Caps %>
+                            <strong>Caps: </strong><br /><%=p.Caps %>
                         </div>
                     </div>
                     <div class="playerProfileStat">
                         <a href="javascript:EditPlayer(<%=p.ID %>,'<%=p.FullName %>')">Edit player details...</a>
                     </div>
                     
-                    <div class="WidgetContainer ui-widget ui-widget-content">
-                        <div class="WidgetTitleBlock ui-widget-header ui-helper-clearfix">
-                            Filter Data
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Filter Data&nbsp;<small>(coming soon)</small>
                         </div>
-                        From<br /> <input id=FromDate class="datePicker" /><br /><br />
-                        To<br /> <input id=ToDate class="datePicker" /><br /><br />
-                        At<br /><asp:DropDownList ID=VenuesList runat=server></asp:DropDownList><br /><br />
-                        <button id=FilterButton name="Go"><span>Go</span></button>
+                        <div class="panel-body">
+                            <div class="form-group" style="padding-left: 10px; padding-right: 10px;">
+                                <label>From</label>
+                                <div class='input-group date datepicker' id='fromDate'>
+                                <input type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                            </div>
+                            <div class="form-group" style="padding-left: 10px; padding-right: 10px;">
+                                <label>To</label>
+                                <div class='input-group date datepicker' id='toDate'>
+                                <input type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                            <div class="form-group" style="padding-left: 10px; padding-right: 10px;">
+                                <label class=>At</label>
+                                <asp:DropDownList ID=VenuesList runat=server CssClass="form-control"></asp:DropDownList>
+                            </div>
+                            <button id=FilterButton name="Go" class="btn btn-default"><span>Apply</span></button>
+                        </div>
                         
                     </div>   
                     
+                </div> 
                 </div>
-                <div class="WidgetColumnRight PlayerDetailsRightColumn">
-                    <div class="WidgetContainer ui-widget ui-widget-content">
-                        <div class="WidgetTitleBlock ui-widget-header ui-helper-clearfix">
+                <div class="col-sm-9">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
                             Biography
                         </div>
-                        <%=p.Bio %>
+                        <div class="panel-body">
+                            <%=p.Bio %>
+                        </div>
                     </div>
                 
                     <%--Batting Stats--%>
-                    <div class="WidgetContainer ui-widget ui-widget-content">
-                        <div class="WidgetTitleBlock ui-widget-header ui-helper-clearfix">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
                             Batting and Fielding Stats
                         </div>
                         <asp:GridView ID=BattingStats runat=server AutoGenerateColumns="False" 
-                            CssClass="StatsTable" GridLines="None" 
+                            CssClass="table table-hover" 
                             onrowdatabound="BattingStats_RowDataBound">
-                            <RowStyle CssClass="underlined_row" />
                             <Columns>
                                 <asp:BoundField HeaderText="" />
                                 <asp:BoundField HeaderText="Mat" />
                                 <asp:BoundField HeaderText="Inns" />
                                 <asp:BoundField HeaderText="NO" />
-                                <asp:BoundField HeaderText="Runs" />
+                                <asp:BoundField HeaderText="Runs" /> 
                                 <asp:BoundField HeaderText="HS" />
                                 <asp:BoundField HeaderText="Ave" />
                                 <asp:BoundField HeaderText="100s" />
@@ -166,14 +197,12 @@
                                 <asp:BoundField HeaderText="St" />
                                 <asp:BoundField HeaderText="RO" />
                             </Columns>
-                            <HeaderStyle CssClass="ui-state-default" />
-                            
                         </asp:GridView>
                     </div>
                     
                     <!--Batting Graphs-->
-                    <div class="WidgetContainer ui-widget ui-widget-content">
-                        <div class="WidgetTitleBlock ui-widget-header ui-helper-clearfix">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
                             Batting Analysis
                             <div class=floatRight>
                                 <select id="battingChartSelect">
@@ -188,47 +217,47 @@
                                 </select>
                             </div>
                         </div>
-                        <div id="battingChartLoading">
-                            <div class='ChartLoadingMessage'>Computing stats, please wait...</div>
-                            <div class='ChartLoadingIcon'><img src='Images/loading-icon.gif' /></div>
+                        <div class="panel-body">
+                            <div id="battingChartLoading">
+                                <div class='ChartLoadingMessage'>Computing stats, please wait...</div>
+                                <div class='ChartLoadingIcon'><img src='Images/loading-icon.gif' /></div>
 
+                            </div>
+                            <div id=battingChart>
+                                <!-- A place holder - gets AJAX filled -->
+                            </div>    
                         </div>
-                        <div id=battingChart>
-                            <!-- A place holder - gets AJAX filled -->
-                        </div>
+                        
                     </div>
                     
                     <%--Bowling Stats--%>
-                    <div class="WidgetContainer ui-widget ui-widget-content">
-                        <div class="WidgetTitleBlock ui-widget-header ui-helper-clearfix">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
                             Bowling Stats
                         </div>
-                        <asp:GridView ID=BowlingStats runat=server AutoGenerateColumns="False" 
-                            CssClass="StatsTable" GridLines="None" 
-                            onrowdatabound="BowlingStats_RowDataBound">
-                            <RowStyle CssClass="underlined_row" />
-                            <Columns>
-                                <asp:BoundField HeaderText="" />
-                                <asp:BoundField HeaderText="Mat" />
-                                <asp:BoundField HeaderText="Ovs" />
-                                <asp:BoundField HeaderText="Runs" />
-                                <asp:BoundField HeaderText="Wkts" />
-                                <asp:BoundField HeaderText="BBM" />
-                                <asp:BoundField HeaderText="Ave" />
-                                <asp:BoundField HeaderText="Econ" />
-                                <asp:BoundField HeaderText="SR" />
-                                <asp:BoundField HeaderText="3" />
-                                <asp:BoundField HeaderText="5" />
-                                <asp:BoundField HeaderText="10" />
-                            </Columns>
-                            <HeaderStyle CssClass="ui-state-default" />
-                            
-                        </asp:GridView>
+                            <asp:GridView ID=BowlingStats runat=server AutoGenerateColumns="False" 
+                                CssClass="table table-hover" 
+                                onrowdatabound="BowlingStats_RowDataBound">
+                                <Columns>
+                                    <asp:BoundField HeaderText="" />
+                                    <asp:BoundField HeaderText="Mat" />
+                                    <asp:BoundField HeaderText="Ovs" />
+                                    <asp:BoundField HeaderText="Runs" />
+                                    <asp:BoundField HeaderText="Wkts" />
+                                    <asp:BoundField HeaderText="BBM" />
+                                    <asp:BoundField HeaderText="Ave" />
+                                    <asp:BoundField HeaderText="Econ" />
+                                    <asp:BoundField HeaderText="SR" />
+                                    <asp:BoundField HeaderText="3" />
+                                    <asp:BoundField HeaderText="5" />
+                                    <asp:BoundField HeaderText="10" />
+                                </Columns>
+                            </asp:GridView>    
                     </div>
                     
                     <!--Bowling Graphs-->
-                    <div class="WidgetContainer ui-widget ui-widget-content">
-                        <div class="WidgetTitleBlock ui-widget-header ui-helper-clearfix">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
                             Bowling Analysis
                             <div class=floatRight>
                                 <select id = "bowlingChartSelect">
@@ -240,20 +269,18 @@
                                 </select>
                             </div>
                         </div>
-                         <div id="bowlingChartLoading">
-                            <div class='ChartLoadingMessage'>Computing stats, please wait...</div>
-                            <div class='ChartLoadingIcon'><img src='Images/loading-icon.gif' /></div>
-
-                        </div>
-                        <div id=bowlingChart>
-                            <!-- A place holder - gets AJAX filled -->
+                        <div class="panel-body">
+                             <div id="bowlingChartLoading">
+                                <div class='ChartLoadingMessage'>Computing stats, please wait...</div>
+                                <div class='ChartLoadingIcon'><img src='Images/loading-icon.gif' /></div>
+                            </div>
+                            <div id=bowlingChart>
+                                <!-- A place holder - gets AJAX filled -->
+                            </div>   
                         </div>
                     </div>
                     
                 </div>
-            </div>
-            
-            
         </form>
         </div>
         <!-- Footer -->

@@ -9,7 +9,7 @@
 <body>
     <form id="form1" runat="server">
     <div>
-        <div class=leftColumn>
+        <div class="col-sm-5">
             <div class=playerProfileImageLarge>
                 <asp:Image ID=PlayerImage Width=220 Height=124 runat=server />
             </div>
@@ -45,11 +45,8 @@
                     <span>Caps: </span><%=p.Caps %>
                 </div>
             </div>
-            <div class="playerProfileEditLink">
-                <a href="javascript:EditPlayer(<%=p.ID %>,'<%=p.FullName %>')">Edit player details...</a>
-            </div>
         </div>
-        <div class=rightColumn>
+        <div class="col-sm-7">
             <div class=bioTitle>
                 Biography
             </div>

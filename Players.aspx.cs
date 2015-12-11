@@ -55,9 +55,21 @@ public partial class Players : System.Web.UI.Page
         }
         else
         {
-            imgSrc = imgSrc + "noimage.jpg";
+            imgSrc = imgSrc + "noimage.gif";
         }
 
         img.ImageUrl = imgSrc;
+
+        if (e.Item.DataItemIndex%4 == 0)
+        {
+            Literal newRowDiv = (Literal)e.Item.FindControl("newRowDiv");
+            newRowDiv.Text = "<div class=\"container\" style=\"width: 1000px !important\">";
+        }
+        if (e.Item.DataItemIndex%4 == 3)
+        {
+            Literal newRowDiv = (Literal)e.Item.FindControl("newRowEndDiv");
+            newRowDiv.Text = "</div>";
+        }
+
     }
 }

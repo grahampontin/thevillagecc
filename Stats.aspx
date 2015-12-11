@@ -3,9 +3,9 @@
 <%@ Register TagPrefix="CC" TagName="Footer" Src="~/UserControls/Footer.ascx" %>
 <%@ Register TagPrefix="CC" TagName="Styles" Src="~/UserControls/Styles.ascx" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head id="Head1" runat="server">
     <title>The Village Cricket Club Online | Stats</title>
     <CC:Styles runat=server ID=styles /> 
@@ -71,18 +71,14 @@
             });
             $('#tabs').tab();
             //load content for first tab and initialize
-            $('#Batting').load(baseURL + 'Batting' + getFilter(), function () {
-                $('#tabs').tab(); //initialize tabs
-                sortTable();
-            });
+            loadTab($('#Batting'));
+
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 var pattern = /#.+/gi //use regex to get anchor(==selector)
                 var contentID = e.target.toString().match(pattern)[0]; //get anchor         
                 loadTab($(contentID))
             });
             $('#filterButton').click(function () {
-                var btn = $(this);
-                btn.button('loading');
                 var activeTab = $('.tab-pane.active');
                 loadTab(activeTab);
 
@@ -90,7 +86,11 @@
         });
 
        function loadTab(tab) {
-           tab.html('<img alt="loading..." src="img/loading_big.gif"/>');
+           $('#filterButton').button('loading');
+           $('.tab-pane').each(function(index, value) {
+               $(this).html('');
+           });
+           tab.html('<div class="table-bordered" style="padding: 50px;"><div class="progress" ><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"><span class="sr-only">Loading</span></div></div></div>');
            //load content for selected tab
            tab.load(baseURL + tab.prop('id').replace('#','') + getFilter(), function () {
                $('#tabs').tab(); //reinitialize tabs
@@ -174,12 +174,12 @@
 		            </ul>
                     
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="Batting"><img alt="loading..." src="img/loading_big.gif"/></div>
-                        <div role="tabpanel" class="tab-pane" id="Bowling"><img alt="loading..." src="img/loading_big.gif"/></div>
-                        <div role="tabpanel" class="tab-pane" id="Teams"><img alt="loading..." src="img/loading_big.gif"/></div>
-                        <div role="tabpanel" class="tab-pane" id="Venues"><img alt="loading..." src="img/loading_big.gif"/></div>
-                        <div role="tabpanel" class="tab-pane" id="Captains"><img alt="loading..." src="img/loading_big.gif"/></div>
-                        <div role="tabpanel" class="tab-pane" id="Keepers"><img alt="loading..." src="img/loading_big.gif"/></div>
+                        <div role="tabpanel" class="tab-pane active" id="Batting"></div>
+                        <div role="tabpanel" class="tab-pane" id="Bowling"></div>
+                        <div role="tabpanel" class="tab-pane" id="Teams"></div>
+                        <div role="tabpanel" class="tab-pane" id="Venues"></div>
+                        <div role="tabpanel" class="tab-pane" id="Captains"></div>
+                        <div role="tabpanel" class="tab-pane" id="Keepers"></div>
                     </div>
 
             </form>

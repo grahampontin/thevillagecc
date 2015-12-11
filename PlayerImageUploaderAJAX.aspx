@@ -13,14 +13,6 @@
         <div id=uploader></div>
     </div>
     <div id=step2 runat=server visible=false>
-        <div class=floatRight>
-            <button id=CropButton>
-                <span>Crop & Save</span>
-            </button><br /><br />
-            <button id=CancelButton>
-                <span>Cancel Upload</span>
-            </button>
-        </div>
         <asp:Image ID=tempImage runat=server />
 
         <input type=hidden ID="X"/>        

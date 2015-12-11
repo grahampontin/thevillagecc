@@ -35,10 +35,10 @@ public partial class PlayerImageUploaderAJAX : System.Web.UI.Page
         {
             Player p = new Player(PlayerID);
 
-            int x = Convert.ToInt32(Request["X"]);
-            int y = Convert.ToInt32(Request["Y"]);
-            int w = Convert.ToInt32(Request["W"]);
-            int h = Convert.ToInt32(Request["H"]);
+            int x = (int)Convert.ToDecimal(Request["X"]);
+            int y = (int)Convert.ToDecimal(Request["Y"]);
+            int w = (int)Convert.ToDecimal(Request["W"]);
+            int h = (int)Convert.ToDecimal(Request["H"]);
 
             //Load the Image from the location
             System.Drawing.Image image = Bitmap.FromFile(Server.MapPath(path+imageName));

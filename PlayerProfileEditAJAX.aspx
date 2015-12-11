@@ -66,19 +66,9 @@
                 Biography
             </div>
             <div  class=bioBody>
-               <textarea style="width: 402px; height: 300px" id="bioInput" >
+               <div style="width: 402px; height: 300px" id="bioInput" >
                 <%=p.Bio %>
-               </textarea>
-
-            </div>
-            <div class=playerEditButtons>
-                <button id=cancelButton name=Cancel value=Cancel>
-                    <span class="ui-button-text">Cancel</span>
-                </button>
-                <button id=saveButton name=s value=s>
-                    <span class="ui-button-text">Save</span>
-                </button>
-                
+               </div>
 
             </div>
         </div>

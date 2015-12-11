@@ -1,21 +1,19 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="TopMenu.ascx.cs" Inherits="UserControls_TopMenu" %>
-        <div class="green">
-	        <div id="slatenav">
-	            <ul>
-	            <li><a runat=server href="~/" title=" " id="Home">Home</a></li>
-	            <li><a runat=server href="~/Awards.aspx" title=" " id="Awards">Info & Awards</a></li>
-	            <li><a runat=server href="~/Fixtures.aspx" title="Fixtures" id="Fixtures">Fixtures</a></li>
-	            <li><a runat=server href="~/Results.aspx" title=" " id="Results">Results</a></li>
-	            <li><a runat=server href="~/Tours.aspx" title="Cisk fueled fun" id="Tours">Tours</a></li>
-	            <li><a runat=server href="~/Committee.aspx" title="Committee & Official Docs" id="Committee">Committee</a></li>
-	            <li><a runat=server id="Players" href="~/Players.aspx" title="Player Stats">Squad</a></li>
-                <li><a id="Stats" runat=server href="~/Stats.aspx" title=" ">Stats</a></li>
-	            <li><a runat=server id="News" href="~/News.aspx" title=" ">News</a></li>
-	            <li><a runat=server id="Chat" href="~/Chat.aspx" title="Chat">Chat</a></li>
-	            <li><a runat=server href="~/Join.aspx" title="Interested in Joining?" id="Join">Join</a></li>
-	            <li><a runat=server href="~/Shop.aspx" title="Buy Village kit online!" id="Shop">Shop!</a></li>
-	            <li><a id="Admin" runat=server href="~/Admin.aspx" title=" ">Admin</a></li>
+        <nav class="navbar navbar-default">        <ul class="nav navbar-nav">
+	            <li runat=server id="Home"      ><a href="/" title=" " >Home</a></li>
+	            <li runat=server id="Awards"    ><a href="/Awards.aspx" title=" ">Info & Awards</a></li>
+	            <li runat=server id="Fixtures"  ><a href="/Fixtures.aspx" title="Fixtures" >Fixtures</a></li>
+	            <li runat=server id="Results"   ><a href="/Results.aspx" title=" " >Results</a></li>
+	            <li runat=server id="Tours"     ><a href="/Tours.aspx" title="Cisk fueled fun">Tours</a></li>
+	            <li runat=server id="Committee" ><a href="/Committee.aspx" title="Committee & Official Docs" >Committee</a></li>
+	            <li runat=server id="Players"   ><a href="/Players.aspx" title="Player Stats">Squad</a></li>
+                <li runat=server id="Stats"     ><a href="/Stats.aspx" title=" ">Stats</a></li>
+	            <li runat=server id="News"      ><a href="/News.aspx" title=" ">News</a></li>
+	            <li runat=server id="Chat"      ><a href="/Chat.aspx" title="Chat">Chat</a></li>
+	            <li runat=server id="Join"      ><a href="/Join.aspx" title="Interested in Joining?" >Join</a></li>
+	            <li runat=server id="Shop"      ><a href="/Shop.aspx" title="Buy Village kit online!">Shop!</a></li>
+	            <li runat=server id="Admin"     ><a href="/Admin.aspx" title=" ">Admin</a></li>
 	            
 	            </ul>
-	        </div>
-	    </div>
+            </nav>
+	    

@@ -29,7 +29,7 @@ public partial class UserControls_TopMenu : System.Web.UI.UserControl
         }
 
         HtmlControl active = (HtmlControl)FindControl(PageID);
-        active.Attributes["class"] = "current";
+        active.Attributes["class"] = "active";
 
         
     }
