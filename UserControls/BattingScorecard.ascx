@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="BattingScorecard.ascx.cs" Inherits="UserControls_BattingScorecard" %>
-<table class="BattingScoreCard">
+<table class="table table-striped">
     <tr class="scHeadingRow">
         <td colspan=3></td>
         <td>Runs</td>

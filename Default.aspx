@@ -10,7 +10,14 @@
 <head runat="server">
     <title>The Village Cricket Club Online | Home</title>
     <CC:Styles runat=server ID=styles /> 
-    
+    <script>
+        $(function() {
+            $(".item").each(function(object, index) {
+                $("#carousel-indicators").append("<li data-target=\"#myCarousel\" data-slide-to=\""+object+"\"></li>");
+            });
+            $(".item").first().addClass("active");
+        });
+    </script>
 </head>
 <body>
     <div id="pageContainer">
@@ -23,43 +30,83 @@
             <div id=pictureCar>
                 <CC:Carousel runat=server />
             </div>
-            <div id=introText>
-                <div id="introTextInner">
-                    <b><asp:Literal ID=ReportHeadline runat=server></asp:Literal></b> 
-                    <br /><br />
-                    <p>
-                    <asp:Literal ID=ReportBody runat=server></asp:Literal>...
-                </div>
-                <a href=./MatchReport.aspx?MatchID=<asp:Literal runat=server ID=ReportID></asp:Literal> >read more...</a>
-                    
-            </div>
-            
-            <div class="horizontalDivider"></div>
-            <br /><b>About Us</b><br /><br />
-            <p>
-            The Village Cricket Club is a small club based loosely around its roots in North East London.
-            We were formed in 2004 by a bunch of singularly talentless but enthusiastic cricketers who decided
-            that they wanted to continue their summer pastime beyond the end of their university days.
-            </p>
-            <p>
-            One bizarre meeting in Stamford Hill&#39;s Birdcage later, the Village CC was formed and enrolled
-            in the North East London Cricket League which sustained it for its first few seasons.
-            </p>
-            <p>
-            Since then, much has changed, the club has grown and left the league behind, perferring to follow
-            its instincts in the world of friendly London cricket.
-            </p>
-            <p>
-            We play most of our matches in central London but we also make yearly trips to Cambridge, Oxford and the West Country. 
-            We are always on the lookout for new members of any ability - enthusiasm for the game is our only selection
-            criteria. You can contact us via the "Join" link up above, or a few of us hang out in the "chat" section
-            when work isn't keeping us too busy.
-            </p>
+            <div class="container marketing">
+
+      <!-- Three columns of text below the carousel -->
+      <div class="row">
+        <div class="col-lg-4">
+          <img src="img/vcc_cricle_small.png" alt="About Us" width="140" height="140">
+          <h2>About us</h2>
+          <p>The Village Cricket Club is a small club based loosely around its roots in North East London. We were formed in 2004 by a bunch of singularly talentless but enthusiastic cricketers...</p>
+          <p><a class="btn btn-default" href="Awards.aspx" role="button">View details &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4">
+          <img src="img/cricketer.png" alt="Join" width="140" height="140">
+          <h2>Get involved</h2>
+          <p>We're always on the lookout for new recruits of all abilities. Batsman, bowler, enthusiast, novice; The Village welcomes all. If you're looking to get involved you can shoot us an email, fill in this nice little form or even track us down on twitter.</p>
+          <p><a class="btn btn-default" href="Join.aspx" role="button">View details &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4">
+          <img src="img/graph.png" alt="Stats" width="140" height="140">
+          <h2>Stats</h2>
+          <p>Let's be honest, it's the only reason most of us play the game. The chance to slice, dice and disect every inch of your game then talk about it at the pub. That's real cricket.</p>
+          <p><a class="btn btn-default" href="/stats.aspx" role="button">View details &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
+
+
+      <!-- START THE FEATURETTES -->
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-7">
+          <h2 class="featurette-heading"><asp:Literal runat="server" ID="matchReportOne_Heading"></asp:Literal><span class="text-muted"><asp:Literal runat="server" ID="matchReportOne_SubText"></asp:Literal></span></h2>
+          <p class="lead"><asp:Literal runat="server" ID="matchReportOne_Text"></asp:Literal></p>
+          <p><a class="btn btn-default" href='/MatchReport.aspx?MatchID=<asp:Literal runat="server" ID="matchReportOne_Id"></asp:Literal>' role="button">Read more &raquo;</a></p>
+        
+        </div>
+        <div class="col-md-5">
+          <img class="featurette-image img-responsive center-block" src="match_reports/images/no_match_report_image.jpg" alt="Generic placeholder image">
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-7 col-md-push-5">
+            <h2 class="featurette-heading"><asp:Literal runat="server" ID="matchReportTwo_Heading"></asp:Literal><span class="text-muted"><asp:Literal runat="server" ID="matchReportTwo_Subtext"></asp:Literal></span></h2>
+            <p class="lead"><asp:Literal runat="server" ID="matchReportTwo_Text"></asp:Literal></p>
+            <p><a class="btn btn-default" href='/MatchReport.aspx?MatchID=<asp:Literal runat="server" ID="matchReportTwo_Id"></asp:Literal>' role="button">Read more &raquo;</a></p>
+        </div>
+        <div class="col-md-5 col-md-pull-7">
+          <img class="featurette-image img-responsive center-block" src="match_reports/images/no_match_report_image.jpg" alt="Generic placeholder image">
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-7">
+            <h2 class="featurette-heading"><asp:Literal runat="server" ID="matchReportThree_Heading"></asp:Literal><span class="text-muted"><asp:Literal runat="server" ID="matchReportThree_Subtext"></asp:Literal></span></h2>
+            <p class="lead"><asp:Literal runat="server" ID="matchReportThree_Text"></asp:Literal></p>
+            <p><a class="btn btn-default" href='/MatchReport.aspx?MatchID=<asp:Literal runat="server" ID="matchReportThree_Id"></asp:Literal>' role="button">Read more &raquo;</a></p>
+        </div>
+        <div class="col-md-5">
+          <img class="featurette-image img-responsive center-block" src="match_reports/images/no_match_report_image.jpg" alt="Generic placeholder image">
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <!-- /END THE FEATURETTES -->
+
+
+      <!-- FOOTER -->
+    <CC:Footer runat="server" />
+    </div>
         </form>
         </div>
-        <!-- Footer -->
-        <CC:Footer runat="server" />
-        <!-- ENd Footer -->
     </div>
 </body>
 </html>

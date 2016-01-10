@@ -19,59 +19,110 @@
         <!-- End Head -->
         <div class=clearer></div>
         <div id="mainContent">
-            <div class=standardText>
+            <h1>Committee</h1>
+            <p class=standardText>
                 Here you have found the home page of the tedious bureaucracy that is the Village Cricket
                 Club Committee. Its current occupants are as follows:
-                
-                <br />
-                <br />
-                <table border="0" width="100%" id="table1" style="border-collapse: collapse" bordercolor="#000000">
-			<tr>
-				<td><b><font face="Arial" size="2">Captain</font></b></td>
-				<td style="border-right-style: solid; border-right-width: 1px">
-				    Nick Thompson</td>
-				<td style="border-left-style: solid; border-left-width: 1px"><b>
-				<font face="Arial" size="2">&nbsp; (Miami) Vice Captain</font></b></td>
-				<td>Toby de Mellow</td>
-			</tr>
-			<tr>
-				<td><b><font face="Arial" size="2">Director of Cricket</font></b></td>
-				<td style="border-right-style: solid; border-right-width: 1px">
-				    Nicholas Troja</td>
-				<td><b><font face="Arial" size="2">&nbsp; Tour Secretary</font></b></td>
-				<td>
-				    Oliver Morgans</td>
-			</tr>
-			<tr>
-				<td><b>
-				<font face="Arial" size="2">Treasurer</font></b></td>
-				<td>James de Mellow</td>
-				<td style="border-left-style: solid; border-left-width: 1px"><b>
-				<font face="Arial" size="2">&nbsp; Fixtures Secretary</font></b></td>
-				<td>Eklavya Gupte</td>
-			</tr>
-			<tr>
-				<td><b><font face="Arial" size="2">Social Secretary</font></b></td>
-				<td style="border-right-style: solid; border-right-width: 1px">
-				    Richard Cressey</td>
-				<td style="border-left-style: solid; border-left-width: 1px"><b>
-				<font face="Arial" size="2">&nbsp; Webmaster</font></b></td>
-				<td><font face="Arial" size="2">Graham Pontin</font></td>
-			</tr>
-			
-		</table>
-                
-                <p align="center">
-                    And they look like this bunch of fools:
-                </p>
-		        <p align="center">
-		            Coming (probably not that) soon...
-		            <BR>
-		            <br>
-		            <a href = ./documents/constitutionSEPT2006.pdf>Constitution</a>
-		            
+            </p>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Captain
+                        </div>
+                        <div class="panel-body">
+                            <img src="Images/committee/thommo.jpg" width="200" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Nick Thompson</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Vice-Captain
+                        </div>
+                        <div class="panel-body">
+                            <img src="Images/committee/tdm.jpg" width="200px" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Toby de Mellow</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Director of Cricker
+                        </div>
+                        <div class="panel-body">
+                            <img src="Images/committee/troja.jpg" width="200px" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Nick Troja</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Treasurer
+                        </div>
+                        <div class="panel-body">
+                            <img src="Images/committee/jdm.jpg" width="200px" style="padding-bottom: 10px;"/>
+                            <div class="Centered">James de Mellow</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Fixtures Secretary
+                        </div>
+                        <div class="panel-body">
+                            <img src="Images/committee/ek.jpg" width="200" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Eklavya Gupte</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Tour Secretary
+                        </div>
+                        <div class="panel-body">
+                            <img src="Images/committee/morgs.jpg" width="200" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Oliver Morgans</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Social Secretary
+                        </div>
+                        <div class="panel-body">
+                            <img src="Images/committee/cressy.jpg" width="200" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Richard Cressey</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Webmaster
+                        </div>
+                        <div class="panel-body">
+                            <img src="Images/committee/graham.jpg" width="200" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Graham Pontin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+            <div class="panel panel-default">
+                <div class="panel-heading">Documents, minutes, meetings and such like</div>
+                <div class="panel-body">
+                    
 		            <p align="center">
-		
+		                <a href = ./documents/constitutionSEPT2006.pdf>Constitution</a>
+		            
 		                <table border="0" width="100%" id="table2">
 			                <tr>
 				                <td align="center" width=50%>
@@ -117,8 +168,11 @@
 		                	</tr>
 		            </table>
 		        </p>
-                
+
+                </div>
             </div>
+		            
+                
         </div>
         <!-- Footer -->
         <CC:Footer ID="Footer1" runat="server" />

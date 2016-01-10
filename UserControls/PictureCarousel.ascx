@@ -1,28 +1,32 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="PictureCarousel.ascx.cs" Inherits="UserControls_PictureCarousel" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol  id="carousel-indicators" class="carousel-indicators">
+  </ol>
 
-    <ul id="rotateThis"> 
-        <asp:ListView ID="Pictures" runat="server">
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+    <asp:ListView ID="Pictures" runat="server">
            <LayoutTemplate>
                     <asp:PlaceHolder runat="server" ID="itemPlaceholder"></asp:PlaceHolder>
            </LayoutTemplate>
 
            <ItemTemplate>
-              <li><img src="\Images\Carousel\<%# Eval("Name")%>" width="460px"/></li>
+            <div class="item">
+               <img src="\Images\Carousel\<%# Eval("Name")%>" />
+            </div>
            </ItemTemplate>
         </asp:ListView> 
-        <li>
-	        <a href="http://medienfreunde.com/deutsch/referenzen/kreation/good_guy__bad_guy.html">
-		        <img src="./Images/Carousel/Cricket 118.jpg" alt="Good Guy bad Guy" width="460px"/>
-	        </a>
-        </li>
-        <li>
-	        <a href="http://medienfreunde.com/deutsch/referenzen/kreation/whizzkids.html">
-		        <img src="./Images/Carousel/Cricket 096.jpg" alt="Cricket" width="460px"/>
-	        </a>
-        </li> 
-        <li>
-	        <a href="http://medienfreunde.com/deutsch/referenzen/kreation/whizzkids.html">
-		        <img src="./Images/Carousel/Cricket 125.jpg" alt="Cricket" width="460px" />
-	        </a>
-        </li> 
-    </ul>
+   </div>
+
+  <!-- Left and right controls -->
+  <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>

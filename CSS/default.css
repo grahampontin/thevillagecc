@@ -135,29 +135,46 @@
 /* END GENERIC LAYOUT */
 
 /* HOMEPAGE STYLES */
+/* CUSTOMIZE THE CAROUSEL
+-------------------------------------------------- */
 
-#pictureCar 
-{
-    width: 512px;
-    height: 400px;
-    padding: auto;
-    margin-top: 5px;
-    float: left;
+/* Carousel base class */
+.carousel {
+  height: 400px;
+  margin-bottom: 60px;
+}
+/* Since positioning the image, we need to help out the caption */
+.carousel-caption {
+  z-index: 10;
 }
 
-#pictureCar li 
-{
-    list-style: none;
+/* Declare heights because of positioning of img element */
+.carousel .item {
+  height: 400px;
+  background-color: #777;
+}
+.carousel-inner > .item > img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  height: 400px;
 }
 
-#introText 
-{
-    padding: 15px;
-    height: 350px;
-    width: 450px;
-    float: left;
-    
-    
+.marketing .col-lg-4 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.marketing h2 {
+  font-weight: normal;
+}
+.marketing .col-lg-4 p {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.marketing {
+    width: 1000px !important;
 }
 
 #introTextInner 

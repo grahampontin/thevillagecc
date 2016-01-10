@@ -18,11 +18,12 @@
         <!-- End Head -->
         <div class=clearer></div>
         <div id="mainContent">
+            <h1>Fixtures</h1>
         <form id="form1" runat="server">
              <asp:ListView ID="FixturesListView" runat="server" 
                  onitemdatabound="FixturesListView_ItemDataBound">
            <LayoutTemplate>
-            <table id=fixtureTable class=fullWidth>
+            <table id=fixtureTable class="table table-striped">
                     
                         <asp:PlaceHolder runat="server" ID="itemPlaceholder"></asp:PlaceHolder>
                     

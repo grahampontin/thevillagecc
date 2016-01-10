@@ -112,7 +112,7 @@
         <div class=clearer></div>
         <div id="mainContent">
             <form runat=server id=StatsForm class="form-horizontal">
-            <div class=PageHeading>Club Statistics</div>
+            <H1>Club Statistics<small> for the cricket geek in all of us</small></H1>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Filter Statistics

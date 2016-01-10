@@ -18,12 +18,23 @@
         <!-- End Head -->
         <div class=clearer></div>
         <div id="mainContent">
-            <div class=PageHeading><a class="SmallLink" href=Results.aspx?season=<asp:Literal runat=server ID=PrevResultsYear></asp:Literal>> << previous</a> Season <asp:Literal runat=server ID=ResultsYear></asp:Literal> <a class="SmallLink" href=Results.aspx?season=<asp:Literal runat=server ID=NextResultsYear></asp:Literal>>next >></a></div>
+            <h1>Results <asp:Literal runat=server ID=ResultsYear></asp:Literal></h1>
+            <div class="row">
+                <div class="col-sm-6">
+                    <a class="SmallLink" href=Results.aspx?season=<asp:Literal runat=server ID=PrevResultsYear></asp:Literal>> << previous</a>
+                </div>
+                <div class="col-sm-6">
+                    <div class="pull-right">
+                        <a class="SmallLink" href=Results.aspx?season=<asp:Literal runat=server ID=NextResultsYear></asp:Literal>>next >></a>
+                    </div>
+                </div>    
+            </div>
+            
         <form id="form1" runat="server">
              <asp:ListView ID="FixturesListView" runat="server" 
                  onitemdatabound="FixturesListView_ItemDataBound">
            <LayoutTemplate>
-            <table id=resultsTable class=fullWidth>
+            <table id=resultsTable class="table table-striped">
                     
                         <asp:PlaceHolder runat="server" ID="itemPlaceholder"></asp:PlaceHolder>
                     

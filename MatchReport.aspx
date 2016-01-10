@@ -23,9 +23,9 @@
         <div class=clearer></div>
         <div id="mainContent">
         <form id="form1" runat="server">
-            <div class="PageHeading">
+            <H1>
                 <asp:Literal runat=server ID="PageHeading"></asp:Literal>
-            </div>
+            </H1>
             <div class=Centered>
                 <a href="#Report">Report</a> | 
                 <a href="#Scorecards">Scorcards</a> | 

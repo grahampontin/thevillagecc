@@ -21,7 +21,7 @@ public class CommandHandler : IHttpHandler
         var genericBallByBallCommand = javaScriptSerializer.Deserialize<GenericBallByBallCommand>(postData);
         context.Response.ContentType = "text/json";
         context.Response.StatusCode = 200;
-        
+
         try
         {
             var match = new Match(genericBallByBallCommand.matchId);
@@ -42,14 +42,26 @@ public class CommandHandler : IHttpHandler
                     var stateFromClient = javaScriptSerializer.Deserialize<MatchState>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
                     match.UpdateCurrentBallByBallState(stateFromClient);
                     ReturnCurrentMatchState(context, match);
-                    break;    
+                    break;
+                case "liveScorecard":
+                    //do stuff
+                    if (!match.GetIsBallByBallInProgress())
+                    {
+                        throw new InvalidOperationException("Match " + genericBallByBallCommand.matchId + " does not have any ball by ball coverage");
+                    }
+                    
+                    string json = javaScriptSerializer.Serialize(match.GetLiveScorecard());
+                    context.Response.ContentType = "text/json";
+                    context.Response.StatusCode = 200;
+                    context.Response.Write(json);
+                    break;
                 default:
                     context.Response.ContentType = "text/plain";
                     context.Response.Write("Command: " + genericBallByBallCommand.command + " is not supported");
                     context.Response.StatusCode = 400;
                     break;
-            }    
-        } 
+            }
+        }
         catch(InvalidOperationException ex)
         {
             ReportError(context, ex, 400);
@@ -57,7 +69,7 @@ public class CommandHandler : IHttpHandler
         {
             ReportError(context, ex, 500);
         }
-        
+
 
 
     }
