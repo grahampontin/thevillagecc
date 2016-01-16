@@ -68,14 +68,14 @@
             <div class="row">
                 <div class="col-sm-8">
                     <div class="pull-left">
-                        The Village CC <strong>165/4 (<span id="lastCompletedOver"></span> ov)</strong><br />
-                        <span class="opposition"></span> <strong>Yet to bat</strong><br />
-                        <small>Village lead someone by 165 runs with 6 wickets remaining</small>
+                        The Village CC <strong><span id="teamScore"></span>/<span id="teamWickets"></span> (<span id="lastCompletedOver"></span> ov)</strong><br />
+                        <span class="opposition"></span> <strong><span id="oppositionScore"></span></strong><br />
+                        <small>Village lead/trail someone by XXXX runs with YYYY wickets remaining</small>
                     </div>
                     <div class="pull-right">
                         <small>
-                        Village RR: 4.23<br />
-                        <span class="opposition"></span> RR: TBC<br />
+                        Village RR: <span id="teamRunRate"></span><br />
+                        <span class="opposition"></span> RR: <span id="oppositionRunRate"></span><br />
                         Overs remaining: <span id="oversRemaining"></span><br />
                         </small>
                     </div>
@@ -165,41 +165,30 @@
                     </table>
                     <div class="recent-overs">
                         <div class="pull-left" style="margin-right: 10px; margin-left: 10px"><strong><small>Recent overs</small></strong></div>
-                        <div class="ball-score">
-                        •    
-                        </div> 
-                        <div class="ball-score">
-                        <small>4</small>    
-                        </div> 
-                        <div class="ball-score">
-                        <small>1</small>
-                        </div> 
-                        <div class=" ball-score">
-                        •    
-                        </div>
-                        <div class="over-divider">
-                        &nbsp;
-                        </div>
-                        <div class="ball-score">
-                        <small>1</small>    
-                        </div> 
+                        <div id="recentOvers"></div>
                         <div class="clearfix"></div>                       
                     </div> 
                     <div class="current-partnership">
                         <strong><small>Current partnership </small> </strong><small>
-                    16 runs,
-                    6.0 overs,
-                    RR: 2.66
-                    (Cook 8, Hales 5)
+                    <span id="currentPartnershipRuns"></span> runs,
+                    <span id="currentPartnershipOvers"></span> overs,
+                    RR: <span id="currentPartnershipRunRate"></span>
+                    (<span id="currentPartnershipPlayer1Name"></span> <span id="currentPartnershipPlayer1Runs"></span>, <span id="currentPartnershipPlayer2Name"></span> <span id="currentPartnershipPlayer2Runs"></span>)
                     </small>
                     </div>
                     <div class="last-batsman">
                         <strong><small>Last bat </small> </strong><small>
-                        JWA Taylor c Bavuma b Piedt 27 (112m 84b 1x4 1x6) SR: 32.14
+                        <span id="lastBatsmanWicketText"></span> <span id="lastBatsmanScore"></span> (<span id="lastBatsmanBalls"></span>b <span id="lastBatsmanFours"></span>x4 <span id="lastBatsmanSixes"></span>x6) SR: <span id="lastBatsmanStrikeRate"></span>
                         </small><br />
                         <strong><small>Fall of wicket </small> </strong>
                         <small>
-                        116/6 (42.4 ov); Partnership: 1 runs, 1.4 overs, RR: 0.60 (Bairstow 1, Taylor 0)
+                        <span id="fallOfWicketTeamScore"></span>/<span id="fallOfWicketWicketNumber"></span> (<span id="fallOfWicketOver"></span> ov); 
+                            Partnership: 
+                            <span id="lastPartnershipRuns"></span> runs,
+                            <span id="lastPartnershipOvers"></span> overs,
+                            RR: <span id="lastPartnershipRunRate"></span>
+                            (<span id="lastPartnershipPlayer1Name"></span> <span id="lastPartnershipPlayer1Runs"></span>, <span id="lastPartnershipPlayer2Name"></span> <span id="lastPartnershipPlayer2Runs"></span>)
+                    
                         </small>
                     </div>
                     <div class="panel panel-default">

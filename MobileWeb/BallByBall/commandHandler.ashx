@@ -49,8 +49,9 @@ public class CommandHandler : IHttpHandler
                     {
                         throw new InvalidOperationException("Match " + genericBallByBallCommand.matchId + " does not have any ball by ball coverage");
                     }
-                    
-                    string json = javaScriptSerializer.Serialize(match.GetLiveScorecard());
+
+                    var liveScorecard = match.GetLiveScorecard();
+                    string json = javaScriptSerializer.Serialize(liveScorecard);
                     context.Response.ContentType = "text/json";
                     context.Response.StatusCode = 200;
                     context.Response.Write(json);
@@ -86,7 +87,7 @@ public class CommandHandler : IHttpHandler
     private static void ReportError(HttpContext context, Exception ex, int statusCode)
     {
         context.Response.ContentType = "text/plain";
-        context.Response.Write(ex.Message);
+        context.Response.Write(ex.Message + Environment.NewLine + ex.StackTrace);
         context.Response.StatusCode = statusCode;
         Logger.Log(ex.Message, ex, Severity.Error);
     }
