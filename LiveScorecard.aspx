@@ -53,6 +53,13 @@
         .over-comment {
             padding-bottom: 10px;
         }
+        .ball-row {
+            padding-bottom: 5px;
+        }
+        .wicket-row {
+            padding-bottom: 10px; 
+
+        }
     </style>
     <script src="Script/purl.js"></script>
     <script src="Script/live-scorecard.js"></script>
@@ -191,20 +198,23 @@
                     
                         </small>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <small><strong>End of over 10</strong> (3 runs) <strong>Village 165/4</strong></small>
-                        </div>
-                        <div class="panel-body">
-                            <div class="over-comment">Stuff happened in this over and it was totally incredible, yes it was.</div>
-                            <div class="row">
-                                <div class="col-sm-1"><strong>9.6</strong></div>
-                                <div class="col-sm-11">
-                                    A chap to GC Pontin <strong>FOUR</strong>
+                    <div id="overDetails">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <small><strong>End of over 10</strong> (3 runs) <strong>Village 165/4</strong></small>
+                            </div>
+                            <div class="panel-body">
+                                <div class="over-comment">Stuff happened in this over and it was totally incredible, yes it was.</div>
+                                <div class="row">
+                                    <div class="col-sm-1"><strong>9.6</strong></div>
+                                    <div class="col-sm-11">
+                                        A chap to GC Pontin <strong>FOUR</strong>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>   
+                        </div>    
+                    </div>
+                       
                 </div>
                 <div class="col-sm-4">
                     <div class="panel panel-default">

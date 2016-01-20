@@ -84,7 +84,7 @@ function renderMatchData(matchData) {
     $("#lastBatsmanFours").text(matchData.LastManOut.OutgoingBatsmanInningsDetails.Fours);
     $("#lastBatsmanSixes").text(matchData.LastManOut.OutgoingBatsmanInningsDetails.Sixes);
     $("#lastBatsmanStrikeRate").text(matchData.LastManOut.OutgoingBatsmanInningsDetails.StrikeRate);
-    $("#lastBatsmanWicketText").text(getDismissalText(matchData.LastManOut));
+    $("#lastBatsmanWicketText").text(getDismissalText(matchData.LastManOut.Wicket));
 
     //Fall of last wicket
     $("#fallOfWicketWicketNumber").text(matchData.LastManOut.WicketNumber);
@@ -104,7 +104,7 @@ function renderMatchData(matchData) {
         if (ballsRendered >= 26) {
             return;
         }
-        $.each(over.Balls.reverse(), function (ballIndex, ball) {
+        $.each(over.Over.Balls.reverse(), function (ballIndex, ball) {
             if (ballsRendered >= 26) {
                 return;
             }
@@ -124,25 +124,103 @@ function renderMatchData(matchData) {
         $("#recentOvers").prepend("<div class=\"over-divider\">&nbsp</div>");
     });
 
+    //Overs text
+    $.each(matchData.CompletedOvers.reverse(), function (index, over) {
+        var overContainer = $("<div></div>");
+        overContainer.addClass("panel panel-default");
+
+        var overHeader = $("<div></div>");
+        overHeader.addClass("panel-heading");
+        overHeader.html("<small><strong>End of over " + over.Over.OverNumber + "</strong> (" + getScoreString(over.ScoreForThisOver) + ") <strong>Village " + over.ScoreAtEndOfOver + "/" + over.WicketsAtEndOfOver + "</strong></small>");
+
+        overContainer.append(overHeader);
+
+        var overBody = $("<div></div>");
+        overBody.addClass("panel-body");
+
+        var overCommentary = $("<div></div>");
+        overCommentary.addClass("over-comment");
+        overCommentary.html(over.Over.Commentary);
+
+
+        $.each(over.Over.Balls, function (ballIndex, ball) {
+            var row = $("<div></div>");
+            row.addClass("row ball-row");
+
+            var ballNumber = $("<div></div>");
+            ballNumber.addClass("col-sm-1");
+            ballNumber.html("<strong>" + index + "." + ballIndex + "</strong>");
+
+            var ballDescription = $("<div></div>");
+            ballDescription.addClass("col-sm-11");
+            ballDescription.html(ball.Bowler + " to " + ball.BatsmanName + ", " + getBallDescription(ball));
+            row.append(ballNumber);
+            row.append(ballDescription);
+
+            if (ball.Wicket != null) {
+                var wicketRow = $("<div></div>");
+                wicketRow.addClass("row wicket-row");
+                var emptyColumn = $("<div></div>");
+                emptyColumn.addClass("col-sm-1");
+                wicketRow.append(emptyColumn);
+
+                var wicketDetails = $("<div></div>");
+                wicketDetails.addClass("col-sm-11");
+                wicketDetails.html("<strong>" + getDismissalText(ball.Wicket) + "</strong>");
+                wicketRow.append(wicketDetails);
+
+                overBody.prepend(wicketRow);
+            }
+            overBody.prepend(row);
+
+        });
+
+        overBody.prepend(overCommentary);
+
+
+        overContainer.append(overBody);
+
+
+
+
+        $("#overDetails").prepend(overContainer);
+    });
+
 }
 
-function getDismissalText(fallOfWicket) {
-    var string = fallOfWicket.OutgoingPlayerName + " ";
-    switch (fallOfWicket.Wicket.ModeOfDismissal) {
+function getScoreString(score) {
+    if (score === 0)
+        return "maiden";
+    else {
+        var runOrRuns = score === 1 ? " run" : " runs";
+        return score + runOrRuns;
+    }
+}
+
+function getBallDescription(ball) {
+    if (ball.Wicket != null) {
+        return "<strong>OUT!</strong> " + ball.Wicket.Description;
+    }
+}
+
+
+function getDismissalText(wicket) {
+    var string = wicket.PlayerName + " ";
+    switch (wicket.ModeOfDismissal) {
         case "b":
-            string += "b " + fallOfWicket.Bowler;
+            string += "b " + wicket.Bowler;
             break;
         case "ct":
-            string += "ct " + fallOfWicket.Fielder + " b " + fallOfWicket.Bowler;
+            string += "ct " + wicket.Fielder + " b " + wicket.Bowler;
             break;
         case "lbw":
-            string += "lbw " + fallOfWicket.Bowler;
+            string += "lbw " + wicket.Bowler;
             break;
         case "ro":
-            string += "run out " + fallOfWicket.Fielder;
+            string += "run out " + wicket.Fielder;
             break;
         case "st":
-            string += "stumped " + fallOfWicket.Fielder;
+            string += "stumped " + wicket.Fielder;
             break;
         case "hw":
             string += "hit wicket";

@@ -8,6 +8,7 @@
     $("#submitToServerButton").click(function () {
         //Fix this
         var matchId = matchState.MatchId;
+        matchState.Over.Commentary = $("#overCommentery").val();
         var postData = { 'command': "submitOver", 'matchId': matchId, 'payload': matchState };
         //Post to server and handle response.
         $.post('./CommandHandler.ashx', JSON.stringify(postData), function (data) {
