@@ -60,8 +60,34 @@
             padding-bottom: 10px; 
 
         }
+        .player-icon {
+            background-color: #ff4500;
+            width: 50px;
+            color: #ffffff;
+            font-weight: bold;
+            height: 50px;
+            margin-left: 10px;
+            text-align: center;
+            padding-top: 13px;
+            margin-bottom: 5px;
+        }
+        .player-icon:hover {
+            cursor: pointer;
+        }
+
+        .player-icon-row {
+            overflow-x: scroll;
+        }
+        .player-icon-inner {
+            
+        }
+        .player-icon-active {
+            background-color: #000000 !important;
+        }
+        
     </style>
     <script src="Script/purl.js"></script>
+    <script src="Script/wagonwheel-functions.js"></script>
     <script src="Script/live-scorecard.js"></script>
 </head>
 <body>
@@ -146,28 +172,28 @@
                             <th>This spell</th>
                         </tr>
                         <tr>
-                            <td>Some chap</td>
-                            <td>10</td>
-                            <td>15</td>
-                            <td>1</td>
-                            <td>0</td>
-                            <td>23.45</td>
-                            <td>2(1b)</td>
-                            <td>10(15b)</td>
-                            <td>68</td>
-                            <td>1034</td>
+                            <td><span id="bowlerOneName"></span></td>
+                            <td><span id="bowlerOneOvers"></span></td>
+                            <td><span id="bowlerOneMaidens"></span></td>
+                            <td><span id="bowlerOneRuns"></span></td>
+                            <td><span id="bowlerOneWickets"></span></td>
+                            <td><span id="bowlerOneEconomy"></span></td>
+                            <td><span id="bowlerOneDots"></span></td>
+                            <td><span id="bowlerOneFours"></span></td>
+                            <td><span id="bowlerOneSixes"></span></td>
+                            <td><span id="bowlerOneThisSpell"></span></td>
                         </tr>
                         <tr>
-                            <td>Another bloke</td>
-                            <td>10</td>
-                            <td>15</td>
-                            <td>1</td>
-                            <td>0</td>
-                            <td>23.45</td>
-                            <td>2(1b)</td>
-                            <td>10(15b)</td>
-                            <td>68</td>
-                            <td>1034</td>
+                            <td><span id="bowlerTwoName"></span></td>
+                            <td><span id="bowlerTwoOvers"></span></td>
+                            <td><span id="bowlerTwoMaidens"></span></td>
+                            <td><span id="bowlerTwoRuns"></span></td>
+                            <td><span id="bowlerTwoWickets"></span></td>
+                            <td><span id="bowlerTwoEconomy"></span></td>
+                            <td><span id="bowlerTwoDots"></span></td>
+                            <td><span id="bowlerTwoFours"></span></td>
+                            <td><span id="bowlerTwoSixes"></span></td>
+                            <td><span id="bowlerTwoThisSpell"></span></td>
                         </tr>
                     </table>
                     <div class="recent-overs">
@@ -185,7 +211,7 @@
                     </div>
                     <div class="last-batsman">
                         <strong><small>Last bat </small> </strong><small>
-                        <span id="lastBatsmanWicketText"></span> <span id="lastBatsmanScore"></span> (<span id="lastBatsmanBalls"></span>b <span id="lastBatsmanFours"></span>x4 <span id="lastBatsmanSixes"></span>x6) SR: <span id="lastBatsmanStrikeRate"></span>
+                        <span id="lastBatsmanWicketText"></span>
                         </small><br />
                         <strong><small>Fall of wicket </small> </strong>
                         <small>
@@ -199,20 +225,7 @@
                         </small>
                     </div>
                     <div id="overDetails">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <small><strong>End of over 10</strong> (3 runs) <strong>Village 165/4</strong></small>
-                            </div>
-                            <div class="panel-body">
-                                <div class="over-comment">Stuff happened in this over and it was totally incredible, yes it was.</div>
-                                <div class="row">
-                                    <div class="col-sm-1"><strong>9.6</strong></div>
-                                    <div class="col-sm-11">
-                                        A chap to GC Pontin <strong>FOUR</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>    
+                        <!-- Populated by script -->
                     </div>
                        
                 </div>
@@ -222,7 +235,13 @@
                             Analysis
                         </div>
                         <div class="panel-body">
-                            Stuff
+                            <div class="player-icon-row">
+                                <div class="player-icon-inner" id="player-icons">
+                                    
+                                </div>
+                            </div>
+                            <div id="wagon-wheel">
+                            </div>
                         </div>
                     </div>
 

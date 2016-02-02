@@ -69,6 +69,33 @@ function renderMatchData(matchData) {
     $("#otherBatsmanCareerHighScore").text(matchData.OtherBatsman.CareerHighScore);
     $("#otherBatsmanCareerAverage").text(matchData.OtherBatsman.CareerAverage);
 
+    //Bowler One
+    $("#bowlerOneName").text(matchData.BowlerOneDetails.Name);
+    $("#bowlerOneOvers").text(matchData.BowlerOneDetails.Details.Overs);
+    $("#bowlerOneMaidens").text(matchData.BowlerOneDetails.Details.Maidens);
+    $("#bowlerOneRuns").text(matchData.BowlerOneDetails.Details.Runs);
+    $("#bowlerOneWickets").text(matchData.BowlerOneDetails.Details.Wickets);
+    $("#bowlerOneDots").text(matchData.BowlerOneDetails.Details.Dots);
+    $("#bowlerOneFours").text(matchData.BowlerOneDetails.Details.Fours);
+    $("#bowlerOneSixes").text(matchData.BowlerOneDetails.Details.Sixes);
+    $("#bowlerOneEconomy").text(matchData.BowlerOneDetails.Details.Economy);
+    var spell = matchData.BowlerOneDetails.JustThisSpell;
+    $("#bowlerOneThisSpell").text(spell.Overs+"-"+spell.Maidens+"-"+spell.Runs+"-"+spell.Wickets);
+
+    //Bowler Two
+    $("#bowlerTwoName").text(matchData.BowlerTwoDetails.Name);
+    $("#bowlerTwoOvers").text(matchData.BowlerTwoDetails.Details.Overs);
+    $("#bowlerTwoMaidens").text(matchData.BowlerTwoDetails.Details.Maidens);
+    $("#bowlerTwoRuns").text(matchData.BowlerTwoDetails.Details.Runs);
+    $("#bowlerTwoWickets").text(matchData.BowlerTwoDetails.Details.Wickets);
+    $("#bowlerTwoDots").text(matchData.BowlerTwoDetails.Details.Dots);
+    $("#bowlerTwoFours").text(matchData.BowlerTwoDetails.Details.Fours);
+    $("#bowlerTwoSixes").text(matchData.BowlerTwoDetails.Details.Sixes);
+    $("#bowlerTwoEconomy").text(matchData.BowlerTwoDetails.Details.Economy);
+    spell = matchData.BowlerTwoDetails.JustThisSpell;
+    $("#bowlerTwoThisSpell").text(spell.Overs+"-"+spell.Maidens+"-"+spell.Runs+"-"+spell.Wickets);
+
+
     //Current partnership
     $("#currentPartnershipRuns").text(matchData.CurrentPartnership.Score);
     $("#currentPartnershipRunRate").text(matchData.CurrentPartnership.RunRate);
@@ -79,12 +106,7 @@ function renderMatchData(matchData) {
     $("#currentPartnershipPlayer2Runs").text(matchData.CurrentPartnership.Player2Score);
     
     //Last batsman
-    $("#lastBatsmanScore").text(matchData.LastManOut.OutgoingBatsmanInningsDetails.Score);
-    $("#lastBatsmanBalls").text(matchData.LastManOut.OutgoingBatsmanInningsDetails.Balls);
-    $("#lastBatsmanFours").text(matchData.LastManOut.OutgoingBatsmanInningsDetails.Fours);
-    $("#lastBatsmanSixes").text(matchData.LastManOut.OutgoingBatsmanInningsDetails.Sixes);
-    $("#lastBatsmanStrikeRate").text(matchData.LastManOut.OutgoingBatsmanInningsDetails.StrikeRate);
-    $("#lastBatsmanWicketText").text(getDismissalText(matchData.LastManOut.Wicket));
+    $("#lastBatsmanWicketText").text(getDismissalText(matchData.LastManOut.Wicket, matchData.FallOfWickets));
 
     //Fall of last wicket
     $("#fallOfWicketWicketNumber").text(matchData.LastManOut.WicketNumber);
@@ -143,13 +165,15 @@ function renderMatchData(matchData) {
         overCommentary.html(over.Over.Commentary);
 
 
-        $.each(over.Over.Balls, function (ballIndex, ball) {
+        var actualBallNumber = 1;
+        $.each(over.Over.Balls.reverse(), function (ballIndex, ball) {
             var row = $("<div></div>");
             row.addClass("row ball-row");
 
             var ballNumber = $("<div></div>");
             ballNumber.addClass("col-sm-1");
-            ballNumber.html("<strong>" + index + "." + ballIndex + "</strong>");
+
+            ballNumber.html("<strong>" + index + "." + actualBallNumber+ "</strong>");
 
             var ballDescription = $("<div></div>");
             ballDescription.addClass("col-sm-11");
@@ -166,26 +190,98 @@ function renderMatchData(matchData) {
 
                 var wicketDetails = $("<div></div>");
                 wicketDetails.addClass("col-sm-11");
-                wicketDetails.html("<strong>" + getDismissalText(ball.Wicket) + "</strong>");
+                wicketDetails.html("<strong>" + getDismissalText(ball.Wicket, matchData.FallOfWickets) + "</strong>");
                 wicketRow.append(wicketDetails);
 
                 overBody.prepend(wicketRow);
             }
             overBody.prepend(row);
-
+            if (!needsToBeReBowled(ball)) {
+                actualBallNumber ++;
+            }
         });
-
         overBody.prepend(overCommentary);
-
-
         overContainer.append(overBody);
-
-
-
-
         $("#overDetails").prepend(overContainer);
     });
 
+    $.each(matchData.LiveBattingCard.Players, function(index, player) {
+        var playerIcon = $("<div></div");
+        playerIcon.addClass("img-circle player-icon pull-left");
+        playerIcon.attr("playerId", player.BatsmanInningsDetails.PlayerId);
+        var playerName = player.BatsmanInningsDetails.Name;
+        playerIcon.attr("playerName", player.BatsmanInningsDetails.Name);
+        playerIcon.attr("playerScore", player.BatsmanInningsDetails.Score);
+        playerIcon.attr("playerIsOut", player.Wicket != null);
+
+
+        var parts = playerName.split(' ');
+        var shortName = "";
+        $.each(parts, function(index, part) {
+            shortName = shortName + part.charAt(0);
+        });
+        if (shortName.length > 3) {
+            shortName = shortName.charAt(0) + shortName.charAt(1) + shortName.charAt(shortName.length - 1);
+        }
+        playerIcon.html(shortName);
+        $('#player-icons').append(playerIcon);
+        
+    });
+    $('#player-icons').width($(".player-icon").length * 60);
+
+
+
+    $(".player-icon").click(function() {
+        var paper = refreshWagonWheel();
+        var clickedPlayer = $(this);
+        $('.player-icon').removeClass('player-icon-active');
+        clickedPlayer.addClass('player-icon-active');
+        drawWagonWheel(clickedPlayer, matchData.CompletedOvers, paper);
+    });
+}
+
+function drawWagonWheel(player, overs, paper) {
+    var playerText = player.attr("playerName") + " (" + player.attr("playerScore");
+    if (player.attr("playerIsOut") !== "true") {
+        playerText = playerText + "*";
+    }
+    playerText = playerText + ")";
+    paper.text(paper.width / 2, 20, playerText).attr({ 'font-size': 20 });
+    $.each(overs, function(index, over) {
+        $.each(over.Over.Balls, function (index, ball) {
+            if (ball.Batsman.toString() === player.attr("playerId")) {
+                drawBall(ball, paper);
+            }
+        });
+    });
+}
+
+function drawBall(ball, paper) {
+    var stumpsX = Math.round(paper.width * 0.5);
+    var stumpsY = Math.round((paper.height-30) * .4 + 30);
+
+    var result = findNewPoint(stumpsX, stumpsY, ball.Angle, getDistance(ball.Amount, ball.Angle));
+    paper.path("M" + stumpsX + " " + stumpsY + "L" + result.x + " " + result.y).attr({ stroke: getColour(ball.Amount), 'stroke-width': 2 });
+}
+
+function refreshWagonWheel() {
+    $('#wagon-wheel').html('');
+    var wagonWheelPaper = Raphael("wagon-wheel", 283, 330);
+    var wagonWheelImage = wagonWheelPaper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", 0, 30, 283, 280);
+    wagonWheelPaper.text(55, 175, 'Off\nSide').attr({ fill: '#fff', 'font-size': 20 });
+    wagonWheelPaper.text(235, 175, 'Leg\nSide').attr({ fill: '#fff', 'font-size': 20 });
+    wagonWheelPaper.text(20, 325, 'Runs').attr({ 'font-size': 12 });
+    wagonWheelPaper.path('M40 325L80 325').attr({ stroke: '#ff0', 'stroke-width': 4 });
+    wagonWheelPaper.text(120, 325, 'Fours').attr({ 'font-size': 12 });
+    wagonWheelPaper.path('M140 325L180 325').attr({ stroke: '#00f', 'stroke-width': 4 });
+    wagonWheelPaper.text(220, 325, 'Sixes').attr({ 'font-size': 12 });
+    wagonWheelPaper.path('M240 325L280 325').attr({ stroke: '#f00', 'stroke-width': 4 });
+
+    return wagonWheelPaper;
+} 
+
+function needsToBeReBowled(ball) {
+    return ball.Thing === "nb" || ball.Thing === "wd";
 }
 
 function getScoreString(score) {
@@ -201,33 +297,109 @@ function getBallDescription(ball) {
     if (ball.Wicket != null) {
         return "<strong>OUT!</strong> " + ball.Wicket.Description;
     }
+    var sOrNoS = ball.Amount > 1 ? "s" : "";
+    switch (ball.Thing) {
+        case "":
+            switch (ball.Amount) {
+                case 0:
+                    return "no run";
+                case 1:
+                    return "single to " + getLocationFrom(ball);
+                case 4:
+                    return "<strong>FOUR</strong> through " + getLocationFrom(ball);
+                case 6:
+                    return "<strong>SIX!</strong> over " + getLocationFrom(ball);
+                default:
+                    return ball.Amount + " runs to " + getLocationFrom(ball);
+            }
+        case "wd":
+            return ball.Amount + " wide" + sOrNoS;
+        case "nb":
+            return ball.Amount + " no ball" + sOrNoS;
+        case "b":
+            return ball.Amount + " bye" + sOrNoS;
+        case "lb":
+            return ball.Amount + " leg bye" + sOrNoS;
+        case "p":
+            return ball.Amount + " penalty run" + sOrNoS;
+        default:
+            return ball.Amount + " " + ball.Thing;
+
+    }
 }
 
+function getLocationFrom(ball) {
+    if (ball.Angle < Math.PI / 4) {
+        return "fine leg";
+    }
+    if (ball.Angle < Math.PI / 2) {
+        return "backwards square leg";
+    }
+    if (ball.Angle < Math.PI * 0.6) {
+        return "square leg";
+    }
+    if (ball.Angle < Math.PI * 0.8) {
+        return "mid wicket";
+    }
+    if (ball.Angle < Math.PI) {
+        return "mid on";
+    }
+    if (ball.Angle < Math.PI * 1.2) {
+        return "mid off";
+    }
+    if (ball.Angle < Math.PI * 1.35) {
+        return "extra cover";
+    }
+    if (ball.Angle < Math.PI * 1.5) {
+        return "cover";
+    }
+    if (ball.Angle < Math.PI * 1.65) {
+        return "point";
+    }
+    if (ball.Angle < Math.PI * 1.8) {
+        return "backwards point";
+    }
+    return "third man";
+}
 
-function getDismissalText(wicket) {
+function getFallOfWicketForPlayer(playerId, fallOfWickets) {
+    var wicketToReturn;
+        $.each(fallOfWickets, function(index, fallOfWicket) {
+            if (fallOfWicket.OutGoingPlayerId === playerId) {
+                return wicketToReturn = fallOfWicket;
+            }
+        }
+    );
+    return wicketToReturn;
+}
+
+function getDismissalText(wicket, fallOfWickets) {
     var string = wicket.PlayerName + " ";
+    var fallOfWicket = getFallOfWicketForPlayer(wicket.Player, fallOfWickets);
     switch (wicket.ModeOfDismissal) {
-        case "b":
+        case "bowled":
             string += "b " + wicket.Bowler;
             break;
-        case "ct":
+        case "caught":
             string += "ct " + wicket.Fielder + " b " + wicket.Bowler;
             break;
         case "lbw":
             string += "lbw " + wicket.Bowler;
             break;
-        case "ro":
+        case "run out":
             string += "run out " + wicket.Fielder;
             break;
-        case "st":
+        case "stumped":
             string += "stumped " + wicket.Fielder;
             break;
-        case "hw":
+        case "hit wicket":
             string += "hit wicket";
             break;
-        case "htb":
+        case "handled the ball":
             string += "handled the ball";
             break;
     }
+    var details = fallOfWicket.OutgoingBatsmanInningsDetails;
+    string += " " + details.Score + " (" + details.Balls + "b " + details.Fours + "x4 " + details.Sixes + "x6) SR: "+details.StrikeRate+" ";
     return string;
 }

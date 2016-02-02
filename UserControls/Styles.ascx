@@ -23,4 +23,6 @@
     <script src="/Script/bootstrap-datetimepicker.min.js"></script>
     <script src="/Script/bootstrap-dialog.min.js"></script>
     <script src="/Script/bootstrap3-wysihtml5.all.min.js"></script>
+    <script src="/Script/raphael-min.js"></script>
+
     
