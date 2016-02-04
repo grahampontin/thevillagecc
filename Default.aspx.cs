@@ -37,14 +37,15 @@ public partial class _Default : System.Web.UI.Page
 
         string reportText = report.Report.Substring(report.Report.IndexOf("</conditions>") + 13);
         int lenght = 400;
+        
+        reportText = Regex.Replace(reportText, @"<[^>]+>|&nbsp;", "").Trim();
+        reportText = Regex.Replace(reportText, @"\s{2,}", " ");
         if (reportText.Length < lenght)
         {
             lenght = reportText.Length;
         }
-        reportText = Regex.Replace(reportText, @"<[^>]+>|&nbsp;", "").Trim();
-        reportText = Regex.Replace(reportText, @"\s{2,}", " ");
 
-        bodyControl.Text = reportText.Substring(0, lenght) + "...";
+        bodyControl.Text = reportText.Substring(0, lenght - 1) + "...";
         idControl.Text = report.MatchID.ToString();
     }
 }
