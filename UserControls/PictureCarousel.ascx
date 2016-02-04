@@ -1,32 +1,35 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="PictureCarousel.ascx.cs" Inherits="UserControls_PictureCarousel" %>
 <%@ Import Namespace="System.ComponentModel" %>
-<div id="myCarousel" class="carousel slide" data-ride="carousel">
-  <!-- Indicators -->
-  <ol  id="carousel-indicators" class="carousel-indicators">
-  </ol>
+<link rel="stylesheet" type="text/css" href="/Plugins/kenburns-carousel/css/style.css"/>
+<div id="kenburns-slideshow"></div>
 
-  <!-- Wrapper for slides -->
-  <div class="carousel-inner" role="listbox">
-    <asp:ListView ID="Pictures" runat="server">
-           <LayoutTemplate>
-                    <asp:PlaceHolder runat="server" ID="itemPlaceholder"></asp:PlaceHolder>
-           </LayoutTemplate>
+<script type="text/javascript" src="../Plugins/kenburns-carousel/js/kenburns.js"></script>
+	
+	<script type="text/javascript">
+	
+	$(document).ready(function() {
+	    $('#kenburns-slideshow').Kenburns({
+	    	images: [
+	    		"Images/newCarousel/IMG-20150621-WA0014.jpg",
+	    		"Images/newCarousel/IMG-20150530-WA0007.jpg",
+	    		"Images/newCarousel/IMG-20150704-WA0006.jpg",
+	    		"Images/newCarousel/IMG-20150711-WA0000.jpg",
+	    		"Images/newCarousel/IMG-20150426-WA0014.jpg",
+	    		"Images/newCarousel/IMG-20150912-WA0003.jpg",
+	    		"Images/newCarousel/IMG-20160204-WA0000.jpg"
+	    	],
+	    	scale:0.9,
+	    	duration:8000,
+	    	fadeSpeed:1200,
+	    	ease3d:'cubic-bezier(0.445, 0.050, 0.550, 0.950)',
 
-           <ItemTemplate>
-            <div class="item">
-               <img src="\Images\Carousel\<%# Eval("Name")%>" />
-            </div>
-           </ItemTemplate>
-        </asp:ListView> 
-   </div>
+	    	onSlideComplete: function(){
+	    		//$('#slide-title').html(titles[this.getSlideIndex()]);
+	    	},
+	    	onLoadingComplete: function(){
+	    		//$('#status').html("Loading Complete");
+	    	}
 
-  <!-- Left and right controls -->
-  <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
-</div>
+	    });
+	});
+    </script>

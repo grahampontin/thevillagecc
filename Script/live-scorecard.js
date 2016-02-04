@@ -249,7 +249,7 @@ function drawWagonWheel(player, overs, paper) {
     paper.text(paper.width / 2, 20, playerText).attr({ 'font-size': 20 });
     $.each(overs, function(index, over) {
         $.each(over.Over.Balls, function (index, ball) {
-            if (ball.Batsman.toString() === player.attr("playerId")) {
+            if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing ==="" || (ball.Thing === "nb" && ball.Amount > 1))) {
                 drawBall(ball, paper);
             }
         });
