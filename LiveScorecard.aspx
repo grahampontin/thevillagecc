@@ -103,7 +103,7 @@
                     <div class="pull-left">
                         The Village CC <strong><span id="teamScore"></span>/<span id="teamWickets"></span> (<span id="lastCompletedOver"></span> ov)</strong><br />
                         <span class="opposition"></span> <strong><span id="oppositionScore"></span></strong><br />
-                        <small>Village lead/trail someone by XXXX runs with YYYY wickets remaining</small>
+                        <small>Village lead/trail <span class="opposition"></span> by XXXX runs with <span id="wicketsRemaining"></span> wickets remaining</small>
                     </div>
                     <div class="pull-right">
                         <small>

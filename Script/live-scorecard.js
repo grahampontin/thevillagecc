@@ -35,6 +35,7 @@ function renderMatchData(matchData) {
     $("#lastCompletedOver").text(matchData.LastCompletedOver);
     $("#teamScore").text(matchData.Score);
     $("#teamWickets").text(matchData.Wickets);
+    $("#wicketsRemaining").text(10 - matchData.Wickets);
     $("#teamRunRate").text(matchData.RunRate);
 
     //On strike batsman
@@ -259,9 +260,12 @@ function drawWagonWheel(player, overs, paper) {
 function drawBall(ball, paper) {
     var stumpsX = Math.round(paper.width * 0.5);
     var stumpsY = Math.round((paper.height-30) * .4 + 30);
-
-    var result = findNewPoint(stumpsX, stumpsY, ball.Angle, getDistance(ball.Amount, ball.Angle));
-    paper.path("M" + stumpsX + " " + stumpsY + "L" + result.x + " " + result.y).attr({ stroke: getColour(ball.Amount), 'stroke-width': 2 });
+    var batsmansScoreForBall = ball.Amount;
+    if (ball.Thing === "nb") {
+        batsmansScoreForBall = batsmansScoreForBall - 1;
+    }
+    var result = findNewPoint(stumpsX, stumpsY, ball.Angle, getDistance(batsmansScoreForBall, ball.Angle));
+    paper.path("M" + stumpsX + " " + stumpsY + "L" + result.x + " " + result.y).attr({ stroke: getColour(batsmansScoreForBall), 'stroke-width': 2 });
 }
 
 function refreshWagonWheel() {

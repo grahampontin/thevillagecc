@@ -57,12 +57,16 @@ function initialiseBallByBallCore() {
                 line.remove();
             }
             var lastBall = matchState.Over.balls[matchState.Over.balls.length - 1];
-            line = wagonWheelPaper.path(buildPath(e)).attr({ stroke: getColour(lastBall.amount), 'stroke-width': 3 });
+            var batsmansScoreForBall = lastBall.amount;
+            if (lastBall.thing === "nb") {
+                batsmansScoreForBall = batsmansScoreForBall - 1;
+            }
+            line = wagonWheelPaper.path(buildPath(e, batsmansScoreForBall)).attr({ stroke: getColour(batsmansScoreForBall), 'stroke-width': 3 });
             var x = e.touches[0].pageX - $(document).scrollLeft() - $('#wagonWheelCanvas').offset().left;
             var y = e.touches[0].pageY - $('#wagonWheelCanvas').offset().top;
             var angleRadians = angleBetweenTwoPointsWithFixedPoint(x, y, 150, 0, 150, 125);
             lastBall.angle = (Math.round(angleRadians * 10000) / 10000);
-            $("#wagonWheelSaveButton").text(lastBall.amount + " to " + getScoringArea(angleRadians));
+            $("#wagonWheelSaveButton").text(batsmansScoreForBall + " to " + getScoringArea(angleRadians));
         });
 
         wagonWheelImage.touchend(function () {
@@ -74,8 +78,13 @@ function initialiseBallByBallCore() {
             var angleRadians = angleBetweenTwoPointsWithFixedPoint(x, y, 150, 0, 150, 125);
             var lastBall = matchState.Over.balls[matchState.Over.balls.length - 1];
             lastBall.angle = (Math.round(angleRadians * 10000) / 10000);
-            line.attr({ path: buildPath(e) });
-            $("#wagonWheelSaveButton").text(lastBall.amount + " to " + getScoringArea(angleRadians));
+            var batsmansScoreForBall = lastBall.amount;
+            if (lastBall.thing === "nb") {
+                batsmansScoreForBall = batsmansScoreForBall - 1;
+            }
+
+            line.attr({ path: buildPath(e, batsmansScoreForBall) });
+            $("#wagonWheelSaveButton").text(batsmansScoreForBall + " to " + getScoringArea(angleRadians));
         });
     });
 };
@@ -122,8 +131,7 @@ function getScoringArea(angleInRadians) {
     return "Third Man";
 }
 		
-function buildPath(e) {
-    var scoreForBall =  matchState.Over.balls[matchState.Over.balls.length - 1].amount;
+function buildPath(e, scoreForBall) {
     var x = e.touches[0].pageX - $(document).scrollLeft() - $('#wagonWheelCanvas').offset().left;
     var y = e.touches[0].pageY - $('#wagonWheelCanvas').offset().top;
     var angleRadians = angleBetweenTwoPointsWithFixedPoint(x, y, 150, 0, 150, 125);
@@ -267,7 +275,9 @@ $("#runsButton").click(function () {
 $("#extrasSelect").change(function () {
     var amount = $("#amountSelect").val();
     var extra = $(this).val();
-
+    if (amount > 1 && extra ==="nb") {
+        $("#wagonWheel").popup("open");
+    }
     addBall(new Ball(amount, extra, getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
     $(this).val("extras");
 });

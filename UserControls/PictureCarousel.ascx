@@ -10,6 +10,7 @@
 	$(document).ready(function() {
 	    $('#kenburns-slideshow').Kenburns({
 	    	images: [
+	    		"Images/newCarousel/10553409_10153477334335190_8739570804864643916_n.jpg",
 	    		"Images/newCarousel/IMG-20150621-WA0014.jpg",
 	    		"Images/newCarousel/IMG-20150530-WA0007.jpg",
 	    		"Images/newCarousel/IMG-20150704-WA0006.jpg",
