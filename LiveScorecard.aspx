@@ -84,6 +84,26 @@
         .player-icon-active {
             background-color: #000000 !important;
         }
+        .chart-types {
+            margin-left: 10px;
+            margin-bottom: 10px;
+        }
+        .chart-type {
+            margin: 5px;
+            height: 40px;
+            width: 40px;
+            padding-top: 7px;
+            background-color: #ddd;
+            vertical-align: central;
+            text-align: center;
+        }
+        .chart-type:hover {
+            cursor: pointer;
+        }
+
+        .chart-type-active {
+            background-color: #556b2f !important;
+        }
         
     </style>
     <script src="Script/purl.js"></script>
@@ -238,6 +258,17 @@
                             <div class="player-icon-row">
                                 <div class="player-icon-inner" id="player-icons">
                                     
+                                </div>
+                            </div>
+                            <div id="chart-types" class="hidden">
+                                <div class="chart-type chart-type-active pull-left" chartType="wagon">
+                                    <img src="Images/liveScorecard/wagon.png" />
+                                </div>
+                                <div class="chart-type pull-left" chartType="zones">
+                                    <img src="Images/liveScorecard/zones.png" />
+                                </div>
+                                <div class="chart-type pull-left" chartType="worm">
+                                    <img src="Images/liveScorecard/worm.png" />
                                 </div>
                             </div>
                             <div id="wagon-wheel">

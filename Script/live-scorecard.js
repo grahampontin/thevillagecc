@@ -233,21 +233,70 @@ function renderMatchData(matchData) {
 
 
     $(".player-icon").click(function() {
-        var paper = refreshWagonWheel();
+        $("#chart-types").removeClass("hidden");
         var clickedPlayer = $(this);
         $('.player-icon').removeClass('player-icon-active');
         clickedPlayer.addClass('player-icon-active');
-        drawWagonWheel(clickedPlayer, matchData.CompletedOvers, paper);
+        drawChart(clickedPlayer);
+
+
+    });
+
+    function drawChart(clickedPlayer) {
+        $('#wagon-wheel').html('');
+
+        var chartToDraw = $(".chart-type-active").attr("chartType");
+        var paper;
+        if (chartToDraw === "wagon") {
+            paper = initializeWagonWheel();
+            drawWagonWheel(clickedPlayer, matchData.CompletedOvers, paper);
+        }
+        if (chartToDraw === "zones") {
+            paper = initializeZones();
+            drawZones(clickedPlayer, paper, matchData.CompletedOvers);
+
+        }
+    }
+
+    function drawZones(player, paper, overs) {
+        var scoreBuckets = [0,0,0,0,0,0,0,0];
+        drawPlayerNameAndScore(player, paper);
+        $.each(overs, function (index, over) {
+            $.each(over.Over.Balls, function (index, ball) {
+                if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing === "" || (ball.Thing === "nb" && ball.Amount > 1))) {
+                    addBallToBucket(ball, scoreBuckets);
+                }
+            });
+        });
+        $.each(scoreBuckets, function(index) {
+            addScoreToZone(index, scoreBuckets, paper);
+        });
+    }
+
+    function addScoreToZone(zoneIndex, scoreBuckets, paper) {
+        var point = findNewPoint(paper.width / 2, paper.height / 2, Math.PI / 8 * (zoneIndex*2+1), paper.width / 3);
+        paper.text(point.x, point.y, scoreBuckets[zoneIndex]).attr({
+            'font-size': 20, fill : '#fff'  
+    });
+
+    }
+
+    function addBallToBucket(ball, scoreBuckets) {
+        var modulo = Math.floor(ball.Angle / (Math.PI / 4));
+        scoreBuckets[modulo] += ball.Amount;
+    }
+
+    $(".chart-type").click(function() {
+        var clickedChart = $(this);
+        $(".chart-type").removeClass("chart-type-active");
+        clickedChart.addClass("chart-type-active");
+
+        drawChart($(".player-icon-active"));
     });
 }
 
 function drawWagonWheel(player, overs, paper) {
-    var playerText = player.attr("playerName") + " (" + player.attr("playerScore");
-    if (player.attr("playerIsOut") !== "true") {
-        playerText = playerText + "*";
-    }
-    playerText = playerText + ")";
-    paper.text(paper.width / 2, 20, playerText).attr({ 'font-size': 20 });
+    drawPlayerNameAndScore(player, paper);
     $.each(overs, function(index, over) {
         $.each(over.Over.Balls, function (index, ball) {
             if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing ==="" || (ball.Thing === "nb" && ball.Amount > 1))) {
@@ -255,6 +304,15 @@ function drawWagonWheel(player, overs, paper) {
             }
         });
     });
+}
+
+function drawPlayerNameAndScore(player, paper) {
+    var playerText = player.attr("playerName") + " (" + player.attr("playerScore");
+    if (player.attr("playerIsOut") !== "true") {
+        playerText = playerText + "*";
+    }
+    playerText = playerText + ")";
+    paper.text(paper.width / 2, 20, playerText).attr({ 'font-size': 20 });
 }
 
 function drawBall(ball, paper) {
@@ -268,8 +326,7 @@ function drawBall(ball, paper) {
     paper.path("M" + stumpsX + " " + stumpsY + "L" + result.x + " " + result.y).attr({ stroke: getColour(batsmansScoreForBall), 'stroke-width': 2 });
 }
 
-function refreshWagonWheel() {
-    $('#wagon-wheel').html('');
+function initializeWagonWheel() {
     var wagonWheelPaper = Raphael("wagon-wheel", 283, 330);
     var wagonWheelImage = wagonWheelPaper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", 0, 30, 283, 280);
     wagonWheelPaper.text(55, 175, 'Off\nSide').attr({ fill: '#fff', 'font-size': 20 });
@@ -282,7 +339,14 @@ function refreshWagonWheel() {
     wagonWheelPaper.path('M240 325L280 325').attr({ stroke: '#f00', 'stroke-width': 4 });
 
     return wagonWheelPaper;
-} 
+}
+
+
+function initializeZones() {
+    var paper = Raphael("wagon-wheel", 283, 330);
+    paper.image("\\Images\\liveScorecard\\zones-background.png", 0, 30, 280, 280);
+    return paper;
+}
 
 function needsToBeReBowled(ball) {
     return ball.Thing === "nb" || ball.Thing === "wd";
