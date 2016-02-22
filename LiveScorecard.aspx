@@ -109,6 +109,8 @@
     <script src="Script/purl.js"></script>
     <script src="Script/wagonwheel-functions.js"></script>
     <script src="Script/live-scorecard.js"></script>
+    <script src="Script/gRaphael/g.raphael-min.js"></script>
+    <script src="Script/gRaphael/g.line-min.js"></script>
 </head>
 <body>
     <div id="pageContainer">

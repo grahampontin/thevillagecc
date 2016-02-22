@@ -254,7 +254,10 @@ function renderMatchData(matchData) {
         if (chartToDraw === "zones") {
             paper = initializeZones();
             drawZones(clickedPlayer, paper, matchData.CompletedOvers);
-
+        }
+        if (chartToDraw === "worm") {
+            paper = initializeWorm();
+            drawWorm(clickedPlayer, paper, matchData.CompletedOvers);
         }
     }
 
@@ -271,6 +274,95 @@ function renderMatchData(matchData) {
         $.each(scoreBuckets, function(index) {
             addScoreToZone(index, scoreBuckets, paper);
         });
+    }
+
+    function drawWorm(player, paper, overs) {
+        var colour1 = '#009933';
+        var colour2 = '#ffd633';
+
+        paper.image("\\Images\\livescorecard\\vcc-logo-opaque.jpg", 35, 90, 200, 85);
+        var xValues = [];
+        var scoreValues = [];
+        var strikeRateValues = [];
+
+        var cumulativeScore = 0;
+        var ballNumber = 0;
+        $.each(overs, function (index, over) {
+            $.each(over.Over.Balls, function (index, ball) {
+                if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing === "" || (ball.Thing === "nb" && ball.Amount > 1))) {
+                    ballNumber ++;
+                    cumulativeScore = cumulativeScore + ball.Amount;
+                    xValues.push(ballNumber);
+                    scoreValues.push(cumulativeScore);
+                    strikeRateValues.push((cumulativeScore / ballNumber) * 100);
+                }
+            });
+        });
+
+        var maxStrikeRate = maxValue(strikeRateValues);
+        $.each(strikeRateValues, function (index, value) {
+            strikeRateValues[index] = (value / maxStrikeRate) * cumulativeScore;
+        });
+
+        drawPlayerNameAndScore(player, paper);
+        var r = paper;
+
+        // Creates a simple line chart at 10, 10
+        // width 300, height 200
+        var x = 10,
+            y = 10,
+            xlen = paper.width-30,
+            ylen = paper.height-40,
+            gutter = 20,
+            xdata = xValues;
+        var chrt = r.linechart(x, y, xlen, ylen, xdata, [scoreValues, strikeRateValues], {
+            gutter: gutter,
+            nostroke: false,
+            axis: "0 0 0 1",
+            symbol: "",
+            smooth: true,
+            colors: [
+                        colour1, 
+                        colour2  
+            ]
+        });
+        // default gutter: 10
+        //x, y, length, from, to, steps, orientation, labels, type, dashsize, paper
+        Raphael.g.axis(
+            x + gutter, // 10 + gutter
+            y + ylen - gutter, //y pos
+            xlen - 2 * gutter, 1, xdata.length, // used to pass the initial value and last value (number) if no labels are provided
+            xdata.length - 5, // number of steps 
+            0, null, // the labels
+            r // you need to provide the Raphael object
+        );
+        Raphael.g.axis(
+            paper.width - gutter - 20, // 10 + gutter
+            y + ylen - gutter, //y pos
+            paper.height - 80, 0, maxStrikeRate, // used to pass the initial value and last value (number) if no labels are provided
+            null, // number of steps 
+            3, null, // the labels
+            r // you need to provide the Raphael object
+        );
+
+        paper.text(40, 320, 'Score').attr({ 'font-size': 12 });
+        
+        paper.path('M70 320L110 320').attr({ stroke: colour1, 'stroke-width': 4 });
+        paper.text(160, 320, 'Strike Rate').attr({ 'font-size': 12 });
+        paper.path('M200 320L240 320').attr({ stroke: colour2, 'stroke-width': 4 });
+        paper.text(5, 160, 'Runs').attr({ 'font-size': 12 }).rotate(-90, true);
+        paper.text(275, 160, 'Strike Rate').attr({ 'font-size': 12 }).rotate(90, true);
+
+    }
+
+    function maxValue(values) {
+        var maxValue = 0;
+        $.each(values, function (index, value) {
+            if (value > maxValue) {
+                maxValue = value;
+            }
+        });
+        return maxValue;
     }
 
     function addScoreToZone(zoneIndex, scoreBuckets, paper) {
@@ -345,6 +437,11 @@ function initializeWagonWheel() {
 function initializeZones() {
     var paper = Raphael("wagon-wheel", 283, 330);
     paper.image("\\Images\\liveScorecard\\zones-background.png", 0, 30, 280, 280);
+    return paper;
+}
+
+function initializeWorm() {
+    var paper = Raphael("wagon-wheel", 283, 330);
     return paper;
 }
 
