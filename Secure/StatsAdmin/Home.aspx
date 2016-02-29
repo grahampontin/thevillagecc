@@ -8,6 +8,14 @@
 <head id="Head1" runat="server">
     <title>VCC Online Stats Admin</title>
     <CC:Styles runat=server ID=styles /> 
+    <script>
+        $(function() {
+            $('#fromDate').datetimepicker({
+                defaultDate: new Date(new Date().getUTCFullYear(), 3, 1),
+                format: 'DD MMMM YYYY'
+            });
+        });
+    </script>
     
 </head>
 <body>
@@ -79,7 +87,14 @@
                 At: <asp:DropDownList ID=EditMatchVenuesDropDownList runat=server></asp:DropDownList><br />
                 Home / Away: <asp:DropDownList ID=HomeAway runat=server></asp:DropDownList><br />
                 Match Type: <asp:DropDownList ID=MatchType runat=server></asp:DropDownList><br />
-                Date: <asp:TextBox ID=MatchDate runat=server class=datePicker></asp:TextBox>
+                Date: 
+                <div class='input-group date datepicker' id='fromDate'>
+                                <asp:TextBox ID=MatchDate runat=server class=form-control></asp:TextBox>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                
                 <br /><br />
                 <asp:Button ID=MatchSubmitButton runat=server Text="Create Match" onclick="MatchSubmitButton_Click" 
                      />

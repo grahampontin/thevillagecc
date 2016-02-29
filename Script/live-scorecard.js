@@ -1,4 +1,13 @@
 ﻿$(function () {
+    $('#tabs').tab();
+    $('#analysisTabs').tab();
+
+    $('#analysisTabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var pattern = /#.+/gi //use regex to get anchor(==selector)
+        var chart = e.target.toString().match(pattern)[0]; //get anchor         
+        drawTeamChart(chart);
+    });
+
     var matchId = $.url().param('matchId');
     if (matchId == null) {
         showError("No match id speified. How did you get here exactly?");
@@ -13,6 +22,14 @@
             showError(data.responseText);
         });
 });
+
+function drawTeamChart(chartType) {
+    $("#chartPlaceholder").html('');
+    var paper = Raphael("chartPlaceholder", 700, 400);
+    paper.image("\\Images\\livescorecard\\vcc-logo-opaque.jpg", 100, 90, 500, 214);
+
+
+}
 
 function showError(text) {
     BootstrapDialog.show({
@@ -37,6 +54,9 @@ function renderMatchData(matchData) {
     $("#teamWickets").text(matchData.Wickets);
     $("#wicketsRemaining").text(10 - matchData.Wickets);
     $("#teamRunRate").text(matchData.RunRate);
+    $("#match-format").text(matchData.Declaration ? "Declaration" : matchData.Overs + " overs");
+    $("#toss-winner").text(matchData.WonToss ? "The Village CC" : matchData.Opposition);
+    $("#bat-or-bowl").text(matchData.TossWinnerBatted ? "bat" : "bowl");
 
     //On strike batsman
     $("#onStrikeBatsmanName").text(matchData.OnStrikeBatsman.Name);
@@ -106,21 +126,27 @@ function renderMatchData(matchData) {
     $("#currentPartnershipPlayer2Name").text(matchData.CurrentPartnership.Player2Name);
     $("#currentPartnershipPlayer2Runs").text(matchData.CurrentPartnership.Player2Score);
     
-    //Last batsman
-    $("#lastBatsmanWicketText").text(getDismissalText(matchData.LastManOut.Wicket, matchData.FallOfWickets));
+    if (matchData.LastManOut != null) {
+        $(".last-batsman").show();
 
-    //Fall of last wicket
-    $("#fallOfWicketWicketNumber").text(matchData.LastManOut.WicketNumber);
-    $("#fallOfWicketTeamScore").text(matchData.LastManOut.TeamScore);
-    $("#fallOfWicketOver").text(matchData.LastManOut.OverAsString);
-    $("#lastPartnershipRuns").text(matchData.LastManOut.Partnership.Score);
-    $("#lastPartnershipRunRate").text(matchData.LastManOut.Partnership.RunRate);
-    $("#lastPartnershipOvers").text(matchData.LastManOut.Partnership.OversAsString);
-    $("#lastPartnershipPlayer1Name").text(matchData.LastManOut.Partnership.Player1Name);
-    $("#lastPartnershipPlayer1Runs").text(matchData.LastManOut.Partnership.Player1Score);
-    $("#lastPartnershipPlayer2Name").text(matchData.LastManOut.Partnership.Player2Name);
-    $("#lastPartnershipPlayer2Runs").text(matchData.LastManOut.Partnership.Player2Score);
+        //Last batsman
+        $("#lastBatsmanWicketText").text(getDismissalText(matchData.LastManOut.Wicket, matchData.FallOfWickets));
 
+        //Fall of last wicket
+        $("#fallOfWicketWicketNumber").text(matchData.LastManOut.WicketNumber);
+        $("#fallOfWicketTeamScore").text(matchData.LastManOut.TeamScore);
+        $("#fallOfWicketOver").text(matchData.LastManOut.OverAsString);
+        $("#lastPartnershipRuns").text(matchData.LastManOut.Partnership.Score);
+        $("#lastPartnershipRunRate").text(matchData.LastManOut.Partnership.RunRate);
+        $("#lastPartnershipOvers").text(matchData.LastManOut.Partnership.OversAsString);
+        $("#lastPartnershipPlayer1Name").text(matchData.LastManOut.Partnership.Player1Name);
+        $("#lastPartnershipPlayer1Runs").text(matchData.LastManOut.Partnership.Player1Score);
+        $("#lastPartnershipPlayer2Name").text(matchData.LastManOut.Partnership.Player2Name);
+        $("#lastPartnershipPlayer2Runs").text(matchData.LastManOut.Partnership.Player2Score);
+    } else {
+        $(".last-batsman").hide();
+    }
+    
     //Recent overs
     var ballsRendered = 0;
     $.each(matchData.CompletedOvers.reverse(), function(index, over) {
@@ -307,8 +333,6 @@ function renderMatchData(matchData) {
         drawPlayerNameAndScore(player, paper);
         var r = paper;
 
-        // Creates a simple line chart at 10, 10
-        // width 300, height 200
         var x = 10,
             y = 10,
             xlen = paper.width-30,

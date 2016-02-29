@@ -104,6 +104,13 @@
         .chart-type-active {
             background-color: #556b2f !important;
         }
+
+        #tabs {
+            margin-bottom: 20px;
+        }
+        #mainContent {
+            margin-bottom: 20px;
+        }
         
     </style>
     <script src="Script/purl.js"></script>
@@ -246,15 +253,55 @@
                     
                         </small>
                     </div>
-                    <div id="overDetails">
-                        <!-- Populated by script -->
+                    
+                    <ul id="tabs" class="nav nav-tabs">
+		                <li class="active"><a href="#Commentary" role="tab" data-toggle="tab">Commentary</a></li>
+		                <li><a href="#Analysis" role="tab" data-toggle="tab">Analysis</a></li>
+		                <li><a href="#Scorecard" role="tab" data-toggle="tab">Scorecard</a></li>
+		                <li><a href="#Report" role="tab" data-toggle="tab">Report</a></li>
+		            </ul>
+                    
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="Commentary">
+                            <div id="overDetails">
+                                <!-- Populated by script -->
+                            </div>        
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="Analysis">
+                            <div id="chartPlaceholder"></div>
+                            <ul id="analysisTabs" class="nav nav-pills nav-justified">
+		                        <li class="active"><a href="#worm" role="tab" data-toggle="tab">Worm</a></li>
+		                        <li><a href="#wagon" role="tab" data-toggle="tab">Wagon Wheel</a></li>
+		                        <li><a href="#manahttan" role="tab" data-toggle="tab">Manhattan</a></li>
+		                        <li><a href="#partnerships" role="tab" data-toggle="tab">Partnerships</a></li>
+		                    </ul>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="Scorecard">
+                            Coming soon
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="Report">
+                            Report not yet available
+                        </div>
                     </div>
+
+                    
                        
                 </div>
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Analysis
+                            Match Conditions
+                        </div>
+                        <div class="panel-body">
+                            <span id="toss-winner"></span> won the toss and elected to <span id="bat-or-bowl"></span>.
+                            <br/><br/>
+                            Match format: <span id="match-format"></span>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Player Analysis
                         </div>
                         <div class="panel-body">
                             <div class="player-icon-row">

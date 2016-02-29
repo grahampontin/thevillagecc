@@ -27,14 +27,6 @@
 <!-- page -->
 <div data-role="page" data-theme="a" >
 	<asp:ContentPlaceHolder id="page_content" runat="server" />
-    <div data-role="popup" id="errorMessage">
-		<div data-role="header">
-			<h1>Error</h1>
-            <a href="mobile.master">mobile.master</a>	</div>
-		<div data-role="content" id="errorMessageContent">
-			Place holder
-		</div>
-	</div>
     <!-- footer -->
     <div data-role="footer">
         <h1>(c) The Village CC / Graham Pontin 2015</h1>

@@ -1,7 +1,6 @@
 ﻿function initialiseMatchConditions() {
     $("#confirmMatchConditions").click(function () {
         var matchId = $.url().param('matchId');
-        //Pass the player ids on the url, sucks
         var players = playersForThisMatch;
         var wicketKeeperId = $("#keeperSelect").find('option:selected').attr("playerId");
         var captainId = $("#captainSelect").find('option:selected').attr("playerId");
@@ -20,7 +19,12 @@
         };
         $.post('./CommandHandler.ashx', JSON.stringify(postData), function () {
             //success
-            $("body").pagecontainer( "change", "BallByBall.aspx?matchId=" + matchId, { transition: "slide" } );
+            if ((weWonToss && tossWinnerBatted) || (!weWonToss && !tossWinnerBatted)) {
+                $("body").pagecontainer("change", "BallByBall.aspx?matchId=" + matchId, { transition: "slide" });
+            } else {
+                $("body").pagecontainer("change", "OppositionInnings.aspx?matchId=" + matchId, { transition: "slide" });
+            }
+            
         }, 'json')
         .fail(function (data) {
             showError(data.responseText);

@@ -20,6 +20,9 @@
             case "EndOfOver.aspx":
                 initialiseEndOfOver();
                 break;
+            case "OppositionInnings.aspx":
+                initialiseOppositionInnings();
+                break;
         }
     });
 });

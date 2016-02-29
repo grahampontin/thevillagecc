@@ -9,10 +9,10 @@
     </div><!-- /header -->
     
     <div data-role="content">
-        <asp:ListView ID="InProgressMatchesListView" runat="server">
+        <asp:ListView ID="InProgressMatchesListViewBatting" runat="server">
             <LayoutTemplate>
                 <ul data-role="listview" data-inset="true">
-                    <li data-role="list-divider">In-Progress Matches</li>
+                    <li data-role="list-divider">In-Progress Matches (VCC Batting)</li>
                     <li runat="server" id="itemPlaceholder" ></li>
                 </ul>
             </LayoutTemplate>
@@ -27,6 +27,25 @@
             </EmptyDataTemplate>     
         </asp:ListView>
         
+        <asp:ListView ID="InProgressMatchesListViewBowling" runat="server">
+            <LayoutTemplate>
+                <ul data-role="listview" data-inset="true">
+                    <li data-role="list-divider">In-Progress Matches (VCC Bowling)</li>
+                    <li runat="server" id="itemPlaceholder" ></li>
+                </ul>
+            </LayoutTemplate>
+            <ItemTemplate>
+               <li><a href="OppositionInnings.aspx?matchId=<%#Eval("ID") %>" onclick=""><%#Eval("Opposition") %> (<%#Eval("OppositionBallByBallOver")%> ovs)</a></li> 
+            </ItemTemplate>  
+            <EmptyDataTemplate>
+                <ul data-role="listview" data-inset="true">
+                    <li data-role="list-divider">In-Progress Matches</li>
+                    <li>None</li>
+                </ul>
+            </EmptyDataTemplate>     
+        </asp:ListView>
+        
+
         <asp:ListView ID="FutureMatchesListView" runat="server">
             <LayoutTemplate>
                 <ul data-role="listview" data-inset="true">

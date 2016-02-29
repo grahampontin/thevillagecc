@@ -56,6 +56,11 @@ public class CommandHandler : IHttpHandler
                     context.Response.StatusCode = 200;
                     context.Response.Write(json);
                     break;
+                case "updateOppositionScore":
+                    var incoming = javaScriptSerializer.Deserialize<OppositionInningsDetails>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                    match.UpdateOppositionScore(incoming);
+                    context.Response.Write("{}");
+                    break;
                 default:
                     context.Response.ContentType = "text/plain";
                     context.Response.Write("Command: " + genericBallByBallCommand.command + " is not supported");
