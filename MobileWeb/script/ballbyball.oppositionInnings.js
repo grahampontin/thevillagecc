@@ -30,7 +30,7 @@ function initialiseOppositionInnings() {
             'command': "updateOppositionScore",
             'matchId': matchId,
             'payload': {
-                Overs: overs,
+                Over: overs,
                 Wickets: wickets,
                 Score: score,
                 Commentary: commentary,

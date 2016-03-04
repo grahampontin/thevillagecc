@@ -70,7 +70,7 @@ public class CommandHandler : IHttpHandler
         }
         catch(InvalidOperationException ex)
         {
-            ReportError(context, ex, 400);
+            ReportInvalidInput(context, ex.Message);
         } catch(Exception ex)
         {
             ReportError(context, ex, 500);
@@ -95,6 +95,13 @@ public class CommandHandler : IHttpHandler
         context.Response.Write(ex.Message + Environment.NewLine + ex.StackTrace);
         context.Response.StatusCode = statusCode;
         Logger.Log(ex.Message, ex, Severity.Error);
+    }
+
+    private static void ReportInvalidInput(HttpContext context, string userMessage)
+    {
+        context.Response.ContentType = "text/plain";
+        context.Response.Write(userMessage);
+        context.Response.StatusCode = 400;
     }
 
     private BallByBallMatchConditions GetMatchConditions(object data)
