@@ -61,6 +61,14 @@ public class CommandHandler : IHttpHandler
                     match.UpdateOppositionScore(incoming);
                     context.Response.Write("{}");
                     break;
+                case "endInnings":
+                    var inningsEndDetails = javaScriptSerializer.Deserialize<InningsEndDetails>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                    NextInnings nextInnings = match.EndInnings(inningsEndDetails);
+                    context.Response.ContentType = "text/json";
+                    context.Response.StatusCode = 200;
+                    context.Response.Write("{ \"NextInnings\" : \""+nextInnings+"\" }");
+
+                    break;
                 default:
                     context.Response.ContentType = "text/plain";
                     context.Response.Write("Command: " + genericBallByBallCommand.command + " is not supported");
@@ -115,6 +123,8 @@ public class CommandHandler : IHttpHandler
         get { return false; }
     }
 }
+
+
 
 public class GenericBallByBallCommand
 {

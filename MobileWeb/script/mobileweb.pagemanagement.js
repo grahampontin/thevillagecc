@@ -23,6 +23,9 @@
             case "OppositionInnings.aspx":
                 initialiseOppositionInnings();
                 break;
+            case "EndOfInnings.aspx":
+                initialiseEndOfInnings();
+                break;
         }
     });
 });

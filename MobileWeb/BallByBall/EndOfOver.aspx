@@ -23,6 +23,16 @@
     <button id="submitToServerButton">Submit to Server</button>
         <hr />
     </div>
+    
+    <div data-role="popup" id="errorMessage" data-dismissible="true" data-overlay-theme="b" style="min-width:300px;">
+		<div data-role="header">
+			<h1>Error</h1>
+		</div>
+		<div data-role="content" id="errorMessageContent">
+			Place holder
+		</div>
+	</div>
+
 </asp:Content>
 
 

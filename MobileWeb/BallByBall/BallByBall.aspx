@@ -10,11 +10,6 @@
 <div data-role="content">
     <select name="bowler" id="bowlerSelect">
 	</select>
-<%--    <label for="flip-a">to:</label>--%>
-<%--    <select name="striker" id="strikerSelect" data-role="flipswitch" data-wrapper-class="full-width-flipswitch">--%>
-<%--	    <option id="batsman1" value="1" selected>Unknown 1</option>--%>
-<%--	    <option id="batsman2" value="2">Unknown 2</option>--%>
-<%--    </select> --%>
 <div id="full-width-radio">
     <fieldset data-role="controlgroup" data-type="horizontal">
         <legend>to</legend>
@@ -60,6 +55,9 @@
     <fieldset class="ui-grid-a">
     <div class="ui-block-a"><a href=EndOfOver.aspx id="endOfOverButton" data-theme="b" data-role="button" data-icon="check">End of Over</a></div>
     <div class="ui-block-b"><button id="undoButton" data-theme="b" data-icon="back">Undo Last</button></div>
+    <hr />
+    <button id="endOfInningsButton" data-theme="a" data-icon="flag">End of Innings</button>
+    <hr />
     </fieldset>
 
     <div data-role="popup" id="chooseBatsmen" data-dismissible="false" data-overlay-theme="b" style="min-width:300px;">
@@ -105,8 +103,33 @@
             <div id="wagonWheelSaveButton" data-role="button">Done</div>
         </div>    
     </div>
+    
+    <div data-role="popup" id="confirmationDialog" data-dismissible="true" data-overlay-theme="b" style="min-width:300px;">
+		<div data-role="header">
+			<h1>Are you sure?</h1>
+		</div>
+		<div data-role="content">
+			Make sure you've submitted the final update you want recorded before ending the innings. 
+            Ending the innings now will not save whatever is on the screen unless you submitted it already.
+            <button id="endOfInningsGoBack" data-theme="a" data-icon="undo">Ah, nuts, take me back</button>
+            <button id="endOfInningsConfirmButton" data-theme="a" data-icon="check">We're good, let's end this thing.</button>
+		</div>
+	</div>
 
-</div><!-- /content -->
+</div>
+
+    <div data-role="popup" id="errorMessage" data-dismissible="true" data-overlay-theme="b" style="min-width:300px;">
+		<div data-role="header">
+			<h1>Error</h1>
+		</div>
+		<div data-role="content" id="errorMessageContent">
+			Place holder
+		</div>
+	</div>
+    
+    
+    
+    <!-- /content -->
 
 
 

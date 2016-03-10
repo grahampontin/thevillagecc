@@ -87,7 +87,23 @@ function initialiseBallByBallCore() {
             $("#wagonWheelSaveButton").text(batsmansScoreForBall + " to " + getScoringArea(angleRadians));
         });
     });
+
+    $("#endOfInningsButton").click(function () {
+        showConfirmationDialog();
+    });
+
+    $("#endOfInningsConfirmButton").click(function () {
+        $("body").pagecontainer("change", "EndOfInnings.aspx?innings=Batting&matchId=" + matchState.MatchId, { transition: "slide" });
+    });
+
+    $("#endOfInningsGoBack").click(function () {
+        $("#confirmationDialog").popup('close');
+    });
 };
+
+function showConfirmationDialog() {
+    $("#confirmationDialog").popup('open');
+}
 
 function getColour(score) {
     if (score < 4) {

@@ -20,15 +20,30 @@
         <div class="ui-field-contain">
             <label for="oppositionOversInput">from</label>
             <input name="oppositionOversInput" id="oppositionOversInput" size="3" placeholder="overs" />
-            
         </div>
         <hr/>
         <textarea id="commentary" placeholder="Say something about it..."></textarea>
         <hr />
-        <label><input type="checkbox" id="endOfInnings" />End of Innings?</label>
-        <button id="submitButton">Submit</button>
+        
+        <button id="submitButton">Post Update</button>
+        <hr />
+            <button id="endOfInningsButton" data-theme="a" data-icon="flag">End of Innings</button>
+        <hr />
+    
     </div>    
     
+    <div data-role="popup" id="confirmationDialog" data-dismissible="true" data-overlay-theme="b" style="min-width:300px;">
+		<div data-role="header">
+			<h1>Are you sure?</h1>
+		</div>
+		<div data-role="content">
+			Make sure you've submitted the final update you want recorded before ending the innings. 
+            Ending the innings now will not save whatever is on the screen unless you submitted it already.
+            <button id="endOfInningsGoBack" data-theme="a" data-icon="undo">Ah, nuts, take me back</button>
+            <button id="endOfInningsConfirmButton" data-theme="a" data-icon="check">We're good, let's end this thing.</button>
+		</div>
+	</div>
+        
     <div data-role="popup" id="errorMessage" data-dismissible="true" data-overlay-theme="b" style="min-width:300px;">
 		<div data-role="header">
 			<h1>Error</h1>
