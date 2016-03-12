@@ -8,6 +8,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
+                <a class="navbar-brand visible-xs" style="padding: 0;"><img src="/Images/logo_transparent.png" height="50px"/></a>
             </div>    
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
