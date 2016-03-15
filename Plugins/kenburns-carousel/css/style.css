@@ -20,6 +20,12 @@ the images will fade over one another and not move.
     margin-bottom: 40px;
 }
 
+@media (max-width: 768px) {
+    #kenburns-slideshow {
+        height: 150px
+    }
+}
+
 /*  The plugin wraps the images in div.kb-slide. This
 allows me to run separate animations simultaneously. */
 .kb-slide{

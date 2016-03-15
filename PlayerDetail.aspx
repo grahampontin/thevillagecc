@@ -5,9 +5,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<head id="Head1" runat="server">
     <title>The Village Cricket Club Online | Squad | <%=PlayerName %></title>
     <CC:Styles runat=server ID=styles />   
     <!--[if IE]><script language="javascript" type="text/javascript" src="Script/excanvas.min.js"></script><![endif]-->

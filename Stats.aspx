@@ -5,8 +5,11 @@
 
 <!DOCTYPE html>
 
-<html>
-<head id="Head1" runat="server">
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>The Village Cricket Club Online | Stats</title>
     <CC:Styles runat=server ID=styles /> 
        

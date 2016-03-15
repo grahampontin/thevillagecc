@@ -5,8 +5,12 @@
 
 <!DOCTYPE html>
 
-<html>
-<head id="Head1" runat="server">
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>The Village Cricket Club Online | Live Scores</title>
     <CC:Styles runat=server ID=styles /> 
     <style>
@@ -131,7 +135,7 @@
                 <div class="col-sm-8">
                     <div class="pull-left">
                         The Village CC <strong><span id="teamScore"></span>/<span id="teamWickets"></span> (<span id="lastCompletedOver"></span> ov)</strong><br />
-                        <span class="opposition"></span> <strong><span id="oppositionScore"></span></strong><br />
+                        <span class="opposition"></span> <strong><span id="oppositionScore"></span>/<span id="oppositionWickets"></span> (<span id="oppositionLastCompletedOver"></span> ov)</strong><br />
                         <small>Village lead/trail <span class="opposition"></span> by XXXX runs with <span id="wicketsRemaining"></span> wickets remaining</small>
                     </div>
                     <div class="pull-right">
@@ -142,7 +146,8 @@
                         </small>
                     </div>
                     <div class="clearfix"></div>
-                    <table class="table table-striped" style="margin-top: 20px">
+                    <div id="live-batting-info">
+                        <table class="table table-striped" style="margin-top: 20px">
                         <tr>
                             <th>Batsmen</th>
                             <th>R</th>
@@ -252,17 +257,20 @@
                             (<span id="lastPartnershipPlayer1Name"></span> <span id="lastPartnershipPlayer1Runs"></span>, <span id="lastPartnershipPlayer2Name"></span> <span id="lastPartnershipPlayer2Runs"></span>)
                     
                         </small>
+                    </div>    
                     </div>
                     
+                    
                     <ul id="tabs" class="nav nav-tabs">
-		                <li class="active"><a href="#Commentary" role="tab" data-toggle="tab">Commentary</a></li>
+		                <li class="active"><a href="#OurCommentary" role="tab" data-toggle="tab">VCC Commentary</a></li>
+		                <li><a href="#TheirCommentary" role="tab" data-toggle="tab">Oppo Commentary</a></li>
 		                <li><a href="#Analysis" role="tab" data-toggle="tab">Analysis</a></li>
 		                <li><a href="#Scorecard" role="tab" data-toggle="tab">Scorecard</a></li>
 		                <li><a href="#Report" role="tab" data-toggle="tab">Report</a></li>
 		            </ul>
                     
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="Commentary">
+                        <div role="tabpanel" class="tab-pane active" id="OurCommentary">
                             <div id="overDetails">
                                 <!-- Populated by script -->
                             </div>        
