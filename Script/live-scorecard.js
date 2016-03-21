@@ -50,20 +50,59 @@ function renderMatchData(matchData) {
     $(".opposition").text(matchData.Opposition);
     $("#oversRemaining").text(matchData.OversRemaining);
     
-    $("#lastCompletedOver").text(matchData.LastCompletedOver);
+    $("#lastCompletedOver").text(matchData.OurLastCompletedOver);
     $("#teamScore").text(matchData.Score);
     $("#teamWickets").text(matchData.Wickets);
-    $("#wicketsRemaining").text(10 - matchData.Wickets);
-    $("#teamRunRate").text(matchData.RunRate);
+    $("#teamRunRate").text(matchData.OurInningsStatus === "NotStarted" ? "N/A" : matchData.RunRate);
     $("#oppositionScore").text(matchData.TheirScore);
     $("#oppositionWickets").text(matchData.TheirWickets);
     $("#oppositionLastCompletedOver").text(matchData.TheirOver);
-    $("#oppositionRunRate").text(matchData.TheirRunRate);
+    $("#oppositionRunRate").text(matchData.TheirInningsStatus === "NotStarted" ? "N/A" : matchData.TheirRunRate);
     $("#match-format").text(matchData.Declaration ? "Declaration" : matchData.Overs + " overs");
     $("#toss-winner").text(matchData.WonToss ? "The Village CC" : matchData.Opposition);
     $("#bat-or-bowl").text(matchData.TossWinnerBatted ? "bat" : "bowl");
 
-    if (matchData.OurInningsStatus !== "NotStarted") {
+    if (!matchData.IsMatchComplete) {
+        //show / hide
+        $(".teamCurrentlyBatting").text(matchData.OurInningsStatus === "InProgress" ? "The Village" : matchData.Opposition);
+        $(".teamCorrentlyBowling").text(matchData.TheirInningsStatus === "InProgress" ? "The Village" : matchData.Opposition);
+        $(".leadOrTrail").text(matchData.IsFirstInnings ? "lead" : "trail");
+        var leadTrailByRuns = getLeadTrailByRuns(matchData);
+        $("#leadTrailByRuns").text(leadTrailByRuns);
+        $("#wicketsRemaining").text(matchData.OurInningsStatus === "InProgress" ? 10 - matchData.Wickets : 10 - matchData.TheirWickets);
+
+        var requiredRunRate = "N/A";
+        if (!matchData.IsFirstInnings && !matchData.Declaration && !matchData.IsMatchComplete) {
+            requiredRunRate = leadTrailByRuns / matchData.OversRemaining;
+            requiredRunRate = Math.round(requiredRunRate * 100) / 100;
+        }
+        $("#requiredRunRate").text(requiredRunRate);
+
+    } else {
+        //sow / hide
+        //render result text
+    }
+    
+    
+
+
+    if (matchData.OurInningsStatus === "NotStarted") {
+        $("#ourScoreSummary").hide();
+        $("#usYetToBat").show();
+    } else {
+        $("#ourScoreSummary").show();
+        $("#usYetToBat").hide();
+    }
+    if (matchData.TheirInningsStatus === "NotStarted") {
+        $("#oppositionScoreSummary").hide();
+        $("#oppositionYetToBat").show();
+    } else {
+        $("#oppositionScoreSummary").show();
+        $("#oppositionYetToBat").hide();
+    }
+
+
+    if (matchData.OurInningsStatus !== "NotStarted" && matchData.CompletedOvers.length > 0) {
         $("#live-batting-info").show();
 
         //On strike batsman
@@ -112,18 +151,25 @@ function renderMatchData(matchData) {
         $("#bowlerOneThisSpell").text(spell.Overs + "-" + spell.Maidens + "-" + spell.Runs + "-" + spell.Wickets);
 
         //Bowler Two
-        $("#bowlerTwoName").text(matchData.BowlerTwoDetails.Name);
-        $("#bowlerTwoOvers").text(matchData.BowlerTwoDetails.Details.Overs);
-        $("#bowlerTwoMaidens").text(matchData.BowlerTwoDetails.Details.Maidens);
-        $("#bowlerTwoRuns").text(matchData.BowlerTwoDetails.Details.Runs);
-        $("#bowlerTwoWickets").text(matchData.BowlerTwoDetails.Details.Wickets);
-        $("#bowlerTwoDots").text(matchData.BowlerTwoDetails.Details.Dots);
-        $("#bowlerTwoFours").text(matchData.BowlerTwoDetails.Details.Fours);
-        $("#bowlerTwoSixes").text(matchData.BowlerTwoDetails.Details.Sixes);
-        $("#bowlerTwoEconomy").text(matchData.BowlerTwoDetails.Details.Economy);
-        spell = matchData.BowlerTwoDetails.JustThisSpell;
-        $("#bowlerTwoThisSpell").text(spell.Overs + "-" + spell.Maidens + "-" + spell.Runs + "-" + spell.Wickets);
+        if (matchData.BowlerTwoDetails.Details == null) {
+            $("#bowlerTwoRow").hide();
+        } else {
+            $("#bowlerTwoRow").show();
 
+            $("#bowlerTwoName").text(matchData.BowlerTwoDetails.Name);
+            $("#bowlerTwoOvers").text(matchData.BowlerTwoDetails.Details.Overs);
+            $("#bowlerTwoMaidens").text(matchData.BowlerTwoDetails.Details.Maidens);
+            $("#bowlerTwoRuns").text(matchData.BowlerTwoDetails.Details.Runs);
+            $("#bowlerTwoWickets").text(matchData.BowlerTwoDetails.Details.Wickets);
+            $("#bowlerTwoDots").text(matchData.BowlerTwoDetails.Details.Dots);
+            $("#bowlerTwoFours").text(matchData.BowlerTwoDetails.Details.Fours);
+            $("#bowlerTwoSixes").text(matchData.BowlerTwoDetails.Details.Sixes);
+            $("#bowlerTwoEconomy").text(matchData.BowlerTwoDetails.Details.Economy);
+            spell = matchData.BowlerTwoDetails.JustThisSpell;
+            $("#bowlerTwoThisSpell").text(spell.Overs + "-" + spell.Maidens + "-" + spell.Runs + "-" + spell.Wickets);
+
+        }
+        
 
         //Current partnership
         $("#currentPartnershipRuns").text(matchData.CurrentPartnership.Score);
@@ -240,6 +286,30 @@ function renderMatchData(matchData) {
             $("#overDetails").prepend(overContainer);
         });
 
+        $.each(matchData.TheirCompletedOvers.reverse(), function(index, over) {
+            var overContainer = $("<div></div>");
+            overContainer.addClass("panel panel-default");
+
+            var overHeader = $("<div></div>");
+            overHeader.addClass("panel-heading");
+            overHeader.html("<small><strong>End of over " + over.Over + "</strong> <strong> " + matchData.Opposition + " " + over.Score + "/" + over.Wickets + "</strong></small>");
+
+            overContainer.append(overHeader);
+
+            var overBody = $("<div></div>");
+            overBody.addClass("panel-body");
+
+            var overCommentary = $("<div></div>");
+            overCommentary.addClass("over-comment");
+            overCommentary.html(over.Commentary);
+
+
+            overBody.append(overCommentary);
+            overContainer.append(overBody);
+
+            $("#theirOverDetails").append(overContainer);
+        });
+
         $.each(matchData.LiveBattingCard.Players, function (index, player) {
             var playerIcon = $("<div></div");
             playerIcon.addClass("img-circle player-icon pull-left");
@@ -275,6 +345,22 @@ function renderMatchData(matchData) {
         });
     } else {
         $("#live-batting-info").hide();
+    }
+
+    function getLeadTrailByRuns(matchData) {
+        if (matchData.IsFirstInnings) {
+            if (matchData.OurInningsStatus === "InProgress") {
+                return matchData.Score;
+            } else {
+                return matchData.TheirScore;
+            }
+        } else {
+            if (matchData.OurInningsStatus === "InProgress") {
+                return matchData.TheirScore - matchData.Score;
+            } else {
+                return matchData.Score - matchData.TheirScore;
+            }
+        }
     }
 
     function drawChart(clickedPlayer) {
@@ -334,6 +420,10 @@ function renderMatchData(matchData) {
             });
         });
 
+        if (xValues.length === 0) {
+            return;
+        }
+
         var maxStrikeRate = maxValue(strikeRateValues);
         $.each(strikeRateValues, function (index, value) {
             strikeRateValues[index] = (value / maxStrikeRate) * cumulativeScore;
@@ -365,7 +455,7 @@ function renderMatchData(matchData) {
             x + gutter, // 10 + gutter
             y + ylen - gutter, //y pos
             xlen - 2 * gutter, 1, xdata.length, // used to pass the initial value and last value (number) if no labels are provided
-            xdata.length - 5, // number of steps 
+            xdata.length / 6, // number of steps 
             0, null, // the labels
             r // you need to provide the Raphael object
         );

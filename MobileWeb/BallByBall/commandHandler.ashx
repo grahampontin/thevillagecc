@@ -78,7 +78,7 @@ public class CommandHandler : IHttpHandler
         }
         catch(InvalidOperationException ex)
         {
-            ReportInvalidInput(context, ex.Message);
+            ReportInvalidInput(context, ex.Message + Environment.NewLine + ex.StackTrace);
         } catch(Exception ex)
         {
             ReportError(context, ex, 500);

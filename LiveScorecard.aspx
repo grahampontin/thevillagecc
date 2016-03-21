@@ -134,15 +134,34 @@
             <div class="row">
                 <div class="col-sm-8">
                     <div class="pull-left">
-                        The Village CC <strong><span id="teamScore"></span>/<span id="teamWickets"></span> (<span id="lastCompletedOver"></span> ov)</strong><br />
-                        <span class="opposition"></span> <strong><span id="oppositionScore"></span>/<span id="oppositionWickets"></span> (<span id="oppositionLastCompletedOver"></span> ov)</strong><br />
-                        <small>Village lead/trail <span class="opposition"></span> by XXXX runs with <span id="wicketsRemaining"></span> wickets remaining</small>
+                        The Village CC 
+                            <span id="ourScoreSummary">
+                                <strong>
+                                <span id="teamScore"></span>/<span id="teamWickets"></span> (<span id="lastCompletedOver"></span> ov)
+                                </strong>
+                            </span>
+                            <span id="usYetToBat">
+                                <strong>Yet to bat</strong>
+                            </span>
+                        <br />
+                        <span class="opposition"></span> 
+                        <span id="oppositionScoreSummary">
+                            <strong>
+                                <span id="oppositionScore"></span>/<span id="oppositionWickets"></span> (<span id="oppositionLastCompletedOver"></span> ov)
+                            </strong>
+                        </span>
+                        <span id="oppositionYetToBat">
+                                <strong>Yet to bat</strong>
+                        </span>
+                        <br />
+                        <small><span class="teamCurrentlyBatting"></span> <span class="leadOrTrail"></span> <span class="teamCorrentlyBowling"></span> by <span id="leadTrailByRuns"></span> runs with <span id="wicketsRemaining"></span> wickets remaining</small>
                     </div>
                     <div class="pull-right">
                         <small>
                         Village RR: <span id="teamRunRate"></span><br />
                         <span class="opposition"></span> RR: <span id="oppositionRunRate"></span><br />
                         Overs remaining: <span id="oversRemaining"></span><br />
+                        Required RR: <span id="requiredRunRate"></span>
                         </small>
                     </div>
                     <div class="clearfix"></div>
@@ -217,7 +236,7 @@
                             <td><span id="bowlerOneSixes"></span></td>
                             <td><span id="bowlerOneThisSpell"></span></td>
                         </tr>
-                        <tr>
+                        <tr id="bowlerTwoRow">
                             <td><span id="bowlerTwoName"></span></td>
                             <td><span id="bowlerTwoOvers"></span></td>
                             <td><span id="bowlerTwoMaidens"></span></td>
@@ -272,6 +291,11 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="OurCommentary">
                             <div id="overDetails">
+                                <!-- Populated by script -->
+                            </div>        
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="TheirCommentary">
+                            <div id="theirOverDetails">
                                 <!-- Populated by script -->
                             </div>        
                         </div>
