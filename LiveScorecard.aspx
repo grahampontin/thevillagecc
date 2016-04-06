@@ -154,7 +154,11 @@
                                 <strong>Yet to bat</strong>
                         </span>
                         <br />
-                        <small><span class="teamCurrentlyBatting"></span> <span class="leadOrTrail"></span> <span class="teamCorrentlyBowling"></span> by <span id="leadTrailByRuns"></span> runs with <span id="wicketsRemaining"></span> wickets remaining</small>
+                        <span id="scoreSummary">
+                            <small><span class="teamCurrentlyBatting"></span> <span class="leadOrTrail"></span> <span class="teamCorrentlyBowling"></span> by <span id="leadTrailByRuns"></span> runs with <span id="wicketsRemaining"></span> wickets remaining</small>
+                        </span>
+                        <span id="resultSummary"><small><span id="resultSummaryText"></span></small></span>
+                        
                     </div>
                     <div class="pull-right">
                         <small>

@@ -63,7 +63,8 @@ function renderMatchData(matchData) {
     $("#bat-or-bowl").text(matchData.TossWinnerBatted ? "bat" : "bowl");
 
     if (!matchData.IsMatchComplete) {
-        //show / hide
+        $("#resultSummary").hide();
+        $("#scoreSummary").show();
         $(".teamCurrentlyBatting").text(matchData.OurInningsStatus === "InProgress" ? "The Village" : matchData.Opposition);
         $(".teamCorrentlyBowling").text(matchData.TheirInningsStatus === "InProgress" ? "The Village" : matchData.Opposition);
         $(".leadOrTrail").text(matchData.IsFirstInnings ? "lead" : "trail");
@@ -79,8 +80,9 @@ function renderMatchData(matchData) {
         $("#requiredRunRate").text(requiredRunRate);
 
     } else {
-        //sow / hide
-        //render result text
+        $("#resultSummary").show();
+        $("#scoreSummary").hide();
+        $("#resultSummaryText").text(matchData.ResultText);
     }
     
     
@@ -285,6 +287,28 @@ function renderMatchData(matchData) {
             overContainer.append(overBody);
             $("#overDetails").prepend(overContainer);
         });
+        
+        if (matchData.OurInningsStatus === 'Completed') {
+            var endOfInningsContainer = $("<div></div>");
+            endOfInningsContainer.addClass("panel panel-default");
+
+            var header = $("<div></div>");
+            header.addClass("panel-heading");
+            header.html("<small><strong>End of Innings. </strong><strong>Village " + matchData.Score + "/" + matchData.Wickets + "</strong></small>");
+
+            endOfInningsContainer.append(header);
+
+            var body = $("<div></div>");
+            body.addClass("panel-body");
+
+            var commentary = $("<div></div>");
+            commentary.addClass("over-comment");
+            commentary.html(matchData.OurInningsCommentary);
+            body.prepend(commentary);
+            endOfInningsContainer.append(body);
+            $("#overDetails").prepend(endOfInningsContainer);
+
+        }
 
         $.each(matchData.TheirCompletedOvers.reverse(), function(index, over) {
             var overContainer = $("<div></div>");
@@ -309,6 +333,29 @@ function renderMatchData(matchData) {
 
             $("#theirOverDetails").append(overContainer);
         });
+
+        if (matchData.TheirInningsStatus === 'Completed') {
+            var endOfInningsContainer = $("<div></div>");
+            endOfInningsContainer.addClass("panel panel-default");
+
+            var header = $("<div></div>");
+            header.addClass("panel-heading");
+            header.html("<small><strong>End of Innings. </strong><strong>"+ matchData.Opposition + " " + matchData.TheirScore + "/" + matchData.TheirWickets + "</strong></small>");
+
+            endOfInningsContainer.append(header);
+
+            var body = $("<div></div>");
+            body.addClass("panel-body");
+
+            var commentary = $("<div></div>");
+            commentary.addClass("over-comment");
+            commentary.html(matchData.TheirInningsCommentary);
+            body.prepend(commentary);
+            endOfInningsContainer.append(body);
+            $("#theirOverDetails").prepend(endOfInningsContainer);
+
+        }
+
 
         $.each(matchData.LiveBattingCard.Players, function (index, player) {
             var playerIcon = $("<div></div");
