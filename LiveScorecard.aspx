@@ -313,7 +313,24 @@
 		                    </ul>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="Scorecard">
-                            Coming soon
+                            <div id="inPlayScorecardContainer">
+                                <table class="table table-striped" style="margin-top: 20px" id="inPlayScorecard">
+                                    <tr>
+                                        <th><!--name--></th>
+                                        <th><!--dismissal part 1--></th>
+                                        <th><!--dismissal part 2--></th>
+                                        <th>Runs</th>
+                                        <th>Balls</th>
+                                        <th>4s</th>
+                                        <th>6s</th>
+                                        <th>SR</th>
+                                    </tr>
+                                    <!--Rows added by script-->
+                                </table>       
+                            </div>
+                            <div id="matchCompletedScoreCards">
+                                <%--Todo--%>
+                            </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="Report">
                             Report not yet available

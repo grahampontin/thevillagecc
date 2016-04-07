@@ -353,7 +353,6 @@ function renderMatchData(matchData) {
             body.prepend(commentary);
             endOfInningsContainer.append(body);
             $("#theirOverDetails").prepend(endOfInningsContainer);
-
         }
 
 
@@ -392,161 +391,7 @@ function renderMatchData(matchData) {
         });
     } else {
         $("#live-batting-info").hide();
-    }
-
-    function getLeadTrailByRuns(matchData) {
-        if (matchData.IsFirstInnings) {
-            if (matchData.OurInningsStatus === "InProgress") {
-                return matchData.Score;
-            } else {
-                return matchData.TheirScore;
-            }
-        } else {
-            if (matchData.OurInningsStatus === "InProgress") {
-                return matchData.TheirScore - matchData.Score;
-            } else {
-                return matchData.Score - matchData.TheirScore;
-            }
-        }
-    }
-
-    function drawChart(clickedPlayer) {
-        $('#wagon-wheel').html('');
-
-        var chartToDraw = $(".chart-type-active").attr("chartType");
-        var paper;
-        if (chartToDraw === "wagon") {
-            paper = initializeWagonWheel();
-            drawWagonWheel(clickedPlayer, matchData.CompletedOvers, paper);
-        }
-        if (chartToDraw === "zones") {
-            paper = initializeZones();
-            drawZones(clickedPlayer, paper, matchData.CompletedOvers);
-        }
-        if (chartToDraw === "worm") {
-            paper = initializeWorm();
-            drawWorm(clickedPlayer, paper, matchData.CompletedOvers);
-        }
-    }
-
-    function drawZones(player, paper, overs) {
-        var scoreBuckets = [0,0,0,0,0,0,0,0];
-        drawPlayerNameAndScore(player, paper);
-        $.each(overs, function (index, over) {
-            $.each(over.Over.Balls, function (index, ball) {
-                if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing === "" || (ball.Thing === "nb" && ball.Amount > 1))) {
-                    addBallToBucket(ball, scoreBuckets);
-                }
-            });
-        });
-        $.each(scoreBuckets, function(index) {
-            addScoreToZone(index, scoreBuckets, paper);
-        });
-    }
-
-    function drawWorm(player, paper, overs) {
-        var colour1 = '#009933';
-        var colour2 = '#ffd633';
-
-        paper.image("\\Images\\livescorecard\\vcc-logo-opaque.jpg", 35, 90, 200, 85);
-        var xValues = [];
-        var scoreValues = [];
-        var strikeRateValues = [];
-
-        var cumulativeScore = 0;
-        var ballNumber = 0;
-        $.each(overs, function (index, over) {
-            $.each(over.Over.Balls, function (index, ball) {
-                if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing === "" || (ball.Thing === "nb" && ball.Amount > 1))) {
-                    ballNumber ++;
-                    cumulativeScore = cumulativeScore + ball.Amount;
-                    xValues.push(ballNumber);
-                    scoreValues.push(cumulativeScore);
-                    strikeRateValues.push((cumulativeScore / ballNumber) * 100);
-                }
-            });
-        });
-
-        if (xValues.length === 0) {
-            return;
-        }
-
-        var maxStrikeRate = maxValue(strikeRateValues);
-        $.each(strikeRateValues, function (index, value) {
-            strikeRateValues[index] = (value / maxStrikeRate) * cumulativeScore;
-        });
-
-        drawPlayerNameAndScore(player, paper);
-        var r = paper;
-
-        var x = 10,
-            y = 10,
-            xlen = paper.width-30,
-            ylen = paper.height-40,
-            gutter = 20,
-            xdata = xValues;
-        var chrt = r.linechart(x, y, xlen, ylen, xdata, [scoreValues, strikeRateValues], {
-            gutter: gutter,
-            nostroke: false,
-            axis: "0 0 0 1",
-            symbol: "",
-            smooth: true,
-            colors: [
-                        colour1, 
-                        colour2  
-            ]
-        });
-        // default gutter: 10
-        //x, y, length, from, to, steps, orientation, labels, type, dashsize, paper
-        Raphael.g.axis(
-            x + gutter, // 10 + gutter
-            y + ylen - gutter, //y pos
-            xlen - 2 * gutter, 1, xdata.length, // used to pass the initial value and last value (number) if no labels are provided
-            xdata.length / 6, // number of steps 
-            0, null, // the labels
-            r // you need to provide the Raphael object
-        );
-        Raphael.g.axis(
-            paper.width - gutter - 20, // 10 + gutter
-            y + ylen - gutter, //y pos
-            paper.height - 80, 0, maxStrikeRate, // used to pass the initial value and last value (number) if no labels are provided
-            null, // number of steps 
-            3, null, // the labels
-            r // you need to provide the Raphael object
-        );
-
-        paper.text(40, 320, 'Score').attr({ 'font-size': 12 });
-        
-        paper.path('M70 320L110 320').attr({ stroke: colour1, 'stroke-width': 4 });
-        paper.text(160, 320, 'Strike Rate').attr({ 'font-size': 12 });
-        paper.path('M200 320L240 320').attr({ stroke: colour2, 'stroke-width': 4 });
-        paper.text(5, 160, 'Runs').attr({ 'font-size': 12 }).rotate(-90, true);
-        paper.text(275, 160, 'Strike Rate').attr({ 'font-size': 12 }).rotate(90, true);
-
-    }
-
-    function maxValue(values) {
-        var maxValue = 0;
-        $.each(values, function (index, value) {
-            if (value > maxValue) {
-                maxValue = value;
-            }
-        });
-        return maxValue;
-    }
-
-    function addScoreToZone(zoneIndex, scoreBuckets, paper) {
-        var point = findNewPoint(paper.width / 2, paper.height / 2, Math.PI / 8 * (zoneIndex*2+1), paper.width / 3);
-        paper.text(point.x, point.y, scoreBuckets[zoneIndex]).attr({
-            'font-size': 20, fill : '#fff'  
-    });
-
-    }
-
-    function addBallToBucket(ball, scoreBuckets) {
-        var modulo = Math.floor(ball.Angle / (Math.PI / 4));
-        scoreBuckets[modulo] += ball.Amount;
-    }
+    }    
 
     $(".chart-type").click(function() {
         var clickedChart = $(this);
@@ -555,6 +400,176 @@ function renderMatchData(matchData) {
 
         drawChart($(".player-icon-active"));
     });
+
+    //Scorecard
+    $.each(matchData.LiveBattingCard.Players, function(index, player) {
+        var row = $("<tr></tr>");
+
+        var name = $("<td></td>");
+        name.text(player.BatsmanInningsDetails.Name);
+        row.append(name);
+
+        var dismissal1 = $("<td></td>");
+        dismissal1.text(player.BatsmanInningsDetails.Name);
+        row.append(dismissal1);
+
+        $("#inPlayScorecard").append(row);
+    });
+
+}
+
+function getLeadTrailByRuns(matchData) {
+    if (matchData.IsFirstInnings) {
+        if (matchData.OurInningsStatus === "InProgress") {
+            return matchData.Score;
+        } else {
+            return matchData.TheirScore;
+        }
+    } else {
+        if (matchData.OurInningsStatus === "InProgress") {
+            return matchData.TheirScore - matchData.Score;
+        } else {
+            return matchData.Score - matchData.TheirScore;
+        }
+    }
+}
+
+function drawChart(clickedPlayer) {
+    $('#wagon-wheel').html('');
+
+    var chartToDraw = $(".chart-type-active").attr("chartType");
+    var paper;
+    if (chartToDraw === "wagon") {
+        paper = initializeWagonWheel();
+        drawWagonWheel(clickedPlayer, matchData.CompletedOvers, paper);
+    }
+    if (chartToDraw === "zones") {
+        paper = initializeZones();
+        drawZones(clickedPlayer, paper, matchData.CompletedOvers);
+    }
+    if (chartToDraw === "worm") {
+        paper = initializeWorm();
+        drawWorm(clickedPlayer, paper, matchData.CompletedOvers);
+    }
+}
+
+function drawZones(player, paper, overs) {
+    var scoreBuckets = [0, 0, 0, 0, 0, 0, 0, 0];
+    drawPlayerNameAndScore(player, paper);
+    $.each(overs, function (index, over) {
+        $.each(over.Over.Balls, function (index, ball) {
+            if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing === "" || (ball.Thing === "nb" && ball.Amount > 1))) {
+                addBallToBucket(ball, scoreBuckets);
+            }
+        });
+    });
+    $.each(scoreBuckets, function (index) {
+        addScoreToZone(index, scoreBuckets, paper);
+    });
+}
+
+function drawWorm(player, paper, overs) {
+    var colour1 = '#009933';
+    var colour2 = '#ffd633';
+
+    paper.image("\\Images\\livescorecard\\vcc-logo-opaque.jpg", 35, 90, 200, 85);
+    var xValues = [];
+    var scoreValues = [];
+    var strikeRateValues = [];
+
+    var cumulativeScore = 0;
+    var ballNumber = 0;
+    $.each(overs, function (index, over) {
+        $.each(over.Over.Balls, function (index, ball) {
+            if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing === "" || (ball.Thing === "nb" && ball.Amount > 1))) {
+                ballNumber++;
+                cumulativeScore = cumulativeScore + ball.Amount;
+                xValues.push(ballNumber);
+                scoreValues.push(cumulativeScore);
+                strikeRateValues.push((cumulativeScore / ballNumber) * 100);
+            }
+        });
+    });
+
+    if (xValues.length === 0) {
+        return;
+    }
+
+    var maxStrikeRate = maxValue(strikeRateValues);
+    $.each(strikeRateValues, function (index, value) {
+        strikeRateValues[index] = (value / maxStrikeRate) * cumulativeScore;
+    });
+
+    drawPlayerNameAndScore(player, paper);
+    var r = paper;
+
+    var x = 10,
+        y = 10,
+        xlen = paper.width - 30,
+        ylen = paper.height - 40,
+        gutter = 20,
+        xdata = xValues;
+    var chrt = r.linechart(x, y, xlen, ylen, xdata, [scoreValues, strikeRateValues], {
+        gutter: gutter,
+        nostroke: false,
+        axis: "0 0 0 1",
+        symbol: "",
+        smooth: true,
+        colors: [
+                    colour1,
+                    colour2
+        ]
+    });
+    // default gutter: 10
+    //x, y, length, from, to, steps, orientation, labels, type, dashsize, paper
+    Raphael.g.axis(
+        x + gutter, // 10 + gutter
+        y + ylen - gutter, //y pos
+        xlen - 2 * gutter, 1, xdata.length, // used to pass the initial value and last value (number) if no labels are provided
+        xdata.length / 6, // number of steps 
+        0, null, // the labels
+        r // you need to provide the Raphael object
+    );
+    Raphael.g.axis(
+        paper.width - gutter - 20, // 10 + gutter
+        y + ylen - gutter, //y pos
+        paper.height - 80, 0, maxStrikeRate, // used to pass the initial value and last value (number) if no labels are provided
+        null, // number of steps 
+        3, null, // the labels
+        r // you need to provide the Raphael object
+    );
+
+    paper.text(40, 320, 'Score').attr({ 'font-size': 12 });
+
+    paper.path('M70 320L110 320').attr({ stroke: colour1, 'stroke-width': 4 });
+    paper.text(160, 320, 'Strike Rate').attr({ 'font-size': 12 });
+    paper.path('M200 320L240 320').attr({ stroke: colour2, 'stroke-width': 4 });
+    paper.text(5, 160, 'Runs').attr({ 'font-size': 12 }).rotate(-90, true);
+    paper.text(275, 160, 'Strike Rate').attr({ 'font-size': 12 }).rotate(90, true);
+
+}
+
+function maxValue(values) {
+    var maxValue = 0;
+    $.each(values, function (index, value) {
+        if (value > maxValue) {
+            maxValue = value;
+        }
+    });
+    return maxValue;
+}
+
+function addScoreToZone(zoneIndex, scoreBuckets, paper) {
+    var point = findNewPoint(paper.width / 2, paper.height / 2, Math.PI / 8 * (zoneIndex * 2 + 1), paper.width / 3);
+    paper.text(point.x, point.y, scoreBuckets[zoneIndex]).attr({
+        'font-size': 20, fill: '#fff'
+    });
+
+}
+
+function addBallToBucket(ball, scoreBuckets) {
+    var modulo = Math.floor(ball.Angle / (Math.PI / 4));
+    scoreBuckets[modulo] += ball.Amount;
 }
 
 function drawWagonWheel(player, overs, paper) {
