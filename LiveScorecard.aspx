@@ -122,6 +122,8 @@
     <script src="Script/live-scorecard.js"></script>
     <script src="Script/gRaphael/g.raphael-min.js"></script>
     <script src="Script/gRaphael/g.line-min.js"></script>
+    <script src="Script/gRaphael/g.bar-min.js"></script>
+    <script src="Script/vcc.charts.js"></script>
 </head>
 <body>
     <div id="pageContainer">
@@ -314,6 +316,7 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="Scorecard">
                             <div id="inPlayScorecardContainer">
+                                <strong>Village CC Batting (Match Currently In-Play)</strong>
                                 <table class="table table-striped" style="margin-top: 20px" id="inPlayScorecard">
                                     <tr>
                                         <th><!--name--></th>
@@ -321,12 +324,30 @@
                                         <th><!--dismissal part 2--></th>
                                         <th>Runs</th>
                                         <th>Balls</th>
+                                        <th>Dots</th>
                                         <th>4s</th>
                                         <th>6s</th>
                                         <th>SR</th>
                                     </tr>
                                     <!--Rows added by script-->
-                                </table>       
+                                </table> 
+                                
+                                <strong><span class="opposition"></span> Bowling (Match Currently In-Play)</strong>
+                                <table class="table table-striped" style="margin-top: 20px" id="inPlayBowlingScorecard">
+                                    <tr>
+                                        <th><!--name--></th>
+                                        <th>Overs</th>
+                                        <th>Maidens</th>
+                                        <th>Runs</th>
+                                        <th>Wickets</th>
+                                        <th>Econ</th>
+                                    </tr>
+                                    <!--Rows added by script-->
+                                </table> 
+
+                                <small>Full scoreacard details for both innings will appear once the match is completed and reports submitted.</small>
+
+                                      
                             </div>
                             <div id="matchCompletedScoreCards">
                                 <%--Todo--%>

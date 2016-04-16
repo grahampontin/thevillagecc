@@ -7,10 +7,10 @@
     return result;
 }
 
-function getDistance(scoreForBall, angleRadians) {
-    var scale = 34;
+function getDistance(scoreForBall, angleRadians, radius) {
+    var scale = radius/4;
     if (scoreForBall === 6) {
-        scale = 24;
+        scale = scale *0.75 ;
     }
     var distance = scoreForBall * scale;
     if (angleRadians <= (Math.PI / 2)) {

@@ -2,11 +2,6 @@
     $('#tabs').tab();
     $('#analysisTabs').tab();
 
-    $('#analysisTabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        var pattern = /#.+/gi //use regex to get anchor(==selector)
-        var chart = e.target.toString().match(pattern)[0]; //get anchor         
-        drawTeamChart(chart);
-    });
 
     var matchId = $.url().param('matchId');
     if (matchId == null) {
@@ -23,12 +18,24 @@
         });
 });
 
-function drawTeamChart(chartType) {
+function drawTeamChart(chartType, matchData) {
     $("#chartPlaceholder").html('');
     var paper = Raphael("chartPlaceholder", 700, 400);
     paper.image("\\Images\\livescorecard\\vcc-logo-opaque.jpg", 100, 90, 500, 214);
+    switch (chartType) {
+        case "worm":
+            drawTeamWorm(paper, matchData);
+            break;
+        case "wagon":
+            drawTeamWagonWheel(paper, matchData);
+            break;
+        case "manahttan":
+            drawTeamManahttan(paper, matchData);
+            break;
+    }
 
-
+    var image = $("#chartPlaceholder image").detach();
+    $("#chartPlaceholder svg").prepend(image);
 }
 
 function showError(text) {
@@ -385,7 +392,7 @@ function renderMatchData(matchData) {
             var clickedPlayer = $(this);
             $('.player-icon').removeClass('player-icon-active');
             clickedPlayer.addClass('player-icon-active');
-            drawChart(clickedPlayer);
+            drawChart(clickedPlayer, matchData);
 
 
         });
@@ -398,11 +405,63 @@ function renderMatchData(matchData) {
         $(".chart-type").removeClass("chart-type-active");
         clickedChart.addClass("chart-type-active");
 
-        drawChart($(".player-icon-active"));
+        drawChart($(".player-icon-active"), matchData);
     });
 
+    $('#analysisTabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var pattern = /#.+/gi //use regex to get anchor(==selector)
+        var chart = e.target.toString().match(pattern)[0].replace('#', ''); //get anchor         
+        drawTeamChart(chart, matchData);
+    });
+
+
+    renderLiveBattingScoreCard(matchData);
+    renderLiveBowlingScoreCard(matchData);
+
+}
+
+function renderLiveBowlingScoreCard(matchData) {
     //Scorecard
-    $.each(matchData.LiveBattingCard.Players, function(index, player) {
+    $.each(matchData.LiveBowlingCard, function(index, bowler) {
+        var details = bowler.Details;
+        var name = bowler.Name;
+
+        var row = $("<tr></tr>");
+
+        var nameCell = $("<td></td>");
+        nameCell.text(name);
+        row.append(nameCell);
+
+        var oversCell = $("<td></td>");
+        oversCell.text(details.Overs);
+        row.append(oversCell);
+
+        var maidensCell = $("<td></td>");
+        maidensCell.text(details.Maidens);
+        row.append(maidensCell);
+
+        var runsCell = $("<td></td>");
+        runsCell.text(details.Runs);
+        row.append(runsCell);
+
+        var wicketsCell = $("<td></td>");
+        wicketsCell.text(details.Wickets);
+        row.append(wicketsCell);
+
+        var econCell = $("<td></td>");
+        econCell.text(details.Economy);
+        row.append(econCell);
+
+
+        $("#inPlayBowlingScorecard").append(row);
+
+
+    });
+}
+
+function renderLiveBattingScoreCard(matchData) {
+    //Scorecard
+    $.each(matchData.LiveBattingCard.Players, function (index, player) {
         var row = $("<tr></tr>");
 
         var name = $("<td></td>");
@@ -410,12 +469,107 @@ function renderMatchData(matchData) {
         row.append(name);
 
         var dismissal1 = $("<td></td>");
-        dismissal1.text(player.BatsmanInningsDetails.Name);
+        var dismissal2 = $("<td></td>");
+        var wicket = player.Wicket;
+        if (wicket === null) {
+            dismissal1.text("not");
+            dismissal2.text("out");
+        } else {
+            dismissal2.text("");
+            dismissal1.text("");
+            setDismissalText(dismissal1, dismissal2, wicket);
+        }
         row.append(dismissal1);
+        row.append(dismissal2);
+
+        var runs = $("<td></td>");
+        runs.text(player.BatsmanInningsDetails.Score);
+        row.append(runs);
+
+        var balls = $("<td></td>");
+        balls.text(player.BatsmanInningsDetails.Balls);
+        row.append(balls);
+
+        var dots = $("<td></td>");
+        dots.text(player.BatsmanInningsDetails.Dots);
+        row.append(dots);
+
+        var fours = $("<td></td>");
+        fours.text(player.BatsmanInningsDetails.Fours);
+        row.append(fours);
+
+        var sixes = $("<td></td>");
+        sixes.text(player.BatsmanInningsDetails.Sixes);
+        row.append(sixes);
+
+
+        var strikeRate = $("<td></td>");
+        strikeRate.text(player.BatsmanInningsDetails.StrikeRate);
+        row.append(strikeRate);
 
         $("#inPlayScorecard").append(row);
     });
 
+    var extrasRow = $("<tr></tr>");
+    extrasRow.append($("<td></td>"));
+    extrasRow.append($("<td></td>"));
+    var extrasTitle = $("<td>Extras</td>");
+    extrasRow.append(extrasTitle);
+    var extrasTotal = $("<td></td>");
+    extrasTotal.text(matchData.LiveBattingCard.Extras.Total);
+    extrasRow.append(extrasTotal);
+    var extrasDetails = $("<td colspan=5></td>");
+    extrasDetails.text("(" + matchData.LiveBattingCard.Extras.DetailString + ")");
+    extrasRow.append(extrasDetails);
+
+    $("#inPlayScorecard").append(extrasRow);
+
+    var totalRow = $("<tr></tr>");
+    totalRow.append($("<td></td>"));
+    totalRow.append($("<td></td>"));
+    var totalTitle = $("<td><strong>Total</strong></td>");
+    totalRow.append(totalTitle);
+    var scoreTotal = $("<td></td>");
+    var scoreTotalText = $("<strong></strong>");
+    scoreTotalText.text(matchData.Score);
+    scoreTotal.append(scoreTotalText);
+    totalRow.append(scoreTotal);
+    var scoreDetails = $("<td colspan=5></td>");
+    scoreDetails.text("for " + matchData.Wickets + " wickets");
+    totalRow.append(scoreDetails);
+
+    $("#inPlayScorecard").append(totalRow);
+}
+
+
+function setDismissalText(dismissal1, dismissal2, wicket) {
+    if (wicket.IsCaught || wicket.IsBowled) {
+        dismissal2.text("b. " + wicket.Bowler);
+    }
+    if (wicket.IsLbw) {
+        dismissal2.text("lbw b. " + wicket.Bowler);
+    }
+    if (wicket.IsCaughtAndBowled) {
+        dismissal2.text("c&b " + wicket.Bowler);
+    }
+    if (wicket.IsCaught) {
+        dismissal1.text("ct. " + wicket.Fielder);
+    }
+    if (wicket.IsRunOut) {
+        dismissal1.text("run out (" + wicket.Fielder + ")");
+    }
+    if (wicket.IsStumped) {
+        dismissal1.text("stumped (" + wicket.Fielder + ")");
+    }
+    if (wicket.IsHitWicket) {
+        dismissal1.text("hit wicket");
+    }
+    if (wicket.IsRetired) {
+        dismissal1.text("retired");
+    }
+    if (wicket.IsRetiredHurt) {
+        dismissal1.text("retired hurt");
+    }
 }
 
 function getLeadTrailByRuns(matchData) {
@@ -434,7 +588,7 @@ function getLeadTrailByRuns(matchData) {
     }
 }
 
-function drawChart(clickedPlayer) {
+function drawChart(clickedPlayer, matchData) {
     $('#wagon-wheel').html('');
 
     var chartToDraw = $(".chart-type-active").attr("chartType");
@@ -540,10 +694,10 @@ function drawWorm(player, paper, overs) {
     );
 
     paper.text(40, 320, 'Score').attr({ 'font-size': 12 });
-
     paper.path('M70 320L110 320').attr({ stroke: colour1, 'stroke-width': 4 });
     paper.text(160, 320, 'Strike Rate').attr({ 'font-size': 12 });
     paper.path('M200 320L240 320').attr({ stroke: colour2, 'stroke-width': 4 });
+
     paper.text(5, 160, 'Runs').attr({ 'font-size': 12 }).rotate(-90, true);
     paper.text(275, 160, 'Strike Rate').attr({ 'font-size': 12 }).rotate(90, true);
 
@@ -599,7 +753,7 @@ function drawBall(ball, paper) {
     if (ball.Thing === "nb") {
         batsmansScoreForBall = batsmansScoreForBall - 1;
     }
-    var result = findNewPoint(stumpsX, stumpsY, ball.Angle, getDistance(batsmansScoreForBall, ball.Angle));
+    var result = findNewPoint(stumpsX, stumpsY, ball.Angle, getDistance(batsmansScoreForBall, ball.Angle, paper.width/2));
     paper.path("M" + stumpsX + " " + stumpsY + "L" + result.x + " " + result.y).attr({ stroke: getColour(batsmansScoreForBall), 'stroke-width': 2 });
 }
 
