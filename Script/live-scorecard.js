@@ -319,31 +319,33 @@ function renderMatchData(matchData) {
             $("#overDetails").prepend(endOfInningsContainer);
 
         }
+        if (matchData.TheirCompletedOvers != null) {
+            $.each(matchData.TheirCompletedOvers.reverse(), function (index, over) {
+                var overContainer = $("<div></div>");
+                overContainer.addClass("panel panel-default");
 
-        $.each(matchData.TheirCompletedOvers.reverse(), function(index, over) {
-            var overContainer = $("<div></div>");
-            overContainer.addClass("panel panel-default");
+                var overHeader = $("<div></div>");
+                overHeader.addClass("panel-heading");
+                overHeader.html("<small><strong>End of over " + over.Over + "</strong> <strong> " + matchData.Opposition + " " + over.Score + "/" + over.Wickets + "</strong></small>");
 
-            var overHeader = $("<div></div>");
-            overHeader.addClass("panel-heading");
-            overHeader.html("<small><strong>End of over " + over.Over + "</strong> <strong> " + matchData.Opposition + " " + over.Score + "/" + over.Wickets + "</strong></small>");
+                overContainer.append(overHeader);
 
-            overContainer.append(overHeader);
+                var overBody = $("<div></div>");
+                overBody.addClass("panel-body");
 
-            var overBody = $("<div></div>");
-            overBody.addClass("panel-body");
-
-            var overCommentary = $("<div></div>");
-            overCommentary.addClass("over-comment");
-            overCommentary.html(over.Commentary);
+                var overCommentary = $("<div></div>");
+                overCommentary.addClass("over-comment");
+                overCommentary.html(over.Commentary);
 
 
-            overBody.append(overCommentary);
-            overContainer.append(overBody);
+                overBody.append(overCommentary);
+                overContainer.append(overBody);
 
-            $("#theirOverDetails").append(overContainer);
-        });
+                $("#theirOverDetails").append(overContainer);
+            });
 
+        }
+        
         if (matchData.TheirInningsStatus === 'Completed') {
             var endOfInningsContainer = $("<div></div>");
             endOfInningsContainer.addClass("panel panel-default");

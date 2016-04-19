@@ -19,12 +19,16 @@
 
     var theirRawData = [];
     var maxBallNumber;
-    $.each(matchData.TheirCompletedOvers, function (index, over) {
-        var ballNumber = over.Over * 6;
-        theirRawData.push([ballNumber, over.Score]);
-        maxBallNumber = ballNumber;
-    });
-
+    if (matchData.TheirCompleteOvers != null) {
+        $.each(matchData.TheirCompletedOvers, function(index, over) {
+            var ballNumber = over.Over * 6;
+            theirRawData.push([ballNumber, over.Score]);
+            maxBallNumber = ballNumber;
+        });
+    } else {
+        theirRawData.push([]);
+    }
+    
     var beginSegmentAtBall = 0;
     var segmentNumber = 0;
     var endSegmantAtBall = theirRawData[0][0];
@@ -222,7 +226,8 @@ function drawTeamPartnerships(paper, matchData) {
 
 function partnershipChart(width, height, scorePairs, paper) {
     var numberOfPairs = scorePairs.length;
-    var barHeight = (height / numberOfPairs) - (height/10);
+    var margin = (height/30);
+    var barHeight = (height / numberOfPairs) - margin;
     var highScore = highestScore(scorePairs);
 
     var yPos = 0;
@@ -239,6 +244,8 @@ function partnershipChart(width, height, scorePairs, paper) {
         //right
         var rightRect = paper.rect(center, yPos, barSize(rightScore, highScore, width), barHeight).attr({ stroke: 'none', fill: Raphael.g.colors[1], 'fill-opacity': 100 });
         paper.text(center + (width / 2) - 20, rightRect.attrs.y + (rightRect.attrs.height / 2), pair[1].label + ' (' + pair[1].value + ')').attr({ 'text-anchor': 'end', 'font-size': '14pt' });
+
+        yPos += barHeight + margin;
 
     });
 }
