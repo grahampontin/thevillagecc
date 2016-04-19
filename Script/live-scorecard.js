@@ -32,6 +32,9 @@ function drawTeamChart(chartType, matchData) {
         case "manahttan":
             drawTeamManahttan(paper, matchData);
             break;
+        case "partnerships":
+            drawTeamPartnerships(paper, matchData);
+            break;
     }
 
     var image = $("#chartPlaceholder image").detach();
@@ -594,8 +597,9 @@ function drawChart(clickedPlayer, matchData) {
     var chartToDraw = $(".chart-type-active").attr("chartType");
     var paper;
     if (chartToDraw === "wagon") {
-        paper = initializeWagonWheel();
-        drawWagonWheel(clickedPlayer, matchData.CompletedOvers, paper);
+        paper = Raphael("wagon-wheel", 283, 330);
+        var image = initializeWagonWheel(paper);
+        drawWagonWheel(clickedPlayer, matchData.CompletedOvers, paper, image);
     }
     if (chartToDraw === "zones") {
         paper = initializeZones();
@@ -726,12 +730,12 @@ function addBallToBucket(ball, scoreBuckets) {
     scoreBuckets[modulo] += ball.Amount;
 }
 
-function drawWagonWheel(player, overs, paper) {
+function drawWagonWheel(player, overs, paper, image) {
     drawPlayerNameAndScore(player, paper);
     $.each(overs, function(index, over) {
         $.each(over.Over.Balls, function (index, ball) {
             if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing ==="" || (ball.Thing === "nb" && ball.Amount > 1))) {
-                drawBall(ball, paper);
+                drawBall(ball, paper, image);
             }
         });
     });
@@ -757,8 +761,7 @@ function drawBall(ball, paper) {
     paper.path("M" + stumpsX + " " + stumpsY + "L" + result.x + " " + result.y).attr({ stroke: getColour(batsmansScoreForBall), 'stroke-width': 2 });
 }
 
-function initializeWagonWheel() {
-    var wagonWheelPaper = Raphael("wagon-wheel", 283, 330);
+function initializeWagonWheel(wagonWheelPaper) {
     var wagonWheelImage = wagonWheelPaper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", 0, 30, 283, 280);
     wagonWheelPaper.text(55, 175, 'Off\nSide').attr({ fill: '#fff', 'font-size': 20 });
     wagonWheelPaper.text(235, 175, 'Leg\nSide').attr({ fill: '#fff', 'font-size': 20 });
@@ -769,7 +772,7 @@ function initializeWagonWheel() {
     wagonWheelPaper.text(220, 325, 'Sixes').attr({ 'font-size': 12 });
     wagonWheelPaper.path('M240 325L280 325').attr({ stroke: '#f00', 'stroke-width': 4 });
 
-    return wagonWheelPaper;
+    return wagonWheelImage;
 }
 
 

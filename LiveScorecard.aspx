@@ -120,9 +120,9 @@
     <script src="Script/purl.js"></script>
     <script src="Script/wagonwheel-functions.js"></script>
     <script src="Script/live-scorecard.js"></script>
-    <script src="Script/gRaphael/g.raphael-min.js"></script>
+    <script src="Script/gRaphael/g.raphael.js"></script>
     <script src="Script/gRaphael/g.line-min.js"></script>
-    <script src="Script/gRaphael/g.bar-min.js"></script>
+    <script src="Script/gRaphael/g.bar.js"></script>
     <script src="Script/vcc.charts.js"></script>
 </head>
 <body>

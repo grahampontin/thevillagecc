@@ -138,35 +138,125 @@ function getKeyPath(yPos) {
 
 
 function drawTeamManahttan(paper, matchData) {
-    var data3 = [];
+    var overScores = [];
+    var overNumbers = [];
 
+    var overNumber = 0;
     $.each(matchData.CompletedOvers, function (index, over) {
-        data3.push(over.ScoreForThisOver);
+        overScores.push(over.ScoreForThisOver);
+        overNumber++;
+        overNumbers.push(overNumber);
     });
     var x = 10;
     var y = 10;
     var xlen = paper.width - 20;
     var ylen = paper.height - 20;
     var gutter = 20;
-    var bc = paper.barchart(x+gutter, y, xlen, ylen, [data3], {
+    var bc = paper.barchart(x+gutter, y, xlen, ylen, [overScores], {
         stacked: false,
         type: "soft",
         axis: "1 1 0 0"
     });
-    bc.label(['a', 'b', 'c']);
-
+    
     var axis = Raphael.g.axis(
         x + gutter, // 10 + gutter
         y + ylen - gutter, //y pos
-        ylen - 2 * gutter, 0,maxValue(data3), // used to pass the initial value and last value (number) if no labels are provided
+        ylen - 2 * gutter, 0,maxValue(overScores), // used to pass the initial value and last value (number) if no labels are provided
         null, // number of steps 
         1, null, // the labels
         paper // you need to provide the Raphael object
     );
 
+    
+
     for (var i = 0; i < axis.text.items.length; i++) {
-        paper.path(['M', x, axis.text.items[i].attrs.y, 'H', xlen + x]).attr({
-            stroke: '#EEE'
+        var colour = '#EEE';
+        if (i === 0) {
+            colour = '#000';
+        }
+        paper.path(['M', x+gutter, axis.text.items[i].attrs.y, 'H', xlen + x]).attr({
+            stroke: colour
         }).toBack();
     }
+
+    labelBarChart(paper, bc, overNumbers, {});
 }
+
+function labelBarChart(r, bc, labels, attrs) {
+    // Label a bar chart bc that is part of a Raphael object r
+    // Labels is an array of strings. Attrs is a dictionary
+    // that provides attributes such as fill (text color)
+    // and font (text font, font-size, font-weight, etc) for the
+    // label text.
+
+    for (var i = 0; i < bc.bars[0].length; i++) {
+        var bar = bc.bars[0][i];
+        var gutter_y = bar.w * 0.4;
+        var label_x = bar.x;
+        var label_y = bar.y + bar.h + 10;
+        var label_text = labels[i];
+        var label_attr = { fill: "#2f69bf", font: "16px sans-serif" };
+
+        r.text(label_x, label_y, label_text).attr(label_attr);
+    }
+
+}
+
+function drawTeamPartnerships(paper, matchData) {
+    var scorePairs = [];
+    $.each(matchData.Partnerships, function(index, partnership) {
+        var pair = [];
+        pair.push({
+            value: partnership.Player1Score,
+            label: partnership.Player1Name
+        });
+        pair.push({
+            value: partnership.Player2Score,
+            label: partnership.Player2Name
+        });
+        scorePairs.push(pair);
+    });
+
+    partnershipChart(paper.width, paper.height, scorePairs, paper);
+}
+
+function partnershipChart(width, height, scorePairs, paper) {
+    var numberOfPairs = scorePairs.length;
+    var barHeight = (height / numberOfPairs) - (height/10);
+    var highScore = highestScore(scorePairs);
+
+    var yPos = 0;
+    var center = paper.width / 2;
+
+    $.each(scorePairs, function(index, pair) {
+        var leftScore = pair[0].value;
+        var rightScore = pair[1].value;
+
+        //left
+        var size = barSize(leftScore, highScore, width);
+        var leftRect = paper.rect(center - size, yPos, size, barHeight).attr({ stroke: 'none', fill: Raphael.g.colors[0], 'fill-opacity': 100 });
+        paper.text(center - (width/2) + 20, leftRect.attrs.y + (leftRect.attrs.height / 2), pair[0].label + ' (' + pair[0].value + ')').attr({ 'text-anchor': 'start', 'font-size': '14pt' });
+        //right
+        var rightRect = paper.rect(center, yPos, barSize(rightScore, highScore, width), barHeight).attr({ stroke: 'none', fill: Raphael.g.colors[1], 'fill-opacity': 100 });
+        paper.text(center + (width / 2) - 20, rightRect.attrs.y + (rightRect.attrs.height / 2), pair[1].label + ' (' + pair[1].value + ')').attr({ 'text-anchor': 'end', 'font-size': '14pt' });
+
+    });
+}
+
+function barSize(score, highScore, width) {
+    return ((score / highScore) * (width / 2));
+
+}
+
+function highestScore(pairs) {
+    var max = 0;
+    $.each(pairs, function (index, pair) {
+        $.each(pair, function(i, entry) {
+            if (entry.value > max) {
+                max = entry.value;
+            }
+        });
+    });
+    return max;
+}
+
