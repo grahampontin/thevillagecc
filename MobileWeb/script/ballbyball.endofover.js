@@ -5,7 +5,9 @@
     $("#inningsRunRate").html(matchState.Over.totalScore() + ".00");
     $("#overPlaceHolder").replaceWith(matchState.Over.toHtml(matchState.LastCompletedOver));
     $("#overDetailUl").listview('refresh');
+    $("#submitToServerButton").prop('disabled', false);
     $("#submitToServerButton").click(function () {
+        $("#submitToServerButton").prop('disabled', true);
         //Fix this
         var matchId = matchState.MatchId;
         matchState.Over.Commentary = $("#overCommentery").val();
