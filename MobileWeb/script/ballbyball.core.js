@@ -5,6 +5,7 @@ var line;
 
 
 function initialiseBallByBallCore() {
+    initPhotoCapture('imageInput', 'blah');
     if (matchState == null) {
         var matchId = $.url().param('matchId');
         if (matchId == null) {
@@ -99,6 +100,12 @@ function initialiseBallByBallCore() {
     $("#endOfInningsGoBack").click(function () {
         $("#confirmationDialog").popup('close');
     });
+
+    $("#takeAPicture").click(function () {
+        $("#addPictureDialog").popup('open');
+    });
+
+
 };
 
 function showConfirmationDialog() {

@@ -4,7 +4,8 @@
 
 <asp:Content runat="server" ID="Page" ContentPlaceHolderID="page_content">
 <div data-role="header">
-    <h1>VCC vs <span id="oppositionName"></span>  <span id="score"></span>/<span id="wickets"></span> (<span id="overs"></span> ovs)</h1>
+    <h1>VCC vs <span id="oppositionName"></span>  <span id="score"></span>/<span id="wickets"></span> (<span id="overs"></span> ovs)
+    </h1><button id="takeAPicture" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-camera ui-btn-icon-notext ui-corner-all"></button>
 </div><!-- /header -->
 
 <div data-role="content">
@@ -115,7 +116,16 @@
             <button id="endOfInningsConfirmButton" data-theme="a" data-icon="check">We're good, let's end this thing.</button>
 		</div>
 	</div>
-
+    
+    <div data-role="popup" id="addPictureDialog" data-dismissible="true" data-overlay-theme="b" style="min-width:300px;">
+		<div data-role="header">
+			<h1>Take a picture</h1>
+		</div>
+		<div data-role="content">
+			Pictures of cricket matches are the best. Why not take one?
+		    <input type="file" accept="image" id="imageInput"/>
+		</div>
+	</div>
 </div>
 
     <div data-role="popup" id="errorMessage" data-dismissible="true" data-overlay-theme="b" style="min-width:300px;">
@@ -143,6 +153,7 @@
     <script language="javascript" src="../script/ballbyball.matchState.js" type="text/javascript"></script>
     
     <script language="javascript" src="../script/ballbyball.functions.js" type="text/javascript"></script>
+    <script language="javascript" src="../script/ballbyball.photoCapture.js" type="text/javascript"></script>
     <script language="javascript" src="../script/ballbyball.core.js" type="text/javascript"></script>
     
 </asp:Content>
