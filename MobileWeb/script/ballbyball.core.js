@@ -104,7 +104,52 @@ function initialiseBallByBallCore() {
     $("#takeAPicture").click(function () {
         $("#addPictureDialog").popup('open');
     });
+    
 
+    $("#singleButton").click(function () {
+        addSimpleRunsBall(1);
+    });
+
+    $("#fourButton").click(function () {
+        addSimpleRunsBall(4);
+    });
+
+    $("#sixButton").click(function () {
+        addSimpleRunsBall(6);
+    });
+
+    $("#undoButton").click(function () {
+        var undone = matchState.Over.balls.pop();
+        evaluatePlayerScores();
+        evaluateBattingStatuses(undone);
+        write();
+        evaluateShouldSwitchStrikerAfter(undone);
+    });
+    $("#runsButton").click(function () {
+        var amount = parseInt($("#amountSelect").val());
+        addSimpleRunsBall(amount);
+    });
+
+    $("#extrasSelect").change(function () {
+        var amount = $("#amountSelect").val();
+        var extra = $(this).val();
+        if (amount > 1 && extra === "nb") {
+            $("#wagonWheel").popup("open");
+        }
+        addBall(new Ball(amount, extra, getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
+        $(this).val("extras");
+    });
+
+    $("#wagonWheelSaveButton").click(function () {
+        if (line != null) {
+            line.remove();
+        }
+        $("#wagonWheel").popup("close");
+    });
+
+    $("#dotBallButton").click(function () {
+        addSimpleRunsBall(0);
+    });
 
 };
 
@@ -248,8 +293,8 @@ function bindChooseBatsmenHandlers() {
         var playerId1 = $("#batsman1select").find('option:selected').attr("playerId");
         var playerId2 = $("#batsman2select").find('option:selected').attr("playerId");
                 
-        matchState.setPlayerBatting(playerId1, 1);
-		matchState.setPlayerBatting(playerId2, 2);
+        matchState.setPlayerBattingAtPosition(playerId1, 1);
+		matchState.setPlayerBattingAtPosition(playerId2, 2);
 		write();
 		$("#chooseBatsmen").popup("close");
 	});
@@ -288,33 +333,6 @@ function updateChooseBatsmenSaveButtoEnabled() {
 
 		
 
-$("#runsButton").click(function () {
-	var amount = parseInt($("#amountSelect").val());
-    addSimpleRunsBall(amount);
-});
-
-        
-
-$("#extrasSelect").change(function () {
-    var amount = $("#amountSelect").val();
-    var extra = $(this).val();
-    if (amount > 1 && extra ==="nb") {
-        $("#wagonWheel").popup("open");
-    }
-    addBall(new Ball(amount, extra, getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
-    $(this).val("extras");
-});
-
-$("#wagonWheelSaveButton").click(function () {
-    if (line != null) {
-        line.remove();
-    }
-    $("#wagonWheel").popup("close");
-});
-
-$("#dotBallButton").click(function () {
-    addSimpleRunsBall(0);
-});
 
 function addSimpleRunsBall(runs) {
     if (runs > 0) {
@@ -323,24 +341,6 @@ function addSimpleRunsBall(runs) {
     addBall(new Ball(runs, "", getOnStrikeBatsman(), getOnStrikeBatsmanName(), getBowler()));
 }
 
-$("#singleButton").click(function () {
-    addSimpleRunsBall(1);
-});
-
-$("#fourButton").click(function () {
-    addSimpleRunsBall(4);
-});
-
-$("#sixButton").click(function () {
-    addSimpleRunsBall(6);
-});
-
-$("#undoButton").click(function () {
-    var undone = matchState.Over.balls.pop();
-    evaluatePlayerScores();
-    write();
-    evaluateShouldSwitchStrikerAfter(undone);
-});
 
 function formatScore(score) {
     if (score == 0) {
@@ -386,6 +386,24 @@ function evaluatePlayerScores() {
 
     batsman1.Score = batsman1.CurrentScore + matchState.Over.scoreForPlayer(batsman1.PlayerId);
     batsman2.Score = batsman2.CurrentScore + matchState.Over.scoreForPlayer(batsman2.PlayerId);
+}
+
+
+function evaluateBattingStatuses(ball) {
+    if (ball.wicket != null) {
+        var outBatsman = ball.wicket.player;
+        var notOutBatsman = ball.wicket.notOutPlayer.PlayerId;
+
+        var batters = matchState.getBattingPlayers();
+        if (batters[0].PlayerId === notOutBatsman) {
+            matchState.setPlayerWaiting(batters[1].PlayerId);
+        } else {
+            matchState.setPlayerWaiting(batters[0].PlayerId);
+        }
+
+        matchState.setPlayerBatting(outBatsman);
+    }
+
 }
 
 function evaluateShouldSwitchStrikerAfter(ball) {

@@ -1,4 +1,4 @@
-﻿function Wicket(player, playerName, playerScore, modeOfDismissal, bowler, fielder, description) {
+﻿function Wicket(player, playerName, playerScore, modeOfDismissal, bowler, fielder, description, notOutPlayer) {
     this.player = player;
     this.playerName = playerName;
     this.playerScore = playerScore;
@@ -6,6 +6,7 @@
     this.bowler = bowler;
     this.fielder = fielder;
     this.description = description;
+    this.notOutPlayer = notOutPlayer;
 }
 
 function toString() {

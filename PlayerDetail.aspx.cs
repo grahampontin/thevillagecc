@@ -42,6 +42,7 @@ public partial class PlayerDetail : System.Web.UI.Page
         BattingStats.DataSource = Enum.GetNames(typeof(MatchType));
         BattingStats.DataBind();
 
+
         BowlingStats.DataSource = Enum.GetNames(typeof(MatchType));
         BowlingStats.DataBind();
 
@@ -78,20 +79,20 @@ public partial class PlayerDetail : System.Web.UI.Page
             List<MatchType> Match = new List<MatchType>();
             Match.Add(MatchTypeName);
             Type.Text = MatchTypeName.ToString();
-            Matches.Text = p.GetMatchesPlayed(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Ave.Text = p.GetBattingAverage(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Inns.Text = p.GetInnings(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            NotOuts.Text = p.GetNotOuts(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Runs.Text = p.GetRunsScored(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            HS.Text = p.GetHighScore(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Ducks.Text = p.GetDucks(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();             
-            Tons.Text = p.Get100sScored(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Fifties.Text = p.Get50sScored(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Fours.Text = p.Get4s(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Sixes.Text = p.Get6s(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Catches.Text = p.GetCatchesTaken(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Stumpings.Text = p.GetStumpings(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString(); ;
-            Runouts.Text = p.GetRunOuts(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
+            Matches.Text = p.GetMatchesPlayed(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Ave.Text = p.GetBattingAverage(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Inns.Text = p.GetInnings(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            NotOuts.Text = p.GetNotOuts(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Runs.Text = p.GetRunsScored(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            HS.Text = p.GetHighScore(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Ducks.Text = p.GetDucks(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();             
+            Tons.Text = p.Get100sScored(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Fifties.Text = p.Get50sScored(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Fours.Text = p.Get4s(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Sixes.Text = p.Get6s(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Catches.Text = p.GetCatchesTaken(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Stumpings.Text = p.GetStumpings(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString(); ;
+            Runouts.Text = p.GetRunOuts(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
          }
     }
     protected void BowlingStats_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -117,17 +118,17 @@ public partial class PlayerDetail : System.Web.UI.Page
             List<MatchType> Match = new List<MatchType>();
             Match.Add(MatchTypeName);
             Type.Text = MatchTypeName.ToString();
-            Matches.Text = p.GetMatchesPlayed(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Overs.Text = p.GetOversBowled(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Runs.Text = p.GetRunsConceeded(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Wkts.Text = p.GetWicketsTaken(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            BBM.Text = p.GetBestMatchFigures(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Ave.Text = p.GetBowlingAverage(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Econ.Text = p.GetEconomy(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString(); 
-            SR.Text = p.GetStrikeRate(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Fourfers.Text = p.GetThreeFers(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Fivefers.Text = p.GetFiveFers(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
-            Tenfers.Text = p.GetTenFers(new DateTime(2000, 1, 1), new DateTime(2012, 1, 1), Match, null).ToString();
+            Matches.Text = p.GetMatchesPlayed(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Overs.Text = p.GetOversBowled(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Runs.Text = p.GetRunsConceeded(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Wkts.Text = p.GetWicketsTaken(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            BBM.Text = p.GetBestMatchFigures(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Ave.Text = p.GetBowlingAverage(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Econ.Text = p.GetEconomy(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString(); 
+            SR.Text = p.GetStrikeRate(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Fourfers.Text = p.GetThreeFers(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Fivefers.Text = p.GetFiveFers(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Tenfers.Text = p.GetTenFers(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
         }
     }
 }

@@ -267,8 +267,8 @@
                                     <option value="bowlingEconomyTimeline">Econ Timeline</option>
                                     <option value="bowlingAverageTimeline">Average Timeline</option>
                                     <option value="bowlingSRTimeline">Strike Rate Timeline</option>
-                                    <option value="bowlingDismissalsTimeline">Dismissal Types</option>
-                                    <option value="batsmenDismissed">Batsmen Dismissed</option>
+                                    <option value="bowlingDismissals">Dismissal Types</option>
+                                    <option value="bowlingBatsmenDismissed">Batsmen Dismissed</option>
                                 </select>
                             </div>
                         </div>

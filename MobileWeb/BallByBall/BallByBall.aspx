@@ -5,7 +5,9 @@
 <asp:Content runat="server" ID="Page" ContentPlaceHolderID="page_content">
 <div data-role="header">
     <h1>VCC vs <span id="oppositionName"></span>  <span id="score"></span>/<span id="wickets"></span> (<span id="overs"></span> ovs)
-    </h1><button id="takeAPicture" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-camera ui-btn-icon-notext ui-corner-all"></button>
+    </h1>
+    <button id="takeAPicture" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-camera ui-btn-icon-notext ui-corner-all"></button>
+    <button id="help" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bug ui-btn-icon-notext ui-corner-all"></button>
 </div><!-- /header -->
 
 <div data-role="content">
@@ -147,13 +149,5 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">
-    <script language="javascript" src="../script/ballbyball.ball.js" type="text/javascript"></script>
-    <script language="javascript" src="../script/ballbyball.over.js" type="text/javascript"></script>
-    <script language="javascript" src="../script/ballbyball.wicket.js" type="text/javascript"></script>
-    <script language="javascript" src="../script/ballbyball.matchState.js" type="text/javascript"></script>
-    
-    <script language="javascript" src="../script/ballbyball.functions.js" type="text/javascript"></script>
-    <script language="javascript" src="../script/ballbyball.photoCapture.js" type="text/javascript"></script>
-    <script language="javascript" src="../script/ballbyball.core.js" type="text/javascript"></script>
-    
+     
 </asp:Content>

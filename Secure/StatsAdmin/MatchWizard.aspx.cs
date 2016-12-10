@@ -14,8 +14,10 @@ using CricketClubMiddle;
 using CricketClubMiddle.Stats;
 using CricketClubMiddle.Utility;
 using System.Collections.Generic;
+using System.Net;
 using CricketClubDomain;
 using CricketClubAccounts;
+using CricketClubMiddle.Logging;
 
 public partial class stats_MatchWizard : System.Web.UI.Page
 {
@@ -1435,17 +1437,20 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                 report.Save();
                 try
                 {
-                    System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("admin@thevillagecc.org.uk", emailAddress);
+                    System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage("matchreports@thevillagecc.org.uk", emailAddress);
                     mail.Subject = "Match Report Request";        // put subject here	
                     mail.Body = "You are requested to provide a match report for the match against " + selectedMatch.Opposition.Name + " on " + selectedMatch.MatchDate.ToLongDateString() + ". You can do this by visiting http://www.thevillagecc.org.uk/CreateMatchReport.aspx?MatchID="+selectedMatch.ID+ " and using the password: "+ pass;
                     mail.IsBodyHtml = true;
-                    System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("mail.thevillagecc.org.uk");
+                    System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("mail.thevillagecc.org.uk", 8889);
+                    smtp.UseDefaultCredentials = false;
+                    smtp.Credentials = new NetworkCredential("matchreports@thevillagecc.org.uk", "matchreports1A");
                     smtp.Send(mail);
                 }
                 catch (Exception ex)
                 {
                     wasError = true;
-                    errorText = "Email was not sent - ACCOUNTS HAVE NOT BEEN UPDATED!<BR><BR>" + ex.Message + "<BR><BR>" + ex.StackTrace;
+                    errorText = "Email was not sent - ACCOUNTS HAVE NOT BEEN UPDATED!<BR><BR>" + ex.Message + "<BR><BR>" + ex.StackTrace; 
+                    Logger.Log("failed to send email", ex, Severity.Error);
                 }
 
             }

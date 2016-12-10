@@ -17,8 +17,10 @@
     this.getBattingPlayers = getBattingPlayers;
     this.getWaitingPlayers = getWaitingPlayers;
     this.getPlayersOfStatus = getPlayersOfStatus;
-    this.setPlayerBatting = setPlayerBatting;
+    this.setPlayerBattingAtPosition = setPlayerBattingAtPosition;
     this.setPlayerOut = setPlayerOut;
+    this.setPlayerBatting = setPlayerBatting;
+    this.setPlayerWaiting = setPlayerWaiting;
     this.getCurrentScoreForBatsman = getCurrentScoreForBatsman;
     this.getPlayer = getPlayer;
     this.getNextBattingPosition = getNextBattingPosition;
@@ -56,7 +58,7 @@ function matchStateFromData(data) {
     return new MatchState(data.Players, data.LastCompletedOver, new Over(), data.Score, data.RunRate, data.Bowlers, data.MatchId);
 }
 
-function setPlayerBatting(playerId, position) {
+function setPlayerBattingAtPosition(playerId, position) {
     $.each(this.Players, function (index, player) {
         if (player.PlayerId == playerId) {
             player.State = "Batting";
@@ -65,6 +67,21 @@ function setPlayerBatting(playerId, position) {
     });
 }
 
+function setPlayerBatting(playerId) {
+    $.each(this.Players, function (index, player) {
+        if (player.PlayerId == playerId) {
+            player.State = "Batting";
+        }
+    });
+
+}function setPlayerWaiting(playerId) {
+    $.each(this.Players, function (index, player) {
+        if (player.PlayerId == playerId) {
+            player.State = "Waiting";
+            player.Position = null;
+        }
+    });
+}
 function setPlayerOut(playerId) {
     $.each(this.Players, function (index, player) {
         if (player.PlayerId == playerId) {

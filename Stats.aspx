@@ -79,7 +79,7 @@
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 var pattern = /#.+/gi //use regex to get anchor(==selector)
                 var contentID = e.target.toString().match(pattern)[0]; //get anchor         
-                loadTab($(contentID))
+                loadTab($(contentID));
             });
             $('#filterButton').click(function () {
                 var activeTab = $('.tab-pane.active');

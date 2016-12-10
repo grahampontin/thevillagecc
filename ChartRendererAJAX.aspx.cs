@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Web.UI;
 using CricketClubDomain;
 using CricketClubMiddle;
@@ -83,14 +84,38 @@ public partial class ChartRendererAJAX : Page
 
     private void MakeBowlingDismissalsChart(Player player, Chart chart)
     {
-        throw new NotImplementedException();
-        
-        
+        Dictionary<Match, List<BattingCardLineData>> dismissedBatsmenData = player.GetDismissedBatsmenData();
+        var countsByDismissalType = dismissedBatsmenData.SelectMany<KeyValuePair<Match, List<BattingCardLineData>>, BattingCardLineData>(t => t.Value).GroupBy(l => l.ModeOfDismissal).ToDictionary(g=>(ModesOfDismissal)g.Key, g=>g.AsEnumerable().Count());
+        var data =
+            new PieSeriesData(
+                countsByDismissalType.Select(
+                    a => new KeyValuePair<string, double>(a.Key.ToString(), a.Value)));
+        chart.AddSeries(data);
+        chart.options.AddSeriesOptions(SeriesTypes.Pie);
+        chart.options.legend.show = true;
+        chart.options.legend.location = LegendLocations.East;
+
+        var onlyXAxisDefinition = new OnlyXAxisDefinition();
+        onlyXAxisDefinition.xaxis.showLabel = false;
+        chart.options.axes = onlyXAxisDefinition;
     }
 
     private void MakeBowlingBatsmenDismissedChart(Player player, Chart chart)
     {
-        
+        var dismissedBatsmenData = player.GetDismissedBatsmenData();
+        var countsByBattingAt = dismissedBatsmenData.SelectMany(t => t.Value).GroupBy(l => l.BattingAt).ToDictionary(g => g.Key, g => g.AsEnumerable().Count());
+        YOnlySeriesData data = new YOnlySeriesData();
+        for (int position=0; position<11; position++)
+        {
+            chart.options.axes.xaxis.AddTick((position + 1).ToString());
+            data.AddPoint(countsByBattingAt.ContainsKey(position)?countsByBattingAt[position]:0);
+        }
+
+        chart.options.axes.xaxis.renderer = AxisRenderers.CategoryAxisRenderer;
+        chart.AddSeries(data);
+        chart.options.AddSeriesOptions(SeriesTypes.Bar);
+        chart.options.axes.xaxis.label = "Batting at";
+        chart.options.axes.yaxis.label = "Times dismissed";
     }
 
     private void MakeBowlingTimelineChart(Player player, Chart chart, string whichStat)
@@ -112,9 +137,9 @@ public partial class ChartRendererAJAX : Page
             totalRuns += bowlingStatsEntryData.Runs;
             totalWickets += bowlingStatsEntryData.Wickets;
 
-            double strikeRate = Convert.ToDouble((totalOvers*6)/totalWickets);
-            double economy = Convert.ToDouble(totalRuns/totalOvers);
-            double average = (double)totalRuns/totalWickets;
+            double strikeRate = totalWickets == 0 ? 0 : Convert.ToDouble((totalOvers*6)/totalWickets);
+            double economy = totalOvers == 0 ? 0 : Convert.ToDouble(totalRuns/totalOvers);
+            double average = totalWickets == 0 ? 0 : (double)totalRuns/totalWickets;
 
             strikeRates.AddPoint(strikeRate);
             econ.AddPoint(economy);

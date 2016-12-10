@@ -18,6 +18,16 @@
     <script src="/MobileWeb/script/jquery.Storage.js" type="text/javascript"></script>
     <script src="/MobileWeb/script/raphael-min.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/MobileWeb/css/mobile.css" />
+        
+    <script src="../script/ballbyball.ball.js" type="text/javascript"></script>
+    <script src="../script/ballbyball.over.js" type="text/javascript"></script>
+    <script src="../script/ballbyball.wicket.js" type="text/javascript"></script>
+    <script src="../script/ballbyball.matchState.js" type="text/javascript"></script>
+           
+    <script src="../script/ballbyball.functions.js" type="text/javascript"></script>
+    <script src="../script/ballbyball.photoCapture.js" type="text/javascript"></script>
+    <script src="../script/ballbyball.core.js" type="text/javascript"></script>
+   
  
     
 

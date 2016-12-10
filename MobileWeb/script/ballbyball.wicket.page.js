@@ -2,6 +2,14 @@
     return $("#outBatsmanSelect option:selected").attr("playerId");
 }
 
+function getNotOutBatsman() {
+    var batters = matchState.getBattingPlayers();
+    if (batters[0] == getOutBatsman()) {
+        return batters[1];
+    }
+    return batters[0];
+}
+
 function getOutBatsmanName() {
     return $("#outBatsmanSelect option:selected").text();
 }
@@ -61,7 +69,7 @@ function getModeOfDismissal() {
 
 function handleSaveWicket() {
 
-    var scoreForWicketBall = $("#scoreForWicketBallAmount").val();
+    var scoreForWicketBall = parseInt($("#scoreForWicketBallAmount").val());
     var thingForWicketBall = $("#wicketRunsSelect").val();
     if (scoreForWicketBall == 0) {
         thingForWicketBall = "";
@@ -71,11 +79,11 @@ function handleSaveWicket() {
                                     getModeOfDismissal(),
                                     matchState.CurrentBowler,
                                     $("#fielder").val(),
-                                    $("#wicketDescription").val())
+                                    $("#wicketDescription").val(), getNotOutBatsman())  //Add not out batsman id here
                                     ));
 
     matchState.setPlayerOut(getOutBatsman());
-    matchState.setPlayerBatting(getNextManIn(), matchState.getNextBattingPosition());
+    matchState.setPlayerBattingAtPosition(getNextManIn(), matchState.getNextBattingPosition());
     $.mobile.changePage("BallByBall.aspx", "slide", true, true);
 }
 
