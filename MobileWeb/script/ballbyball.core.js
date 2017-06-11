@@ -4,12 +4,16 @@ var wagonWheelPaper;
 var line;
 
 
-function initialiseBallByBallCore() {
+function initialiseBallByBallCore(force) {
     initPhotoCapture('imageInput', 'blah');
+    var matchId = $.url().param('matchId');
+    if (force) {
+        matchId = matchState.MatchId;
+        matchState = null;
+    }
     if (matchState == null) {
-        var matchId = $.url().param('matchId');
         if (matchId == null) {
-            showError("No match id speified. Did you come from the entry page?");
+            showError("No match id specified. Did you come from the entry page?");
             return;
         }
         var postData = { 'command': "matchState", 'matchId': matchId };
@@ -33,7 +37,11 @@ function initialiseBallByBallCore() {
         if (matchState.getBowlers().length < 2) {
             chooseNewBowler();
         }
-        evaluatePlayerScores();
+        if (matchState.getBattingPlayers().length < 2) {
+            chooseBatsmen();
+        } else {
+            evaluatePlayerScores();
+        } 
         write();
     }
 
@@ -168,10 +176,12 @@ function getColour(score) {
 }
 
 function initializeWagonWheel() {
-    wagonWheelPaper = Raphael("wagonWheelCanvas", 300, 296);
-    wagonWheelImage = wagonWheelPaper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", 0, 0, 300, 296);
-    wagonWheelPaper.text(60, 150, 'Off\nSide').attr({ fill: '#fff', 'font-size': 20 });
-    wagonWheelPaper.text(240, 150, 'Leg\nSide').attr({ fill: '#fff', 'font-size': 20 });
+    if (wagonWheelPaper == null) {
+        wagonWheelPaper = Raphael("wagonWheelCanvas", 300, 296);
+        wagonWheelImage = wagonWheelPaper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", 0, 0, 300, 296);
+        wagonWheelPaper.text(60, 150, 'Off\nSide').attr({ fill: '#fff', 'font-size': 20 });
+        wagonWheelPaper.text(240, 150, 'Leg\nSide').attr({ fill: '#fff', 'font-size': 20 });
+    }
 }
 
 function getScoringArea(angleInRadians) {
@@ -444,6 +454,10 @@ function write() {
         $("#batsman2Label").text(batsman2.PlayerName + " (" + batsman2.Score + ")");
         $("#batsman2").attr("playerId", batsman2.PlayerId).attr("playerName", batsman2.PlayerName);
     }
+}
+
+function reloadBallByBall() {
+    window.location.replace("/MobileWeb/BallByBall/SelectMatch.aspx");
 }
 
 

@@ -26,6 +26,9 @@
             case "EndOfInnings.aspx":
                 initialiseEndOfInnings();
                 break;
+            case "HelpMenu.aspx":
+                initialiseHelp();
+                break;
         }
     });
 });

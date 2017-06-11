@@ -1,13 +1,16 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="BallByBall.aspx.cs" Inherits="MobileWeb_BallByBall" MasterPageFile="~/MobileWeb/mobile.master" %>
 
-<asp:Content runat="server" ID="Head" ContentPlaceHolderID="head"></asp:Content>
+<asp:Content runat="server" ID="Head" ContentPlaceHolderID="head">
+    
+</asp:Content>
 
 <asp:Content runat="server" ID="Page" ContentPlaceHolderID="page_content">
 <div data-role="header">
     <h1>VCC vs <span id="oppositionName"></span>  <span id="score"></span>/<span id="wickets"></span> (<span id="overs"></span> ovs)
     </h1>
     <button id="takeAPicture" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-camera ui-btn-icon-notext ui-corner-all"></button>
-    <button id="help" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bug ui-btn-icon-notext ui-corner-all"></button>
+    <a href="HelpMenu.aspx" data-role="button" id="help" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bug ui-btn-icon-notext ui-corner-all"></a>
+    <button id="reload" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-refresh ui-btn-icon-notext ui-corner-all" style="margin-left: 40px;" onclick="reloadBallByBall()"></button>
 </div><!-- /header -->
 
 <div data-role="content">
@@ -149,5 +152,12 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">
-     
+     <script>
+        $(document).ready(function() {
+            var force = $.url().param('forceInit');
+            if (force) {
+                initialiseBallByBallCore();
+            }
+        });
+    </script>
 </asp:Content>

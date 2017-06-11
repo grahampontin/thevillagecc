@@ -4,8 +4,9 @@
     Wicket!
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="page_content" Runat="Server">
-    <div data-role="header">
+    <div data-role="header" data-add-back-btn="true">
         <h1>Wicket!</h1>
+
     </div><!-- /header -->
     
     <div data-role="content">

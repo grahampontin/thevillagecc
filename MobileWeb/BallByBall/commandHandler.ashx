@@ -69,6 +69,10 @@ public class CommandHandler : IHttpHandler
                     context.Response.Write("{ \"NextInnings\" : \""+nextInnings+"\" }");
 
                     break;
+                case "deleteLastOver":
+                    match.DeleteLastBallByBallOver();
+                    ReturnCurrentMatchState(context, match);
+                    break;
                 default:
                     context.Response.ContentType = "text/plain";
                     context.Response.Write("Command: " + genericBallByBallCommand.command + " is not supported");
