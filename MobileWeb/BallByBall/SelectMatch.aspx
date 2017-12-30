@@ -21,7 +21,7 @@
             </ItemTemplate>  
             <EmptyDataTemplate>
                 <ul data-role="listview" data-inset="true">
-                    <li data-role="list-divider">In-Progress Matches</li>
+                    <li data-role="list-divider">In-Progress Matches (VCC Batting)</li>
                     <li>None</li>
                 </ul>
             </EmptyDataTemplate>     
@@ -39,7 +39,7 @@
             </ItemTemplate>  
             <EmptyDataTemplate>
                 <ul data-role="listview" data-inset="true">
-                    <li data-role="list-divider">In-Progress Matches</li>
+                    <li data-role="list-divider">In-Progress Matches (VCC Bowling)</li>
                     <li>None</li>
                 </ul>
             </EmptyDataTemplate>     

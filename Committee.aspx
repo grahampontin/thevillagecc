@@ -35,8 +35,8 @@
                             Captain
                         </div>
                         <div class="panel-body">
-                            <img src="Images/committee/thommo.jpg" width="200" style="padding-bottom: 10px;"/>
-                            <div class="Centered">Nick Thompson</div>
+                            <img src="Images/committee/cressy.jpg" width="200" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Richard Cressey</div>
                         </div>
                     </div>
                 </div>
@@ -46,19 +46,19 @@
                             Vice-Captain
                         </div>
                         <div class="panel-body">
-                            <img src="Images/committee/tdm.jpg" width="200px" style="padding-bottom: 10px;"/>
-                            <div class="Centered">Toby de Mellow</div>
+                            <img src="Images/committee/jdm.jpg" width="200px" style="padding-bottom: 10px;"/>
+                            <div class="Centered">James de Mellow</div>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Director of Cricker
+                            Director of Cricket
                         </div>
                         <div class="panel-body">
-                            <img src="Images/committee/troja.jpg" width="200px" style="padding-bottom: 10px;"/>
-                            <div class="Centered">Nick Troja</div>
+                            <img src="Images/committee/thommo.jpg" width="200px" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Nick Price-Thompson</div>
                         </div>
                     </div>
                 </div>
@@ -68,8 +68,8 @@
                             Treasurer
                         </div>
                         <div class="panel-body">
-                            <img src="Images/committee/jdm.jpg" width="200px" style="padding-bottom: 10px;"/>
-                            <div class="Centered">James de Mellow</div>
+                            <img src="Images/committee/eddie.jpg" width="200px" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Eddie Francis</div>
                         </div>
                     </div>
                 </div>
@@ -81,8 +81,8 @@
                             Fixtures Secretary
                         </div>
                         <div class="panel-body">
-                            <img src="Images/committee/ek.jpg" width="200" style="padding-bottom: 10px;"/>
-                            <div class="Centered">Eklavya Gupte</div>
+                            <img src="Images/committee/tdm.jpg" width="200" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Toby de Mellow</div>
                         </div>
                     </div>
                 </div>
@@ -92,8 +92,8 @@
                             Tour Secretary
                         </div>
                         <div class="panel-body">
-                            <img src="Images/committee/morgs.jpg" width="200" style="padding-bottom: 10px;"/>
-                            <div class="Centered">Oliver Morgans</div>
+                            <img src="Images/committee/pitcher.jpg" width="200" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Chris Pitcher</div>
                         </div>
                     </div>
                 </div>
@@ -103,8 +103,8 @@
                             Social Secretary
                         </div>
                         <div class="panel-body">
-                            <img src="Images/committee/cressy.jpg" width="200" style="padding-bottom: 10px;"/>
-                            <div class="Centered">Richard Cressey</div>
+                            <img src="Images/committee/bosh.jpg" width="200" style="padding-bottom: 10px;"/>
+                            <div class="Centered">Bosh</div>
                         </div>
                     </div>
                 </div>
