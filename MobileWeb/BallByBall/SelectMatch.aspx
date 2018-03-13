@@ -3,8 +3,12 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 
 </asp:Content>
+
+<asp:Content ID="Content4" ContentPlaceHolderID="page_name" Runat="Server">selectMatch</asp:Content>
+
+
 <asp:Content ID="Content2" ContentPlaceHolderID="page_content" Runat="Server">
-     <div data-role="header">
+     <div data-role="header" data-position="fixed">
         <h1>Select Match</h1>
     </div><!-- /header -->
     
@@ -17,7 +21,7 @@
                 </ul>
             </LayoutTemplate>
             <ItemTemplate>
-               <li><a href="BallByBall.aspx?matchId=<%#Eval("ID") %>" onclick=""><%#Eval("Opposition") %> (<%#Eval("BallByBallOver")%> ovs)</a></li> 
+               <li><a href="NewOver.aspx"  data-transition="slide" onclick="setMatchId(<%#Eval("ID") %>)"><%#Eval("Opposition") %> (<%#Eval("BallByBallOver")%> ovs)</a></li> 
             </ItemTemplate>  
             <EmptyDataTemplate>
                 <ul data-role="listview" data-inset="true">
@@ -35,7 +39,7 @@
                 </ul>
             </LayoutTemplate>
             <ItemTemplate>
-               <li><a href="OppositionInnings.aspx?matchId=<%#Eval("ID") %>" onclick=""><%#Eval("Opposition") %> (<%#Eval("OppositionBallByBallOver")%> ovs)</a></li> 
+               <li><a href="OppositionInnings.aspx" onclick="setMatchId(<%#Eval("ID") %>)"><%#Eval("Opposition") %> (<%#Eval("OppositionBallByBallOver")%> ovs)</a></li> 
             </ItemTemplate>  
             <EmptyDataTemplate>
                 <ul data-role="listview" data-inset="true">
@@ -54,7 +58,7 @@
                 </ul>
             </LayoutTemplate>
             <ItemTemplate>
-               <li><a href="SelectTeam.aspx?matchId=<%#Eval("ID") %>" onclick=""><%#Eval("Opposition") %> (<%#Eval("MatchDateString")%>)</a></li> 
+               <li><a href="SelectTeam.aspx" onclick="setMatchId(<%#Eval("ID") %>)"><%#Eval("Opposition") %> (<%#Eval("MatchDateString")%>)</a></li> 
             </ItemTemplate>       
         </asp:ListView>
     </div>

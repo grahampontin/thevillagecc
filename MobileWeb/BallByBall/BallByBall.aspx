@@ -1,11 +1,12 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="BallByBall.aspx.cs" Inherits="MobileWeb_BallByBall" MasterPageFile="~/MobileWeb/mobile.master" %>
 
-<asp:Content runat="server" ID="Head" ContentPlaceHolderID="head">
-    
+<asp:Content runat="server" ID="Head" ContentPlaceHolderID="head">    
 </asp:Content>
 
+<asp:Content ID="Content4" ContentPlaceHolderID="page_name" Runat="Server">main</asp:Content>
+
 <asp:Content runat="server" ID="Page" ContentPlaceHolderID="page_content">
-<div data-role="header">
+<div data-role="header" data-position="fixed">
     <h1>VCC vs <span id="oppositionName"></span>  <span id="score"></span>/<span id="wickets"></span> (<span id="overs"></span> ovs)
     </h1>
     <button id="takeAPicture" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-camera ui-btn-icon-notext ui-corner-all"></button>
@@ -14,8 +15,8 @@
 </div><!-- /header -->
 
 <div data-role="content">
-    <select name="bowler" id="bowlerSelect">
-	</select>
+    <div id="currentBowler" class="ui-btn ui-corner-all">
+	</div>
 <div id="full-width-radio">
     <fieldset data-role="controlgroup" data-type="horizontal">
         <legend>to</legend>
@@ -56,48 +57,22 @@
         </div>
     </fieldset>
     <hr />
-    <a id="wicketButton" data-theme="a" data-icon="hand-o-up" href="./Wicket.aspx" data-role="button">Wicket!</a>
+    <a id="wicketButton" data-theme="a" data-icon="hand-o-up" href="./Wicket.aspx" data-role="button"   data-transition="slide" >Wicket!</a>
     <hr />
     <fieldset class="ui-grid-a">
-    <div class="ui-block-a"><a href=EndOfOver.aspx id="endOfOverButton" data-theme="b" data-role="button" data-icon="check">End of Over</a></div>
-    <div class="ui-block-b"><button id="undoButton" data-theme="b" data-icon="back">Undo Last</button></div>
+    <div class="ui-block-a">
+        <a href="./EndOfOver.aspx" id="endOfOverButton" data-theme="b" data-role="button" data-icon="check" data-transition="slide" >End of Over</a>
+    </div>
+    <div class="ui-block-b">
+        <button id="undoButton" data-theme="b" data-icon="back">Undo Last</button>
+    </div>
     <hr />
     <button id="endOfInningsButton" data-theme="a" data-icon="flag">End of Innings</button>
     <hr />
     </fieldset>
 
-    <div data-role="popup" id="chooseBatsmen" data-dismissible="false" data-overlay-theme="b" style="min-width:300px;">
-        <div data-role="header">
-            <h1>Choose Batsmen</h1>
-        </div>
-        <div data-role="content">
-            <hr />
-            <label for="select-choice-1">Batsman 1:</label>
-            <select name="select-choice-1" id="batsman1select" data-native-menu="true" >
-            </select>
-            <hr />
-            <label for="select-choice-2">Batsman 2:</label>
-            <select name="select-choice-2" id="batsman2select" data-native-menu="true" >
-            </select>
-            <hr />
-            <div id="chooseBatsmenSaveButton">Done</div>
-            <hr />
-        </div>
-    </div>
-
-    <div data-role="popup" id="chooseNewBowler" data-dismissible="false" data-overlay-theme="b" style="min-width:300px;">
-        <div data-role="header">
-            <h1>New Bowler</h1>
-        </div>
-        <div data-role="content">
-            <label for="newBowlerInput">Bowler Name</label>
-            <input name="newBowlerInput" id="newBowlerInput" />
-            <hr />
-            <div id="chooseBowlerSaveButton">Done</div>
-            <hr />
-        </div>
-    </div>
-
+    
+    
     <div data-role="popup" id="wagonWheel" data-dismissible="false" data-overlay-theme="b" style="min-width:328px; min-height:300px">
         <div data-role="header">
             <h1>Wagon Wheel</h1>
@@ -118,7 +93,7 @@
 			Make sure you've submitted the final update you want recorded before ending the innings. 
             Ending the innings now will not save whatever is on the screen unless you submitted it already.
             <button id="endOfInningsGoBack" data-theme="a" data-icon="undo">Ah, nuts, take me back</button>
-            <button id="endOfInningsConfirmButton" data-theme="a" data-icon="check">We're good, let's end this thing.</button>
+            <a href="./EndOfInnings.aspx" id="endOfInningsConfirmButton" data-theme="a" data-icon="check" data-role="button" data-transition="slide" >We're good, let's end this thing.</a>
 		</div>
 	</div>
     
@@ -132,15 +107,6 @@
 		</div>
 	</div>
 </div>
-
-    <div data-role="popup" id="errorMessage" data-dismissible="true" data-overlay-theme="b" style="min-width:300px;">
-		<div data-role="header">
-			<h1>Error</h1>
-		</div>
-		<div data-role="content" id="errorMessageContent">
-			Place holder
-		</div>
-	</div>
     
     
     
@@ -156,7 +122,7 @@
         $(document).ready(function() {
             var force = $.url().param('forceInit');
             if (force) {
-                initialiseBallByBallCore();
+                bindCoreHandlers();
             }
         });
     </script>

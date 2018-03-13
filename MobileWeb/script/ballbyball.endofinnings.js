@@ -1,11 +1,9 @@
 ﻿
-function initialiseEndOfInnings() {
-    var matchId = $.url().param('matchId');
-    var innings = $.url().param('innings');
-        
-    $("#endOfInningsButton").click(function () {
-        var commentary = $("#commentary").val();
-        var wasDeclared = $("#wasDeclared").prop('checked');
+function bindEndOfInningsPageHandlers() {
+       
+    $("#endOfInningsPageConfirmButton").click(function () {
+        var commentary = $("#endOfInningsPageCommentary").val();
+        var wasDeclared = $("#endOfInningsPageWasDeclared").prop('checked');
 
         var postData = {
             'command': "endInnings",
@@ -20,13 +18,16 @@ function initialiseEndOfInnings() {
         $.post('./CommandHandler.ashx', JSON.stringify(postData), function (data) {
             //success
             if (data.NextInnings === 'Batting') {
-                $("body").pagecontainer("change", "BallByBall.aspx?matchId="+matchId, { transition: "fade" });
+                innings = "Batting";
+                $("body").pagecontainer("change", "NewOver.aspx", { transition: "slide" });
             }
             if (data.NextInnings === 'Bowling') {
-                $("body").pagecontainer("change", "OppositionInnings.aspx?matchId=" + matchId, { transition: "fade" });
+                innings = "Bowling";
+                $("body").pagecontainer("change", "OppositionInnings.aspx", { transition: "slide" });
             }
             if (data.NextInnings === 'GameOver') {
-                $("body").pagecontainer("change", "GameOver.aspx?matchId=" + matchId, { transition: "fade" });
+                innings = "GameOver";
+                $("body").pagecontainer("change", "GameOver.aspx", { transition: "slide" });
             }
         }, 'json')
         .fail(function (data) {
@@ -35,4 +36,9 @@ function initialiseEndOfInnings() {
 
     });
 };
+
+
+function refreshEndOfInningsPageView() {
+    $("#endOfInningsPageCommentary").val("");
+}
 

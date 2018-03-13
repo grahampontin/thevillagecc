@@ -168,6 +168,9 @@
                             		<br>
                             		<a href = ./documents/endofseason2007mins_B.pdf>18/10/2007 (The infamous pre-AGM Meeting)</a>
                                     <br />
+				                    <a href = ./documents/Minutes_22_2_2018.docx>22/2/2018</a>
+				                    <br>
+
 		                        </td>
 		                	</tr>
 		            </table>

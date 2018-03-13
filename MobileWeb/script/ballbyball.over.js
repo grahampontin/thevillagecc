@@ -6,6 +6,7 @@
     this.wickets = wickets;
     this.toHtml = toHtml;
     this.ballNumber = ballNumber;
+    this.legalBallCount = legalBallCount;
 }
 
 function toPrettyString() {
@@ -39,7 +40,7 @@ function ballNumber(ballIndex) {
     var out = ballIndex;
     for (q = 0; q < ballIndex; q++) {
         var ball = this.balls[q];
-        if (ball.thing == "nb") {
+        if (ball.thing === "nb" || ball.thing === "wd") {
             out--;
         }
     }
@@ -70,7 +71,7 @@ function toHtml(overNumber) {
     var html = "";
     for (i = 0; i < this.balls.length; i++) {
         var ball = this.balls[i];
-        html += "<li>";
+        html += "<li class='overBallListItem'>";
         html += overNumber + "."+this.ballNumber(i) + " " + ball.bowler + " to " + ball.batsmanName + ", ";
         switch (ball.thing) {
             case "":
@@ -125,4 +126,15 @@ function htmlForBallType(type, amount) {
         html += "s";
     }
     return html;
+}
+
+function legalBallCount() {
+    var legalBalls = 0;
+    for (i = 0; i < this.balls.length; i++) {
+        var ball = this.balls[i];
+        if (ball.isLegalDelivery()) {
+            legalBalls++;
+        }
+    }
+    return legalBalls;
 }

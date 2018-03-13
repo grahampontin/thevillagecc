@@ -3,8 +3,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 
+<asp:Content ID="Content4" ContentPlaceHolderID="page_name" Runat="Server">matchconditions</asp:Content>
+
 <asp:Content ID="Content2" ContentPlaceHolderID="page_content" Runat="Server">
-    <div data-role="header">
+    <div data-role="header" data-position="fixed">
         <h1>Match Conditions</h1>
     </div><!-- /header -->
 
@@ -37,9 +39,11 @@
             <label for="overs" id="oversLabel">Limited Overs</label>
             <input type="radio" name="matchFormatSelect" id="declaration" value="declaration">
             <label for="declaration" id="declarationLabel">Declaration</label>
-        </fieldset>    
-        <label for="numberOfOversInput">Number of overs</label>
-        <input name="numberOfOversInput" id="numberOfOversInput" />
+        </fieldset>
+        <div id="numberOfOversContainer">
+            <label for="numberOfOversInput">Number of overs</label>
+            <input name="numberOfOversInput" id="numberOfOversInput" />
+        </div>
         <hr/>
         <button id="confirmMatchConditions">All done, let's get started</button>
     </div>    
@@ -48,8 +52,5 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">
-    <script language="javascript" src="../script/ballbyball.matchConditions.js" type="text/javascript"></script>
-    <script language="javascript" src="../script/ballbyball.matchConditionsType.js" type="text/javascript"></script>
-    <script language="javascript" src="../script/ballbyball.functions.js" type="text/javascript"></script>
 </asp:Content>
 

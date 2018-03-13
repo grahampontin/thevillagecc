@@ -1,11 +1,23 @@
-﻿function initialiseEndOfOver() {
-    $("#overTotalScore").html(formatScore(matchState.Over.totalScore() * 1 + matchState.Score * 1));
+﻿function refreshEndOfOverPageView() {
+    $("#overTotalScore").html(formatScore(matchState.Over.totalScore()));
     $("#inningsWickets").html(matchState.Over.wickets());
-    $("#inningsScore").html(matchState.Over.totalScore());
-    $("#inningsRunRate").html(matchState.Over.totalScore() + ".00");
-    $("#overPlaceHolder").replaceWith(matchState.Over.toHtml(matchState.LastCompletedOver));
+    var scoreAfterThisOver = matchState.Over.totalScore() * 1 + matchState.Score * 1;
+    $("#inningsScore").html(scoreAfterThisOver);
+    $("#inningsRunRate").html((scoreAfterThisOver / (matchState.LastCompletedOver+1)).toFixed(2));
+    $(".overBallListItem").remove();
+    $("#overDetailUl").append(matchState.Over.toHtml(matchState.LastCompletedOver));
     $("#overDetailUl").listview('refresh');
     $("#submitToServerButton").prop('disabled', false);
+    var numberOfBalls = matchState.Over.legalBallCount();
+    if (numberOfBalls < 6) {
+        showWarning("There are only " + numberOfBalls + " legal balls in this over. Sure you didn't miss one?");
+    }
+    if (numberOfBalls > 6) {
+        showWarning("There are " + numberOfBalls + " legal balls in this over. Seems like too many don't you think?");
+    }
+}
+
+function bindEndOfOverPageHandlers() {
     $("#submitToServerButton").click(function () {
         $("#submitToServerButton").prop('disabled', true);
         //Fix this
@@ -14,14 +26,15 @@
         var postData = { 'command': "submitOver", 'matchId': matchId, 'payload': matchState };
         //Post to server and handle response.
         $.post('./CommandHandler.ashx', JSON.stringify(postData), function (data) {
-            //success
-            matchState = matchStateFromData(data);
-            $("body").pagecontainer("change", "BallByBall.aspx", { transition: "fade" });
+                //success
+                matchState = matchStateFromData(data);
+                switchBatsmen();
+                $("body").pagecontainer("change", "NewOver.aspx", { transition: "slide" });
 
-            write();
-        }, 'json')
-         .fail(function (data) {
-             showError(data.responseText);
-         });
+                updateUi();
+            }, 'json')
+            .fail(function (data) {
+                showError(data.responseText);
+            });
     });
 }

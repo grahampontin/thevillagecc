@@ -15,16 +15,7 @@
             <li data-icon="ambulance" id="backToMatchSelect"><a href="#">Back to match select</a></li>
         </ul>    
     </div>
-    
-    
-    <div data-role="popup" id="errorMessage">
-		<div data-role="header">
-			<h1>Error</h1>
-		</div>
-		<div data-role="content" id="errorMessageContent">
-			Place holder
-		</div>
-	</div>
+
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">

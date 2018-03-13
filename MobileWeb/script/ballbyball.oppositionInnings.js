@@ -1,20 +1,28 @@
 ﻿
-function initialiseOppositionInnings() {
-    var matchId = $.url().param('matchId');
-        
+function bindOppositionInningsPageHandlers() {
+    if (innings == undefined) {
+        innings = "Bowling";
+    }
     $("#submitButton").click(function() {
         var score =     parseInt($("#oppositionScoreInput").val());
         var overs =     parseInt($("#oppositionOversInput").val());
         var wickets =   parseInt($("#oppositionWicketsInput").val());
         var commentary = $("#commentary").val();
 
-        if (overs <= 0) {
+        if (isNaN(overs) || overs <= 0) {
             showError("You should have more than zero overs");
             return;
         }
-        if (score < 0) {
-            showError("The score cannot bw negative, noone is that bad");
+        if (isNaN(score)) {
+            showError("The score should be a number of some sort, e.g. 0, 10 or something.");
             return;
+        }
+        if (score < 0) {
+            showError("The score cannot be negative, noone is that bad");
+            return;
+        }
+        if (isNaN(wickets)) {
+            wickets = 0;
         }
         if (wickets < 0) {
             showError("You can't have negative wickets, that's just not right.");
@@ -42,27 +50,28 @@ function initialiseOppositionInnings() {
                 $("#oppositionOversInput").val("");
                 $("#oppositionWicketsInput").val("");
                 $("#commentary").val("");
-        }, 'json')
+                showInfo("Saved: Opposition are " + score + " for " + wickets + " after " + overs + " overs");
+            }, 'json')
         .fail(function (data) {
             showError(data.responseText);
         });
 
     });
 
-    $("#endOfInningsButton").click(function() {
+    $("#endOfOppositionInningsButton").click(function() {
         showConfirmationDialog();
     });
 
-    $("#endOfInningsConfirmButton").click(function () {
-        $("body").pagecontainer("change", "EndOfInnings.aspx?innings=Bowling&matchId=" + matchId, { transition: "slide" });
+    $("#endOfOppositionInningsConfirmButton").click(function () {
+        $("body").pagecontainer("change", "EndOfInnings.aspx", { transition: "slide" });
     });
 
-    $("#endOfInningsGoBack").click(function () {
-        $("#confirmationDialog").popup('close');
+    $("#endOfOppositionInningsGoBack").click(function () {
+        $("#oppositionInningsConfirmationDialog").popup('close');
     });
 
     function showConfirmationDialog() {
-        $("#confirmationDialog").popup('open');
+        $("#oppositionInningsConfirmationDialog").popup('open');
     }
 };
 

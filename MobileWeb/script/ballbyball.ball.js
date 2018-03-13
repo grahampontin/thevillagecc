@@ -7,6 +7,7 @@
     this.wicket = null;
     this.angle = null;
     this.toBallString = toBallString;
+    this.isLegalDelivery = isLegalDelivery;
 }
 
 function Ball(number, thing, batsman, batsmanName, bowler, wicket) {
@@ -18,6 +19,7 @@ function Ball(number, thing, batsman, batsmanName, bowler, wicket) {
     this.wicket = wicket;
     this.angle = null;
     this.toBallString = toBallString;
+    this.isLegalDelivery = isLegalDelivery;
 }
 
 function toBallString() {
@@ -43,4 +45,11 @@ function toBallString() {
 
     }
     return output;
+}
+
+function isLegalDelivery() {
+    if (this.thing === "wd" || this.thing === "nb") {
+        return false;
+    }
+    return true;
 }

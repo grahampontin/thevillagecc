@@ -3,8 +3,11 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 
+
+<asp:Content ID="Content4" ContentPlaceHolderID="page_name" Runat="Server">selectteam</asp:Content>
+
 <asp:Content ID="Content2" ContentPlaceHolderID="page_content" Runat="Server">
-    <div data-role="header">
+    <div data-role="header" data-position="fixed">
         <h1>Select XI</h1>
     </div><!-- /header -->
 
@@ -31,8 +34,6 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="postPageScripts" Runat="Server">
-    <script language="javascript" src="../script/ballbyball.playerStub.js" type="text/javascript"></script>
-    <script language="javascript" src="../script/ballbyball.selectTeam.js" type="text/javascript"></script>
-    <script language="javascript" src="../script/ballbyball.functions.js" type="text/javascript"></script>
+    
 </asp:Content>
 

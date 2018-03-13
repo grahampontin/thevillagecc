@@ -4,7 +4,7 @@
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="page_content" Runat="Server">
-    <div data-role="header">
+    <div data-role="header" data-position="fixed">
         <h1>Game Over</h1>
     </div><!-- /header -->
 

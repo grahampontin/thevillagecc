@@ -1,4 +1,4 @@
-﻿function MatchState(Players, LastCompletedOver, Over, Score, RunRate, Bowlers, MatchId) {
+﻿function MatchState(Players, LastCompletedOver, Over, Score, RunRate, Bowlers, MatchId, PreviousBowler, PreviousBowlerButOne) {
     //Fields
     this.Players = Players;
     this.Over = Over;
@@ -7,10 +7,11 @@
     this.RunRate = RunRate;
     this.Bowlers = Bowlers;
     this.MatchId = MatchId;
+    this.PreviousBowler = PreviousBowler;
+    this.PreviousBowlerButOne = PreviousBowlerButOne;
     this.CurrentBowler = Bowlers.length >= 1 ? Bowlers[0] : "";
     this.OnStrikeBatsmanId = -1;
     this.OnStrikeBatsmanName = "Not set";
-
 
 
     //Methods
@@ -39,7 +40,7 @@ function getWaitingPlayers() {
 function getPlayersOfStatus(status) {
     var players = new Array();
     $.each(this.Players, function (index, value) {
-        if (value.State == status) {
+        if (value.State === status) {
             players.push(value);
         }
     });
@@ -51,11 +52,11 @@ function getBowlers() {
 }
 
 function addBowler(name) {
-    this.Bowlers.unshift(name);
+    this.Bowlers.push(name);
 }
 
 function matchStateFromData(data) {
-    return new MatchState(data.Players, data.LastCompletedOver, new Over(), data.Score, data.RunRate, data.Bowlers, data.MatchId);
+    return new MatchState(data.Players, data.LastCompletedOver, new Over(), data.Score, data.RunRate, data.Bowlers, data.MatchId, data.PreviousBowler, data.PreviousBowlerButOne);
 }
 
 function setPlayerBattingAtPosition(playerId, position) {

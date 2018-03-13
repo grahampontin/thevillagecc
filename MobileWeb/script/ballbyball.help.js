@@ -6,7 +6,7 @@ function initialiseHelp() {
             //success
             matchState = matchStateFromData(data);
             $("body").pagecontainer("change", "BallByBall.aspx", { transition: "fade" });
-            write();
+            updateUi();
         }, 'json')
          .fail(function (data) {
              showError(data.responseText);
