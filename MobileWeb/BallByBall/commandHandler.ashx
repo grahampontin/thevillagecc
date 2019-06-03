@@ -1,7 +1,6 @@
 ﻿<%@ WebHandler Language="C#" Class="CommandHandler" %>
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.Script.Serialization;

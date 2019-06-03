@@ -10,6 +10,7 @@
 
     <div data-role="content">
         We're all done here. Pub time.
+        <a href="../Scorecards/Start.aspx" id="enterScorecardButton" data-icon="plus">Complete Scorecard Now</a>
     </div>
         
 </asp:Content>
