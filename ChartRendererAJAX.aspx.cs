@@ -82,7 +82,7 @@ public partial class ChartRendererAJAX : Page
         
     }
 
-    private void MakeBowlingDismissalsChart(Player player, Chart chart)
+   private void MakeBowlingDismissalsChart(Player player, Chart chart)
     {
         Dictionary<Match, List<BattingCardLineData>> dismissedBatsmenData = player.GetDismissedBatsmenData();
         var countsByDismissalType = dismissedBatsmenData.SelectMany<KeyValuePair<Match, List<BattingCardLineData>>, BattingCardLineData>(t => t.Value).GroupBy(l => l.ModeOfDismissal).ToDictionary(g=>(ModesOfDismissal)g.Key, g=>g.AsEnumerable().Count());

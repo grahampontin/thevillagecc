@@ -108,6 +108,28 @@
                 <asp:BoundField HeaderText="Batting Average with Gloves" />
                 <asp:BoundField HeaderText="Batting Average Witout Gloves" />
             </Columns>
+        </asp:GridView> 
+        
+        <asp:GridView ID=MatchesGridView runat=server AutoGenerateColumns="False" 
+            EnableModelValidation="True" onrowdatabound="MatchesGridView_RowDataBound">
+            <Columns>
+                <asp:BoundField HeaderText="Match" />
+                <asp:BoundField HeaderText="Village Runs" />
+                <asp:BoundField HeaderText="Opposition Runs" />
+                <asp:BoundField HeaderText="Margin of Victory (defeat)" />
+                <asp:BoundField HeaderText="No. of Catches (all)" />
+                <asp:BoundField HeaderText="No. of Catches (vcc)" />
+                <asp:BoundField HeaderText="No. of LBWs (all)" />
+                <asp:BoundField HeaderText="No. of LBWs (vcc)" />
+                <asp:BoundField HeaderText="No. of Bowleds (all)" />
+                <asp:BoundField HeaderText="No. of Bowleds (vcc)" />
+                <asp:BoundField HeaderText="No. of Stumpings (all)" />
+                <asp:BoundField HeaderText="No. of Stumpings (vcc)" />
+                <asp:BoundField HeaderText="No. of Runouts (all)" />
+                <asp:BoundField HeaderText="No. of Runouts (vcc)" />
+                <asp:BoundField HeaderText="Extras Conceeded (vcc)" />
+                <asp:BoundField HeaderText="Extras Conceeded (oppo)" />
+            </Columns>
         </asp:GridView>
 
     </div>

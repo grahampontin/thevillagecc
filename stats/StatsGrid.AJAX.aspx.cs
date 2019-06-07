@@ -32,10 +32,10 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
         {
             endDate = new DateTime(DateTime.Today.Year + 1, 3, 30);
         }
-     
-        
 
-        if (Request["Friendly"]=="1")
+
+
+        if (Request["Friendly"] == "1")
         {
             MatchTypes.Add(MatchType.Friendly);
         }
@@ -65,7 +65,8 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
         string tab = Request["Tab"];
         if (tab == "") tab = "Batting";
 
-        switch (tab) {
+        switch (tab)
+        {
             case "Batting":
             case "Bowling":
                 playersGV.DataSource = Player.GetAll().Where(a => a.GetMatchesPlayed(startDate, endDate, MatchTypes, venue) > 0);
@@ -79,25 +80,25 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
                 break;
             case "Teams":
                 playersGV.Visible = false;
-                TeamsGridView.DataSource = Team.GetAll().Select(a=>a.GetStats(startDate, endDate, MatchTypes, venue)).Where(a=>a.GetMatchesPlayed()>0);
+                TeamsGridView.DataSource = Team.GetAll().Select(a => a.GetStats(startDate, endDate, MatchTypes, venue)).Where(a => a.GetMatchesPlayed() > 0);
                 TeamsGridView.DataBind();
                 TeamsGridView.CssClass = "fullWidth tablesorter";
                 if (TeamsGridView.Rows.Count > 0)
                 {
                     TeamsGridView.HeaderRow.TableSection = TableRowSection.TableHeader;
                     TeamsGridView.FooterRow.TableSection = TableRowSection.TableFooter;
-                
+
                 }
                 break;
             case "Venues":
-                VenuesGridView.DataSource = Venue.GetAll().Select(a=>a.GetStats(startDate, endDate, MatchTypes)).Where(a=>a.GetMatchesPlayed()>0);
+                VenuesGridView.DataSource = Venue.GetAll().Select(a => a.GetStats(startDate, endDate, MatchTypes)).Where(a => a.GetMatchesPlayed() > 0);
                 VenuesGridView.DataBind();
                 VenuesGridView.CssClass = "fullWidth tablesorter";
                 if (VenuesGridView.Rows.Count > 0)
                 {
                     VenuesGridView.HeaderRow.TableSection = TableRowSection.TableHeader;
                     VenuesGridView.FooterRow.TableSection = TableRowSection.TableFooter;
-                
+
                 }
                 break;
             case "Captains":
@@ -108,7 +109,7 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
                 {
                     CaptainsGridView.HeaderRow.TableSection = TableRowSection.TableHeader;
                     CaptainsGridView.FooterRow.TableSection = TableRowSection.TableFooter;
-                
+
                 }
                 break;
             case "Keepers":
@@ -119,10 +120,21 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
                 {
                     KeepersGridView.HeaderRow.TableSection = TableRowSection.TableHeader;
                     KeepersGridView.FooterRow.TableSection = TableRowSection.TableFooter;
-                
+
                 }
                 break;
-    }
+            case "Matches":
+                MatchesGridView.DataSource = Match.GetAll(startDate, endDate, MatchTypes, venue).Where(m=>!m.Abandoned).Where(m=>m.GetTeamScore(m.AwayTeam)>0 && m.GetTeamScore(m.HomeTeam)>0);
+                MatchesGridView.DataBind();
+                MatchesGridView.CssClass = "fullWidth tablesorter";
+                if (MatchesGridView.Rows.Count > 0)
+                {
+                    MatchesGridView.HeaderRow.TableSection = TableRowSection.TableHeader;
+                    MatchesGridView.FooterRow.TableSection = TableRowSection.TableFooter;
+
+                }
+                break;
+        }
 
 
     }
@@ -265,7 +277,7 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
         TableCell lbwsGiven = e.Row.Cells[9];
         TableCell lbwsConceeded = e.Row.Cells[10];
 
-        
+
         if (e.Row.RowType == DataControlRowType.DataRow)
         {
             TeamStats CurrentTeamStats = (TeamStats)e.Row.DataItem;
@@ -353,7 +365,7 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
         TableCell byes = e.Row.Cells[4];
         TableCell aveWithGloves = e.Row.Cells[5];
         TableCell aveWithoutGloves = e.Row.Cells[6];
-        
+
         if (e.Row.RowType == DataControlRowType.DataRow)
         {
             KeeperStats CurrentStats = (KeeperStats)e.Row.DataItem;
@@ -365,8 +377,96 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
             byes.Text = CurrentStats.GetAverageByesPerMatch().ToString();
             aveWithGloves.Text = CurrentStats.GetBattingAverageAsKeeper().ToString();
             aveWithoutGloves.Text = CurrentStats.GetBattingAverageNotAsKeeper().ToString();
-            
+
 
         }
+    }
+
+    protected void MatchesGridView_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        /*
+    *                 <asp:BoundField HeaderText="Match" /> 
+                <asp:BoundField HeaderText="Village Runs" />
+                <asp:BoundField HeaderText="Opposition Runs" />
+                <asp:BoundField HeaderText="Total Runs" />
+                <asp:BoundField HeaderText="Margin of Victory (defeat)" />
+                <asp:BoundField HeaderText="No. of Catches (all)" />
+                <asp:BoundField HeaderText="No. of Catches (vcc)" />
+                <asp:BoundField HeaderText="No. of LBWs (all)" />
+                <asp:BoundField HeaderText="No. of LBWs (vcc)" />
+                <asp:BoundField HeaderText="No. of Bowleds (all)" />
+                <asp:BoundField HeaderText="No. of Bowleds (vcc)" />
+                <asp:BoundField HeaderText="No. of Stumpings (all)" />
+                <asp:BoundField HeaderText="No. of Stumpings (vcc)" />
+                <asp:BoundField HeaderText="No. of Runouts (all)" />
+                <asp:BoundField HeaderText="No. of Runouts (vcc)" />
+         */
+
+        TableCell match = e.Row.Cells[0];
+        TableCell vccRuns = e.Row.Cells[1];
+        TableCell oppoRuns = e.Row.Cells[2];
+        TableCell victoryMargin = e.Row.Cells[3];
+        TableCell catchesAll = e.Row.Cells[4];
+        TableCell catchesVcc = e.Row.Cells[5];
+        TableCell lbwsAll = e.Row.Cells[6];
+        TableCell lbwsVcc = e.Row.Cells[7];
+        TableCell bowledsAll = e.Row.Cells[8];
+        TableCell bowledsVcc = e.Row.Cells[9];
+        TableCell stumpingsAll = e.Row.Cells[10];
+        TableCell stumpingsVcc = e.Row.Cells[11];
+        TableCell runoutsAll = e.Row.Cells[12];
+        TableCell runoutsVcc = e.Row.Cells[13];
+        TableCell extrasVcc = e.Row.Cells[14];
+        TableCell extrasOppo = e.Row.Cells[15];
+        
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            Match CurrentStats = (Match)e.Row.DataItem;
+
+            match.Text = "<a href=\"/MatchReport.aspx?MatchID="+CurrentStats.ID+"\">" + CurrentStats.Description+"</a>";
+            var villageScore = CurrentStats.HomeOrAway == HomeOrAway.Home
+                ? CurrentStats.GetTeamScore(CurrentStats.HomeTeam)
+                : CurrentStats.GetTeamScore(CurrentStats.AwayTeam);
+            vccRuns.Text = villageScore.ToString();
+            var oppoScore = CurrentStats.HomeOrAway == HomeOrAway.Away
+                ? CurrentStats.GetTeamScore(CurrentStats.HomeTeam)
+                : CurrentStats.GetTeamScore(CurrentStats.AwayTeam);
+            oppoRuns.Text = oppoScore.ToString();
+            victoryMargin.Text = (villageScore - oppoScore).ToString();
+            catchesAll.Text = CountForAll(CurrentStats, d => d.Dismissal == ModesOfDismissal.Caught);
+            catchesVcc.Text = CountForOppoBatting(CurrentStats, d => d.Dismissal == ModesOfDismissal.Caught);
+            lbwsAll.Text = CountForAll(CurrentStats, d => d.Dismissal == ModesOfDismissal.LBW);
+            lbwsVcc.Text = CountForOppoBatting(CurrentStats, d => d.Dismissal == ModesOfDismissal.LBW);
+            bowledsAll.Text = CountForAll(CurrentStats, d => d.Dismissal == ModesOfDismissal.Bowled);
+            bowledsVcc.Text = CountForOppoBatting(CurrentStats, d => d.Dismissal == ModesOfDismissal.Bowled);
+            stumpingsAll.Text = CountForAll(CurrentStats, d => d.Dismissal == ModesOfDismissal.Stumped);
+            stumpingsVcc.Text = CountForOppoBatting(CurrentStats, d => d.Dismissal == ModesOfDismissal.Stumped);
+            runoutsAll.Text = CountForAll(CurrentStats, d => d.Dismissal == ModesOfDismissal.RunOut);
+            runoutsVcc.Text = CountForOppoBatting(CurrentStats, d => d.Dismissal == ModesOfDismissal.RunOut);
+            extrasVcc.Text = CurrentStats.GetTheirBattingScoreCard().Extras.ToString();
+            extrasOppo.Text = CurrentStats.GetOurBattingScoreCard().Extras.ToString();
+
+
+
+        }
+    }
+
+    private static string CountForOppoBatting(Match CurrentStats, Func<BattingCardLine, bool> predicate)
+    {
+        return CurrentStats.GetTheirBattingScoreCard()
+            .ScorecardData.Count(predicate).ToString();
+    }
+
+    private static string CountForVccBatting(Match CurrentStats, Func<BattingCardLine, bool> predicate)
+    {
+        return CurrentStats.GetOurBattingScoreCard()
+            .ScorecardData.Count(predicate).ToString();
+    }
+
+    private static string CountForAll(Match CurrentStats, Func<BattingCardLine, bool> predicate)
+    {
+        return (CurrentStats.GetOurBattingScoreCard().ScorecardData
+                    .Count(predicate) + CurrentStats.GetTheirBattingScoreCard()
+                    .ScorecardData.Count(predicate)).ToString();
     }
 }

@@ -485,7 +485,7 @@ table td,th
 
 .stats_table {
   float: right;
-  align: center;
+  text-align: center;
   padding-right: 40px;
 }
 
@@ -499,7 +499,7 @@ table td,th
 .player_photo {
  clear: both;
  float: left;
- align: center;
+ text-align: center;
  padding-left: 40px;
 }
 

@@ -50,6 +50,7 @@
            applyTableSorter($("#VenuesGridView") ,0, 0);
            applyTableSorter($("#CaptainsGridView"), 0, 0);
            applyTableSorter($("#KeepersGridView"), 0, 0);
+           applyTableSorter($("#MatchesGridView"), 0, 0);
            applyTableSorter($("#playersGV"), 5, 1);
        }
 
@@ -174,6 +175,7 @@
 		                <li><a href="#Venues" role="tab" data-toggle="tab">Venues</a></li>
 		                <li><a href="#Captains" role="tab" data-toggle="tab">Captains</a></li>
 		                <li><a href="#Keepers" role="tab" data-toggle="tab">Keepers</a></li>
+		                <li><a href="#Matches" role="tab" data-toggle="tab">Matches</a></li>
 		            </ul>
                     
                     <div class="tab-content">
@@ -183,6 +185,7 @@
                         <div role="tabpanel" class="tab-pane" id="Venues"></div>
                         <div role="tabpanel" class="tab-pane" id="Captains"></div>
                         <div role="tabpanel" class="tab-pane" id="Keepers"></div>
+                        <div role="tabpanel" class="tab-pane" id="Matches"></div>
                     </div>
 
             </form>
