@@ -23,6 +23,14 @@ function bindCoreHandlers() {
         $("#addPictureDialog").popup("open");
     });
 
+    $("#getLink").click(function () {
+        var link = "http://www.thevillagecc.org.uk/livescorecard.aspx?matchId="+matchState.MatchId;
+        $("<textarea/>").appendTo("body").val(link).select().each(function () {
+            document.execCommand('copy');
+        }).remove();
+        showInfo('Link copied to clipboard ('+link+'). Share it on WhatsApp or whatever the cool kids are using these days');
+    });
+
 
     $("#singleButton").click(function() {
         addSimpleRunsBall(1);

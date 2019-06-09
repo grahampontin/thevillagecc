@@ -10,6 +10,7 @@
     <h1>VCC vs <span id="oppositionName"></span>  <span id="score"></span>/<span id="wickets"></span> (<span id="overs"></span> ovs)
     </h1>
     <button id="takeAPicture" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-camera ui-btn-icon-notext ui-corner-all"></button>
+    <button id="getLink" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-share-square ui-btn-icon-notext ui-corner-all" style="margin-right: 40px;></button>
     <a href="HelpMenu.aspx" data-role="button" id="help" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bug ui-btn-icon-notext ui-corner-all"></a>
     <button id="reload" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-refresh ui-btn-icon-notext ui-corner-all" style="margin-left: 40px;" onclick="reloadBallByBall()"></button>
 </div><!-- /header -->

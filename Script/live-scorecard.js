@@ -4,7 +4,7 @@
 
 
     var matchId = $.url().param('matchId');
-    if (matchId == null) {
+    if (matchId === null) {
         showError("No match id speified. How did you get here exactly?");
         return;
     }
@@ -163,7 +163,7 @@ function renderMatchData(matchData) {
         $("#bowlerOneThisSpell").text(spell.Overs + "-" + spell.Maidens + "-" + spell.Runs + "-" + spell.Wickets);
 
         //Bowler Two
-        if (matchData.BowlerTwoDetails.Details == null) {
+        if (matchData.BowlerTwoDetails.Details === null) {
             $("#bowlerTwoRow").hide();
         } else {
             $("#bowlerTwoRow").show();
@@ -184,14 +184,16 @@ function renderMatchData(matchData) {
         
 
         //Current partnership
-        $("#currentPartnershipRuns").text(matchData.CurrentPartnership.Score);
-        $("#currentPartnershipRunRate").text(matchData.CurrentPartnership.RunRate);
-        $("#currentPartnershipOvers").text(matchData.CurrentPartnership.OversAsString);
-        $("#currentPartnershipPlayer1Name").text(matchData.CurrentPartnership.Player1Name);
-        $("#currentPartnershipPlayer1Runs").text(matchData.CurrentPartnership.Player1Score);
-        $("#currentPartnershipPlayer2Name").text(matchData.CurrentPartnership.Player2Name);
-        $("#currentPartnershipPlayer2Runs").text(matchData.CurrentPartnership.Player2Score);
-
+        if (matchData.CurrentPartnership !== null) {
+            $("#currentPartnershipRuns").text(matchData.CurrentPartnership.Score);
+            $("#currentPartnershipRunRate").text(matchData.CurrentPartnership.RunRate);
+            $("#currentPartnershipOvers").text(matchData.CurrentPartnership.OversAsString);
+            $("#currentPartnershipPlayer1Name").text(matchData.CurrentPartnership.Player1Name);
+            $("#currentPartnershipPlayer1Runs").text(matchData.CurrentPartnership.Player1Score);
+            $("#currentPartnershipPlayer2Name").text(matchData.CurrentPartnership.Player2Name);
+            $("#currentPartnershipPlayer2Runs").text(matchData.CurrentPartnership.Player2Score);
+        }
+        
         if (matchData.LastManOut != null) {
             $(".last-batsman").show();
 
@@ -274,7 +276,7 @@ function renderMatchData(matchData) {
                 row.append(ballNumber);
                 row.append(ballDescription);
 
-                if (ball.Wicket != null) {
+                if (ball.Wicket !== null) {
                     var wicketRow = $("<div></div>");
                     wicketRow.addClass("row wicket-row");
                     var emptyColumn = $("<div></div>");
@@ -319,7 +321,7 @@ function renderMatchData(matchData) {
             $("#overDetails").prepend(endOfInningsContainer);
 
         }
-        if (matchData.TheirCompletedOvers != null) {
+        if (matchData.TheirCompletedOvers !== null) {
             $.each(matchData.TheirCompletedOvers.reverse(), function (index, over) {
                 var overContainer = $("<div></div>");
                 overContainer.addClass("panel panel-default");
@@ -908,7 +910,9 @@ function getDismissalText(wicket, fallOfWickets) {
             string += "handled the ball";
             break;
     }
-    var details = fallOfWicket.OutgoingBatsmanInningsDetails;
-    string += " " + details.Score + " (" + details.Balls + "b " + details.Fours + "x4 " + details.Sixes + "x6) SR: "+details.StrikeRate+" ";
+    if (fallOfWicket !== undefined) {
+        var details = fallOfWicket.OutgoingBatsmanInningsDetails;
+        string += " " + details.Score + " (" + details.Balls + "b " + details.Fours + "x4 " + details.Sixes + "x6) SR: " + details.StrikeRate + " ";
+    }
     return string;
 }
