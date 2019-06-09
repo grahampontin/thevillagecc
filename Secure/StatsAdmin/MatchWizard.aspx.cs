@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Net;
 using CricketClubDomain;
 using CricketClubAccounts;
-using CricketClubMiddle.Logging;
+using CricketClubDAL;
 
 public partial class stats_MatchWizard : System.Web.UI.Page
 {
@@ -1450,7 +1450,7 @@ public partial class stats_MatchWizard : System.Web.UI.Page
                 {
                     wasError = true;
                     errorText = "Email was not sent - ACCOUNTS HAVE NOT BEEN UPDATED!<BR><BR>" + ex.Message + "<BR><BR>" + ex.StackTrace; 
-                    Logger.Log("failed to send email", ex, Severity.Error);
+                    DbLogger.Log("failed to send email", ex, Severity.Error);
                 }
 
             }

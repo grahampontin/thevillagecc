@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.Script.Serialization;
+using CricketClubDAL;
 using CricketClubDomain;
 using CricketClubMiddle;
-using CricketClubMiddle.Logging;
 using CricketClubMiddle.Stats;
 
 public class CommandHandler : IHttpHandler
@@ -106,7 +106,7 @@ public class CommandHandler : IHttpHandler
         context.Response.ContentType = "text/plain";
         context.Response.Write(ex.Message + Environment.NewLine + ex.StackTrace);
         context.Response.StatusCode = statusCode;
-        Logger.Log(ex.Message, ex, Severity.Error);
+        DbLogger.Log(ex.Message, ex, Severity.Error);
     }
 
     private static void ReportInvalidInput(HttpContext context, string userMessage)

@@ -33,6 +33,8 @@
            <option value="st">Stumped</option>
            <option value="hw">Hit Wicket</option>
            <option value="htb">Handled the Ball</option>
+           <option value="rt">Retired (out)</option>
+           <option value="rh">Retired Hurt</option>
         </select>
         <div id="runsForThisBallContainer">
             <hr />
