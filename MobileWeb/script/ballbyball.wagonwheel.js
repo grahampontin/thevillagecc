@@ -109,10 +109,12 @@ function setupWagonWheel() {
                 var angleRadians = angleBetweenTwoPointsWithFixedPoint(x, y, 150, 0, 150, 125);
                 lastBall.angle = (Math.round(angleRadians * 10000) / 10000);
                 $("#wagonWheelSaveButton").text(batsmansScoreForBall + " to " + getScoringArea(angleRadians));
+                e.preventDefault();
             });
 
             wagonWheelImage.touchend(function() {
                 $("#wagonWheelSaveButton").button("enable");
+                return true;
             });
             wagonWheelImage.touchmove(function(e) {
                 var x = e.touches[0].pageX - $(document).scrollLeft() - $("#wagonWheelCanvas").offset().left;
@@ -127,6 +129,9 @@ function setupWagonWheel() {
 
                 line.attr({ path: buildPath(e, batsmansScoreForBall) });
                 $("#wagonWheelSaveButton").text(batsmansScoreForBall + " to " + getScoringArea(angleRadians));
+                e.preventDefault();
+                e.stopPropagation();
+                return true;
             });
         });
 }

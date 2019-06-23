@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web;
 using System.Web.Script.Serialization;
 using CricketClubDAL;
@@ -24,6 +25,18 @@ public class CommandHandler : IHttpHandler
 
         try
         {
+            if (genericBallByBallCommand.command == "listMatches")
+            {
+                var matchDescriptors = Match.GetInProgressGames().Union(Match.GetFixtures().Where(m=>m.MatchDate < DateTime.Today.AddDays(14))).Select(m => new MatchDescriptor(m)).ToList();
+                context.Response.Write(javaScriptSerializer.Serialize(matchDescriptors));
+                return;
+            }
+            if (genericBallByBallCommand.command == "listPlayers")
+            {
+                var players = Player.GetAll().Where(p => p.IsActive && p.ID > 0).OrderByDescending(p=>p.NumberOfMatchesPlayedThisSeason).ThenBy(p => p.FormalName).Select(p=>new PlayerDescriptor(p)).ToList();
+                context.Response.Write(javaScriptSerializer.Serialize(players));
+                return;
+            }
             var match = new Match(genericBallByBallCommand.matchId);
             switch (genericBallByBallCommand.command)
             {
@@ -128,6 +141,52 @@ public class CommandHandler : IHttpHandler
     }
 }
 
+public class PlayerDescriptor
+{
+    public int playerId;
+    public int matches;
+    public string name;
+
+    public PlayerDescriptor(Player player)
+    {
+        playerId = player.ID;
+        name = player.FormalName;
+        matches = player.NumberOfMatchesPlayedThisSeason;
+    }
+}
+
+public class MatchDescriptor
+{
+    public readonly int matchId;
+    public readonly string batOrBowl;
+    public readonly string opponent;
+    public readonly string dateString;
+    public readonly int overs;
+
+    public MatchDescriptor(Match m)
+    {
+        matchId = m.ID;
+        var currentBallByBallState = m.GetCurrentBallByBallState();
+        if (m.OurInningsInProgress)
+        {
+            batOrBowl = "Bat";
+            overs = currentBallByBallState.LastCompletedOver;
+        }
+        else if (m.TheirInningsInProgress)
+        {
+            batOrBowl = "Bowl";
+            overs = currentBallByBallState.OppositionOver;
+        }
+        else
+        {
+            batOrBowl = "";
+            overs = 0;
+        }
+
+        opponent = m.HomeOrAway == HomeOrAway.Home ? m.AwayTeamName : m.HomeTeamName;
+        dateString = m.MatchDate.ToShortDateString();
+    }
+}
 
 
 public class GenericBallByBallCommand

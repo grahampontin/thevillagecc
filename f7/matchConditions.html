@@ -1,0 +1,114 @@
+﻿<div class="page" data-name="matchConditions">
+    <div class="toolbar toolbar-bottom">
+        
+    </div>
+    
+
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="left">
+                <a href="#" class="link icon-only back-button">
+                    <i class="icon icon-back"></i>
+                </a>
+            </div>
+            <div class="title">Match Conditions</div>
+            <div class="right">
+                <a class="link icon-only" href="/matchConditions/">
+                    <i class="icon material-icons" id="match-conditions-done">done</i>
+                </a>
+                <a class="link icon-only">
+                    <i class="icon material-icons" id="match-conditions-incomplete" style="color: red">block</i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <form class="list" id="my-form" style="margin-top: 16px;">
+            <div class="block-title block">PLAYERS</div>
+            <ul>
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Captain</div>
+                            <div class="item-input-wrap">
+                                <select name="captainSelect" id="captainSelect" class="form-validation">
+                                    <option selected="selected"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Wicket Keeper</div>
+                            <div class="item-input-wrap">
+                                <select name="wicketKeeperSelect" id="wicketKeeperSelect" class="form-validation">
+                                    <option selected="selected"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="block-title" style="margin-top: 16px;">MATCH FORMAT</div>
+            <ul>
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-input-wrap">
+                                <select name="matchFormatSelect" id="matchFormatSelect" class="form-validation">
+                                    <option selected="selected"></option>
+                                    <option>Limited Overs</option>
+                                    <option>Declaration</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li id="numberOfOversInput">
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Number of Overs</div>
+                            <div class="item-input-wrap">
+                                <input type="number" name="numberOfOvers" id="numberOfOvers" placeholder="Overs"  class="form-validation"/>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="block-title" style="margin-top: 16px;">THE TOSS</div>
+            <ul>
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-input-wrap">
+                                <select name="tossWinnerSelect" id="tossWinnerSelect" placeholder="who won it?" class="form-validation">
+                                    <option selected="selected"></option>
+                                    <option>We</option>
+                                    <option>They</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">won the toss and elected to</div>
+                            <div class="item-input-wrap">
+                                <select name="tossWinnerBatBowlSelect" id="tossWinnerBatBowlSelect" placeholder="what did they do?" class="form-validation">
+                                    <option selected="selected"></option>
+                                    <option>Bat</option>
+                                    <option>Bowl</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </form>
+    </div>
+</div>

@@ -233,7 +233,7 @@ function loadMatchState(matchId, callback) {
 };
 
 function initializeCoreView() {
-    if (matchState == undefined) {
+    if (matchState === undefined) {
         assertMatchIdIsDefined();
         loadMatchState(matchId, updateUi);
         return;
