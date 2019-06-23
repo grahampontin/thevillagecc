@@ -61,6 +61,33 @@ $$(document).on('page:init', '.page[data-name="selectTeam"]', function (e) {
 });
 
 $$(document).on('page:init', '.page[data-name="matchConditions"]', function (e) {
+    $("#match-conditions-done").parent().click(function() {
+        if (selectedPlayers === null) {
+            showToastCenter("There don't seem to be any players which is weird. Go back to select the team again.");
+            return;
+        }
+        //TODO: MAP VARIABLES
+        var postData = { 'command': "startMatch", 'matchId': matchId, 'payload': 
+            new MatchConditions(getPlayerIds(players), wicketKeeperId, captainId, weWonToss, tossWinnerBatted, wasDeclaration, numberOfOvers)
+        };
+        $.post('./CommandHandler.ashx', JSON.stringify(postData), function () {
+                //success
+                if ((weWonToss && tossWinnerBatted) || (!weWonToss && !tossWinnerBatted)) {
+                    innings = "Batting";
+                    //TODO: F7 Page Navigation?
+                    $("body").pagecontainer("change", "NewOver.aspx", { transition: "slide" });
+                } else {
+                    innings = "Bowling";
+                    $("body").pagecontainer("change", "OppositionInnings.aspx", { transition: "slide" });
+                }
+            
+            }, 'json')
+            .fail(function (data) {
+                showToastCenter(data.responseText);
+            });
+    });
+    
+
     $("#numberOfOversInput").hide();
     enableDisableConfirmButton();
     $.each(selectedPlayers,
@@ -90,39 +117,69 @@ $$(document).on('page:init', '.page[data-name="matchConditions"]', function (e) 
 
 function enableDisableConfirmButton() {
     if (isMatchConditionsComplete()) {
-        $("#match-conditions-done").show();
-        $("#match-conditions-incomplete").hide();
+        $("#match-conditions-done").parent().show();
+        $("#match-conditions-incomplete").parent().hide();
     }
     else
     {
-        $("#match-conditions-done").hide();
-        $("#match-conditions-incomplete").show();
+        $("#match-conditions-done").parent().hide();
+        $("#match-conditions-incomplete").parent().show();
     }
 }
-
+var toast;
 function isMatchConditionsComplete() {
     if ($("#captainSelect option:selected").attr("playerId") === undefined) {
+        toast = showToastBottom(
+            "Every team needs a leader, a man to look up to, someone to stand up and be counted. At the very least someone should set the field don't you think?");
         return false;
+    } else {
+        toast.close();
     }
     if ($("#wicketKeeperSelect option:selected").attr("playerId") === undefined) {
+        toast = showToastBottom(
+            "Not having a wicket keeper seems pretty village, even for us. Did we forget the kit again? Go borrow some.");
         return false;
+    } else {
+        toast.close();
     }
-    if ($("#tossWinnerSelect option:selected").val() === undefined) {
+    if ($("#matchFormatSelect option:selected").val() === "") {
+        toast = showToastBottom(
+            "What kind of a game is this? It's not a test match, etc.");
         return false;
-    }
-    if ($("#tossWinnerBatBowlSelect option:selected").val() === undefined) {
-        return false;
-    }
-    if ($("#matchFormatSelect option:selected").val() === undefined) {
-        return false;
+    } else {
+        toast.close();
     }
     if ($("#matchFormatSelect option:selected").val() === "Limited Overs") {
-        if (parseInt($("#numberOfOvers").val()) < 0) {
+        var numberOfOvers = $("#numberOfOvers").val();
+        if (!isNormalInteger(numberOfOvers)) {
+            toast = showToastBottom(
+                "If we're playing a limited overs game it would be tremendous to know how many overs each team is allowed. It should be a whole number, if that wasn't obvious.");
             return false;
+        } else {
+            toast.close();
         }
     }
-
+    if ($("#tossWinnerSelect option:selected").val() === "") {
+        toast = showToastBottom(
+            "Who won the toss? Is it time for the Official Tosser clause to be enacted?");
+        return false;
+    } else {
+        toast.close();
+    }
+    if ($("#tossWinnerBatBowlSelect option:selected").val() === "") {
+        toast = showToastBottom(
+            "Always bat first. Unless it looks like a bowling day, then think about bowling first, but bat first anyway.");
+        return false;
+    } else {
+        toast.close();
+    }
+    
     return true;
+}
+
+function isNormalInteger(str) {
+    var n = Math.floor(Number(str));
+    return n !== Infinity && String(n) === str && n >= 0;
 }
 
 
@@ -197,5 +254,24 @@ function listAllPlayers() {
             app.preloader.hide();
             showError(data.responseText);
         });
-};
+}
+
+function showToastBottom(str) {
+    var toastBottom = app.toast.create({
+        text: str,
+        closeButton: true
+    });
+    toastBottom.open();
+    return toastBottom;
+}
+function showToastCenter(str) {
+    var toastIcon = app.toast.create({
+        icon: '<i class="material-icons">error</i>',
+        text: str,
+        position: 'center',
+        closeButton: true
+    });
+    toastIcon.open();
+    return toastIcon;
+}
 
