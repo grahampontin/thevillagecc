@@ -36,7 +36,10 @@ var app = new Framework7({
 });
 
 var mainView = app.views.create('.view-main');
+//First page setup
 listMatches();
+
+//End
 
 $$(document).on('page:init', function (e) {
     //GENERIC HANDLERS APPLICABLE TO ALL PAGES
@@ -66,19 +69,22 @@ $$(document).on('page:init', '.page[data-name="matchConditions"]', function (e) 
             showToastCenter("There don't seem to be any players which is weird. Go back to select the team again.");
             return;
         }
-        //TODO: MAP VARIABLES
+        var wicketKeeperId = $("#wicketKeeperSelect").find('option:selected').attr("playerId");
+        var captainId = $("#captainSelect").find('option:selected').attr("playerId");
+        var tossWinnerBatted = $("#tossWinnerBatBowlSelect").find('option:selected').val() === "Bat"; //ew
+        var weWonToss = $("#tossWinnerSelect").find('option:selected').val() === "We";
+        var wasDeclaration = $("#matchFormatSelect").find('option:selected').val() === "Declaration";
+        var numberOfOvers = $("#numberOfOvers").val();
+        
         var postData = { 'command': "startMatch", 'matchId': matchId, 'payload': 
-            new MatchConditions(getPlayerIds(players), wicketKeeperId, captainId, weWonToss, tossWinnerBatted, wasDeclaration, numberOfOvers)
+            new MatchConditions(getPlayerIds(selectedPlayers), wicketKeeperId, captainId, weWonToss, tossWinnerBatted, wasDeclaration, numberOfOvers)
         };
-        $.post('./CommandHandler.ashx', JSON.stringify(postData), function () {
+        $.post('/MobileWeb/ballbyball/CommandHandler.ashx', JSON.stringify(postData), function () {
                 //success
                 if ((weWonToss && tossWinnerBatted) || (!weWonToss && !tossWinnerBatted)) {
-                    innings = "Batting";
-                    //TODO: F7 Page Navigation?
-                    $("body").pagecontainer("change", "NewOver.aspx", { transition: "slide" });
+                    app.views.current.router.navigate("newOver.html");
                 } else {
-                    innings = "Bowling";
-                    $("body").pagecontainer("change", "OppositionInnings.aspx", { transition: "slide" });
+                    app.views.current.router.navigate("oppositionInnings.html");
                 }
             
             }, 'json')
@@ -196,13 +202,16 @@ function listMatches() {
                 $.each(data,
                     function(i, o) {
                         if (o.batOrBowl === "") {
-                            $('#upcoming-matches ul').append('<li><a href="/selectTeam/" class="item-link item-content"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.dateString+')</div><div class="item-after"><span class="badge bg-color-green">New</span></div></div></a></li>');
+                            $('#upcoming-matches ul').append('<li><a href="/selectTeam/" class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.dateString+')</div><div class="item-after"><span class="badge bg-color-green">New</span></div></div></a></li>');
                         } else {
                             var page = o.batOrBowl === "Bat" ? "scoring" : "oppositionScoring";
                             $('#in-progress-matches ul').append('<li><a href="/'+page+'/" class="item-link item-content"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.overs+' ovs)</div><div class="item-after"><span class="badge bg-color-green">'+o.batOrBowl+'</span></div></div></a></li>');
                         }
                         
                     });
+                $(".new-match").click(function() {
+                    matchId = $(this).attr("matchId");
+                });
             },
             "json")
         .fail(function(data) {
@@ -273,5 +282,14 @@ function showToastCenter(str) {
     });
     toastIcon.open();
     return toastIcon;
+}
+
+
+function getPlayerIds(playerStubs) {
+    var playerIds = $.map(playerStubs, function(element) {
+        return element.playerId;
+    });
+    return $.makeArray(playerIds);
+
 }
 
