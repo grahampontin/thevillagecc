@@ -6,24 +6,29 @@
 
     <div class="navbar">
         <div class="navbar-inner">
+            <div class="left">
+                <a href="#" class="link icon-only back-button">
+                    <i class="icon icon-back"></i>
+                </a>
+            </div>
             <div class="title">New Over</div>
+            <div class="right">
+                <a class="link icon-only" id="newOverConfirmButton">
+                    <i class="icon material-icons" id="new-over-done">done</i>
+                </a>
+                <a class="link icon-only">
+                    <i class="icon material-icons" id="new-over-incomplete" style="color: red">block</i>
+                </a>
+            </div>
         </div>
     </div>
-
-    <div class="fab fab-extended fab-right-top color-green">
-        <a href="#">
-            <i class="icon f7-icons if-not-md">add</i>
-            <i class="icon material-icons md-only">add</i>
-        </a>
-    </div>
-    
     <div class="page-content">
         <div class="block-title">BOWLER</div>
         <div class="list">
-            <ul>
+            <ul id="bowlers-list">
                 <li>
                     <label class="item-radio item-content">
-                        <input type="radio" name="demo-radio" value="Books" checked/>
+                        <input type="radio" name="demo-radio" value="Books" checked />
                         <i class="icon icon-radio"></i>
                         <div class="item-inner">
                             <div class="item-title">Books</div>
@@ -32,7 +37,7 @@
                 </li>
                 <li>
                     <label class="item-radio item-content">
-                        <input type="radio" name="demo-radio" value="Movies"/>
+                        <input type="radio" name="demo-radio" value="Movies" />
                         <i class="icon icon-radio"></i>
                         <div class="item-inner">
                             <div class="item-title">Movies</div>
@@ -41,7 +46,7 @@
                 </li>
                 <li>
                     <label class="item-radio item-content">
-                        <input type="radio" name="demo-radio" value="Food"/>
+                        <input type="radio" name="demo-radio" value="Food" />
                         <i class="icon icon-radio"></i>
                         <div class="item-inner">
                             <div class="item-title">Food</div>
@@ -50,7 +55,7 @@
                 </li>
                 <li>
                     <label class="item-radio item-content">
-                        <input type="radio" name="demo-radio" value="Drinks"/>
+                        <input type="radio" name="demo-radio" value="Drinks" />
                         <i class="icon icon-radio"></i>
                         <div class="item-inner">
                             <div class="item-title">Drinks</div>
@@ -58,35 +63,44 @@
                     </label>
                 </li>
             </ul>
+            <button id="addNewBowlerButton" class="button button-raised color-green button-fill" style="margin: 10px 15px; width: auto">
+                <i class="icon f7-icons if-not-md">add</i>
+                <i class="icon material-icons md-only">add</i>
+                New Bowler
+            </button>
+            
+            
         </div>
-        <div class="block-title">BATSMEN</div>
-        <div class="list inline-labels no-hairlines-md">
-            <ul>
-                <li class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Striker</div>
-                        <div class="item-input-wrap input-dropdown-wrap">
-                            <select placeholder="Please choose..." required validate data-error-message="Someone needs to face up.">
-                                <option></option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
+        <div id="newOverBatsmenDiv">
+            <div class="block-title">BATSMEN</div>
+            <div class="list inline-labels no-hairlines-md">
+                <ul>
+                    <li class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Striker</div>
+                            <div class="item-input-wrap input-dropdown-wrap">
+                                <select id="batsman1select" placeholder="Please choose..." required validate data-error-message="Someone needs to face up.">
+                                    <option></option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                </li>
-                <li class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Non-Striker</div>
-                        <div class="item-input-wrap input-dropdown-wrap">
-                            <select placeholder="Please choose...">
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
+                    </li>
+                    <li class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Non-Striker</div>
+                            <div class="item-input-wrap input-dropdown-wrap">
+                                <select id="batsman2select" placeholder="Please choose..." required validate data-error-message="You need a number two.">
+                                    <option></option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-
     </div>
 </div>

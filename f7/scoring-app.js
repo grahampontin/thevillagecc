@@ -4,7 +4,7 @@ var app = new Framework7({
     // App root element
     root: '#app',
     // App Name
-    name: 'My App',
+    name: 'Live Scores',
     // App id
     id: 'com.myapp.test',
     // Enable swipe panel
@@ -78,15 +78,7 @@ $$(document).on('page:init', '.page[data-name="selectTeam"]', function (e) {
     });
 });
 
-$$(document).on('page:init', '.page[data-name="newOver"]', function (e) {
-    //Bind handlers here
 
-    //once bound...
-    initializeMatchStateAndThen(false, function() {
-        //Populate new over screen from match data
-        app.input.validateInputs('.page');
-    });
-});
 
 $$(document).on('page:init', '.page[data-name="matchConditions"]', function (e) {
     $("#match-conditions-done").parent().click(function() {
