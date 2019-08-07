@@ -166,15 +166,18 @@ public class MatchDescriptor
     {
         matchId = m.ID;
         var currentBallByBallState = m.GetCurrentBallByBallState();
-        if (m.OurInningsInProgress)
+        if (m.GetIsBallByBallInProgress())
         {
-            batOrBowl = "Bat";
-            overs = currentBallByBallState.LastCompletedOver;
-        }
-        else if (m.TheirInningsInProgress)
-        {
-            batOrBowl = "Bowl";
-            overs = currentBallByBallState.OppositionOver;
+            if (m.OurInningsInProgress)
+            {
+                batOrBowl = "Bat";
+                overs = currentBallByBallState.LastCompletedOver;
+            }
+            else if (m.TheirInningsInProgress)
+            {
+                batOrBowl = "Bowl";
+                overs = currentBallByBallState.OppositionOver;
+            }
         }
         else
         {

@@ -30,6 +30,21 @@ var app = new Framework7({
             name: 'matchConditions',
             path: '/matchConditions/',
             url: 'matchConditions.html'
+        },
+        {
+            name: 'newOver',
+            path: '/newOver/',
+            url: 'newOver.html'
+        },
+        {
+            name: 'oppositionInnings',
+            path: '/oppositionInnings/',
+            url: 'oppositionInnings.html'
+        },
+        {
+            name: 'index',
+            path: '/index/',
+            url: 'index.html'
         }
     ]
     // ... other parameters
@@ -63,6 +78,16 @@ $$(document).on('page:init', '.page[data-name="selectTeam"]', function (e) {
     });
 });
 
+$$(document).on('page:init', '.page[data-name="newOver"]', function (e) {
+    //Bind handlers here
+
+    //once bound...
+    initializeMatchStateAndThen(false, function() {
+        //Populate new over screen from match data
+        app.input.validateInputs('.page');
+    });
+});
+
 $$(document).on('page:init', '.page[data-name="matchConditions"]', function (e) {
     $("#match-conditions-done").parent().click(function() {
         if (selectedPlayers === null) {
@@ -82,9 +107,9 @@ $$(document).on('page:init', '.page[data-name="matchConditions"]', function (e) 
         $.post('/MobileWeb/ballbyball/CommandHandler.ashx', JSON.stringify(postData), function () {
                 //success
                 if ((weWonToss && tossWinnerBatted) || (!weWonToss && !tossWinnerBatted)) {
-                    app.views.current.router.navigate("newOver.html");
+                    app.views.current.router.navigate("/newOver/");
                 } else {
-                    app.views.current.router.navigate("oppositionInnings.html");
+                    app.views.current.router.navigate("/oppositionInnings/");
                 }
             
             }, 'json')
@@ -204,8 +229,8 @@ function listMatches() {
                         if (o.batOrBowl === "") {
                             $('#upcoming-matches ul').append('<li><a href="/selectTeam/" class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.dateString+')</div><div class="item-after"><span class="badge bg-color-green">New</span></div></div></a></li>');
                         } else {
-                            var page = o.batOrBowl === "Bat" ? "scoring" : "oppositionScoring";
-                            $('#in-progress-matches ul').append('<li><a href="/'+page+'/" class="item-link item-content"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.overs+' ovs)</div><div class="item-after"><span class="badge bg-color-green">'+o.batOrBowl+'</span></div></div></a></li>');
+                            var page = o.batOrBowl === "Bat" ? "newOver" : "oppositionScoring";
+                            $('#in-progress-matches ul').append('<li><a href="/'+page+'/" class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.overs+' ovs)</div><div class="item-after"><span class="badge bg-color-green">'+o.batOrBowl+'</span></div></div></a></li>');
                         }
                         
                     });
@@ -216,7 +241,7 @@ function listMatches() {
             "json")
         .fail(function(data) {
             app.preloader.hide();
-            showError(data.responseText);
+            showToastCenter(data.responseText);
         });
 };
 
@@ -261,7 +286,7 @@ function listAllPlayers() {
             "json")
         .fail(function(data) {
             app.preloader.hide();
-            showError(data.responseText);
+            showToastCenter(data.responseText);
         });
 }
 
@@ -292,4 +317,30 @@ function getPlayerIds(playerStubs) {
     return $.makeArray(playerIds);
 
 }
+
+function initializeMatchStateAndThen(force, callback)
+{
+    if (matchId === undefined || matchId === null) {
+        app.views.current.router.navigate("/index/");
+    }
+    if (matchState !== undefined && !force) {
+        return;
+    }
+    loadMatchState(matchId, callback);
+}
+
+function loadMatchState(matchId, callback) {
+    var postData = { 'command': "matchState", 'matchId': matchId };
+    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
+            JSON.stringify(postData),
+            function(data) {
+                //success
+                matchState = matchStateFromData(data);
+                callback();
+            },
+            "json")
+        .fail(function(data) {
+            showToastCenter(data.responseText);
+        });
+};
 
