@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <!-- Color theme for statusbar -->
-    <meta name="theme-color" content="#006400">
+    <meta name="theme-color" content="green">
     <!-- Your app title -->
     <title>My App</title>
     <!-- Path to Framework7 Library Bundle CSS -->
@@ -15,16 +15,17 @@
           rel="stylesheet">
     <!-- Path to your custom app styles-->
     <link rel="stylesheet" href="./scoring-app.css">
+    <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="./css/framework7-icons.css">
 </head>
 <body>
     <!-- App root element -->
-    <div id="app" class="color-theme-green">
+    <div id="app">
         <!-- Statusbar overlay -->
-        <div class="statusbar color-theme-green"></div>
+        <div class="statusbar"></div>
 
         <!-- Your main view, should have "view-main" class -->
-        <div class="view view-main color-theme-green">
+        <div class="view view-main">
             <!-- Initial Page, "data-name" contains page name -->
             <div data-name="home" class="page">
 

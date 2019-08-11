@@ -50,6 +50,8 @@ var app = new Framework7({
     // ... other parameters
 });
 
+app.utils.colorThemeCSSProperties("#17801e");
+
 var mainView = app.views.create('.view-main');
 //First page setup
 listMatches();

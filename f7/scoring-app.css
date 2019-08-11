@@ -1,2 +1,113 @@
 ﻿body {
+
+}
+
+.circle {
+    display: block;
+    position: relative;
+    padding: 0;
+    z-index: 98;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    transition: 0.2s;
+    text-align: center;
+}
+
+.circle-small {
+    height: 30px;
+    width: 30px;
+    font-size: 10pt;
+}
+
+.circle-responsive {
+    display: block;
+    position: relative;
+    padding: 0;
+    z-index: 98;
+    border-radius: 50%;
+    height: auto;
+    width: 100%;
+    padding-top: 100%;
+    transition: 0.2s;
+    text-align: center;
+}
+
+.circle-button {
+    line-height: unset !important;
+}
+
+.circle-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: 0.5s;
+}
+
+    .circle-inner:before {
+        content: '';
+        vertical-align: middle;
+        display: inline-block;
+        width: 0;
+        height: 100%;
+    }
+
+    .circle-inner span {
+        vertical-align: middle;
+        display: inline-block;
+    }
+.circle-responsive i {
+    font-size: 8vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    vertical-align: middle;
+    margin-top: 25%;
+}
+
+.circle-large-font {
+    font-size: 7vw;
+}
+
+.team-name {
+    font-weight: bold;
+    font-size: initial;
+    margin-top: 10px;
+    position: absolute;
+    margin-left: 50px;
+}
+
+.team-score {
+    font-size: initial;
+    margin-top: 9px;
+}
+
+.team-row {
+    margin: 0px 10px 10px 10px;
+}
+
+.ball {
+    display: inline-block;
+    margin-left: 3px;
+    border: solid 1px #4f4f4f;
+    color: #4f4f4f
+}
+.dot {
+    border: none;
+}
+
+.wicket {
+    color: white;
+    background-color: red;
+    border-color: red;
+}
+
+.boundary-ball {
+    border-color: var(--f7-color-darkgray);
+    color: white;
+    background-color: var(--f7-color-darkgray)
 }
