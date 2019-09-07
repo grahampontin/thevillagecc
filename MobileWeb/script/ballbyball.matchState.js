@@ -27,6 +27,7 @@
     this.getNextBattingPosition = getNextBattingPosition;
     this.getBowlers = getBowlers;
     this.addBowler = addBowler;
+    this.switchBatsmen = switchBatsmen;
 }
 
 function getBattingPlayers() {
@@ -118,4 +119,14 @@ function getNextBattingPosition() {
     });
     var highestBatter = Math.max.apply(null, positions);
     return (highestBatter * 1) + 1;
+}
+
+function switchBatsmen() {
+    if (getBattingPlayers[0].playerId === this.OnStrikeBatsmanId) {
+        this.OnStrikeBatsmanId = getBattingPlayers[1].playerId;
+        this.OnStrikeBatsmanName = getBattingPlayers[1].playerName;
+    } else {
+        this.OnStrikeBatsmanId = getBattingPlayers[0].playerId;
+        this.OnStrikeBatsmanName = getBattingPlayers[0].playerName;
+    }
 }

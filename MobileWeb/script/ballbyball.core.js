@@ -133,7 +133,6 @@ function addBall(aball) {
     matchState.Over.balls.push(aball);
     updateUi();
     evaluateShouldSwitchStrikerAfter(aball);
-
 }
 
 function evaluatePlayerScores() {

@@ -1,35 +1,24 @@
-﻿<div class="page" data-name="newOver">
+﻿<div class="page" data-name="scoring">
     <div class="navbar">
         <div class="navbar-inner">
             <div class="title">Scoresheet</div>
         </div>
     </div>
-    <div class="toolbar tabbar toolbar-top color-green">
-        <div class="toolbar-inner">
-            <a href="#tab-1" class="tab-link tab-link-active">
-                <span class="tabbar-label">Scorecard</span>
-            </a>
-            <a href="#tab-2" class="tab-link">
-                <span class="tabbar-label">Ball-by-ball</span>
-            </a>
-        </div>
-    </div>
-    <div class="tabs">
-        <div class="page-content tab" id="tab-1">
+    <div class="page-content">
             <div class="block-strong" style="padding-bottom: 1px; border-bottom: solid 1px lightgrey; padding-top: 10px">
                 <div class="row team-row">
                     <div class="circle" style="background-color: var(--f7-theme-color)">
                         <div class="circle-inner" style="color: white; font-weight: bold">VCC</div>
                     </div>
                     <div class="team-name">The Village CC</div>
-                    <div class="team-score">135/5</div>
+                    <div class="team-score" id="village-team-score">135/5</div>
                 </div>
                 <div class="row team-row">
                     <div class="circle bg-color-blue">
-                        <div class="circle-inner" style="color: white; font-weight: bold">PCC</div>
+                        <div class="circle-inner" style="color: white; font-weight: bold" id="opposition-team-abbreviation">PCC</div>
                     </div>
-                    <div class="team-name">Pacific</div>
-                    <div class="team-score">227</div>
+                    <div class="team-name" id="opposition-team-name">Pacific</div>
+                    <div class="team-score" id="opposition-team-score">227</div>
                 </div>
             </div>
             <div class="block-strong" style="padding-bottom: 1px; border-bottom: solid 1px lightgrey; padding: 10px">
@@ -41,45 +30,29 @@
                     <div class="col-10">6s</div>
                 </div>
                 <div class="row" style="margin-top: 10px">
-                    <div class="col-60"><button class="col button button-outline button-round text-align-left">GC Pontin</button></div>
-                    <div class="col-10">55</div>
-                    <div class="col-10">72</div>
-                    <div class="col-10">3</div>
-                    <div class="col-10">0</div>
+                    <div class="col-60"><button class="col button button-outline button-round text-align-left" id="batsman-one-name">[missing]</button></div>
+                    <div class="col-10" id="batsman-one-runs">0</div>
+                    <div class="col-10" id="batsman-one-balls">0</div>
+                    <div class="col-10" id="batsman-one-fours">0</div>
+                    <div class="col-10" id="batsman-one-sixes">0</div>
                 </div>
                 <div class="row" style="margin-top: 10px">
-                    <div class="col-60"><button class="col button button-fill button-round text-align-left">OL Morgans</button></div>
-                    <div class="col-10">17</div>
-                    <div class="col-10">96</div>
-                    <div class="col-10">24</div>
-                    <div class="col-10">12</div>
+                    <div class="col-60"><button class="col button button-fill button-round text-align-left" id="batsman-two-name">[missing]</button></div>
+                    <div class="col-10" id="batsman-two-runs">0</div>
+                    <div class="col-10" id="batsman-two-balls">0</div>
+                    <div class="col-10" id="batsman-two-fours">0</div>
+                    <div class="col-10" id="batsman-two-sixes">0</div>
                 </div> 
                 <div class="row" style="margin-top: 10px">
-                    <div class="col-60"><button class="col button button-outline button-round text-align-left border-color-white">Partnership</button></div>
-                    <div class="col-10">17</div>
-                    <div class="col-10">96</div>
-                    <div class="col-10">24</div>
-                    <div class="col-10">12</div>
+                    <div class="col-60"><button class="col button button-outline button-round text-align-left border-color-white" >Partnership</button></div>
+                    <div class="col-10" id="partnership-runs">0</div>
+                    <div class="col-10" id="partnership-balls">0</div>
+                    <div class="col-10" id="partnership-fours">0</div>
+                    <div class="col-10" id="partnership-sixes">0</div>
                 </div>
                 
             </div>
-            <div class="block-strong" style="padding-bottom: 1px; border-bottom: solid 1px lightgrey; padding: 10px">
-                <div class="row">
-                    <div class="col-60">Bowler</div>
-                    <div class="col-10">O</div>
-                    <div class="col-10">M</div>
-                    <div class="col-10">R</div>
-                    <div class="col-10">W</div>
-                </div>
-                <div class="row" style="margin-top: 10px">
-                    <div class="col-60"><button class="col button button-fill button-round text-align-left">Some Dude</button></div>
-                    <div class="col-10">55</div>
-                    <div class="col-10">72</div>
-                    <div class="col-10">3</div>
-                    <div class="col-10">0</div>
-                </div>
-            </div>
-            <div class="block-strong" style="border-bottom: solid 1px lightgrey; padding: 5px; text-align: center; overflow: scroll">
+            <div class="block-strong" style="border-bottom: solid 1px lightgrey; padding: 5px; text-align: center; overflow: scroll" id="current-over-balls">
                 <div class="circle circle-small ball dot">
                     <div class="circle-inner">.</div>
                 </div>
@@ -101,22 +74,22 @@
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font">
+                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button" value="1">
                             <div class="circle-inner">1</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font">
+                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button" value="2">
                             <div class="circle-inner">2</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font">
+                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button" value="3">
                             <div class="circle-inner">3</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button circle-responsive circle-button button-fill">
+                        <div class="button circle-responsive circle-button button-fill" id="undo-button">
                             <div class="circle-inner">
                                 <i class="icon f7-icons if-not-md">undo</i>
                                 <i class="icon material-icons md-only">undo</i>
@@ -126,56 +99,56 @@
                 </div>
                 <div class="row" style="margin-top: 10px">
                     <div class="col-20">
-                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font">
+                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button" value="4">
                             <div class="circle-inner">4</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font">
+                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button" value="6">
                             <div class="circle-inner">6</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font">
+                        <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font" id="runs-five-plus-button">
                             <div class="circle-inner">5+</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button button-fill circle-responsive circle-button color-blue">
+                        <div class="button button-fill circle-responsive circle-button color-blue" id="end-over-button">
                             <div class="circle-inner">End Over</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button circle-responsive circle-button button-fill">
+                        <div class="button circle-responsive circle-button button-fill" id="show-balls-button">
                             <div class="circle-inner">
-                                Actions
+                                Balls
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row" style="margin-top: 10px">
                     <div class="col-20">
-                        <div class="button button-fill circle-responsive circle-button color-darkgray">
+                        <div class="button button-fill circle-responsive circle-button color-darkgray extras-button" value="w">
                             <div class="circle-inner">Wide</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button button-fill circle-responsive circle-button color-darkgray">
+                        <div class="button button-fill circle-responsive circle-button color-darkgray extras-button" value="nb">
                             <div class="circle-inner">No Ball</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button button-fill circle-responsive circle-button color-darkgray">
+                        <div class="button button-fill circle-responsive circle-button color-darkgray extras-button" value="b">
                             <div class="circle-inner">Bye</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button button-fill circle-responsive circle-button color-darkgray">
+                        <div class="button button-fill circle-responsive circle-button color-darkgray extras-button" value="lb">
                             <div class="circle-inner">Leg Bye</div>
                         </div>
                     </div>
                     <div class="col-20">
-                        <div class="button circle-responsive circle-button button-fill color-red">
+                        <div class="button circle-responsive circle-button button-fill color-red" id="wicket-button">
                             <div class="circle-inner">
                                 Wicket
                             </div>
@@ -185,10 +158,4 @@
             </div>
 
         </div>
-        <div class="page-content tab" id="tab-2">
-            <div class="block">
-                <p><b>Tab 2 content</b></p>
-            </div>
-        </div>
-    </div>
 </div>
