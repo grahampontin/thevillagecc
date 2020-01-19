@@ -2,7 +2,12 @@
     this.balls = new Array();
     this.toPrettyString = toPrettyString;
     this.scoreForPlayer = scoreForPlayer;
+    this.foursForPlayer = foursForPlayer;
+    this.sixesForPlayer = sixesForPlayer;
+    this.ballsFacedByPlayer = ballsFacedByPlayer;
     this.totalScore = totalScore;
+    this.totalFours = totalFours;
+    this.totalSixes = totalSixes;
     this.wickets = wickets;
     this.toHtml = toHtml;
     this.ballNumber = ballNumber;
@@ -36,6 +41,45 @@ function scoreForPlayer(playerId) {
     return score;
 }
 
+function ballsFacedByPlayer(playerId) {
+    var ballsFaced = 0;
+    for (i = 0; i < this.balls.length; i++) {
+        var ball = this.balls[i];
+        if (ball.batsman == playerId) {
+            switch(ball.thing) {
+                case "nb":
+                case "wd":
+                    break;
+                default :
+                    ballsFaced += 1;
+            }
+        }
+    }
+    return ballsFaced;
+}
+
+function foursForPlayer(playerId) {
+    var fours = 0;
+    for (i = 0; i < this.balls.length; i++) {
+        var ball = this.balls[i];
+        if (ball.batsman == playerId && ball.isFour()) {
+            fours += 1;
+        }
+    }
+    return fours;
+}
+
+function sixesForPlayer(playerId) {
+    var sixes = 0;
+    for (i = 0; i < this.balls.length; i++) {
+        var ball = this.balls[i];
+        if (ball.batsman == playerId && ball.isSix()) {
+            sixes += 1;
+        }
+    }
+    return sixes;
+}
+
 function ballNumber(ballIndex) {
     var out = ballIndex;
     for (q = 0; q < ballIndex; q++) {
@@ -52,6 +96,27 @@ function totalScore() {
     for (i = 0; i < this.balls.length; i++) {
         var ball = this.balls[i];
         score += parseInt(ball.amount);
+    }
+    return score;
+}
+
+function totalFours() {
+    var score = parseInt(0);
+    for (i = 0; i < this.balls.length; i++) {
+        var ball = this.balls[i];
+        if (ball.isFour()) {
+            score += 1;
+        }
+    }
+    return score;
+}
+function totalSixes() {
+    var score = parseInt(0);
+    for (i = 0; i < this.balls.length; i++) {
+        var ball = this.balls[i];
+        if (ball.isSix()) {
+            score += 1;
+        }
     }
     return score;
 }

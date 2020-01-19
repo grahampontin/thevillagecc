@@ -261,7 +261,14 @@ function renderMatchData(matchData) {
 
 
             var actualBallNumber = 1;
-            $.each(over.Over.Balls.reverse(), function(ballIndex, ball) {
+            $.each(over.Over.Balls.reverse(), function(ballIndex, ballObj) {
+                var ball = new Ball(ballObj.Amount,
+                    ballObj.Thing,
+                    ballObj.Batsman,
+                    ballObj.BatsmanName,
+                    ballObj.Bowler,
+                    ballObj.Wicket);
+
                 var row = $("<div></div>");
                 row.addClass("row ball-row");
 
@@ -272,11 +279,11 @@ function renderMatchData(matchData) {
 
                 var ballDescription = $("<div></div>");
                 ballDescription.addClass("col-sm-11");
-                ballDescription.html(ball.Bowler + " to " + ball.BatsmanName + ", " + getBallDescription(ball));
+                ballDescription.html(ball.bowler + " to " + ball.batsmanName + ", " + ball.getBallDescription());
                 row.append(ballNumber);
                 row.append(ballDescription);
 
-                if (ball.Wicket !== null) {
+                if (ball.wicket !== null) {
                     var wicketRow = $("<div></div>");
                     wicketRow.addClass("row wicket-row");
                     var emptyColumn = $("<div></div>");
@@ -285,7 +292,7 @@ function renderMatchData(matchData) {
 
                     var wicketDetails = $("<div></div>");
                     wicketDetails.addClass("col-sm-11");
-                    wicketDetails.html("<strong>" + getDismissalText(ball.Wicket, matchData.FallOfWickets) + "</strong>");
+                    wicketDetails.html("<strong>" + getDismissalText(ball.wicket, matchData.FallOfWickets) + "</strong>");
                     wicketRow.append(wicketDetails);
 
                     overBody.prepend(wicketRow);
@@ -792,7 +799,7 @@ function initializeWorm() {
 }
 
 function needsToBeReBowled(ball) {
-    return ball.Thing === "nb" || ball.Thing === "wd";
+    return !ball.isLegalDelivery();
 }
 
 function getScoreString(score) {
@@ -804,74 +811,7 @@ function getScoreString(score) {
     }
 }
 
-function getBallDescription(ball) {
-    if (ball.Wicket != null) {
-        return "<strong>OUT!</strong> " + ball.Wicket.Description;
-    }
-    var sOrNoS = ball.Amount > 1 ? "s" : "";
-    switch (ball.Thing) {
-        case "":
-            switch (ball.Amount) {
-                case 0:
-                    return "no run";
-                case 1:
-                    return "single to " + getLocationFrom(ball);
-                case 4:
-                    return "<strong>FOUR</strong> through " + getLocationFrom(ball);
-                case 6:
-                    return "<strong>SIX!</strong> over " + getLocationFrom(ball);
-                default:
-                    return ball.Amount + " runs to " + getLocationFrom(ball);
-            }
-        case "wd":
-            return ball.Amount + " wide" + sOrNoS;
-        case "nb":
-            return ball.Amount + " no ball" + sOrNoS;
-        case "b":
-            return ball.Amount + " bye" + sOrNoS;
-        case "lb":
-            return ball.Amount + " leg bye" + sOrNoS;
-        case "p":
-            return ball.Amount + " penalty run" + sOrNoS;
-        default:
-            return ball.Amount + " " + ball.Thing;
 
-    }
-}
-
-function getLocationFrom(ball) {
-    if (ball.Angle < Math.PI / 4) {
-        return "fine leg";
-    }
-    if (ball.Angle < Math.PI / 2) {
-        return "backwards square leg";
-    }
-    if (ball.Angle < Math.PI * 0.6) {
-        return "square leg";
-    }
-    if (ball.Angle < Math.PI * 0.8) {
-        return "mid wicket";
-    }
-    if (ball.Angle < Math.PI) {
-        return "mid on";
-    }
-    if (ball.Angle < Math.PI * 1.2) {
-        return "mid off";
-    }
-    if (ball.Angle < Math.PI * 1.35) {
-        return "extra cover";
-    }
-    if (ball.Angle < Math.PI * 1.5) {
-        return "cover";
-    }
-    if (ball.Angle < Math.PI * 1.65) {
-        return "point";
-    }
-    if (ball.Angle < Math.PI * 1.8) {
-        return "backwards point";
-    }
-    return "third man";
-}
 
 function getFallOfWicketForPlayer(playerId, fallOfWickets) {
     var wicketToReturn;

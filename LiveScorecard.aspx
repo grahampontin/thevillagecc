@@ -124,6 +124,7 @@
     <script src="Script/gRaphael/g.line-min.js"></script>
     <script src="Script/gRaphael/g.bar.js"></script>
     <script src="Script/vcc.charts.js"></script>
+    <script src="MobileWeb/script/ballbyball.ball.js"></script>
 </head>
 <body>
     <div id="pageContainer">

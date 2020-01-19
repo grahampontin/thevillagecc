@@ -1,5 +1,6 @@
 ﻿body {
-
+    /* Disables pull-to-refresh but allows overscroll glow effects. */
+    overscroll-behavior-y: contain;
 }
 
 .circle {
@@ -98,6 +99,10 @@
 }
 .dot {
     border: none;
+    background-color: #4f4f4f;
+    height: 8px;
+    width: 8px;
+    margin: 12px 5px 12px 10px;
 }
 
 .wicket {
@@ -110,4 +115,8 @@
     border-color: var(--f7-color-darkgray);
     color: white;
     background-color: var(--f7-color-darkgray)
+}
+
+#wagon-wheel-sheet {
+    height: auto !important;
 }

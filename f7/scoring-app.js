@@ -18,6 +18,10 @@ var app = new Framework7({
             url: 'scoring.html'
         },
         {
+            path: '/wicket/',
+            url: 'wicket.html'
+        },
+        {
             path: '/oppositionScoring/',
             url: 'oppositionScoring.html'
         },
@@ -35,6 +39,11 @@ var app = new Framework7({
             name: 'newOver',
             path: '/newOver/',
             url: 'newOver.html'
+        },
+        {
+            name: 'endOver',
+            path: '/endOver/',
+            url: 'endOver.html'
         },
         {
             name: 'oppositionInnings',
@@ -297,7 +306,8 @@ function showToastCenter(str) {
         icon: '<i class="material-icons">error</i>',
         text: str,
         position: 'center',
-        closeButton: true
+        closeButton: true,
+        closeTimeout: 10000
     });
     toastIcon.open();
     return toastIcon;
@@ -318,6 +328,7 @@ function initializeMatchStateAndThen(force, callback)
         app.views.current.router.navigate("/index/");
     }
     if (matchState !== undefined && !force) {
+        callback();
         return;
     }
     loadMatchState(matchId, callback);

@@ -25,26 +25,33 @@ function validatePage() {
         errorMessage = "I need to know who will be bowling, it's important, really.";
         valid = false;
     }
+    if (getBowlerForOver() == undefined) {
+        errorMessage = "Who's bowling this one?";
+        valid = false;
+    }
+
     if (getBowlerForOver() === matchState.PreviousBowler && valid) {
         errorMessage = getBowlerForOver() + " bowled the last over You're not really allowed to bowl two in a row...";
         valid = false;
     }
-    var playerId1 = $("#batsman1select").find("option:selected").attr("playerId");
-    var playerId2 = $("#batsman2select").find("option:selected").attr("playerId");
-    if ((playerId1 === undefined || playerId2 === undefined) && valid) {
-        errorMessage = "We need two batsmen before we can start.";
-        valid = false;
-    }
-    if (playerId1 === playerId2 && valid) {
-        errorMessage = "It would be swell if we had a different batsman at end, no?";
-        valid = false;
+    if (matchState.getBattingPlayers().length === 0) {
+        var playerId1 = $("#batsman1select").find("option:selected").attr("playerId");
+        var playerId2 = $("#batsman2select").find("option:selected").attr("playerId");
+        if ((playerId1 === undefined || playerId2 === undefined) && valid) {
+            errorMessage = "We need two batsmen before we can start.";
+            valid = false;
+        }
+        if (playerId1 === playerId2 && valid) {
+            errorMessage = "It would be swell if we had a different batsman at each end, no?";
+            valid = false;
+        }
     }
     if (errorMessage.length > 0) {
         toast = showToastBottom(errorMessage);
     } else {
         toast.close();
     }
-    valid = valid && $("#batsman1select")[0].validity.valid && $("#batsman2select")[0].validity.valid;
+    valid = valid && (matchState.getBattingPlayers().length > 0  || ($("#batsman1select")[0].validity.valid && $("#batsman2select")[0].validity.valid));
 
     if (valid) {
         $("#new-over-done").show();
@@ -87,24 +94,30 @@ function bindNewOverPageHandlers() {
         chooseNewBowler();
     });
     $("#new-over-done").click(function() {
-        if (getBowlerForOver() === null) {
+        if (getBowlerForOver() == undefined) {
             showToastCenter("I need to know who will be bowling, it's important, really.");
             return;
         }
         if (matchState.getBattingPlayers().length === 0) {
+            //first over of the match
             var playerId1 = $("#batsman1select").find("option:selected").attr("playerId");
             var playerId2 = $("#batsman2select").find("option:selected").attr("playerId");
-            
+
             matchState.setPlayerBattingAtPosition(playerId1, 1);
             matchState.setPlayerBattingAtPosition(playerId2, 2);
+            matchState.OnStrikeBatsmanId = playerId1;
+        } else {
+            //TODO: not the person who faced the last ball, supply from the server? No, should be easy enough based on the last ball.
+            //matchState.
         }
+
         matchState.CurrentBowler = getBowlerForOver();
         app.views.current.router.navigate("/scoring/");
     });
 }
 
 function getBowlerForOver() {
-    return $("#bowler-list input[type='radio']:checked").val();
+    return $("#bowlers-list input[type='radio']:checked").val();
 }
 
 function chooseNewBowler() {

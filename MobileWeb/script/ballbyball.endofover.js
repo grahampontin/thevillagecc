@@ -28,7 +28,7 @@ function bindEndOfOverPageHandlers() {
         $.post('./CommandHandler.ashx', JSON.stringify(postData), function (data) {
                 //success
                 matchState = matchStateFromData(data);
-                switchBatsmen();
+                switchBatsmanOnStrike();
                 $("body").pagecontainer("change", "NewOver.aspx", { transition: "slide" });
 
                 updateUi();
