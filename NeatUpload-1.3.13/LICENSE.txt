@@ -1,2 +1,0 @@
-NeatUpload is licensed under the Lesser General Public
-License (LGPL) which can be found in COPYING-LIB.txt.
