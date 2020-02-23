@@ -46,6 +46,16 @@ var app = new Framework7({
             url: 'endOver.html'
         },
         {
+            name: 'endMatch',
+            path: '/endMatch/',
+            url: 'endMatch.html'
+        },
+        {
+            name: 'endInnings',
+            path: '/endInnings/:type',
+            url: 'endInnings.html'
+        },
+        {
             name: 'oppositionInnings',
             path: '/oppositionInnings/',
             url: 'oppositionInnings.html'
@@ -230,15 +240,16 @@ function listMatches() {
                 $.each(data,
                     function(i, o) {
                         if (o.batOrBowl === "") {
-                            $('#upcoming-matches ul').append('<li><a href="/selectTeam/" class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.dateString+')</div><div class="item-after"><span class="badge bg-color-green">New</span></div></div></a></li>');
+                            $('#upcoming-matches ul').append('<li><a class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.dateString+')</div><div class="item-after"><span class="badge bg-color-green">New</span></div></div></a></li>');
                         } else {
-                            var page = o.batOrBowl === "Bat" ? "newOver" : "oppositionScoring";
-                            $('#in-progress-matches ul').append('<li><a href="/'+page+'/" class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.overs+' ovs)</div><div class="item-after"><span class="badge bg-color-green">'+o.batOrBowl+'</span></div></div></a></li>');
+                            $('#in-progress-matches ul').append('<li><a class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.overs+' ovs)</div><div class="item-after"><span class="badge bg-color-green">'+o.batOrBowl+'</span></div></div></a></li>');
                         }
                         
                     });
                 $(".new-match").click(function() {
                     matchId = $(this).attr("matchId");
+                    var postData = { 'command': "matchState", 'matchId': matchId };
+                    sendBallByBallCommand(postData);
                 });
             },
             "json")
@@ -347,5 +358,39 @@ function loadMatchState(matchId, callback) {
         .fail(function(data) {
             showToastCenter(data.responseText);
         });
-};
+}
+
+function sendBallByBallCommand(postData) {
+    app.preloader.show();
+    $.post('/MobileWeb/ballbyball/CommandHandler.ashx', JSON.stringify(postData), function (data) {
+            //success
+            matchState = matchStateFromData(data);
+            app.preloader.hide();
+            var pageName;
+            switch (data.NextState) {
+            case "BattingOver":
+                pageName = "newOver";
+                break;
+            case "BowlingOver":
+                pageName = "oppositionScoring";
+                break;
+            case "EndOfBattingInnings":
+                pageName = "endInnings/batting";
+                break;
+            case "EndOfBowlingInnings":
+                pageName = "endInnings/bowling";
+                break;
+            case "EndOfMatch":
+                pageName = "endMatch";
+                break;
+            default:
+                pageName = "index";
+            }
+            app.views.current.router.navigate("/"+pageName+"/");
+        }, 'json')
+        .fail(function (data) {
+            app.preloader.hide();
+            showToastCenter(data.responseText);
+        });
+}
 

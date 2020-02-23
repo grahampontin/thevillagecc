@@ -1,22 +1,29 @@
-﻿$$(document).on('page:init', '.page[data-name="endOver"]', function (e) {
-    
+﻿$$(document).on('page:init', '.page[data-name="endInnings"]', function (e) {
+    setupPageFor(e.detail.route.params.type);
+});
+
+
+function setupPageFor(inningsType) {
     //Bind handlers here
-    $("#end-over-done").click(function() {
+    $("#end-innings-done").click(function() {
         var matchId = matchState.MatchId;
         var textEditor = app.textEditor.get('.chat-text-editor');
 
-        matchState.Over.Commentary = textEditor.value;
-        var postData = { 'command': "submitOver", 'matchId': matchId, 'payload': matchState };
-        //Post to server and handle response.
+        var postData = { 'command': "endInnings", 'matchId': matchId, 'payload': {
+                InningsType: inningsType,
+                WasDeclared: toBoolean($("#innings-declared-select").val()),
+                Commentary: textEditor.value
+            }
+        };
         sendBallByBallCommand(postData);
     });
     
     //once bound...
     initializeMatchStateAndThen(false, function() {
-        renderBallsList();
+        
 
     });
-});
+}
 
 /*
 *       <div class="item-media"><i class="icon icon-f7"></i></div>

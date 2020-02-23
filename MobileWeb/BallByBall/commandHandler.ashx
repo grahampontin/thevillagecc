@@ -71,14 +71,14 @@ public class CommandHandler : IHttpHandler
                 case "updateOppositionScore":
                     var incoming = javaScriptSerializer.Deserialize<OppositionInningsDetails>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
                     match.UpdateOppositionScore(incoming);
-                    context.Response.Write("{}");
+                    ReturnCurrentMatchState(context, match);
                     break;
                 case "endInnings":
                     var inningsEndDetails = javaScriptSerializer.Deserialize<InningsEndDetails>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
-                    NextInnings nextInnings = match.EndInnings(inningsEndDetails);
+                    match.EndInnings(inningsEndDetails);
                     context.Response.ContentType = "text/json";
                     context.Response.StatusCode = 200;
-                    context.Response.Write("{ \"NextInnings\" : \""+nextInnings+"\" }");
+                    ReturnCurrentMatchState(context, match);
 
                     break;
                 case "deleteLastOver":

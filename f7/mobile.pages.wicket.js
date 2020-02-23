@@ -63,9 +63,7 @@
     });
 });
 
-function toBoolean(string) {
-    return "yes"=== string.toLowerCase();
-}
+
 
 function getNotOutBatsman(outBatsman) {
     var batters = matchState.getBattingPlayers();

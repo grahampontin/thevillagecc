@@ -40,6 +40,16 @@
             matchState.removeLastBall();
             refreshUi();
         });
+        var switchIfRequired = function() {
+            if ($(this).attr("playerId") == matchState.OnStrikeBatsmanId) {
+                return;
+            }
+            matchState.switchBatsmanOnStrike();
+            refreshUi();
+        };
+        $("#batsman-one-name").click(switchIfRequired);
+        $("#batsman-two-name").click(switchIfRequired);
+
         //once bound...
         initializeMatchStateAndThen(false,
             function() {
@@ -131,11 +141,14 @@ function refreshBatsmenView() {
     $("#batsman-one-fours").text(batsman1.CurrentFours);
     $("#batsman-one-sixes").text(batsman1.CurrentSixes);
     $("#batsman-one-strike-rate").text(batsman1.CurrentStrikeRate);
+    $("#batsman-one-name").attr("playerId", batsman1.PlayerId);
+
     $("#batsman-two-runs").text(batsman2.Score);
     $("#batsman-two-balls").text(batsman2.CurrentBallsFaced);
     $("#batsman-two-fours").text(batsman2.CurrentFours);
     $("#batsman-two-sixes").text(batsman2.CurrentSixes);
     $("#batsman-two-strike-rate").text(batsman2.CurrentStrikeRate);
+    $("#batsman-two-name").attr("playerId", batsman2.PlayerId);
 
     $("#partnership-runs").text(matchState.Partnership.CurrentScore);
     $("#partnership-balls").text(matchState.Partnership.CurrentBalls);

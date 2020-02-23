@@ -48,7 +48,7 @@ function validatePage() {
     }
     if (errorMessage.length > 0) {
         toast = showToastBottom(errorMessage);
-    } else {
+    } else if (toast != null && toast != undefined) {
         toast.close();
     }
     valid = valid && (matchState.getBattingPlayers().length > 0  || ($("#batsman1select")[0].validity.valid && $("#batsman2select")[0].validity.valid));
@@ -106,11 +106,7 @@ function bindNewOverPageHandlers() {
             matchState.setPlayerBattingAtPosition(playerId1, 1);
             matchState.setPlayerBattingAtPosition(playerId2, 2);
             matchState.OnStrikeBatsmanId = playerId1;
-        } else {
-            //TODO: not the person who faced the last ball, supply from the server? No, should be easy enough based on the last ball.
-            //matchState.
-        }
-
+        } 
         matchState.CurrentBowler = getBowlerForOver();
         app.views.current.router.navigate("/scoring/");
     });
