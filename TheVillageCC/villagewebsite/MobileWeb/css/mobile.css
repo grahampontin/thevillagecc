@@ -1,0 +1,131 @@
+﻿.ButtonRow 
+{
+    padding-bottom: 5px;
+}
+
+.ui-widget {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: 1.7em !important;
+}
+
+.ui-title {
+    margin: 0 20% !important; 
+}
+
+.ChatContent 
+{
+    margin: 0px;
+    padding: 0px;
+}
+
+.ChatItem 
+{
+    padding: 5px;
+    background-color: #FFFFFF;
+}
+
+
+.ui-bar-b {
+    background: -moz-linear-gradient(center top , #006400, #228B22) repeat scroll 0 0 #EEEEEE;
+    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#006400),color-stop(1,#228B22));
+    border: 1px solid #006400;
+    color: #FFFFFF;
+    font-weight: bold;
+    text-shadow: 0 -1px 1px #006400;
+}
+
+.ui-btn-up-b {
+    background: -moz-linear-gradient(center top , #228B22, #006400) repeat scroll 0 0 #EEEEEE;
+    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#228B22),color-stop(1,#006400));
+
+    border: 1px solid #006400;
+    color: #FFFFFF;
+    font-weight: bold;
+    text-shadow: 0 -1px 1px #006400;
+}
+
+textarea.ui-input-text 
+{
+    height: 200px;
+}
+
+.ChatPhoto 
+{
+    display: none;
+    
+}
+
+.ChatNameDate 
+{
+    margin-top: 5px;
+}
+
+.ChatComment 
+{
+    
+}
+
+.ChatDate 
+{
+    font-style: italic;
+}
+
+.footer-btn-fix
+{
+    right: 40px !important;
+}
+
+.next-button 
+{
+    display: none;
+}
+
+#full-width-radio {
+    font-size: 84%;
+}
+#full-width-radio .ui-controlgroup-label{
+    float: none;
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+#full-width-radio .ui-controlgroup-label legend{
+    font-weight: bold;
+    font-size: 130%;   
+    width: 100%;
+    margin-bottom: 8px;
+    text-align: center;
+}
+#full-width-radio .ui-controlgroup-controls {
+    float: none; 
+    display: block;
+    width: 100%;
+}
+#full-width-radio .ui-radio{
+    width: 50%;
+}
+
+#full-width-radio .ui-radio-off {
+    color: #a9a9a9;
+}
+
+#full-width-radio .ui-radio label{
+    text-align: center;
+    white-space: nowrap;
+}
+
+.warning-message {
+    border: solid 2px;
+    padding: 10px;
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+.info-message {
+    border: solid 2px;
+    padding: 10px;
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}

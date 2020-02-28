@@ -1,0 +1,68 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=Content-Type content="text/html; charset=ISO-8859-1">
+</HEAD>
+<BODY>
+<DIV><FONT face=Verdana><FONT 
+size=1>=========================================================<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+R&nbsp;&nbsp;&nbsp; E&nbsp;&nbsp;&nbsp; A&nbsp;&nbsp;&nbsp; D&nbsp;&nbsp;&nbsp; 
+M&nbsp;&nbsp;&nbsp; 
+E<BR>=========================================================<BR>2eNetWorX 
+TableEditoR v0.81 Beta<BR></FONT><A 
+href="http://www.2enetworx.com/dev/projects/tableeditor.asp"><FONT 
+size=1>http://www.2enetworx.com/dev/projects/tableeditor.asp</FONT></A><BR><FONT 
+size=1>--------------------------------------------------------------</FONT></FONT></DIV>
+<DIV><FONT face=Verdana size=1></FONT>&nbsp;</DIV>
+<DIV><FONT face=Verdana><FONT color=#800000 size=1><STRONG>What's 
+New?</STRONG></FONT></FONT></DIV>
+<DIV><STRONG><SPAN class=638015506-08062002></SPAN><FONT face=Verdana 
+color=#800000 size=1>-<SPAN 
+class=638015506-08062002>------------</SPAN><BR></FONT></STRONG><FONT 
+face=Verdana size=1>- Exporting is a permission assigned to each user in the 
+users table.<BR>- Security checks for adding records/fields/table without having 
+permission.<BR>- High Security Login (*Check below on how it works).<BR>- 
+Remember Me option.<BR>- Level-based User/Database access (*Check below how to 
+use it).<BR>- Compatible with most browsers:<BR>&nbsp; + Automatic check for 
+javascript, if not found, TE will work without javascript.<BR>&nbsp; + Fixed 
+Javascripts for more compatabilaty.<BR>&nbsp; + Export/Delete selected records 
+work with brwosers with no javascript.</FONT></DIV>
+<DIV><FONT face=Verdana size=1></FONT>&nbsp;</DIV>
+<DIV><FONT face=Verdana size=1>- Stored Procedures work better now<BR>- Excel 
+export now runs 2000% faster<BR>- XML Export with schema (XML files 99% 
+compatible with Access XP)<BR>- Database Backup now make a copy of the original 
+database.<BR>- Server Database browser became easier to use.<BR>- Option to 
+enable/disable Popups.<BR>- Option for "Default Per Page" (idea from Peter 
+Stucke).<BR>- Page Titles give and idea of the content of the page.<BR>- OLE 
+Images are showed with better script.<BR>- Records in related table work better 
+(add/edit).<BR>- Show Schema table is like all te tables.<BR>- Show Table 
+contents (IE mode and normal mode) work better with queries.</FONT></DIV>
+<DIV><FONT face=Verdana size=1></FONT>&nbsp;</DIV>
+<DIV><FONT face=Verdana 
+size=1>-----------------------------------------------------------------------------</FONT></DIV>
+<DIV><FONT face=Verdana size=1></FONT>&nbsp;</DIV>
+<DIV><SPAN class=638015506-08062002><FONT face=Verdana color=#800000 
+size=1><STRONG>Questions and Answers:</STRONG></FONT></SPAN></DIV>
+<DIV><FONT face=Verdana color=#800000 size=1><SPAN 
+class=638015506-08062002>-------------------------</SPAN></FONT></DIV>
+<DIV><FONT face=Verdana><FONT size=1><STRONG>Q:</STRONG> How does "High Security 
+Login" work?<BR><STRONG>A:</STRONG> To login, you need to get a fresh copy of 
+the homepage (which means loading it while on the internet), this will let te 
+add a unique string to the login form, then login normaly.<BR>If you try to 
+login with a cached copy, the string will be different than the expected one, so 
+login will fail.</FONT></FONT></DIV>
+<DIV><FONT face=Verdana size=1></FONT>&nbsp;</DIV>
+<DIV><FONT face=Verdana size=1>Also when this option is on, Clicking "Home" of 
+the TableEditor will be like Logging out.</FONT></DIV>
+<DIV><FONT face=Verdana size=1></FONT>&nbsp;</DIV><FONT face=Verdana>
+<DIV><BR><FONT size=1><STRONG>Q:</STRONG> What is "Level-based User/Database" 
+access?<BR><STRONG>A:</STRONG> User with value "0", means users can view all of 
+the connections (except administrator one).<BR>Admin sets the value for each 
+user, the higher the value, the more restrictive (i.e., a user-session value of 
+"2" allows the user to view connections with a value greater than or equal to 
+2).</FONT></DIV>
+<DIV><FONT size=1></FONT>&nbsp;</DIV>
+<DIV><FONT size=1>It works opposite for the DB_privileges value assigned to each 
+connection in the "Databases" table in teadmin.mdb. The lower the value, the 
+more restrictive the connection (i.e., if arrConn(1)'s DB_privileges value is 
+set to "0", then users with a session("rConnectionViews") of "1" or greater 
+cannot view it.<BR></FONT></FONT></DIV></BODY></HTML>

@@ -1,0 +1,85 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="mobile.master.cs" Inherits="MobileWeb_mobile" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="/MobileWeb/css/themes/TheVillageCC.min.css"/>
+    <link rel="stylesheet" href="/MobileWeb/css/themes/jquery.mobile.icons.min.css"/>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css"/>
+    <link rel="stylesheet" href="/MobileWeb/iconPack/jqm-icon-pack-fa.css"/>
+    <link rel="stylesheet" href="/MobileWeb/css/mobile.css"/>
+    
+    <!-- Externals -->
+    <script src="http://code.jquery.com/jquery-2.1.0.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="/MobileWeb/script/URI.js"></script>
+    <script src="/MobileWeb/script/purl.js"></script>
+    <script src="/MobileWeb/script/jquery.json-2.3.min.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/jquery.Storage.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/raphael-min.js" type="text/javascript"></script>
+    
+    <!-- Object definitions -->
+    <script src="/MobileWeb/script/ballbyball.globals.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.ball.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.over.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.wicket.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.matchState.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.playerStub.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.matchConditionsType.js" type="text/javascript"></script>
+
+    <!-- Core functionality -->
+    <script src="/MobileWeb/script/ballbyball.wagonwheel.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.functions.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.photoCapture.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.core.js" type="text/javascript"></script>
+
+    <!-- Pages -->
+    <script src="/MobileWeb/script/ballbyball.help.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.selectTeam.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.wicket.page.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.endofover.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.endofinnings.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.oppositionInnings.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.newover.js" type="text/javascript"></script>    
+    <script src="/MobileWeb/script/ballbyball.matchConditions.js" type="text/javascript"></script>
+
+    
+    <script src="/MobileWeb/script/mobileweb.pagemanagement.js"></script>
+    
+    <script>
+        $.mobile.page.prototype.options.domCache = true;
+
+    </script>
+
+</head>
+<body>
+
+<!-- page -->
+<div data-role="page" data-theme="a" id='<asp:ContentPlaceHolder id="page_name" runat="server"/>'>
+    <asp:ContentPlaceHolder id="page_content" runat="server"/>
+    <div data-role="popup" id="errorMessage">
+        <div data-role="header">
+            <h1>Error</h1>
+        </div>
+        <div data-role="content" id="errorMessageContent">
+            Place holder
+        </div>
+    </div>
+
+    <!-- footer -->
+    <div data-role="footer">
+        <h1>(c) The Village CC / Graham Pontin 2015</h1>
+    </div>
+    <!-- /footer -->
+    <asp:ContentPlaceHolder id="postPageScripts" runat="server"/>
+</div>
+
+
+
+<!-- /page -->
+
+
+</body>
+</html>
