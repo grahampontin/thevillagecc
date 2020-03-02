@@ -1,6 +1,7 @@
 ﻿<%@ WebHandler Language="C#" Class="CommandHandler" %>
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -26,7 +27,7 @@ public class CommandHandler : IHttpHandler
         {
             if (genericBallByBallCommand.command == "listMatches")
             {
-                var matchDescriptors = Match.GetInProgressGames().Union(Match.GetFixtures().Where(m=>m.MatchDate < DateTime.Today.AddDays(14))).Select(m => new MatchDescriptor(m)).ToList();
+                var matchDescriptors = Match.GetInProgressGames().Union(Match.GetFixtures().Where(m=>m.MatchDate < DateTime.Today.AddDays(14) && !m.GetCurrentBallByBallState().IsMatchComplete())).Select(m => new MatchDescriptor(m)).Distinct(MatchDescriptor.MatchIdComparer).ToList();
                 context.Response.Write(javaScriptSerializer.Serialize(matchDescriptors));
                 return;
             }
@@ -188,6 +189,30 @@ public class MatchDescriptor
         opponent = m.HomeOrAway == HomeOrAway.Home ? m.AwayTeamName : m.HomeTeamName;
         dateString = m.MatchDate.ToShortDateString();
     }
+
+    protected bool Equals(MatchDescriptor other)
+    {
+        return matchId == other.matchId;
+    }
+
+    private sealed class MatchIdEqualityComparer : IEqualityComparer<MatchDescriptor>
+    {
+        public bool Equals(MatchDescriptor x, MatchDescriptor y)
+        {
+            if (ReferenceEquals(x, y)) return true;
+            if (ReferenceEquals(x, null)) return false;
+            if (ReferenceEquals(y, null)) return false;
+            if (x.GetType() != y.GetType()) return false;
+            return x.matchId == y.matchId;
+        }
+
+        public int GetHashCode(MatchDescriptor obj)
+        {
+            return obj.matchId;
+        }
+    }
+
+    public static IEqualityComparer<MatchDescriptor> MatchIdComparer { get; } = new MatchIdEqualityComparer();
 }
 
 
