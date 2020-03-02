@@ -23,7 +23,11 @@
                 }
             };
 
-            sendBallByBallCommand(postData);
+            sendBallByBallCommand(postData, function() {
+                $("#opposition-runs-input").val('');
+                $("#opposition-overs-input").val('');
+                $("#opposition-wickets-input").val('');
+            });
         }
 
         
@@ -31,10 +35,10 @@
     
     //once bound...
     initializeMatchStateAndThen(false, function() {
-        
 
     });
 });
+
 
 function validateOppositionScoring(score, overs, wickets) {
     if (isNaN(overs) || overs <= 0) {

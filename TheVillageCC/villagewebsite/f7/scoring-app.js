@@ -345,7 +345,7 @@ function loadMatchState(matchId, callback) {
         });
 }
 
-function sendBallByBallCommand(postData) {
+function sendBallByBallCommand(postData, successCallback = null) {
     app.preloader.show();
     $.post('/MobileWeb/ballbyball/CommandHandler.ashx', JSON.stringify(postData), function (data) {
             //success
@@ -353,29 +353,32 @@ function sendBallByBallCommand(postData) {
             app.preloader.hide();
             var pageName;
             switch (data.NextState) {
-            case "BattingOver":
-                pageName = "newOver";
-                break;
-            case "BowlingOver":
-                pageName = "oppositionScoring";
-                break;
-            case "EndOfBattingInnings":
-                pageName = "endInnings/batting";
-                break;
-            case "EndOfBowlingInnings":
-                pageName = "endInnings/bowling";
-                break;
-            case "EndOfMatch":
-                pageName = "endMatch";
-                break;
-            case "SelectTeam":
-                pageName = "selectTeam";
-                break;
-            case "MatchConditions":
-                pageName = "matchConditions";
-                break;
-            default:
-                pageName = "index";
+                case "BattingOver":
+                    pageName = "newOver";
+                    break;
+                case "BowlingOver":
+                    pageName = "oppositionScoring";
+                    break;
+                case "EndOfBattingInnings":
+                    pageName = "endInnings/batting";
+                    break;
+                case "EndOfBowlingInnings":
+                    pageName = "endInnings/bowling";
+                    break;
+                case "EndOfMatch":
+                    pageName = "endMatch";
+                    break;
+                case "SelectTeam":
+                    pageName = "selectTeam";
+                    break;
+                case "MatchConditions":
+                    pageName = "matchConditions";
+                    break;
+                default:
+                    pageName = "index";
+            }
+            if (successCallback != null) {
+                successCallback();
             }
             app.views.current.router.navigate("/"+pageName+"/");
         }, 'json')
