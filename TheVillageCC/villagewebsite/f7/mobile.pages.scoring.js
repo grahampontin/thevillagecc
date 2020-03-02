@@ -114,8 +114,8 @@ function refreshTeamScores() {
     $("#village-team-score").text(matchState.Over.totalScore() * 1 + matchState.Score * 1);
     $("#village-team-wickets").text(matchState.getPlayersOfStatus("Out").length);
     $("#village-team-ovs").text(matchState.LastCompletedOver + "." + matchState.Over.balls.length);
-    $("#opposition-team-score").text("0");
-    $("#opposition-team-wickets").text("0");
+    $("#opposition-team-score").text(matchState.OppositionScore);
+    $("#opposition-team-wickets").text(matchState.OppositionWickets);
 }
 
 function refreshBatsmenView() {
