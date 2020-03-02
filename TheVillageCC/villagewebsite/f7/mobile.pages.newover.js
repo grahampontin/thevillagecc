@@ -1,4 +1,7 @@
 ﻿$$(document).on('page:init', '.page[data-name="newOver"]', function (e) {
+    if (e.detail.position != "next") {
+        return;
+    }
     //Bind handlers here
     bindNewOverPageHandlers();
     //once bound...

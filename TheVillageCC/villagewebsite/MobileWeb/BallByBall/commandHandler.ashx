@@ -45,7 +45,7 @@ public class CommandHandler : IHttpHandler
                         throw new InvalidOperationException("Coverage for match vs " + match.Opposition.Name + " has already been started");
                     }
                     match.StartBallByBallCoverage(GetMatchConditions(genericBallByBallCommand.payload));
-                    context.Response.Write("{}");
+                    ReturnCurrentMatchState(context, match);
                     break;
                 case "matchState":
                     ReturnCurrentMatchState(context, match);

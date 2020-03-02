@@ -22,6 +22,7 @@ var app = new Framework7({
             url: 'wicket.html'
         },
         {
+            name: 'oppositionScoring',
             path: '/oppositionScoring/',
             url: 'oppositionScoring.html'
         },
@@ -54,11 +55,6 @@ var app = new Framework7({
             name: 'endInnings',
             path: '/endInnings/:type',
             url: 'endInnings.html'
-        },
-        {
-            name: 'oppositionInnings',
-            path: '/oppositionInnings/',
-            url: 'oppositionInnings.html'
         },
         {
             name: 'index',
@@ -117,18 +113,7 @@ $$(document).on('page:init', '.page[data-name="matchConditions"]', function (e) 
         var postData = { 'command': "startMatch", 'matchId': matchId, 'payload': 
             new MatchConditions(getPlayerIds(selectedPlayers), wicketKeeperId, captainId, weWonToss, tossWinnerBatted, wasDeclaration, numberOfOvers)
         };
-        $.post('/MobileWeb/ballbyball/CommandHandler.ashx', JSON.stringify(postData), function () {
-                //success
-                if ((weWonToss && tossWinnerBatted) || (!weWonToss && !tossWinnerBatted)) {
-                    app.views.current.router.navigate("/newOver/");
-                } else {
-                    app.views.current.router.navigate("/oppositionInnings/");
-                }
-            
-            }, 'json')
-            .fail(function (data) {
-                showToastCenter(data.responseText);
-            });
+        sendBallByBallCommand(postData);
     });
     
 
@@ -382,6 +367,12 @@ function sendBallByBallCommand(postData) {
                 break;
             case "EndOfMatch":
                 pageName = "endMatch";
+                break;
+            case "SelectTeam":
+                pageName = "selectTeam";
+                break;
+            case "MatchConditions":
+                pageName = "matchConditions";
                 break;
             default:
                 pageName = "index";
