@@ -45,7 +45,7 @@
                 scoreForWicketBall, 
                 thingForWicketBall, 
                 matchState.OnStrikeBatsmanId, 
-                matchState.OnStrikeBatsmanName, 
+                matchState.getPlayer(matchState.OnStrikeBatsmanId).PlayerName, 
                 matchState.CurrentBowler, 
                 wicket  //Add not out batsman id here
         ));
