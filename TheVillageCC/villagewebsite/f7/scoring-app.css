@@ -121,7 +121,7 @@
     height: auto !important;
 }
 
-body {
+html {
     /* Disables pull-to-refresh but allows overscroll glow effects. */
     overscroll-behavior-y: contain;
 }
