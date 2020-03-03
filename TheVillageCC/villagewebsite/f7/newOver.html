@@ -67,27 +67,32 @@
         </div>
         <div id="newOverBatsmenDiv">
             <div class="block-title">BATSMEN</div>
-            <div class="list inline-labels no-hairlines-md">
+            <div class="list inline-labels">
                 <ul>
-                    <li class="item-content item-input">
-                        <div class="item-inner">
-                            <div class="item-title item-label">Striker</div>
-                            <div class="item-input-wrap input-dropdown-wrap">
-                                <select id="batsman1select" placeholder="Please choose..." required validate data-error-message="Someone needs to face up.">
-                                    <option></option>
-                                </select>
+                    <li>
+                        <a class="item-link smart-select smart-select-init" data-open-in="sheet"  data-close-on-select="true">
+                            <select id="batsman1select" placeholder="Please choose..."  class="form-validation">
+                                <option selected="selected"></option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Striker</div>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </li>
-                    <li class="item-content item-input">
-                        <div class="item-inner">
-                            <div class="item-title item-label">Non-Striker</div>
-                            <div class="item-input-wrap input-dropdown-wrap">
-                                <select id="batsman2select" placeholder="Please choose..." required validate data-error-message="You need a number two.">
-                                    <option></option>
-                                </select>
+                    <li>
+                        
+                        <a class="item-link smart-select smart-select-init" data-open-in="sheet"  data-close-on-select="true">
+                            <select id="batsman2select" placeholder="Please choose..."  class="form-validation">
+                                <option selected="selected"></option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Non-Striker</div>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </li>
                 </ul>
             </div>

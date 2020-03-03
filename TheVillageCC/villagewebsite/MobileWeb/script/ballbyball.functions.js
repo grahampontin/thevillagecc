@@ -45,7 +45,7 @@ function populateSelectWithAllWaitingBatsmen(batsmanSelect, value, matchState) {
     $.each(matchState.getWaitingPlayers(), function (index, batsman) {
         batsmanSelect
          .append($("<option></option>")
-         .attr("value", value)
+         .attr("value", batsman.PlayerName)
          .attr("playerId", batsman.PlayerId)
          .text(batsman.PlayerName));
     });

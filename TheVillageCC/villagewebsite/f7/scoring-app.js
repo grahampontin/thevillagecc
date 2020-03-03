@@ -61,11 +61,24 @@ var app = new Framework7({
             path: '/index/',
             url: 'index.html'
         }
-    ]
+    ],
+    on: {
+        smartSelectBeforeOpen: function() {
+            if (toast != undefined && toast != null) {
+                toast.close();
+            }
+        },
+        dialogOpen: function() {
+            if (toast != undefined && toast != null) {
+                toast.close();
+            }
+        },
+    }
     // ... other parameters
 });
 
 app.utils.colorThemeCSSProperties("#17801e");
+
 
 var mainView = app.views.create('.view-main');
 //First page setup

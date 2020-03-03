@@ -58,10 +58,10 @@ function validatePage() {
 
     if (valid) {
         $("#new-over-done").show();
-        $("#new-over-incomplete").hide();
+        $("#new-over-incomplete").parent().hide();
     } else {
         $("#new-over-done").hide();
-        $("#new-over-incomplete").show();
+        $("#new-over-incomplete").parent().show();
     }
 }
 
