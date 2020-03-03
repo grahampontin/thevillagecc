@@ -2,3 +2,4 @@
 *.dll
 **/packages/*
 **/sqlite3/*
+*/PrecompiledWeb/*

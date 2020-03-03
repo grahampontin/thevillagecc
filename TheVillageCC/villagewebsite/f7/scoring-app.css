@@ -120,3 +120,7 @@
 #wagon-wheel-sheet {
     height: auto !important;
 }
+
+.view {
+    overscroll-behavior-y: contain;
+}
