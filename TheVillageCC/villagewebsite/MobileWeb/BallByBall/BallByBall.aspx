@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="BallByBall.aspx.cs" Inherits="MobileWeb_BallByBall" MasterPageFile="~/MobileWeb/mobile.master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="BallByBall.aspx.cs" Inherits="MobileWeb_BallByBall_Home" MasterPageFile="~/MobileWeb/mobile.master" %>
 
 <asp:Content runat="server" ID="Head" ContentPlaceHolderID="head">    
 </asp:Content>
