@@ -162,6 +162,7 @@ public class MatchDescriptor
     public readonly string opponent;
     public readonly string dateString;
     public readonly int overs;
+    private static readonly IEqualityComparer<MatchDescriptor> Comparer = new MatchIdEqualityComparer();
 
     public MatchDescriptor(Match m)
     {
@@ -212,7 +213,13 @@ public class MatchDescriptor
         }
     }
 
-    public static IEqualityComparer<MatchDescriptor> MatchIdComparer { get; } = new MatchIdEqualityComparer();
+    public static IEqualityComparer<MatchDescriptor> MatchIdComparer
+    {
+        get
+        {
+            return Comparer;
+        }
+    }
 }
 
 
