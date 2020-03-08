@@ -1,34 +1,50 @@
-﻿$$(document).on("page:init",
+﻿var toast;
+$$(document).on("page:init",
     '.page[data-name="scoring"]',
     function(e) {
         //Bind handlers here
         $(".runs-button").click(function() {
+            if (waitingForBallType) {
+                toast = showToastBottom("What was the last ball? Runs? Extras?");
+                return;
+            }
             var amount = parseInt($(this).attr("value"));
             addSimpleRunsBall(amount);
             refreshUi();
+            startPulsing();
         });
         $("#wicket-button").click(function() {
+            if (waitingForBallType) {
+                toast = showToastBottom("What was the last ball? Runs? Extras?");
+                return;
+            }
             app.views.current.router.navigate("/wicket/");
         });
         $("#end-over-button").click(function() {
+            if (waitingForBallType) {
+                toast = showToastBottom("What was the last ball? Runs? Extras?");
+                return;
+            }
             app.views.current.router.navigate("/endOver/");
         });
         $("#runs-button").click(function() {
             if (matchState.Over.balls.length === 0) {
-                showToastBottom("Add a ball first");
+                toast = showToastBottom("Add a ball first");
                 return;
             }
+            stopPulsing();
             displayWagonWheel();
         });
         $(".extras-button").click(function() {
             if (matchState.Over.balls.length === 0) {
-                showToastBottom("Add a ball first");
+                toast = showToastBottom("Add a ball first");
                 return;
             }
+            stopPulsing();
             var extra = $(this).attr("value");
             var ball = matchState.removeLastBall();
             if (ball.amount === 0) {
-                showToastBottom("Doesn't make sense to have no extras..");
+                toast = showToastBottom("Doesn't make sense to have no extras..");
                 matchState.addBall(ball);
                 return;
             }
@@ -50,6 +66,8 @@
         $("#batsman-one-name").click(switchIfRequired);
         $("#batsman-two-name").click(switchIfRequired);
 
+
+
         //once bound...
         initializeMatchStateAndThen(false,
             function() {
@@ -64,6 +82,44 @@
                 refreshUi();
             });
     });
+
+var waitingForBallType = false;
+function startPulsing() {
+    waitingForBallType = true;
+        pulse(".extras-button", 400);
+    }
+
+function stopPulsing() {
+    waitingForBallType = false;
+    if (toast != undefined) {
+        toast.close();
+    }
+    $(".extras-button").each(function(i,o) {
+        $(o).pulse('destroy');
+    });
+    $('#runs-button').pulse('destroy');
+}
+
+
+
+function pulse(elementClass, duration) {
+    var properties = {
+        opacity : 0.25
+    };
+
+    $(elementClass).each(function(i,o) {
+        $(o).pulse(properties,
+            {
+                pulses: -1,
+                duration: 1000
+           });
+    });
+    $('#runs-button').pulse(properties,
+        {
+            pulses: -1,
+            duration: 1000
+        });
+}
 
 function addSimpleRunsBall(runs) {
     var batsmanForThisBall = matchState.OnStrikeBatsmanId;
@@ -109,6 +165,8 @@ function refreshUi() {
     refreshCurrentOverView();
     refreshTeamScores();
 }
+
+
 
 function refreshTeamScores() {
     $("#village-team-score").text(matchState.Over.totalScore() * 1 + matchState.Score * 1);
