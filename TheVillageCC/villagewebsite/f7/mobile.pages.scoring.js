@@ -11,7 +11,9 @@ $$(document).on("page:init",
             var amount = parseInt($(this).attr("value"));
             addSimpleRunsBall(amount);
             refreshUi();
-            startPulsing();
+            if (amount > 0) {
+                startPulsing();
+            }
         });
         $("#wicket-button").click(function() {
             if (waitingForBallType) {
@@ -55,6 +57,7 @@ $$(document).on("page:init",
         $("#undo-button").click(function() {
             matchState.removeLastBall();
             refreshUi();
+            stopPulsing();
         });
         var switchIfRequired = function() {
             if ($(this).attr("playerId") == matchState.OnStrikeBatsmanId) {
