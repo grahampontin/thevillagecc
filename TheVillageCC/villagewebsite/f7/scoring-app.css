@@ -36,6 +36,7 @@
 
 .circle-button {
     line-height: unset !important;
+    font-size: 4.5vw;
 }
 
 .circle-inner {
@@ -45,6 +46,7 @@
     width: 100%;
     height: 100%;
     transition: 0.5s;
+    white-space: normal !important;
 }
 
     .circle-inner:before {
