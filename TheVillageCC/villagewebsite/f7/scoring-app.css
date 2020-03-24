@@ -123,6 +123,34 @@
     height: auto !important;
 }
 
+.table-row-header {
+    padding-bottom: 2px;
+    background: lightgray;
+    color: white;
+    padding-right: 20px;
+}
+
+.opacity-40 {
+    opacity: 40%;
+}
+
+.table-row {
+        margin-top: 2px !important;
+    border-bottom: solid 1px lightgrey;
+    padding-bottom: 2px;
+    padding-left: 5px;
+    padding-right: 20px;
+}
+
+.button-height {
+    height: var(--f7-button-height);
+    line-height: var(--f7-button-height);
+}
+
+.table-container {
+    padding: 0;
+}
+
 html {
     /* Disables pull-to-refresh but allows overscroll glow effects. */
     overscroll-behavior-y: contain;

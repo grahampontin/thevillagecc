@@ -189,13 +189,17 @@ function refreshBatsmenView() {
     if (matchState.OnStrikeBatsmanId == batsman1.PlayerId) {
         $("#batsman-one-name").addClass("button-fill");
         $("#batsman-one-name").removeClass("button-outline");
+        $("#batsman-one-name").removeClass("opacity-40");
         $("#batsman-two-name").removeClass("button-fill");
         $("#batsman-two-name").addClass("button-outline");
+        $("#batsman-two-name").addClass("opacity-40");
     } else {
         $("#batsman-two-name").addClass("button-fill");
         $("#batsman-two-name").removeClass("button-outline");
+        $("#batsman-two-name").removeClass("opacity-40");
         $("#batsman-one-name").removeClass("button-fill");
         $("#batsman-one-name").addClass("button-outline");
+        $("#batsman-one-name").addClass("opacity-40");
     }
     $("#batsman-one-runs").text(batsman1.Score);
     $("#batsman-one-balls").text(batsman1.CurrentBallsFaced);

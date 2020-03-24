@@ -26,8 +26,8 @@
                     </div>
                 </div>
             </div>
-            <div class="block-strong" style="padding-bottom: 1px; border-bottom: solid 1px lightgrey; padding: 5px">
-                <div class="row">
+            <div class="block-strong table-container">
+                <div class="row table-row-header">
                     <div class="col-50" style="padding-left: 10px">Batters</div>
                     <div class="col-10">R</div>
                     <div class="col-10">B</div>
@@ -35,31 +35,47 @@
                     <div class="col-10">6s</div>
                     <div class="col-10">SR</div>
                 </div>
-                <div class="row" style="margin-top: 5px">
-                    <div class="col-50"><button class="col button button-outline button-round text-align-left" id="batsman-one-name">[missing]</button></div>
-                    <div class="col-10" id="batsman-one-runs">0</div>
-                    <div class="col-10" id="batsman-one-balls">0</div>
-                    <div class="col-10" id="batsman-one-fours">0</div>
-                    <div class="col-10" id="batsman-one-sixes">0</div>
-                    <div class="col-10" id="batsman-one-strike-rate">0</div>
+                <div class="row table-row">
+                    <div class="col-50"><button class="col button button-outline button-round text-align-left" id="batsman-one-name">[missing] </button></div>
+                    <div class="col-10 button-height" id="batsman-one-runs">0</div>
+                    <div class="col-10 button-height" id="batsman-one-balls">0</div>
+                    <div class="col-10 button-height" id="batsman-one-fours">0</div>
+                    <div class="col-10 button-height" id="batsman-one-sixes">0</div>
+                    <div class="col-10 button-height" id="batsman-one-strike-rate">0</div>
                 </div>
-                <div class="row" style="margin-top: 5px">
+                <div class="row table-row">
                     <div class="col-50"><button class="col button button-fill button-round text-align-left" id="batsman-two-name">[missing]</button></div>
-                    <div class="col-10" id="batsman-two-runs">0</div>
-                    <div class="col-10" id="batsman-two-balls">0</div>
-                    <div class="col-10" id="batsman-two-fours">0</div>
-                    <div class="col-10" id="batsman-two-sixes">0</div>
-                    <div class="col-10" id="batsman-two-strike-rate">0</div>
-                </div> 
-                <div class="row" style="margin-top: 5px">
-                    <div class="col-50"><button class="col button button-outline button-round text-align-left border-color-white" >Partnership</button></div>
-                    <div class="col-10" id="partnership-runs">0</div>
-                    <div class="col-10" id="partnership-balls">0</div>
-                    <div class="col-10" id="partnership-fours">0</div>
-                    <div class="col-10" id="partnership-sixes">0</div>
+                    <div class="col-10 button-height" id="batsman-two-runs">0</div>
+                    <div class="col-10 button-height" id="batsman-two-balls">0</div>
+                    <div class="col-10 button-height" id="batsman-two-fours">0</div>
+                    <div class="col-10 button-height" id="batsman-two-sixes">0</div>
+                    <div class="col-10 button-height" id="batsman-two-strike-rate">0</div>
+                </div>
+                <div class="row table-row">
+                    <div class="col-50"><button class="col button button-outline button-round text-align-left border-color-white text-color-black">Partnership</button></div>
+                    <div class="col-10 button-height" id="partnership-runs">0</div>
+                    <div class="col-10 button-height" id="partnership-balls">0</div>
+                    <div class="col-10 button-height" id="partnership-fours">0</div>
+                    <div class="col-10 button-height" id="partnership-sixes">0</div>
+                    <div class="col-10 button-height"></div>
+                </div>
+                <div class="row table-row-header">
+                    <div class="col-50" style="padding-left: 10px">Bowler</div>
+                    <div class="col-10">O</div>
+                    <div class="col-10">M</div>
+                    <div class="col-10">R</div>
+                    <div class="col-10">W</div>
                     <div class="col-10"></div>
                 </div>
-                
+                <div class="row table-row">
+                    <div class="col-50"><button class="col button button-outline button-round text-align-left border-color-white text-color-black">A Dude</button></div>
+                    <div class="col-10 button-height" id="bowler-overs">0</div>
+                    <div class="col-10 button-height" id="bowler-maidens">0</div>
+                    <div class="col-10 button-height" id="bowler-runs">0</div>
+                    <div class="col-10 button-height" id="bowler-wickets">0</div>
+                    <div class="col-10 button-height"></div>
+                </div>
+
             </div>
             <div class="block-strong" style="border-bottom: solid 1px lightgrey; padding: 5px; text-align: center; overflow: scroll" id="current-over-balls">
                 <div class="circle circle-small ball dot">
