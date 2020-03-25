@@ -37,6 +37,10 @@ $$(document).on("page:init",
             stopPulsing();
             displayWagonWheel();
         });
+        $("#change-bowler-button").click(function() {
+            matchState.PreviousBowlerButOne = matchState.CurrentBowler;
+            app.views.current.router.navigate("/newOver/");
+        });
         $(".extras-button").click(function() {
             if (matchState.Over.balls.length === 0) {
                 toast = showToastBottom("Add a ball first");
@@ -165,6 +169,7 @@ function updateWagonWheelUiText() {
 
 function refreshUi() {
     refreshBatsmenView();
+    refreshBowlerView();
     refreshCurrentOverView();
     refreshTeamScores();
 }
@@ -177,6 +182,26 @@ function refreshTeamScores() {
     $("#village-team-ovs").text(matchState.LastCompletedOver + "." + matchState.Over.balls.length);
     $("#opposition-team-score").text(matchState.OppositionScore);
     $("#opposition-team-wickets").text(matchState.OppositionWickets);
+}
+
+function refreshBowlerView() {
+    $("#bowler-name").text(matchState.CurrentBowler);
+    var bowlerDetails = matchState.getBowlerDetails(matchState.CurrentBowler);
+    var details;
+    if (bowlerDetails == undefined || bowlerDetails == null) {
+        details = {
+            Overs: 0,
+            Maidens: 0,
+            Runs: 0,
+            Wickets: 0
+        };
+    } else {
+        details  = bowlerDetails.Details;
+    }
+    $("#bowler-overs").text(details.Overs + "." + matchState.getBallsBowledBy(matchState.CurrentBowler).length);
+    $("#bowler-maidens").text(details.Maidens);
+    $("#bowler-runs").text(details.Runs + matchState.getRunsConceededInCurrentOver(matchState.CurrentBowler));
+    $("#bowler-wickets").text(details.Wickets + matchState.getWicketsTakenInCurrentOver(matchState.CurrentBowler));
 }
 
 function refreshBatsmenView() {

@@ -26,7 +26,7 @@ function toString() {
             string += "stumped " + this.fielder;
         case "hw":
             string += "hit wicket";
-        case "htb2":
+        case "htb":
             string += "handled the ball";
     }
     string += " " + this.playerScore;

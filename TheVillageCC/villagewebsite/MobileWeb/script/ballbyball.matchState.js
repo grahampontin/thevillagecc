@@ -1,4 +1,4 @@
-﻿function MatchState(Players, LastCompletedOver, Over, Score, RunRate, Bowlers, MatchId, PreviousBowler, PreviousBowlerButOne, Partnership, OnStrikeBatsmanId, OppositionScore, OppositionWickets) {
+﻿function MatchState(Players, LastCompletedOver, Over, Score, RunRate, Bowlers, MatchId, PreviousBowler, PreviousBowlerButOne, Partnership, OnStrikeBatsmanId, OppositionScore, OppositionWickets, BowlerDetails) {
     //Fields
     this.Players = Players;
     this.Over = Over;
@@ -18,6 +18,7 @@
     this.OnStrikeBatsmanName = "Not set";
     this.OppositionScore = OppositionScore;
     this.OppositionWickets = OppositionWickets;
+    this.BowlerDetails = BowlerDetails;
 
 
     //Methods
@@ -45,6 +46,10 @@
     this.getCurrentFoursForBatsman = getCurrentFoursForBatsman;
     this.getCurrentSixesForBatsman = getCurrentSixesForBatsman;
     this.getLastBall = getLastBall;
+    this.getBowlerDetails = getBowlerDetails;
+    this.getBallsBowledBy = getBallsBowledBy;
+    this.getRunsConceededInCurrentOver = getRunsConceededInCurrentOver;
+    this.getWicketsTakenInCurrentOver = getWicketsTakenInCurrentOver;
 }
 
 function addBall(ball) {
@@ -61,6 +66,50 @@ function addBall(ball) {
     if (this.shouldSwitchStrikerAfter(ball)) {
         this.switchBatsmanOnStrike();
     }
+}
+
+function getBowlerDetails(bowlerName) {
+    var theDeets;
+    $.each(this.BowlerDetails, function(index, details) {
+        if (details.Name == bowlerName) {
+            theDeets = details;
+        }
+    });
+    return theDeets;
+}
+
+function getBallsBowledBy(bowlerName) {
+    var balls = new Array();
+    $.each(this.Over.balls, function(index, ball) {
+        if (ball.bowler == bowlerName) {
+            balls.push(ball);
+        }
+    });
+    return balls;
+}
+
+function getRunsConceededInCurrentOver(bowlerName) {
+    var runs = 0;
+    $.each(this.getBallsBowledBy(bowlerName), function(index, ball) {
+        if (ball.bowler == bowlerName) {
+            if (ball.thing != "lb" && ball.thing != "b") {
+                runs += ball.amount;
+            }
+        }
+    });
+    return runs;
+}
+
+function getWicketsTakenInCurrentOver(bowlerName) {
+    var wickets = 0;
+    $.each(this.getBallsBowledBy(bowlerName), function(index, ball) {
+        if (ball.wicket != undefined && ball.wicket != null) {
+            if (ball.wicket.modeOfDismissal != "ro") {
+                wickets ++;
+            }
+        }
+    });
+    return wickets;
 }
 
 function removeLastBall() {
@@ -168,7 +217,7 @@ function addBowler(name) {
 }
 
 function matchStateFromData(data) {
-    return new MatchState(data.Players, data.LastCompletedOver, new Over(), data.Score, data.RunRate, data.Bowlers, data.MatchId, data.PreviousBowler, data.PreviousBowlerButOne, data.Partnership, data.OnStrikeBatsmanId, data.OppositionScore, data.OppositionWickets);
+    return new MatchState(data.Players, data.LastCompletedOver, new Over(), data.Score, data.RunRate, data.Bowlers, data.MatchId, data.PreviousBowler, data.PreviousBowlerButOne, data.Partnership, data.OnStrikeBatsmanId, data.OppositionScore, data.OppositionWickets, data.BowlerDetails);
 }
 
 function setPlayerBattingAtPosition(playerId, position) {
@@ -191,7 +240,7 @@ function setPlayerBatting(playerId) {
     $.each(this.Players, function (index, player) {
         if (player.PlayerId == playerId) {
             player.State = "Waiting";
-            player.Position = null;
+            player.Position = 0;
         }
     });
 }
