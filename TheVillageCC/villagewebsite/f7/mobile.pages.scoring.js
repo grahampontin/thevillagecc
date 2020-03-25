@@ -182,6 +182,8 @@ function refreshTeamScores() {
     $("#village-team-ovs").text(matchState.LastCompletedOver + "." + matchState.Over.balls.length);
     $("#opposition-team-score").text(matchState.OppositionScore);
     $("#opposition-team-wickets").text(matchState.OppositionWickets);
+    $("#opposition-team-name").text(matchState.OppositionName);
+    $("#opposition-team-abbreviation").text(matchState.OppositionShortName);
 }
 
 function refreshBowlerView() {

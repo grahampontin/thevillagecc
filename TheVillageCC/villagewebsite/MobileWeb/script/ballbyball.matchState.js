@@ -1,4 +1,4 @@
-﻿function MatchState(Players, LastCompletedOver, Over, Score, RunRate, Bowlers, MatchId, PreviousBowler, PreviousBowlerButOne, Partnership, OnStrikeBatsmanId, OppositionScore, OppositionWickets, BowlerDetails) {
+﻿function MatchState(Players, LastCompletedOver, Over, Score, RunRate, Bowlers, MatchId, PreviousBowler, PreviousBowlerButOne, Partnership, OnStrikeBatsmanId, OppositionScore, OppositionWickets, BowlerDetails, OppositionName, OppositionShortName) {
     //Fields
     this.Players = Players;
     this.Over = Over;
@@ -19,6 +19,8 @@
     this.OppositionScore = OppositionScore;
     this.OppositionWickets = OppositionWickets;
     this.BowlerDetails = BowlerDetails;
+    this.OppositionName = OppositionName;
+    this.OppositionShortName = OppositionShortName;
 
 
     //Methods
@@ -217,7 +219,7 @@ function addBowler(name) {
 }
 
 function matchStateFromData(data) {
-    return new MatchState(data.Players, data.LastCompletedOver, new Over(), data.Score, data.RunRate, data.Bowlers, data.MatchId, data.PreviousBowler, data.PreviousBowlerButOne, data.Partnership, data.OnStrikeBatsmanId, data.OppositionScore, data.OppositionWickets, data.BowlerDetails);
+    return new MatchState(data.Players, data.LastCompletedOver, new Over(), data.Score, data.RunRate, data.Bowlers, data.MatchId, data.PreviousBowler, data.PreviousBowlerButOne, data.Partnership, data.OnStrikeBatsmanId, data.OppositionScore, data.OppositionWickets, data.BowlerDetails, data.OppositionName, data.OppositionShortName);
 }
 
 function setPlayerBattingAtPosition(playerId, position) {
