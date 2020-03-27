@@ -34,6 +34,8 @@ $$(document).on("page:init",
                 toast = showToastBottom("Add a ball first");
                 return;
             }
+            $(".show-five-plus").hide();
+            $(".hide-five-plus").show();
             stopPulsing();
             displayWagonWheel();
         });
@@ -46,6 +48,8 @@ $$(document).on("page:init",
                 toast = showToastBottom("Add a ball first");
                 return;
             }
+            $(".show-five-plus").hide();
+            $(".hide-five-plus").show();
             stopPulsing();
             var extra = $(this).attr("value");
             var ball = matchState.removeLastBall();
@@ -59,9 +63,19 @@ $$(document).on("page:init",
             refreshUi();
         });
         $("#undo-button").click(function() {
+            $(".show-five-plus").hide();
+            $(".hide-five-plus").show();
             matchState.removeLastBall();
             refreshUi();
             stopPulsing();
+        });
+        $("#runs-five-plus-button").click(function() {
+            $(".show-five-plus").show();
+            $(".hide-five-plus").hide();
+        });
+        $("#normal-runs-button").click(function() {
+            $(".show-five-plus").hide();
+            $(".hide-five-plus").show();
         });
         var switchIfRequired = function() {
             if ($(this).attr("playerId") == matchState.OnStrikeBatsmanId) {
