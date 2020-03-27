@@ -1,4 +1,7 @@
 ﻿$$(document).on('page:init', '.page[data-name="wicket"]', function (e) {
+    if (e.detail.position != "next") {
+        return;
+    }
     $("#wicket-runs-type-element").hide();
 
     //Bind handlers here

@@ -89,6 +89,9 @@ listMatches();
 $$(document).on('page:init', function (e) {
     //GENERIC HANDLERS APPLICABLE TO ALL PAGES
     $('.back-button').click(function() {
+        if (toast != undefined && toast != null) {
+            toast.close();
+        }
         app.views.current.router.back();
     });
 });
