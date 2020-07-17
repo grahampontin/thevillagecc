@@ -19,83 +19,73 @@
     <link rel="manifest" href="./manifest.json">
 </head>
 <body>
-    <!-- App root element -->
-    <div id="app">
-        <!-- Statusbar overlay -->
-        <div class="statusbar"></div>
+<!-- App root element -->
+<div id="app">
 
-        <!-- Your main view, should have "view-main" class -->
-        <div class="view view-main">
-            <!-- Initial Page, "data-name" contains page name -->
-            <div data-name="home" class="page">
+    <!-- Your main view, should have "view-main" class -->
+    <div class="view view-main">
+        <!-- Initial Page, "data-name" contains page name -->
+        <div data-name="home" class="page">
 
-                <!-- Top Navbar -->
-                <div class="navbar">
-                    <div class="navbar-inner">
-                        <div class="title">Live Scoring</div>
-                    </div>
+            <div class="navbar">
+                <div class="navbar-bg"></div>
+                <div class="navbar-inner">
+                    <div class="title">Village Online</div>
                 </div>
+            </div>
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">table_chart</i><span class="tabbar-label">Scorecards</span></div></div>
+                    <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">emoji_events</i><span class="tabbar-label">Matches</span></div></div>
+                    <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">people</i><span class="tabbar-label">Players</span></div></div>
 
-                <!-- Bottom Toolbar -->
-                <!-- <div class="toolbar toolbar-bottom"> -->
-                <!--     <div class="toolbar-inner"> -->
-                <!--         $1$ Toolbar links #1# -->
-                <!--         $1$ <a href="#" class="link">Link 1</a> #1# -->
-                <!--         $1$ <a href="#" class="link">Link 2</a> #1# -->
-                <!--     </div> -->
-                <!-- </div> -->
-
-                <!-- Scrollable page content -->
-                <div class="page-content">
-                    <div class="block-title">IN PROGRESS MATCHES</div>
-                    <div class="list" id="in-progress-matches">
-                        <ul >
-                        </ul>
-                    </div>
-                    <div class="block-title">UPCOMING MATCHES</div>
-                    <div class="list" id="upcoming-matches">
-                        <ul>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Path to Framework7 Library Bundle JS-->
-    <script type="text/javascript" src="./js/framework7.bundle.min.js"></script>
+</div>
+<!-- Path to Framework7 Library Bundle JS-->
+<script type="text/javascript" src="./js/framework7.bundle.min.js"></script>
 
-        <!-- Externals -->
-        <script src="./js/jquery-2.1.0.js"></script>
-        <script src="./js/jquery.pulse.min.js"></script>
-        <script src="/MobileWeb/script/URI.js"></script>
-        <script src="/MobileWeb/script/purl.js"></script>
-        <script src="/MobileWeb/script/jquery.json-2.3.min.js" type="text/javascript"></script>
-        <script src="/MobileWeb/script/jquery.Storage.js" type="text/javascript"></script>
-        <script src="/MobileWeb/script/raphael-min.js" type="text/javascript"></script>
-            
-        <!-- Object definitions -->
-        <script src="/MobileWeb/script/ballbyball.globals.js" type="text/javascript"></script>
-        <script src="/MobileWeb/script/ballbyball.ball.js" type="text/javascript"></script>
-        <script src="/MobileWeb/script/ballbyball.over.js" type="text/javascript"></script>
-        <script src="/MobileWeb/script/ballbyball.wicket.js" type="text/javascript"></script>
-        <script src="/MobileWeb/script/ballbyball.matchState.js" type="text/javascript"></script>
-        <script src="/MobileWeb/script/ballbyball.playerStub.js" type="text/javascript"></script>
-        <script src="/MobileWeb/script/ballbyball.matchConditionsType.js" type="text/javascript"></script>
+<!-- Externals -->
+<script src="./js/jquery-2.1.0.js"></script>
+<script src="./js/jquery.pulse.min.js"></script>
+<script src="/MobileWeb/script/URI.js"></script>
+<script src="/MobileWeb/script/purl.js"></script>
+<script src="/MobileWeb/script/jquery.json-2.3.min.js" type="text/javascript"></script>
+<script src="/MobileWeb/script/jquery.Storage.js" type="text/javascript"></script>
+<script src="/MobileWeb/script/raphael-min.js" type="text/javascript"></script>
 
-        <!-- Core functionality -->
-        <script src="/MobileWeb/script/ballbyball.functions.js" type="text/javascript"></script>
-        <script src="/MobileWeb/script/ballbyball.photoCapture.js" type="text/javascript"></script>
+<!-- Object definitions -->
+<script src="/MobileWeb/script/ballbyball.globals.js" type="text/javascript"></script>
+<script src="/MobileWeb/script/ballbyball.ball.js" type="text/javascript"></script>
+<script src="/MobileWeb/script/ballbyball.over.js" type="text/javascript"></script>
+<script src="/MobileWeb/script/ballbyball.wicket.js" type="text/javascript"></script>
+<script src="/MobileWeb/script/ballbyball.matchState.js" type="text/javascript"></script>
+<script src="/MobileWeb/script/ballbyball.playerStub.js" type="text/javascript"></script>
+<script src="/MobileWeb/script/ballbyball.matchConditionsType.js" type="text/javascript"></script>
 
-        <!-- Path to your app js-->
-        <script type="text/javascript" src="./scoring-app.js"></script>
-        <script type="text/javascript" src="./mobile.pages.newover.js"></script>
-        <script type="text/javascript" src="./mobile.pages.scoring.js"></script>
-        <script type="text/javascript" src="./mobile.pages.wicket.js"></script>
-        <script type="text/javascript" src="./mobile.pages.endover.js"></script>
-        <script type="text/javascript" src="./mobile.pages.endInnings.js"></script>
-        <script type="text/javascript" src="./mobile.pages.oppositionscoring.js"></script>
-        <script type="text/javascript" src="./mobile.util.wagonwheel.js"></script>
-        <script type="text/javascript" src="./mobile.functions.maths.js"></script>
-        <script type="text/javascript" src="./mobile.functions.stringutils.js"></script>
+<!-- Core functionality -->
+<script src="/MobileWeb/script/ballbyball.functions.js" type="text/javascript"></script>
+<script src="/MobileWeb/script/ballbyball.photoCapture.js" type="text/javascript"></script>
+
+<!-- Path to your app js-->
+<script type="text/javascript" src="./scoring-app.js"></script>
+
+<!-- Pages -->
+<script type="text/javascript" src="./mobile.pages.newover.js"></script>
+<script type="text/javascript" src="./mobile.pages.scoring.js"></script>
+<script type="text/javascript" src="./mobile.pages.wicket.js"></script>
+<script type="text/javascript" src="./mobile.pages.endover.js"></script>
+<script type="text/javascript" src="./mobile.pages.endInnings.js"></script>
+<script type="text/javascript" src="./mobile.pages.oppositionscoring.js"></script>
+<script type="text/javascript" src="./mobile.pages.chooseMatch.js"></script>
+<script type="text/javascript" src="./mobile.pages.selectTeam.js"></script>
+<script type="text/javascript" src="./mobile.pages.matchConditions.js"></script>
+
+<!--Utils-->
+<script type="text/javascript" src="./mobile.util.wagonwheel.js"></script>
+<script type="text/javascript" src="./mobile.functions.maths.js"></script>
+<script type="text/javascript" src="./mobile.functions.stringutils.js"></script>
 </body>
 </html>
