@@ -159,3 +159,7 @@ html {
 .show-five-plus {
     display: none;
 }
+
+.flex-container {
+    display: flex;
+}

@@ -87,6 +87,13 @@ $$(document).on("page:init",
         $("#batsman-one-name").click(switchIfRequired);
         $("#batsman-two-name").click(switchIfRequired);
 
+        $("#share").click(function () {
+            var link = "http://www.thevillagecc.org.uk/livescorecard.aspx?matchId="+matchState.MatchId;
+            $("<textarea/>").appendTo("body").val(link).select().each(function () {
+                document.execCommand('copy');
+            }).remove();
+            showToastBottom('Link copied to clipboard ('+link+'). Share it on WhatsApp or whatever the cool kids are using these days');
+        });
 
 
         //once bound...
