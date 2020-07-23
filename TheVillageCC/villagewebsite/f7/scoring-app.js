@@ -65,6 +65,11 @@ var app = new Framework7({
             name: 'chooseMatch',
             path: '/chooseMatch/',
             url: 'chooseMatch.html'
+        },
+        {
+            name: 'debug',
+            path: '/debug/',
+            url: 'debug.html'
         }
     ],
     on: {

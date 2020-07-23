@@ -50,6 +50,11 @@ public class CommandHandler : IHttpHandler
                     break;
                 case "matchState":
                     ReturnCurrentMatchState(context, match);
+                    break; 
+                case "resetMatch":
+                    match.ResetBallByBallData();
+                    context.Response.ContentType = "text/plain";
+                    context.Response.StatusCode = 204;
                     break;
                 case "submitOver":
                     var stateFromClient = javaScriptSerializer.Deserialize<MatchState>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
