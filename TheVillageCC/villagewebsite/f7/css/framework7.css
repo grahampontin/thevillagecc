@@ -1,23 +1,23 @@
 /**
- * Framework7 5.2.0
+ * Framework7 5.7.10
  * Full featured mobile HTML framework for building iOS & Android apps
- * http://framework7.io/
+ * https://framework7.io/
  *
- * Copyright 2014-2019 Vladimir Kharlampidi
+ * Copyright 2014-2020 Vladimir Kharlampidi
  *
  * Released under the MIT License
  *
- * Released on: December 8, 2019
+ * Released on: July 27, 2020
  */
 
 /*====================
   Core
   ==================== */
 :root {
-  --f7-theme-color: #197008;
-  --f7-theme-color-rgb: 25, 112, 8;
-  --f7-theme-color-shade: #114a05;
-  --f7-theme-color-tint: #22960b;
+  --f7-theme-color: #17801e;
+  --f7-theme-color-rgb: 23, 128, 30;
+  --f7-theme-color-shade: #115d16;
+  --f7-theme-color-tint: #1da326;
   --f7-safe-area-left: 0px;
   --f7-safe-area-right: 0px;
   --f7-safe-area-top: 0px;
@@ -153,10 +153,10 @@
   --f7-color-red-rgb: 255, 59, 48;
   --f7-color-red-shade: #ff1407;
   --f7-color-red-tint: #ff6259;
-  --f7-color-green: #197008;
-  --f7-color-green-rgb: 25, 112, 8;
-  --f7-color-green-shade: #114a05;
-  --f7-color-green-tint: #22960b;
+  --f7-color-green: #17801e;
+  --f7-color-green-rgb: 23, 128, 30;
+  --f7-color-green-shade: #115d16;
+  --f7-color-green-tint: #1da326;
   --f7-color-blue: #2196f3;
   --f7-color-blue-rgb: 33, 150, 243;
   --f7-color-blue-shade: #0c82df;
@@ -209,10 +209,6 @@
   --f7-color-black-rgb: 0, 0, 0;
   --f7-color-black-shade: #000000;
   --f7-color-black-tint: #141414;
-  --f7-color-darkgray: #4d4d4d;
-  --f7-color-darkgray-rgb: 77, 77, 77;
-  --f7-color-darkgray-shade: #393939;
-  --f7-color-darkgray-tint: #616161;
 }
 .color-theme-red {
   --f7-theme-color: #ff3b30;
@@ -221,10 +217,10 @@
   --f7-theme-color-tint: #ff6259;
 }
 .color-theme-green {
-  --f7-theme-color: #197008;
-  --f7-theme-color-rgb: 25, 112, 8;
-  --f7-theme-color-shade: #114a05;
-  --f7-theme-color-tint: #22960b;
+  --f7-theme-color: #17801e;
+  --f7-theme-color-rgb: 23, 128, 30;
+  --f7-theme-color-shade: #115d16;
+  --f7-theme-color-tint: #1da326;
 }
 .color-theme-blue {
   --f7-theme-color: #2196f3;
@@ -304,12 +300,6 @@
   --f7-theme-color-shade: #000000;
   --f7-theme-color-tint: #141414;
 }
-.color-theme-darkgray {
-  --f7-theme-color: #4d4d4d;
-  --f7-theme-color-rgb: 77, 77, 77;
-  --f7-theme-color-shade: #393939;
-  --f7-theme-color-tint: #616161;
-}
 .color-red {
   --f7-theme-color: #ff3b30;
   --f7-theme-color-rgb: 255, 59, 48;
@@ -330,23 +320,23 @@
   --f7-theme-color-ripple-color: rgba(255, 59, 48, 0.3);
 }
 .color-green {
-  --f7-theme-color: #197008;
-  --f7-theme-color-rgb: 25, 112, 8;
-  --f7-theme-color-shade: #114a05;
-  --f7-theme-color-tint: #22960b;
+  --f7-theme-color: #17801e;
+  --f7-theme-color-rgb: 23, 128, 30;
+  --f7-theme-color-shade: #115d16;
+  --f7-theme-color-tint: #1da326;
 }
 .text-color-green {
-  --f7-theme-color-text-color: #197008;
+  --f7-theme-color-text-color: #17801e;
 }
 .bg-color-green {
-  --f7-theme-color-bg-color: #197008;
+  --f7-theme-color-bg-color: #17801e;
 }
 .border-color-green {
-  --f7-theme-color-border-color: #197008;
+  --f7-theme-color-border-color: #17801e;
 }
 .ripple-color-green,
 .ripple-green {
-  --f7-theme-color-ripple-color: rgba(25, 112, 8, 0.3);
+  --f7-theme-color-ripple-color: rgba(23, 128, 30, 0.3);
 }
 .color-blue {
   --f7-theme-color: #2196f3;
@@ -595,25 +585,6 @@
 .ripple-black {
   --f7-theme-color-ripple-color: rgba(0, 0, 0, 0.3);
 }
-.color-darkgray {
-  --f7-theme-color: #4d4d4d;
-  --f7-theme-color-rgb: 77, 77, 77;
-  --f7-theme-color-shade: #393939;
-  --f7-theme-color-tint: #616161;
-}
-.text-color-darkgray {
-  --f7-theme-color-text-color: #4d4d4d;
-}
-.bg-color-darkgray {
-  --f7-theme-color-bg-color: #4d4d4d;
-}
-.border-color-darkgray {
-  --f7-theme-color-border-color: #4d4d4d;
-}
-.ripple-color-darkgray,
-.ripple-darkgray {
-  --f7-theme-color-ripple-color: rgba(77, 77, 77, 0.3);
-}
 @font-face {
   font-family: 'framework7-core-icons';
   src: url("data:application/font-woff;charset=utf-8;base64, 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") format("woff");
@@ -646,6 +617,10 @@ body {
   font-size: var(--f7-font-size);
   line-height: var(--f7-line-height);
   color: var(--f7-text-color);
+}
+.theme-dark body,
+body.theme-dark {
+  background: #000;
 }
 .theme-dark {
   color: var(--f7-text-color);
@@ -762,12 +737,32 @@ html.device-full-viewport body {
 .framework7-root > .views {
   height: calc(100% - var(--f7-appbar-app-offset, 0px));
 }
+.view-resize-handler {
+  width: 6px;
+  height: 100%;
+  position: absolute;
+  left: var(--f7-page-master-width);
+  margin-left: -3px;
+  top: 0;
+  cursor: col-resize;
+  z-index: 1000;
+  display: none;
+}
+.view-master-detail .view-resize-handler {
+  display: block;
+}
 /* === Pages === */
 :root {
   --f7-page-master-width: 320px;
   --f7-page-master-border-color: rgba(0, 0, 0, 0.1);
   --f7-page-master-border-width: 1px;
   --f7-page-swipeback-transition-duration: 300ms;
+  --f7-page-parallax-transition-duration: 500ms;
+  --f7-page-cover-transition-duration: 450ms;
+  --f7-page-dive-transition-duration: 500ms;
+  --f7-page-fade-transition-duration: 500ms;
+  --f7-page-flip-transition-duration: 700ms;
+  --f7-page-push-transition-duration: 500ms;
   /*
   --f7-page-content-extra-padding-top: 0px;
   --f7-page-content-extra-padding-bottom: 0px;
@@ -1258,16 +1253,16 @@ html.device-full-viewport body {
   perspective: 1200px;
 }
 .router-transition-f7-cover-v-forward .page-next {
-  animation: f7-cover-v-next-to-current 450ms forwards;
+  animation: f7-cover-v-next-to-current var(--f7-page-cover-transition-duration) forwards;
 }
 .router-transition-f7-cover-v-forward .page-current {
-  animation: f7-cover-v-current-to-prev 450ms forwards;
+  animation: f7-cover-v-current-to-prev var(--f7-page-cover-transition-duration) forwards;
 }
 .router-transition-f7-cover-v-backward .page-current {
-  animation: f7-cover-v-current-to-next 450ms forwards;
+  animation: f7-cover-v-current-to-next var(--f7-page-cover-transition-duration) forwards;
 }
 .router-transition-f7-cover-v-backward .page-previous {
-  animation: f7-cover-v-prev-to-current 450ms forwards;
+  animation: f7-cover-v-prev-to-current var(--f7-page-cover-transition-duration) forwards;
 }
 @keyframes f7-cover-v-next-to-current {
   from {
@@ -1311,16 +1306,16 @@ html.device-full-viewport body {
   perspective: 1200px;
 }
 .router-transition-f7-cover-forward .page-next {
-  animation: f7-cover-next-to-current 450ms forwards;
+  animation: f7-cover-next-to-current var(--f7-page-cover-transition-duration) forwards;
 }
 .router-transition-f7-cover-forward .page-current {
-  animation: f7-cover-current-to-prev 450ms forwards;
+  animation: f7-cover-current-to-prev var(--f7-page-cover-transition-duration) forwards;
 }
 .router-transition-f7-cover-backward .page-current {
-  animation: f7-cover-current-to-next 450ms forwards;
+  animation: f7-cover-current-to-next var(--f7-page-cover-transition-duration) forwards;
 }
 .router-transition-f7-cover-backward .page-previous {
-  animation: f7-cover-prev-to-current 450ms forwards;
+  animation: f7-cover-prev-to-current var(--f7-page-cover-transition-duration) forwards;
 }
 @keyframes f7-cover-next-to-current {
   from {
@@ -1364,16 +1359,16 @@ html.device-full-viewport body {
   perspective: 1200px;
 }
 .router-transition-f7-dive-forward .page-next {
-  animation: f7-dive-next-to-current 500ms forwards;
+  animation: f7-dive-next-to-current var(--f7-page-dive-transition-duration) forwards;
 }
 .router-transition-f7-dive-forward .page-current {
-  animation: f7-dive-current-to-prev 500ms forwards;
+  animation: f7-dive-current-to-prev var(--f7-page-dive-transition-duration) forwards;
 }
 .router-transition-f7-dive-backward .page-current {
-  animation: f7-dive-current-to-next 500ms forwards;
+  animation: f7-dive-current-to-next var(--f7-page-dive-transition-duration) forwards;
 }
 .router-transition-f7-dive-backward .page-previous {
-  animation: f7-dive-prev-to-current 500ms forwards;
+  animation: f7-dive-prev-to-current var(--f7-page-dive-transition-duration) forwards;
 }
 @keyframes f7-dive-next-to-current {
   from {
@@ -1433,16 +1428,16 @@ html.device-full-viewport body {
 }
 .router-transition-f7-fade-forward .page-next {
   opacity: 0 !important;
-  animation: f7-fade-in 500ms forwards;
+  animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
 }
 .router-transition-f7-fade-forward .page-current {
-  animation: f7-fade-out 500ms forwards;
+  animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
 }
 .router-transition-f7-fade-backward .page-current {
-  animation: f7-fade-out 500ms forwards;
+  animation: f7-fade-out var(--f7-page-fade-transition-duration) forwards;
 }
 .router-transition-f7-fade-backward .page-previous {
-  animation: f7-fade-in 500ms forwards;
+  animation: f7-fade-in var(--f7-page-fade-transition-duration) forwards;
 }
 @keyframes f7-fade-in {
   from {
@@ -1477,16 +1472,16 @@ html.device-full-viewport body {
           backface-visibility: hidden;
 }
 .router-transition-f7-flip-forward .page-next {
-  animation: f7-flip-next-to-current 700ms forwards;
+  animation: f7-flip-next-to-current var(--f7-page-flip-transition-duration) forwards;
 }
 .router-transition-f7-flip-forward .page-current {
-  animation: f7-flip-current-to-prev 700ms forwards;
+  animation: f7-flip-current-to-prev var(--f7-page-flip-transition-duration) forwards;
 }
 .router-transition-f7-flip-backward .page-current {
-  animation: f7-flip-current-to-next 700ms forwards;
+  animation: f7-flip-current-to-next var(--f7-page-flip-transition-duration) forwards;
 }
 .router-transition-f7-flip-backward .page-previous {
-  animation: f7-flip-prev-to-current 700ms forwards;
+  animation: f7-flip-prev-to-current var(--f7-page-flip-transition-duration) forwards;
 }
 @keyframes f7-flip-next-to-current {
   from {
@@ -1529,16 +1524,16 @@ html.device-full-viewport body {
   }
 }
 .router-transition-f7-parallax-forward .page-next {
-  animation: f7-parallax-next-to-current 500ms forwards;
+  animation: f7-parallax-next-to-current var(--f7-page-parallax-transition-duration) forwards;
 }
 .router-transition-f7-parallax-forward .page-current {
-  animation: f7-parallax-current-to-prev 500ms forwards;
+  animation: f7-parallax-current-to-prev var(--f7-page-parallax-transition-duration) forwards;
 }
 .router-transition-f7-parallax-backward .page-current {
-  animation: f7-parallax-current-to-next 500ms forwards;
+  animation: f7-parallax-current-to-next var(--f7-page-parallax-transition-duration) forwards;
 }
 .router-transition-f7-parallax-backward .page-previous {
-  animation: f7-parallax-prev-to-current 500ms forwards;
+  animation: f7-parallax-prev-to-current var(--f7-page-parallax-transition-duration) forwards;
 }
 @keyframes f7-parallax-next-to-current {
   from {
@@ -1573,16 +1568,16 @@ html.device-full-viewport body {
   }
 }
 .router-transition-f7-push-forward .page-next {
-  animation: f7-push-next-to-current 500ms forwards;
+  animation: f7-push-next-to-current var(--f7-page-push-transition-duration) forwards;
 }
 .router-transition-f7-push-forward .page-current {
-  animation: f7-push-current-to-prev 500ms forwards;
+  animation: f7-push-current-to-prev var(--f7-page-push-transition-duration) forwards;
 }
 .router-transition-f7-push-backward .page-current {
-  animation: f7-push-current-to-next 500ms forwards;
+  animation: f7-push-current-to-next var(--f7-page-push-transition-duration) forwards;
 }
 .router-transition-f7-push-backward .page-previous {
-  animation: f7-push-prev-to-current 500ms forwards;
+  animation: f7-push-prev-to-current var(--f7-page-push-transition-duration) forwards;
 }
 @keyframes f7-push-next-to-current {
   from {
@@ -1941,6 +1936,9 @@ html.device-full-viewport body {
 .navbar-hidden .navbar-inner > .right {
   opacity: 0 !important;
 }
+.navbar-hidden .subnavbar {
+  pointer-events: auto;
+}
 .navbar-hidden-statusbar {
   transform: translate3d(0, calc(-1 * var(--f7-navbar-height) - var(--f7-safe-area-top)), 0);
 }
@@ -1958,6 +1956,7 @@ html.device-full-viewport body {
   box-sizing: border-box;
   padding: var(--f7-safe-area-top) calc(var(--f7-navbar-inner-padding-right) + var(--f7-safe-area-right)) 0 calc(var(--f7-navbar-inner-padding-left) + var(--f7-safe-area-left));
   transform: translate3d(0, 0, 0);
+  z-index: 10;
 }
 .views > .navbar,
 .view > .navbar,
@@ -1965,18 +1964,27 @@ html.device-full-viewport body {
 .navbars > .navbar {
   position: absolute;
 }
-.navbar-large .navbar-bg,
-.ios .router-navbar-transition-to-large .navbar-bg,
-.ios .router-navbar-transition-from-large .navbar-bg,
-.navbar-bg.ios-swipeback-navbar-bg-large,
-.navbar-large-transparent .navbar-bg.ios-swipeback-navbar-bg-large {
+.navbar-transparent:not(.navbar-large):not(.navbar-transparent-visible):not(.with-searchbar-expandable-enabled) .navbar-bg,
+.navbar-transparent:not(.navbar-large):not(.navbar-transparent-visible):not(.with-searchbar-expandable-enabled) .title {
+  opacity: 0;
+}
+.navbar-large .navbar-bg {
   height: calc(100% + var(--f7-navbar-large-title-height));
   transform: translate3d(0px, calc(-1 * var(--f7-navbar-large-collapse-progress) * var(--f7-navbar-large-title-height)), 0);
 }
-.navbar-large-transparent .navbar-bg {
+.navbar-large-transparent .navbar-bg,
+.navbar-large.navbar-transparent .navbar-bg {
   opacity: var(--f7-navbar-large-collapse-progress);
   height: 100%;
   transform: none;
+}
+.ios .router-navbar-transition-to-large .navbar-bg,
+.ios .router-navbar-transition-from-large .navbar-bg,
+.navbar-bg.ios-swipeback-navbar-bg-large,
+.navbar-large-transparent .navbar-bg.ios-swipeback-navbar-bg-large,
+.navbar-large.navbar-transparent .navbar-bg.ios-swipeback-navbar-bg-large {
+  height: calc(100% + var(--f7-navbar-large-title-height));
+  transform: translate3d(0px, calc(-1 * var(--f7-navbar-large-collapse-progress) * var(--f7-navbar-large-title-height)), 0);
 }
 .ios .navbar:not(.navbar-large) .navbar-bg {
   --f7-navbar-large-collapse-progress: 1;
@@ -2211,6 +2219,16 @@ html.device-full-viewport body {
   transform: translate3d(0, 0, 0) !important;
   opacity: 1 !important;
 }
+.ios .router-transition-forward .navbar-next.navbar-transparent:not(.navbar-large):not(.navbar-transparent-visible) .title,
+.ios .router-transition-backward .navbar-previous.navbar-transparent:not(.navbar-large):not(.navbar-transparent-visible) .title {
+  animation: none;
+}
+.ios .router-transition-forward .navbar-next.navbar-transparent:not(.navbar-large):not(.navbar-transparent-visible) .sliding.title,
+.ios .router-transition-backward .navbar-previous.navbar-transparent:not(.navbar-large):not(.navbar-transparent-visible) .sliding.title,
+.ios .router-transition-forward .navbar-next.navbar-transparent:not(.navbar-large):not(.navbar-transparent-visible) .sliding .title,
+.ios .router-transition-backward .navbar-previous.navbar-transparent:not(.navbar-large):not(.navbar-transparent-visible) .sliding .title {
+  opacity: 0 !important;
+}
 .ios .router-transition-backward .navbar-previous.with-searchbar-expandable-enabled-no-transition .left,
 .ios .router-transition-backward .navbar-previous.with-searchbar-expandable-enabled .left,
 .ios .router-transition-backward .navbar-previous.with-searchbar-expandable-enabled-no-transition .title,
@@ -2296,7 +2314,8 @@ html.device-full-viewport body {
 .ios .router-transition-forward .navbar-current.navbar-large-collapsed:not(.router-navbar-transition-to-large) .navbar-bg {
   animation-name: ios-navbar-bg-from-ct-to-lt;
 }
-.ios .router-transition-forward .navbar-current.navbar-large-collapsed.navbar-large-transparent:not(.router-navbar-transition-to-large) .navbar-bg {
+.ios .router-transition-forward .navbar-current.navbar-large-collapsed.navbar-large-transparent:not(.router-navbar-transition-to-large) .navbar-bg,
+.ios .router-transition-forward .navbar-current.navbar-large-collapsed.navbar-large.navbar-transparent:not(.router-navbar-transition-to-large) .navbar-bg {
   animation-name: ios-navbar-transparent-bg-from-c-to-l;
 }
 .ios .router-transition-forward .navbar-next .navbar-bg {
@@ -2323,7 +2342,8 @@ html.device-full-viewport body {
 .ios .router-transition-backward .navbar-current.navbar-large-collapsed .navbar-bg {
   animation-name: ios-navbar-bg-from-ct-to-rt;
 }
-.ios .router-transition-backward .navbar-current.navbar-large-collapsed.navbar-large-transparent .navbar-bg {
+.ios .router-transition-backward .navbar-current.navbar-large-collapsed.navbar-large-transparent .navbar-bg,
+.ios .router-transition-backward .navbar-current.navbar-large-collapsed.navbar-large.navbar-transparent .navbar-bg {
   animation-name: ios-navbar-bg-from-cb-to-rb;
 }
 .ios .router-transition-backward .navbar-current.navbar-large-collapsed.router-navbar-transition-to-large .navbar-bg {
@@ -2341,10 +2361,12 @@ html.device-full-viewport body {
 .ios .router-transition-backward .navbar-previous.navbar-large-collapsed .navbar-bg {
   animation-name: ios-navbar-bg-from-lt-to-ct;
 }
-.ios .router-transition-backward .navbar-previous.navbar-large-collapsed.navbar-large-transparent .navbar-bg {
+.ios .router-transition-backward .navbar-previous.navbar-large-collapsed.navbar-large-transparent .navbar-bg,
+.ios .router-transition-backward .navbar-previous.navbar-large-collapsed.navbar-large.navbar-transparent .navbar-bg {
   animation-name: ios-navbar-transparent-bg-from-l-to-c;
 }
-.ios .router-transition-backward .navbar-previous.navbar-large-collapsed.navbar-large-transparent.router-navbar-transition-from-large .navbar-bg {
+.ios .router-transition-backward .navbar-previous.navbar-large-collapsed.navbar-large-transparent.router-navbar-transition-from-large .navbar-bg,
+.ios .router-transition-backward .navbar-previous.navbar-large-collapsed.navbar-large.navbar-transparent.router-navbar-transition-from-large .navbar-bg {
   animation-name: ios-navbar-bg-from-lb-to-ct;
 }
 .view-master-detail .navbars {
@@ -2396,7 +2418,8 @@ html.device-full-viewport body {
   transition-duration: 0ms;
   animation: none !important;
 }
-.view-master-detail.router-transition .navbar-master.navbar-large-transparent .navbar-bg {
+.view-master-detail.router-transition .navbar-master.navbar-large-transparent .navbar-bg,
+.view-master-detail.router-transition .navbar-master.navbar-large.navbar-transparent .navbar-bg {
   height: 100% !important;
   opacity: var(--f7-navbar-large-collapse-progress) !important;
 }
@@ -3021,6 +3044,7 @@ html.device-full-viewport body {
   top: auto;
   pointer-events: none;
   background: var(--f7-toolbar-bottom-shadow-image);
+  transform: translate3d(0, 0, 0);
 }
 .toolbar-inner {
   position: absolute;
@@ -5464,11 +5488,19 @@ input[type="button"].button {
   --f7-button-font-weight: var(--f7-segmented-strong-button-font-weight);
   --f7-button-text-transform: var(--f7-segmented-strong-button-text-transform);
   --f7-button-pressed-bg-color: var(--f7-segmented-strong-button-pressed-bg-color);
+  position: relative;
   background: var(--f7-segmented-strong-bg-color);
   border-radius: calc(var(--f7-button-border-radius) + 2px);
   box-shadow: none;
   padding: var(--f7-segmented-strong-padding);
   overflow: hidden;
+}
+.segmented-strong .button,
+.ios .segmented-strong-ios .button,
+.md .segmented-strong-md .button,
+.aurora .segmented-strong-aurora .button {
+  z-index: 1;
+  transform: translate3d(0, 0, 0);
 }
 .segmented-strong .button,
 .ios .segmented-strong-ios .button,
@@ -5498,16 +5530,105 @@ input[type="button"].button {
 .ios .segmented-strong-ios .button.tab-link-active,
 .md .segmented-strong-md .button.tab-link-active,
 .aurora .segmented-strong-aurora .button.tab-link-active {
-  --f7-button-hover-bg-color: var(--f7-segmented-strong-button-active-bg-color);
-  --f7-button-bg-color: var(--f7-segmented-strong-button-active-bg-color);
+  --f7-button-hover-bg-color: transparent;
+  --f7-button-bg-color: transparent;
   --f7-button-text-color: var(--f7-segmented-strong-button-active-text-color);
   --f7-button-font-weight: var(--f7-segmented-strong-button-active-font-weight);
-  --f7-button-box-shadow: var(--f7-segmented-strong-button-active-box-shadow);
+}
+.segmented-strong .segmented-highlight,
+.ios .segmented-strong-ios .segmented-highlight,
+.md .segmented-strong-md .segmented-highlight,
+.aurora .segmented-strong-aurora .segmented-highlight {
+  --f7-segmented-highlight-num: 1;
+  --f7-segmented-highlight-active: 0;
+  --f7-segmented-highlight-padding: calc(var(--f7-segmented-strong-padding) * 2);
+  --f7-segmented-highlight-between: var(--f7-segmented-strong-between-buttons);
+  --f7-segmented-highlight-width: calc((100% - var(--f7-segmented-highlight-padding) - var(--f7-segmented-highlight-between) * (var(--f7-segmented-highlight-num) - 1)) / var(--f7-segmented-highlight-num));
+  position: absolute;
+  background-color: var(--f7-segmented-strong-button-active-bg-color);
+  border-radius: var(--f7-button-border-radius);
+  box-shadow: var(--f7-segmented-strong-button-active-box-shadow);
+  left: var(--f7-segmented-strong-padding);
+  top: var(--f7-segmented-strong-padding);
+  height: calc(100% - var(--f7-segmented-strong-padding) * 2);
+  width: var(--f7-segmented-highlight-width);
+  z-index: 0;
+  transform: translateX(calc(var(--f7-segmented-highlight-active) * 100% + var(--f7-segmented-highlight-active) * var(--f7-segmented-highlight-between)));
+  transition: 200ms;
+}
+.button:nth-child(2) ~ .segmented-highlight {
+  --f7-segmented-highlight-num: 2;
+}
+.button:nth-child(3) ~ .segmented-highlight {
+  --f7-segmented-highlight-num: 3;
+}
+.button:nth-child(4) ~ .segmented-highlight {
+  --f7-segmented-highlight-num: 4;
+}
+.button:nth-child(5) ~ .segmented-highlight {
+  --f7-segmented-highlight-num: 5;
+}
+.button:nth-child(6) ~ .segmented-highlight {
+  --f7-segmented-highlight-num: 6;
+}
+.button:nth-child(7) ~ .segmented-highlight {
+  --f7-segmented-highlight-num: 7;
+}
+.button:nth-child(8) ~ .segmented-highlight {
+  --f7-segmented-highlight-num: 8;
+}
+.button:nth-child(9) ~ .segmented-highlight {
+  --f7-segmented-highlight-num: 9;
+}
+.button:nth-child(10) ~ .segmented-highlight {
+  --f7-segmented-highlight-num: 10;
+}
+.button-active:nth-child(2) ~ .segmented-highlight,
+.tab-link-active:nth-child(2) ~ .segmented-highlight {
+  --f7-segmented-highlight-active: 1;
+}
+.button-active:nth-child(3) ~ .segmented-highlight,
+.tab-link-active:nth-child(3) ~ .segmented-highlight {
+  --f7-segmented-highlight-active: 2;
+}
+.button-active:nth-child(4) ~ .segmented-highlight,
+.tab-link-active:nth-child(4) ~ .segmented-highlight {
+  --f7-segmented-highlight-active: 3;
+}
+.button-active:nth-child(5) ~ .segmented-highlight,
+.tab-link-active:nth-child(5) ~ .segmented-highlight {
+  --f7-segmented-highlight-active: 4;
+}
+.button-active:nth-child(6) ~ .segmented-highlight,
+.tab-link-active:nth-child(6) ~ .segmented-highlight {
+  --f7-segmented-highlight-active: 5;
+}
+.button-active:nth-child(7) ~ .segmented-highlight,
+.tab-link-active:nth-child(7) ~ .segmented-highlight {
+  --f7-segmented-highlight-active: 6;
+}
+.button-active:nth-child(8) ~ .segmented-highlight,
+.tab-link-active:nth-child(8) ~ .segmented-highlight {
+  --f7-segmented-highlight-active: 7;
+}
+.button-active:nth-child(9) ~ .segmented-highlight,
+.tab-link-active:nth-child(9) ~ .segmented-highlight {
+  --f7-segmented-highlight-active: 8;
+}
+.button-active:nth-child(10) ~ .segmented-highlight,
+.tab-link-active:nth-child(10) ~ .segmented-highlight {
+  --f7-segmented-highlight-active: 9;
 }
 .segmented-round,
 .ios .segmented-round-ios,
 .md .segmented-round-md,
 .aurora .segmented-round-aurora {
+  border-radius: var(--f7-button-height);
+}
+.segmented-round .segmented-highlight,
+.ios .segmented-round-ios .segmented-highlight,
+.md .segmented-round-md .segmented-highlight,
+.aurora .segmented-round-aurora .segmented-highlight {
   border-radius: var(--f7-button-height);
 }
 .subnavbar .segmented {
@@ -5736,7 +5857,8 @@ i.icon {
 .popover-backdrop,
 .popup-backdrop,
 .preloader-backdrop,
-.sheet-backdrop {
+.sheet-backdrop,
+.fab-backdrop {
   position: absolute;
   left: 0;
   top: 0;
@@ -5754,7 +5876,8 @@ i.icon {
 .popover-backdrop.not-animated,
 .popup-backdrop.not-animated,
 .preloader-backdrop.not-animated,
-.sheet-backdrop.not-animated {
+.sheet-backdrop.not-animated,
+.fab-backdrop.not-animated {
   transition-duration: 0ms;
 }
 .custom-modal-backdrop.backdrop-in,
@@ -5763,7 +5886,8 @@ i.icon {
 .popover-backdrop.backdrop-in,
 .popup-backdrop.backdrop-in,
 .preloader-backdrop.backdrop-in,
-.sheet-backdrop.backdrop-in {
+.sheet-backdrop.backdrop-in,
+.fab-backdrop.backdrop-in {
   visibility: visible;
   opacity: 1;
 }

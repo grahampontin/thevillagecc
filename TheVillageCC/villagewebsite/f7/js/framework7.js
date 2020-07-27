@@ -1,13 +1,13 @@
 /**
- * Framework7 5.2.0
+ * Framework7 5.7.10
  * Full featured mobile HTML framework for building iOS & Android apps
- * http://framework7.io/
+ * https://framework7.io/
  *
- * Copyright 2014-2019 Vladimir Kharlampidi
+ * Copyright 2014-2020 Vladimir Kharlampidi
  *
  * Released under the MIT License
  *
- * Released on: December 8, 2019
+ * Released on: July 27, 2020
  */
 
 (function (global, factory) {
@@ -672,90 +672,147 @@
   Template7.partials = Template7Class.partials;
 
   /**
-   * SSR Window 1.0.1
+   * SSR Window 2.0.0
    * Better handling for window object in SSR environment
    * https://github.com/nolimits4web/ssr-window
    *
-   * Copyright 2018, Vladimir Kharlampidi
+   * Copyright 2020, Vladimir Kharlampidi
    *
    * Licensed under MIT
    *
-   * Released on: July 18, 2018
+   * Released on: May 12, 2020
    */
-  var doc = (typeof document === 'undefined') ? {
-    body: {},
-    addEventListener: function addEventListener() {},
-    removeEventListener: function removeEventListener() {},
-    activeElement: {
-      blur: function blur() {},
-      nodeName: '',
-    },
-    querySelector: function querySelector() {
-      return null;
-    },
-    querySelectorAll: function querySelectorAll() {
-      return [];
-    },
-    getElementById: function getElementById() {
-      return null;
-    },
-    createEvent: function createEvent() {
-      return {
-        initEvent: function initEvent() {},
-      };
-    },
-    createElement: function createElement() {
-      return {
-        children: [],
-        childNodes: [],
-        style: {},
-        setAttribute: function setAttribute() {},
-        getElementsByTagName: function getElementsByTagName() {
-          return [];
-        },
-      };
-    },
-    location: { hash: '' },
-  } : document; // eslint-disable-line
+  /* eslint-disable no-param-reassign */
+  function isObject(obj) {
+      return (obj !== null &&
+          typeof obj === 'object' &&
+          'constructor' in obj &&
+          obj.constructor === Object);
+  }
+  function extend(target, src) {
+      if (target === void 0) { target = {}; }
+      if (src === void 0) { src = {}; }
+      Object.keys(src).forEach(function (key) {
+          if (typeof target[key] === 'undefined')
+              { target[key] = src[key]; }
+          else if (isObject(src[key]) &&
+              isObject(target[key]) &&
+              Object.keys(src[key]).length > 0) {
+              extend(target[key], src[key]);
+          }
+      });
+  }
 
-  var win = (typeof window === 'undefined') ? {
-    document: doc,
-    navigator: {
-      userAgent: '',
-    },
-    location: {},
-    history: {},
-    CustomEvent: function CustomEvent() {
-      return this;
-    },
-    addEventListener: function addEventListener() {},
-    removeEventListener: function removeEventListener() {},
-    getComputedStyle: function getComputedStyle() {
-      return {
-        getPropertyValue: function getPropertyValue() {
-          return '';
-        },
-      };
-    },
-    Image: function Image() {},
-    Date: function Date() {},
-    screen: {},
-    setTimeout: function setTimeout() {},
-    clearTimeout: function clearTimeout() {},
-  } : window; // eslint-disable-line
+  var doc = typeof document !== 'undefined' ? document : {};
+  var ssrDocument = {
+      body: {},
+      addEventListener: function () { },
+      removeEventListener: function () { },
+      activeElement: {
+          blur: function () { },
+          nodeName: '',
+      },
+      querySelector: function () {
+          return null;
+      },
+      querySelectorAll: function () {
+          return [];
+      },
+      getElementById: function () {
+          return null;
+      },
+      createEvent: function () {
+          return {
+              initEvent: function () { },
+          };
+      },
+      createElement: function () {
+          return {
+              children: [],
+              childNodes: [],
+              style: {},
+              setAttribute: function () { },
+              getElementsByTagName: function () {
+                  return [];
+              },
+          };
+      },
+      createElementNS: function () {
+          return {};
+      },
+      importNode: function () {
+          return null;
+      },
+      location: {
+          hash: '',
+          host: '',
+          hostname: '',
+          href: '',
+          origin: '',
+          pathname: '',
+          protocol: '',
+          search: '',
+      },
+  };
+  extend(doc, ssrDocument);
+
+  var win = typeof window !== 'undefined' ? window : {};
+  var ssrWindow = {
+      document: ssrDocument,
+      navigator: {
+          userAgent: '',
+      },
+      location: {
+          hash: '',
+          host: '',
+          hostname: '',
+          href: '',
+          origin: '',
+          pathname: '',
+          protocol: '',
+          search: '',
+      },
+      history: {
+          replaceState: function () { },
+          pushState: function () { },
+          go: function () { },
+          back: function () { },
+      },
+      CustomEvent: function CustomEvent() {
+          return this;
+      },
+      addEventListener: function () { },
+      removeEventListener: function () { },
+      getComputedStyle: function () {
+          return {
+              getPropertyValue: function () {
+                  return '';
+              },
+          };
+      },
+      Image: function () { },
+      Date: function () { },
+      screen: {},
+      setTimeout: function () { },
+      clearTimeout: function () { },
+      matchMedia: function () {
+          return {};
+      },
+  };
+  extend(win, ssrWindow);
 
   /**
-   * Dom7 2.1.3
+   * Dom7 2.1.5
    * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
    * http://framework7.io/docs/dom.html
    *
-   * Copyright 2019, Vladimir Kharlampidi
+   * Copyright 2020, Vladimir Kharlampidi
    * The iDangero.us
    * http://www.idangero.us/
    *
    * Licensed under MIT
    *
-   * Released on: February 11, 2019
+   * Released on: May 15, 2020
    */
 
   var Dom7 = function Dom7(arr) {
@@ -2770,11 +2827,9 @@
 
   var Support = (function Support() {
     return {
-      touch: (function checkTouch() {
-        return !!((win.navigator.maxTouchPoints > 0) || ('ontouchstart' in win) || (win.DocumentTouch && doc instanceof win.DocumentTouch));
-      }()),
+      touch: !!(('ontouchstart' in win) || (win.DocumentTouch && doc instanceof win.DocumentTouch)),
 
-      pointerEvents: !!win.PointerEvent && ('maxTouchPoints' in win.navigator) && win.navigator.maxTouchPoints > 0,
+      pointerEvents: !!win.PointerEvent && ('maxTouchPoints' in win.navigator) && win.navigator.maxTouchPoints >= 0,
 
       observer: (function checkObserver() {
         return ('MutationObserver' in win || 'WebkitMutationObserver' in win);
@@ -2826,6 +2881,7 @@
       cordova: !!(win.cordova || win.phonegap),
       phonegap: !!(win.cordova || win.phonegap),
       electron: false,
+      nwjs: false,
     };
 
     var screenWidth = win.screen.width;
@@ -2840,20 +2896,26 @@
     var firefox = ua.indexOf('Gecko/') >= 0 && ua.indexOf('Firefox/') >= 0;
     var windows = platform === 'Win32';
     var electron = ua.toLowerCase().indexOf('electron') >= 0;
+    var nwjs = typeof nw !== 'undefined' && typeof process !== 'undefined' && typeof process.versions !== 'undefined' && typeof process.versions.nw !== 'undefined';
     var macos = platform === 'MacIntel';
 
     // iPadOs 13 fix
+    var iPadScreens = [
+      '1024x1366',
+      '1366x1024',
+      '834x1194',
+      '1194x834',
+      '834x1112',
+      '1112x834',
+      '768x1024',
+      '1024x768' ];
     if (!ipad
       && macos
       && Support.touch
-      && (
-        (screenWidth === 1024 && screenHeight === 1366) // Pro 12.9
-        || (screenWidth === 834 && screenHeight === 1194) // Pro 11
-        || (screenWidth === 834 && screenHeight === 1112) // Pro 10.5
-        || (screenWidth === 768 && screenHeight === 1024) // other
-      )
+      && iPadScreens.indexOf((screenWidth + "x" + screenHeight)) >= 0
     ) {
       ipad = ua.match(/(Version)\/([\d.]+)/);
+      if (!ipad) { ipad = [0, 1, '13_0_0']; }
       macos = false;
     }
 
@@ -2899,9 +2961,10 @@
     device.standalone = device.webView;
 
     // Desktop
-    device.desktop = !(device.ios || device.android) || electron;
+    device.desktop = !(device.ios || device.android) || electron || nwjs;
     if (device.desktop) {
       device.electron = electron;
+      device.nwjs = nwjs;
       device.macos = macos;
       device.windows = windows;
       if (device.macos) {
@@ -3188,7 +3251,7 @@
     if ( parameters === void 0 ) parameters = {};
 
     var defaultSelector = parameters.defaultSelector;
-    var constructor = parameters.constructor;
+    var Constructor = parameters.constructor;
     var domProp = parameters.domProp;
     var app = parameters.app;
     var addMethods = parameters.addMethods;
@@ -3197,13 +3260,13 @@
         var args = [], len = arguments.length;
         while ( len-- ) args[ len ] = arguments[ len ];
 
-        if (app) { return new (Function.prototype.bind.apply( constructor, [ null ].concat( [app], args) )); }
-        return new (Function.prototype.bind.apply( constructor, [ null ].concat( args) ));
+        if (app) { return new (Function.prototype.bind.apply( Constructor, [ null ].concat( [app], args) )); }
+        return new (Function.prototype.bind.apply( Constructor, [ null ].concat( args) ));
       },
       get: function get(el) {
         if ( el === void 0 ) el = defaultSelector;
 
-        if (el instanceof constructor) { return el; }
+        if (el instanceof Constructor) { return el; }
         var $el = $(el);
         if ($el.length === 0) { return undefined; }
         return $el[0][domProp];
@@ -3234,30 +3297,66 @@
     if ( parameters === void 0 ) parameters = {};
 
     var defaultSelector = parameters.defaultSelector;
-    var constructor = parameters.constructor;
+    var Constructor = parameters.constructor;
     var app = parameters.app;
     var methods = Utils.extend(
       ConstructorMethods({
         defaultSelector: defaultSelector,
-        constructor: constructor,
+        constructor: Constructor,
         app: app,
         domProp: 'f7Modal',
       }),
       {
-        open: function open(el, animate) {
+        open: function open(el, animate, targetEl) {
           var $el = $(el);
+          if ($el.length > 1 && targetEl) {
+            // check if same modal in other page
+            var $targetPage = $(targetEl).parents('.page');
+            if ($targetPage.length) {
+              $el.each(function (index, modalEl) {
+                var $modalEl = $(modalEl);
+                if ($modalEl.parents($targetPage)[0] === $targetPage[0]) {
+                  $el = $modalEl;
+                }
+              });
+            }
+          }
+          if ($el.length > 1) {
+            $el = $el.eq($el.length - 1);
+          }
           if (!$el.length) { return undefined; }
           var instance = $el[0].f7Modal;
-          if (!instance) { instance = new constructor(app, { el: $el }); }
+          if (!instance) {
+            var params = $el.dataset();
+            instance = new Constructor(app, Object.assign({}, {el: $el}, params));
+          }
           return instance.open(animate);
         },
-        close: function close(el, animate) {
+        close: function close(el, animate, targetEl) {
           if ( el === void 0 ) el = defaultSelector;
 
           var $el = $(el);
           if (!$el.length) { return undefined; }
+          if ($el.length > 1) {
+            // check if close link (targetEl) in this modal
+            var $parentEl;
+            if (targetEl) {
+              var $targetEl = $(targetEl);
+              if ($targetEl.length) {
+                $parentEl = $targetEl.parents($el);
+              }
+            }
+            if ($parentEl && $parentEl.length > 0) {
+              $el = $parentEl;
+            } else {
+              $el = $el.eq($el.length - 1);
+            }
+          }
           var instance = $el[0].f7Modal;
-          if (!instance) { instance = new constructor(app, { el: $el }); }
+          if (!instance) {
+            var params = $el.dataset();
+            instance = new Constructor(app, Object.assign({}, {el: $el}, params));
+          }
           return instance.close(animate);
         },
       }
@@ -3350,12 +3449,12 @@
               var id = Utils.id();
               var callbackLoadName = "f7_component_loader_callback_" + id;
 
-              var scriptEl = document.createElement('script');
+              var scriptEl = doc.createElement('script');
               scriptEl.innerHTML = "window." + callbackLoadName + " = function (Framework7, Framework7AutoInstallComponent) {return " + (scriptContent.trim()) + "}";
               $('head').append(scriptEl);
 
-              var componentLoader = window[callbackLoadName];
-              delete window[callbackLoadName];
+              var componentLoader = win[callbackLoadName];
+              delete win[callbackLoadName];
               $(scriptEl).remove();
 
               var module = componentLoader(Framework7, false);
@@ -3385,7 +3484,7 @@
           Framework7.request.get(
             modulePath.replace('.js', app.rtl ? '.rtl.css' : '.css'),
             function (styleContent) {
-              var styleEl = document.createElement('style');
+              var styleEl = doc.createElement('style');
               styleEl.innerHTML = styleContent;
               $('head').append(styleEl);
 
@@ -3435,6 +3534,8 @@
         autoDarkTheme: false,
         iosTranslucentBars: true,
         iosTranslucentModals: true,
+        component: undefined,
+        componentUrl: undefined,
       };
 
       // Extend defaults with modules params
@@ -3503,10 +3604,15 @@
         var html = doc.querySelector('html');
         if (media === DARK) {
           html.classList.add('theme-dark');
+          app.darkTheme = true;
+          app.emit('darkThemeChange', true);
         } else if (media === LIGHT) {
           html.classList.remove('theme-dark');
+          app.darkTheme = false;
+          app.emit('darkThemeChange', false);
         }
       };
+
       // Init
       if (app.params.init) {
         if (Device.cordova && app.params.initOnDeviceReady) {
@@ -3517,6 +3623,7 @@
           app.init();
         }
       }
+
       // Return app instance
       return app;
     }
@@ -3561,8 +3668,12 @@
       }
       if (app.mq.dark && app.mq.dark.matches) {
         html.classList.add('theme-dark');
+        app.darkTheme = true;
+        app.emit('darkThemeChange', true);
       } else if (app.mq.light && app.mq.light.matches) {
         html.classList.remove('theme-dark');
+        app.darkTheme = false;
+        app.emit('darkThemeChange', false);
       }
     };
 
@@ -3573,7 +3684,24 @@
       if (app.mq.light) { app.mq.light.removeListener(app.colorSchemeListener); }
     };
 
-    Framework7.prototype.init = function init () {
+    Framework7.prototype.initAppComponent = function initAppComponent (callback) {
+      var app = this;
+      app.router.componentLoader(
+        app.params.component,
+        app.params.componentUrl,
+        { componentOptions: { el: app.root[0], root: true } },
+        function (el) {
+          app.root = $(el);
+          app.root[0].f7 = app;
+          app.rootComponent = el.f7Component;
+          if (callback) { callback(); }
+        },
+        function () {}
+      );
+    };
+
+    // eslint-disable-next-line
+    Framework7.prototype._init = function _init () {
       var app = this;
       if (app.initialized) { return app; }
 
@@ -3624,6 +3752,17 @@
       app.emit('init');
 
       return app;
+    };
+
+    Framework7.prototype.init = function init () {
+      var app = this;
+      if (app.params.component || app.params.componentUrl) {
+        app.initAppComponent(function () {
+          app._init(); // eslint-disable-line
+        });
+      } else {
+        app._init(); // eslint-disable-line
+      }
     };
 
     // eslint-disable-next-line
@@ -4001,6 +4140,7 @@
     // Additional headers
     if (options.headers) {
       Object.keys(options.headers).forEach(function (headerName) {
+        if (typeof options.headers[headerName] === 'undefined') { return; }
         xhr.setRequestHeader(headerName, options.headers[headerName]);
       });
     }
@@ -4019,11 +4159,9 @@
       Utils.extend(xhr, options.xhrFields);
     }
 
-    var xhrTimeout;
 
     // Handle XHR
     xhr.onload = function onload() {
-      if (xhrTimeout) { clearTimeout(xhrTimeout); }
       if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 0) {
         var responseData;
         if (options.dataType === 'json') {
@@ -4053,21 +4191,17 @@
     };
 
     xhr.onerror = function onerror() {
-      if (xhrTimeout) { clearTimeout(xhrTimeout); }
       fireCallback('error', xhr, xhr.status, xhr.status);
       fireCallback('complete', xhr, 'error');
     };
 
     // Timeout
     if (options.timeout > 0) {
-      xhr.onabort = function onabort() {
-        if (xhrTimeout) { clearTimeout(xhrTimeout); }
-      };
-      xhrTimeout = setTimeout(function () {
-        xhr.abort();
+      xhr.timeout = options.timeout;
+      xhr.ontimeout = function () {
         fireCallback('error', xhr, 'timeout', 'timeout');
         fireCallback('complete', xhr, 'timeout');
-      }, options.timeout);
+      };
     }
 
     // Ajax start callback
@@ -4398,7 +4532,9 @@
       }
     }
     function handleMouseMove() {
-      $('.active-state').removeClass('active-state');
+      if (!params.activeStateOnMouseMove) {
+        $('.active-state').removeClass('active-state');
+      }
       if (useRipple) {
         rippleTouchMove();
       }
@@ -4589,16 +4725,18 @@
 
 
     var passiveListener = Support.passiveListener ? { passive: true } : false;
+    var passiveListenerCapture = Support.passiveListener ? { passive: true, capture: true } : true;
     var activeListener = Support.passiveListener ? { passive: false } : false;
+    var activeListenerCapture = Support.passiveListener ? { passive: false, capture: true } : true;
 
     doc.addEventListener('click', appClick, true);
 
     if (Support.passiveListener) {
-      doc.addEventListener(app.touchEvents.start, appTouchStartActive, activeListener);
+      doc.addEventListener(app.touchEvents.start, appTouchStartActive, activeListenerCapture);
       doc.addEventListener(app.touchEvents.move, appTouchMoveActive, activeListener);
       doc.addEventListener(app.touchEvents.end, appTouchEndActive, activeListener);
 
-      doc.addEventListener(app.touchEvents.start, appTouchStartPassive, passiveListener);
+      doc.addEventListener(app.touchEvents.start, appTouchStartPassive, passiveListenerCapture);
       doc.addEventListener(app.touchEvents.move, appTouchMovePassive, passiveListener);
       doc.addEventListener(app.touchEvents.end, appTouchEndPassive, passiveListener);
       if (Support.touch && Support.gestures) {
@@ -4614,7 +4752,7 @@
       doc.addEventListener(app.touchEvents.start, function (e) {
         appTouchStartActive(e);
         appTouchStartPassive(e);
-      }, false);
+      }, true);
       doc.addEventListener(app.touchEvents.move, function (e) {
         appTouchMoveActive(e);
         appTouchMovePassive(e);
@@ -4649,6 +4787,7 @@
       app.on('touchstart', handleMouseDown);
       app.on('touchmove', handleMouseMove);
       app.on('touchend', handleMouseUp);
+      doc.addEventListener('pointercancel', handleMouseUp, { passive: true });
     }
     doc.addEventListener('contextmenu', function (e) {
       if (params.disableContextMenu && (Device.ios || Device.android || Device.cordova)) {
@@ -4676,6 +4815,7 @@
         // Active State
         activeState: true,
         activeStateElements: 'a, button, label, span, .actions-button, .stepper-button, .stepper-button-plus, .stepper-button-minus, .card-expandable, .menu-item, .link, .item-link, .accordion-item-toggle',
+        activeStateOnMouseMove: false,
         mdTouchRipple: true,
         iosTouchRipple: false,
         auroraTouchRipple: false,
@@ -5228,12 +5368,22 @@
     function animatableNavElements() {
       var els = [];
       var inverter = app.rtl ? -1 : 1;
+      var currentNavIsTransparent = $currentNavbarEl.hasClass('navbar-transparent') && !$currentNavbarEl.hasClass('navbar-large') && !$currentNavbarEl.hasClass('navbar-transparent-visible');
       var currentNavIsLarge = $currentNavbarEl.hasClass('navbar-large');
       var currentNavIsCollapsed = $currentNavbarEl.hasClass('navbar-large-collapsed');
-      var currentNavIsTransparent = $currentNavbarEl.hasClass('navbar-large-transparent');
+      var currentNavIsLargeTransparent = $currentNavbarEl.hasClass('navbar-large-transparent')
+        || (
+          $currentNavbarEl.hasClass('navbar-large')
+          && $currentNavbarEl.hasClass('navbar-transparent')
+        );
+      var previousNavIsTransparent = $previousNavbarEl.hasClass('navbar-transparent') && !$previousNavbarEl.hasClass('navbar-large') && !$previousNavbarEl.hasClass('navbar-transparent-visible');
       var previousNavIsLarge = $previousNavbarEl.hasClass('navbar-large');
       var previousNavIsCollapsed = $previousNavbarEl.hasClass('navbar-large-collapsed');
-      var previousNavIsTransparent = $previousNavbarEl.hasClass('navbar-large-transparent');
+      var previousNavIsLargeTransparent = $previousNavbarEl.hasClass('navbar-large-transparent')
+        || (
+          $previousNavbarEl.hasClass('navbar-large')
+          && $previousNavbarEl.hasClass('navbar-transparent')
+        );
       var fromLarge = currentNavIsLarge && !currentNavIsCollapsed;
       var toLarge = previousNavIsLarge && !previousNavIsCollapsed;
       var $currentNavElements = $currentNavbarEl.find('.left, .title, .right, .subnavbar, .fading, .title-large, .navbar-bg');
@@ -5266,6 +5416,7 @@
           var isLeft = $navEl.hasClass('left');
           var isTitle = $navEl.hasClass('title');
           var isBg = $navEl.hasClass('navbar-bg');
+          if ((isTitle || isBg) && currentNavIsTransparent) { return; }
           if (!fromLarge && $navEl.hasClass('.title-large')) { return; }
           var el = {
             el: navEl,
@@ -5308,7 +5459,7 @@
             if (els.indexOf(el) < 0) { els.push(el); }
             if (!fromLarge && !toLarge) {
               if (currentNavIsCollapsed) {
-                if (currentNavIsTransparent) {
+                if (currentNavIsLargeTransparent) {
                   el.className = 'ios-swipeback-navbar-bg-large';
                 }
                 el.transform = function (progress) { return ("translateX(" + (100 * progress * inverter) + "%) translateY(calc(-1 * var(--f7-navbar-large-title-height)))"); };
@@ -5358,6 +5509,7 @@
           var isLeft = $navEl.hasClass('left');
           var isTitle = $navEl.hasClass('title');
           var isBg = $navEl.hasClass('navbar-bg');
+          if ((isTitle || isBg) && previousNavIsTransparent) { return; }
           var el = {
             el: navEl,
           };
@@ -5383,7 +5535,7 @@
             if (els.indexOf(el) < 0) { els.push(el); }
             if (!fromLarge && !toLarge) {
               if (previousNavIsCollapsed) {
-                if (previousNavIsTransparent) {
+                if (previousNavIsLargeTransparent) {
                   el.className = 'ios-swipeback-navbar-bg-large';
                 }
                 el.transform = function (progress) { return ("translateX(" + ((-100 + 100 * progress) * inverter) + "%) translateY(calc(-1 * var(--f7-navbar-large-title-height)))"); };
@@ -6075,6 +6227,8 @@
         .removeClass('navbar-previous navbar-current navbar-next')
         .addClass(("navbar-" + newPagePosition + (isMaster ? ' navbar-master' : '') + (isDetail ? ' navbar-master-detail' : '') + (isDetailRoot ? ' navbar-master-detail-root' : '')))
         .removeClass('stacked');
+      $newNavbarEl.trigger('navbar:position', { position: newPagePosition });
+      router.emit('navbarPosition', $newNavbarEl[0], newPagePosition);
       if (isMaster || isDetail) {
         router.emit('navbarRole', $newNavbarEl[0], { role: isMaster ? 'master' : 'detail', detailRoot: !!isDetailRoot });
       }
@@ -6516,7 +6670,7 @@
       return router;
     }
 
-    if (url || templateUrl || componentUrl) {
+    if (url || templateUrl || componentUrl || component) {
       router.allowPageChange = false;
     }
 
@@ -6569,6 +6723,7 @@
     var url;
     var createRoute;
     var name;
+    var path;
     var query;
     var params;
     var route;
@@ -6578,20 +6733,16 @@
       url = navigateParams.url;
       createRoute = navigateParams.route;
       name = navigateParams.name;
+      path = navigateParams.path;
       query = navigateParams.query;
       params = navigateParams.params;
     }
-    if (name) {
-      // find route by name
-      route = router.findRouteByKey('name', name);
-      if (!route) {
-        throw new Error(("Framework7: route with name \"" + name + "\" not found"));
-      }
-      url = router.constructRouteUrl(route, { params: params, query: query });
+    if (name || path) {
+      url = router.generateUrl({ path: path, name: name, params: params, query: query });
       if (url) {
         return router.navigate(url, navigateOptions);
       }
-      throw new Error(("Framework7: can't construct URL for route with name \"" + name + "\""));
+      return router;
     }
     var app = router.app;
     appRouterCheck(router, 'navigate');
@@ -6727,7 +6878,7 @@
         }
       }
       if (preloadMaster || (masterLoaded && navigateOptions.reloadAll)) {
-        router.navigate(route.route.masterRoute.path, {
+        router.navigate({ path: route.route.masterRoute.path, params: route.params || {} }, {
           animate: false,
           reloadAll: navigateOptions.reloadAll,
           reloadCurrent: navigateOptions.reloadCurrent,
@@ -7320,6 +7471,8 @@
         .addClass(("navbar-previous" + (isMaster ? ' navbar-master' : '') + (isDetail ? ' navbar-master-detail' : '') + (isDetailRoot ? ' navbar-master-detail-root' : '')))
         .removeClass('stacked')
         .removeAttr('aria-hidden');
+      $newNavbarEl.trigger('navbar:position', { position: 'previous' });
+      router.emit('navbarPosition', $newNavbarEl[0], 'previous');
       if (isMaster || isDetailRoot) {
         router.emit('navbarRole', $newNavbarEl[0], { role: isMaster ? 'master' : 'detail', detailRoot: !!isDetailRoot });
       }
@@ -7447,7 +7600,7 @@
         router.emit('pageMasterUnstack', $newPage[0]);
         if (dynamicNavbar) {
           $(app.navbar.getElByPage($newPage)).removeClass('navbar-master-stacked');
-          router.emi('navbarMasterUnstack', app.navbar.getElByPage($newPage));
+          router.emit('navbarMasterUnstack', app.navbar.getElByPage($newPage));
         }
       }
       // Page init and before init events
@@ -7679,7 +7832,7 @@
       return router;
     }
 
-    if (url || templateUrl || componentUrl) {
+    if (url || templateUrl || componentUrl || component) {
       router.allowPageChange = false;
     }
 
@@ -7744,12 +7897,7 @@
     var params = navigateOptions.params;
     var query = navigateOptions.query;
     if (name) {
-      // find route by name
-      route = router.findRouteByKey('name', name);
-      if (!route) {
-        throw new Error(("Framework7: route with name \"" + name + "\" not found"));
-      }
-      navigateUrl = router.constructRouteUrl(route, { params: params, query: query });
+      navigateUrl = router.generateUrl({ name: name, params: params, query: query });
       if (navigateUrl) {
         return router.back(navigateUrl, Utils.extend({}, navigateOptions, {
           name: null,
@@ -7757,7 +7905,7 @@
           query: null,
         }));
       }
-      throw new Error(("Framework7: can't construct URL for route with name \"" + name + "\""));
+      return router;
     }
 
     var app = router.app;
@@ -7783,7 +7931,11 @@
       if (modalToClose && modalToClose.$el) {
         var prevOpenedModals = modalToClose.$el.prevAll('.modal-in');
         if (prevOpenedModals.length && prevOpenedModals[0].f7Modal) {
-          previousRoute = prevOpenedModals[0].f7Modal.route;
+          var modalEl = prevOpenedModals[0];
+          // check if current router not inside of the modalEl
+          if (!router.$el.parents(modalEl).length) {
+            previousRoute = modalEl.f7Modal.route;
+          }
         }
       }
       if (!previousRoute) {
@@ -7837,11 +7989,16 @@
 
     var skipMaster;
     if (router.params.masterDetailBreakpoint > 0) {
+      var classes = [];
+      router.$el.children('.page').each(function (index, pageEl) {
+        classes.push(pageEl.className);
+      });
+
       var $previousMaster = router.$el.children('.page-current').prevAll('.page-master').eq(0);
       if ($previousMaster.length) {
         var expectedPreviousPageUrl = router.history[router.history.length - 2];
         var expectedPreviousPageRoute = router.findMatchingRoute(expectedPreviousPageUrl);
-        if (expectedPreviousPageRoute && expectedPreviousPageRoute.route === $previousMaster[0].f7Page.route.route) {
+        if (expectedPreviousPageRoute && $previousMaster[0].f7Page && expectedPreviousPageRoute.route === $previousMaster[0].f7Page.route.route) {
           $previousPage = $previousMaster;
           if (!navigateOptions.preload) {
             skipMaster = app.width >= router.params.masterDetailBreakpoint;
@@ -7849,6 +8006,7 @@
         }
       }
     }
+
     if (!navigateOptions.force && $previousPage.length && !skipMaster) {
       if (router.params.pushState
         && $previousPage[0].f7Page
@@ -8236,10 +8394,12 @@
         (direction === 'forward' ? $newPageEl : $oldPageEl).animationEnd(onCustomTransitionDone);
         if (dynamicNavbar) {
           if ($newNavbarEl && $newPageEl) {
+            router.setNavbarPosition($newNavbarEl, '');
             $newNavbarEl.removeClass('navbar-next navbar-previous navbar-current');
             $newPageEl.prepend($newNavbarEl);
           }
           if ($oldNavbarEl && $oldPageEl) {
+            router.setNavbarPosition($oldNavbarEl, '');
             $oldNavbarEl.removeClass('navbar-next navbar-previous navbar-current');
             $oldPageEl.prepend($oldNavbarEl);
           }
@@ -8328,12 +8488,12 @@
           if ($oldNavbarEl) {
             $oldNavbarEl.removeClass('router-navbar-transition-to-large router-navbar-transition-from-large');
           }
-          if ($newNavbarEl.hasClass('sliding')) {
+          if ($newNavbarEl.hasClass('sliding') || $newNavbarEl.children('.navbar-inner.sliding').length) {
             $newNavbarEl.find('.title, .left, .right, .left .icon, .subnavbar').transform('');
           } else {
             $newNavbarEl.find('.sliding').transform('');
           }
-          if ($oldNavbarEl.hasClass('sliding')) {
+          if ($oldNavbarEl.hasClass('sliding') || $oldNavbarEl.children('.navbar-inner.sliding').length) {
             $oldNavbarEl.find('.title, .left, .right, .left .icon, .subnavbar').transform('');
           } else {
             $oldNavbarEl.find('.sliding').transform('');
@@ -8529,6 +8689,38 @@
         url: url,
         path: path,
       };
+    };
+
+    Router.prototype.generateUrl = function generateUrl (parameters) {
+      if ( parameters === void 0 ) parameters = {};
+
+      if (typeof parameters === 'string') {
+        return parameters;
+      }
+      var name = parameters.name;
+      var path = parameters.path;
+      var params = parameters.params;
+      var query = parameters.query;
+      if (!name && !path) {
+        throw new Error('Framework7: "name" or "path" parameter is required');
+      }
+      var router = this;
+      var route = name
+        ? router.findRouteByKey('name', name)
+        : router.findRouteByKey('path', path);
+
+      if (!route) {
+        if (name) {
+          throw new Error(("Framework7: route with name \"" + name + "\" not found"));
+        } else {
+          throw new Error(("Framework7: route with path \"" + path + "\" not found"));
+        }
+      }
+      var url = router.constructRouteUrl(route, { params: params, query: query });
+      if (!url) {
+        throw new Error(("Framework7: can't construct URL for route with name \"" + name + "\""));
+      }
+      return url;
     };
 
     // eslint-disable-next-line
@@ -8764,7 +8956,10 @@
     Router.prototype.setNavbarPosition = function setNavbarPosition ($el, position, ariaHidden) {
       var router = this;
       $el.removeClass('navbar-previous navbar-current navbar-next');
-      $el.addClass(("navbar-" + position));
+      if (position) {
+        $el.addClass(("navbar-" + position));
+      }
+
       if (ariaHidden === false) {
         $el.removeAttr('aria-hidden');
       } else if (ariaHidden === true) {
@@ -9306,6 +9501,144 @@
     },
   };
 
+  function resizableView(view) {
+    var app = view.app;
+    if (view.resizableInitialized) { return; }
+    Utils.extend(view, {
+      resizable: true,
+      resizableWidth: null,
+      resizableInitialized: true,
+    });
+    var $htmlEl = $('html');
+    var $el = view.$el;
+    if (!$el) { return; }
+
+    var $resizeHandlerEl;
+
+    var isTouched;
+    var isMoved;
+    var touchesStart = {};
+    var touchesDiff;
+    var width;
+
+    var minWidth;
+    var maxWidth;
+
+    function transformCSSWidth(v) {
+      if (!v) { return null; }
+      if (v.indexOf('%') >= 0 || v.indexOf('vw') >= 0) {
+        return parseInt(v, 10) / 100 * app.width;
+      }
+      var newV = parseInt(v, 10);
+      if (Number.isNaN(newV)) { return null; }
+      return newV;
+    }
+
+    function isResizable() {
+      return view.resizable && $el.hasClass('view-resizable') && $el.hasClass('view-master-detail');
+    }
+
+    function handleTouchStart(e) {
+      if (!isResizable()) { return; }
+      touchesStart.x = e.type === 'touchstart' ? e.targetTouches[0].pageX : e.pageX;
+      touchesStart.y = e.type === 'touchstart' ? e.targetTouches[0].pageY : e.pageY;
+      isMoved = false;
+      isTouched = true;
+      var $pageMasterEl = $el.children('.page-master');
+      minWidth = transformCSSWidth($pageMasterEl.css('min-width'));
+      maxWidth = transformCSSWidth($pageMasterEl.css('max-width'));
+    }
+    function handleTouchMove(e) {
+      if (!isTouched) { return; }
+      e.f7PreventSwipePanel = true;
+      var pageX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
+
+      if (!isMoved) {
+        width = $resizeHandlerEl[0].offsetLeft + $resizeHandlerEl[0].offsetWidth;
+        $el.addClass('view-resizing');
+        $htmlEl.css('cursor', 'col-resize');
+      }
+
+      isMoved = true;
+
+      e.preventDefault();
+
+      touchesDiff = (pageX - touchesStart.x);
+
+      var newWidth = width + touchesDiff;
+      if (minWidth && !Number.isNaN(minWidth)) {
+        newWidth = Math.max(newWidth, minWidth);
+      }
+      if (maxWidth && !Number.isNaN(maxWidth)) {
+        newWidth = Math.min(newWidth, maxWidth);
+      }
+      newWidth = Math.min(Math.max(newWidth, 0), app.width);
+
+      view.resizableWidth = newWidth;
+      $htmlEl[0].style.setProperty('--f7-page-master-width', (newWidth + "px"));
+
+      $el.trigger('view:resize', newWidth);
+      view.emit('local::resize viewResize', view, newWidth);
+    }
+    function handleTouchEnd() {
+      $('html').css('cursor', '');
+      if (!isTouched || !isMoved) {
+        isTouched = false;
+        isMoved = false;
+        return;
+      }
+      isTouched = false;
+      isMoved = false;
+
+      $htmlEl[0].style.setProperty('--f7-page-master-width', ((view.resizableWidth) + "px"));
+      $el.removeClass('view-resizing');
+    }
+
+    function handleResize() {
+      if (!view.resizableWidth) { return; }
+      minWidth = transformCSSWidth($resizeHandlerEl.css('min-width'));
+      maxWidth = transformCSSWidth($resizeHandlerEl.css('max-width'));
+
+      if (minWidth && !Number.isNaN(minWidth) && view.resizableWidth < minWidth) {
+        view.resizableWidth = Math.max(view.resizableWidth, minWidth);
+      }
+      if (maxWidth && !Number.isNaN(maxWidth) && view.resizableWidth > maxWidth) {
+        view.resizableWidth = Math.min(view.resizableWidth, maxWidth);
+      }
+      view.resizableWidth = Math.min(Math.max(view.resizableWidth, 0), app.width);
+
+      $htmlEl[0].style.setProperty('--f7-page-master-width', ((view.resizableWidth) + "px"));
+    }
+
+    $resizeHandlerEl = view.$el.children('.view-resize-handler');
+    if (!$resizeHandlerEl.length) {
+      view.$el.append('<div class="view-resize-handler"></div>');
+      $resizeHandlerEl = view.$el.children('.view-resize-handler');
+    }
+    view.$resizeHandlerEl = $resizeHandlerEl;
+
+    $el.addClass('view-resizable');
+
+    // Add Events
+    var passive = Support.passiveListener ? { passive: true } : false;
+
+    view.$el.on(app.touchEvents.start, '.view-resize-handler', handleTouchStart, passive);
+    app.on('touchmove:active', handleTouchMove);
+    app.on('touchend:passive', handleTouchEnd);
+    app.on('resize', handleResize);
+    view.on('beforeOpen', handleResize);
+
+    view.once('viewDestroy', function () {
+      $el.removeClass('view-resizable');
+      view.$resizeHandlerEl.remove();
+      view.$el.off(app.touchEvents.start, '.view-resize-handler', handleTouchStart, passive);
+      app.off('touchmove:active', handleTouchMove);
+      app.off('touchend:passive', handleTouchEnd);
+      app.off('resize', handleResize);
+      view.off('beforeOpen', handleResize);
+    });
+  }
+
   var View = /*@__PURE__*/(function (Framework7Class) {
     function View(appInstance, el, viewParams) {
       if ( viewParams === void 0 ) viewParams = {};
@@ -9320,6 +9653,15 @@
         routes: [],
         routesAdd: [],
       };
+
+      if ($el.length === 0) {
+        var message = 'Framework7: can\'t create a View instance because ';
+        message += (typeof el === 'string')
+          ? ("the selector \"" + el + "\" didn't match any element")
+          : 'el must be an HTMLElement or Dom7 object';
+
+        throw new Error(message);
+      }
 
       // Default View params
       view.params = Utils.extend(defaults, app.params.view, viewParams);
@@ -9469,6 +9811,9 @@
       var app = view.app;
       view.checkMasterDetailBreakpoint = view.checkMasterDetailBreakpoint.bind(view);
       view.checkMasterDetailBreakpoint();
+      if (view.params.masterDetailResizable) {
+        resizableView(view);
+      }
       app.on('resize', view.checkMasterDetailBreakpoint);
     };
 
@@ -9694,7 +10039,7 @@
             try {
               context = JSON.parse(context);
             } catch (err) {
-              reject();
+              reject(err);
               throw (err);
             }
           }
@@ -9713,12 +10058,18 @@
               },
             }
           );
+          if (options.componentOptions && options.componentOptions.el) {
+            componentOptions.el = options.componentOptions.el;
+          }
+          if (options.componentOptions && options.componentOptions.root) {
+            componentOptions.root = options.componentOptions.root;
+          }
           app.component.create(componentOptions, extendContext)
             .then(function (createdComponent) {
               resolve(createdComponent.el);
             })
             .catch(function (err) {
-              reject();
+              reject(err);
               throw new Error(err);
             });
         }
@@ -9850,8 +10201,8 @@
   /* eslint no-use-before-define: "off" */
 
   var selfClosing = 'area base br col command embed hr img input keygen link menuitem meta param source track wbr'.split(' ');
-  var propsAttrs = 'hidden checked disabled readonly selected autocomplete autofocus autoplay required multiple value indeterminate'.split(' ');
-  var booleanProps = 'hidden checked disabled readonly selected autocomplete autofocus autoplay required multiple readOnly indeterminate'.split(' ');
+  var propsAttrs = 'hidden checked disabled readonly selected autofocus autoplay required multiple value indeterminate'.split(' ');
+  var booleanProps = 'hidden checked disabled readonly selected autofocus autoplay required multiple readOnly indeterminate'.split(' ');
   var tempDomDIV = doc.createElement('div');
   var tempDomTBODY;
   var tempDomTROW;
@@ -10016,7 +10367,6 @@
     var fired = false;
     var methodName;
     var method;
-    var customArgs = [];
     var needMethodBind = true;
 
     if (handlerString.indexOf('(') < 0) {
@@ -10054,11 +10404,11 @@
       while ( len-- ) args[ len ] = arguments[ len ];
 
       var e = args[0];
+      var customArgs = [];
       if (once && fired) { return; }
       if (stop) { e.stopPropagation(); }
       if (prevent) { e.preventDefault(); }
       fired = true;
-
       if (handlerString.indexOf('(') < 0) {
         customArgs = args;
       } else {
@@ -10896,6 +11246,7 @@
         $id: options.isClassComponent ? self.constructor.id : (options.id || id),
         $mixins: options.isClassComponent ? self.constructor.mixins : options.mixins,
         $children: children || [],
+        $isRootComponent: !!options.root,
       }
     );
     var $options = self.$options;
@@ -10934,6 +11285,16 @@
       enumerable: true,
       configurable: true,
       get: function get() {
+        if (self.$isRootComponent) {
+          return self;
+        }
+        if (app.rootComponent) {
+          if (!self.$onRootUpdated) {
+            self.$onRootUpdated = function () { return self.$update(); };
+            app.on('rootComponentUpdated', self.$onRootUpdated);
+          }
+          return app.rootComponent;
+        }
         var root = Utils.merge({}, app.data, app.methods);
         if (win && win.Proxy) {
           root = new win.Proxy(root, {
@@ -11176,6 +11537,9 @@
       function resolver() {
         resolve();
         if (callback) { callback(); }
+        if (self.$isRootComponent) {
+          self.$f7.emit('rootComponentUpdated');
+        }
       }
       self.__updateIsPending = true;
       self.__updateQueue.push(resolver);
@@ -11191,6 +11555,18 @@
     return self.$update(callback);
   };
 
+  Component.prototype.$f7ready = function $f7ready (callback) {
+      var this$1 = this;
+
+    if (this.$f7.initialized) {
+      callback(this.$f7);
+      return;
+    }
+    this.$f7.once('init', function () {
+      callback(this$1.$f7);
+    });
+  };
+
   Component.prototype.$mount = function $mount (mountMethod) {
     var self = this;
     self.$hook('beforeMount');
@@ -11204,6 +11580,11 @@
     self.$hook('beforeDestroy');
 
     if (self.$styleEl) { $(self.$styleEl).remove(); }
+    if (self.$onRootUpdated) {
+      self.$f7.off('rootComponentUpdated', self.$onRootUpdated);
+      delete self.$onRootUpdated;
+    }
+
     self.$detachEvents();
     self.$hook('destroyed');
     // Delete component instance
@@ -11285,11 +11666,13 @@
       style = componentString.split('<style scoped>')[1].split('</style>')[0];
       style = style
         .replace(/{{this}}/g, ("[data-f7-" + id + "]"))
-        .replace(/[\n]?([^{^}]*){/ig, function (string, rules) {
+        .replace(/[\n]?([^{^}]*){/gi, function (string, rules) {
+          if (rules.indexOf('"') >= 0 || rules.indexOf("'") >= 0) { return string; }
           // eslint-disable-next-line
           rules = rules
             .split(',')
             .map(function (rule) {
+              if (rule.indexOf('@') >= 0) { return rule; }
               if (rule.indexOf(("[data-f7-" + id + "]")) >= 0) { return rule; }
               return ("[data-f7-" + id + "] " + (rule.trim()));
             })
@@ -11399,8 +11782,10 @@
         },
         create: function create(options, context, children) {
           if (typeof options === 'function') {
+            var root = options.root;
+            var el = options.el;
             // eslint-disable-next-line
-            return new options(app, { isClassComponent: true }, context, children);
+            return new options(app, { isClassComponent: true, root: root, el: el }, context, children);
           }
           return new Component(app, options, context, children);
         },
@@ -11424,7 +11809,7 @@
     registrations: [],
     register: function register(path, scope) {
       var app = this;
-      if (!('serviceWorker' in window.navigator) || !app.serviceWorker.container) {
+      if (!('serviceWorker' in win.navigator) || !app.serviceWorker.container) {
         return new Promise(function (resolve, reject) {
           reject(new Error('Service worker is not supported'));
         });
@@ -11443,7 +11828,7 @@
     },
     unregister: function unregister(registration) {
       var app = this;
-      if (!('serviceWorker' in window.navigator) || !app.serviceWorker.container) {
+      if (!('serviceWorker' in win.navigator) || !app.serviceWorker.container) {
         return new Promise(function (resolve, reject) {
           reject(new Error('Service worker is not supported'));
         });
@@ -11481,7 +11866,7 @@
       var app = this;
       Utils.extend(app, {
         serviceWorker: {
-          container: ('serviceWorker' in window.navigator) ? window.navigator.serviceWorker : undefined,
+          container: ('serviceWorker' in win.navigator) ? win.navigator.serviceWorker : undefined,
           registrations: SW.registrations,
           register: SW.register.bind(app),
           unregister: SW.unregister.bind(app),
@@ -11490,7 +11875,7 @@
     },
     on: {
       init: function init() {
-        if (!('serviceWorker' in window.navigator)) { return; }
+        if (!('serviceWorker' in win.navigator)) { return; }
         var app = this;
         if (!app.serviceWorker.container) { return; }
         var paths = app.params.serviceWorker.path;
@@ -11658,11 +12043,17 @@
     if ($viewsEl.length === 0) { $viewsEl = app.root; }
     // Find active view as tab
     var $viewEl = $viewsEl.children('.view');
+    if ($viewEl.length === 0) {
+      $viewEl = $viewsEl.children('.tabs').children('.view');
+    }
     // Propably in tabs or split view
     if ($viewEl.length > 1) {
       if ($viewEl.hasClass('tab')) {
         // Tabs
         $viewEl = $viewsEl.children('.view.tab-active');
+        if ($viewEl.length === 0) {
+          $viewEl = $viewsEl.children('.tabs').children('.view.tab-active');
+        }
       }
     }
     if ($popoverView.length > 0 && $popoverView[0].f7View) { return $popoverView[0].f7View; }
@@ -11696,6 +12087,7 @@
         reloadPages: false,
         reloadDetail: false,
         masterDetailBreakpoint: 0,
+        masterDetailResizable: false,
         removeElements: true,
         removeElementsWithTimeout: false,
         removeElementsTimeout: 0,
@@ -11778,21 +12170,38 @@
           app.views.create(viewEl, viewParams);
         });
       },
-      modalOpen: function modalOpen(modal) {
+      'modalOpen panelOpen': function onOpen(instance) {
         var app = this;
-        modal.$el.find('.view-init').each(function (index, viewEl) {
+        instance.$el.find('.view-init').each(function (index, viewEl) {
           if (viewEl.f7View) { return; }
           var viewParams = $(viewEl).dataset();
           app.views.create(viewEl, viewParams);
         });
       },
-      modalBeforeDestroy: function modalBeforeDestroy(modal) {
-        if (!modal || !modal.$el) { return; }
-        modal.$el.find('.view-init').each(function (index, viewEl) {
+      'modalBeforeDestroy panelBeforeDestroy': function onClose(instance) {
+        if (!instance || !instance.$el) { return; }
+        instance.$el.find('.view-init').each(function (index, viewEl) {
           var view = viewEl.f7View;
           if (!view) { return; }
           view.destroy();
         });
+      },
+    },
+    vnode: {
+      'view-init': {
+        insert: function insert(vnode) {
+          var app = this;
+          var viewEl = vnode.elm;
+          if (viewEl.f7View) { return; }
+          var viewParams = $(viewEl).dataset();
+          app.views.create(viewEl, viewParams);
+        },
+        destroy: function destroy(vnode) {
+          var viewEl = vnode.elm;
+          var view = viewEl.f7View;
+          if (!view) { return; }
+          view.destroy();
+        },
       },
     },
   };
@@ -11810,8 +12219,11 @@
         return;
       }
 
+      var $innerEl = $el.children('.navbar-inner');
+      if (!$innerEl.length) { return; }
+
       var needCenterTitle = (
-        $el.children('.navbar-inner').hasClass('navbar-inner-centered-title')
+        $innerEl.hasClass('navbar-inner-centered-title')
         || app.params.navbar[((app.theme) + "CenterTitle")]
       );
       var needLeftTitle = app.theme === 'ios' && !app.params.navbar[((app.theme) + "CenterTitle")];
@@ -11828,14 +12240,13 @@
       }
 
       if (app.theme !== 'ios' && app.params.navbar[((app.theme) + "CenterTitle")]) {
-        $el.children('.navbar-inner').addClass('navbar-inner-centered-title');
+        $innerEl.addClass('navbar-inner-centered-title');
       }
       if (app.theme === 'ios' && !app.params.navbar.iosCenterTitle) {
-        $el.children('.navbar-inner').addClass('navbar-inner-left-title');
+        $innerEl.addClass('navbar-inner-left-title');
       }
 
       var $viewEl = $el.parents('.view').eq(0);
-      var $innerEl = $el.children('.navbar-inner');
       var left = app.rtl ? $innerEl.children('.right') : $innerEl.children('.left');
       var right = app.rtl ? $innerEl.children('.left') : $innerEl.children('.right');
       var title = $innerEl.children('.title');
@@ -12093,7 +12504,7 @@
         app.navbar.collapseLargeTitle($navbarEl);
       }
     },
-    initNavbarOnScroll: function initNavbarOnScroll(pageEl, navbarEl, needHide, needCollapse) {
+    initNavbarOnScroll: function initNavbarOnScroll(pageEl, navbarEl, needHide, needCollapse, needTransparent) {
       var app = this;
       var $pageEl = $(pageEl);
       var $navbarEl = $(navbarEl);
@@ -12101,6 +12512,7 @@
       var isLarge = $titleLargeEl.length || $navbarEl.hasClass('.navbar-large');
       var navbarHideHeight = 44;
       var snapPageScrollToLargeTitle = app.params.navbar.snapPageScrollToLargeTitle;
+      var snapPageScrollToTransparentNavbar = app.params.navbar.snapPageScrollToTransparentNavbar;
 
       var previousScrollTop;
       var currentScrollTop;
@@ -12113,6 +12525,9 @@
 
       var navbarCollapsed;
       var navbarTitleLargeHeight;
+
+      var navbarOffsetHeight;
+
       if (needCollapse || (needHide && isLarge)) {
         navbarTitleLargeHeight = $navbarEl.css('--f7-navbar-large-title-height');
 
@@ -12156,15 +12571,83 @@
         }
       }
 
+      function snapTransparentNavbar() {
+        var inSearchbarExpanded = $navbarEl.hasClass('with-searchbar-expandable-enabled');
+        if (inSearchbarExpanded) { return; }
+        if (!scrollContent || currentScrollTop < 0) { return; }
+        if (currentScrollTop >= navbarOffsetHeight / 2 && currentScrollTop < navbarOffsetHeight) {
+          $(scrollContent).scrollTop(navbarOffsetHeight, 100);
+        } else if (currentScrollTop < navbarOffsetHeight) {
+          $(scrollContent).scrollTop(0, 200);
+        }
+      }
+
+      function handleNavbarTransparent() {
+        var isHidden = $navbarEl.hasClass('navbar-hidden') || $navbarEl.parent('.navbars').hasClass('navbar-hidden');
+        var inSearchbarExpanded = $navbarEl.hasClass('with-searchbar-expandable-enabled');
+        if (inSearchbarExpanded || isHidden) { return; }
+        if (!navbarOffsetHeight) {
+          navbarOffsetHeight = navbarEl.offsetHeight;
+        }
+        var opacity = currentScrollTop / navbarOffsetHeight;
+        var notTransparent = $navbarEl.hasClass('navbar-transparent-visible');
+        opacity = Math.max(Math.min(opacity, 1), 0);
+
+        if ((notTransparent && opacity === 1) || (!notTransparent && opacity === 0)) {
+          $navbarEl.find('.navbar-bg, .title').css('opacity', '');
+          return;
+        }
+        if (notTransparent && opacity === 0) {
+          $navbarEl.trigger('navbar:transparenthide');
+          app.emit('navbarTransparentHide', $navbarEl[0]);
+          $navbarEl.removeClass('navbar-transparent-visible');
+          $navbarEl.find('.navbar-bg, .title').css('opacity', '');
+          return;
+        }
+        if (!notTransparent && opacity === 1) {
+          $navbarEl.trigger('navbar:transparentshow');
+          app.emit('navbarTransparentShow', $navbarEl[0]);
+          $navbarEl.addClass('navbar-transparent-visible');
+          $navbarEl.find('.navbar-bg, .title').css('opacity', '');
+          return;
+        }
+
+        $navbarEl.find('.navbar-bg, .title').css('opacity', opacity);
+
+        if (snapPageScrollToTransparentNavbar) {
+          if (!Support.touch) {
+            clearTimeout(scrollTimeoutId);
+            scrollTimeoutId = setTimeout(function () {
+              snapTransparentNavbar();
+            }, desktopSnapTimeout);
+          } else if (touchEndTimeoutId) {
+            clearTimeout(touchEndTimeoutId);
+            touchEndTimeoutId = null;
+            touchEndTimeoutId = setTimeout(function () {
+              snapTransparentNavbar();
+              clearTimeout(touchEndTimeoutId);
+              touchEndTimeoutId = null;
+            }, touchSnapTimeout);
+          }
+        }
+      }
+
+      var previousCollapseProgress = null;
+      var collapseProgress = null;
       function handleLargeNavbarCollapse() {
         var isHidden = $navbarEl.hasClass('navbar-hidden') || $navbarEl.parent('.navbars').hasClass('navbar-hidden');
         if (isHidden) { return; }
-        var isLargeTransparent = $navbarEl.hasClass('navbar-large-transparent');
-        var collapseProgress = Math.min(Math.max((currentScrollTop / navbarTitleLargeHeight), 0), 1);
+        var isLargeTransparent = $navbarEl.hasClass('navbar-large-transparent')
+          || (
+            $navbarEl.hasClass('navbar-large')
+            && $navbarEl.hasClass('navbar-transparent')
+          );
+        previousCollapseProgress = collapseProgress;
+        collapseProgress = Math.min(Math.max((currentScrollTop / navbarTitleLargeHeight), 0), 1);
+        var previousCollapseWasInMiddle = previousCollapseProgress > 0 && previousCollapseProgress < 1;
         var inSearchbarExpanded = $navbarEl.hasClass('with-searchbar-expandable-enabled');
         if (inSearchbarExpanded) { return; }
         navbarCollapsed = $navbarEl.hasClass('navbar-large-collapsed');
-
         if (collapseProgress === 0 && navbarCollapsed) {
           app.navbar.expandLargeTitle($navbarEl[0]);
         } else if (collapseProgress === 1 && !navbarCollapsed) {
@@ -12172,8 +12655,9 @@
         }
         if (
           (collapseProgress === 0 && navbarCollapsed)
+          || (collapseProgress === 0 && previousCollapseWasInMiddle)
           || (collapseProgress === 1 && !navbarCollapsed)
-          // || ((collapseProgress === 1 && navbarCollapsed) || (collapseProgress === 0 && !navbarCollapsed))
+          || (collapseProgress === 1 && previousCollapseWasInMiddle)
         ) {
           if (app.theme === 'md') {
             $navbarEl.find('.navbar-inner').css('overflow', '');
@@ -12217,6 +12701,7 @@
       }
 
       function handleTitleHideShow() {
+        if ($pageEl.hasClass('page-with-card-opened')) { return; }
         scrollHeight = scrollContent.scrollHeight;
         offsetHeight = scrollContent.offsetHeight;
         reachEnd = currentScrollTop + offsetHeight >= scrollHeight;
@@ -12254,9 +12739,10 @@
         }
         currentScrollTop = scrollContent.scrollTop;
         scrollChanged = currentScrollTop;
-
         if (needCollapse) {
           handleLargeNavbarCollapse();
+        } else if (needTransparent) {
+          handleNavbarTransparent();
         }
         if ($pageEl.hasClass('page-previous')) { return; }
         if (needHide) {
@@ -12271,14 +12757,18 @@
         touchEndTimeoutId = null;
         touchEndTimeoutId = setTimeout(function () {
           if (scrollChanged !== false) {
-            snapLargeNavbar();
+            if (needTransparent && !needCollapse) {
+              snapTransparentNavbar();
+            } else {
+              snapLargeNavbar();
+            }
             clearTimeout(touchEndTimeoutId);
             touchEndTimeoutId = null;
           }
         }, touchSnapTimeout);
       }
       $pageEl.on('scroll', '.page-content', handleScroll, true);
-      if (Support.touch && needCollapse && snapPageScrollToLargeTitle) {
+      if (Support.touch && ((needCollapse && snapPageScrollToLargeTitle) || (needTransparent && snapPageScrollToTransparentNavbar))) {
         app.on('touchstart:passive', handeTouchStart);
         app.on('touchend:passive', handleTouchEnd);
       }
@@ -12286,11 +12776,15 @@
         $pageEl.find('.page-content').each(function (pageContentIndex, pageContentEl) {
           if (pageContentEl.scrollTop > 0) { handleScroll.call(pageContentEl); }
         });
+      } else if (needTransparent) {
+        $pageEl.find('.page-content').each(function (pageContentIndex, pageContentEl) {
+          if (pageContentEl.scrollTop > 0) { handleScroll.call(pageContentEl); }
+        });
       }
       $pageEl[0].f7DetachNavbarScrollHandlers = function f7DetachNavbarScrollHandlers() {
         delete $pageEl[0].f7DetachNavbarScrollHandlers;
         $pageEl.off('scroll', '.page-content', handleScroll, true);
-        if (Support.touch && needCollapse && snapPageScrollToLargeTitle) {
+        if (Support.touch && ((needCollapse && snapPageScrollToLargeTitle) || (needTransparent && snapPageScrollToTransparentNavbar))) {
           app.off('touchstart:passive', handeTouchStart);
           app.off('touchend:passive', handleTouchEnd);
         }
@@ -12326,10 +12820,11 @@
         showOnPageScrollTop: true,
         collapseLargeTitleOnScroll: true,
         snapPageScrollToLargeTitle: true,
+        snapPageScrollToTransparentNavbar: true,
       },
     },
     on: {
-      'panelBreakpoint panelCollapsedBreakpoint panelResize resize viewMasterDetailBreakpoint': function onPanelResize() {
+      'panelBreakpoint panelCollapsedBreakpoint panelResize viewResize resize viewMasterDetailBreakpoint': function onPanelResize() {
         var app = this;
         $('.navbar').each(function (index, navbarEl) {
           app.navbar.size(navbarEl);
@@ -12382,6 +12877,12 @@
           page.$el.addClass('page-with-navbar-large');
         }
 
+        // Need transparent on scroll
+        var needTransparentOnScroll;
+        if (!needCollapseOnScrollHandler && $navbarEl.hasClass('navbar-transparent')) {
+          needTransparentOnScroll = true;
+        }
+
         // Need Hide On Scroll
         var needHideOnScrollHandler;
         if (
@@ -12403,8 +12904,8 @@
           }
         }
 
-        if (needCollapseOnScrollHandler || needHideOnScrollHandler) {
-          app.navbar.initNavbarOnScroll(page.el, $navbarEl[0], needHideOnScrollHandler, needCollapseOnScrollHandler);
+        if (needCollapseOnScrollHandler || needHideOnScrollHandler || needTransparentOnScroll) {
+          app.navbar.initNavbarOnScroll(page.el, $navbarEl[0], needHideOnScrollHandler, needCollapseOnScrollHandler, needTransparentOnScroll);
         }
       },
       'panelOpen panelSwipeOpen modalOpen': function onPanelModalOpen(instance) {
@@ -12549,7 +13050,7 @@
       $el.trigger('toolbar:show');
       app.emit('toolbarShow', $el[0]);
     },
-    initHideToolbarOnScroll: function initHideToolbarOnScroll(pageEl) {
+    initToolbarOnScroll: function initToolbarOnScroll(pageEl) {
       var app = this;
       var $pageEl = $(pageEl);
       var $toolbarEl = $pageEl.parents('.view').children('.toolbar');
@@ -12572,11 +13073,12 @@
       var action;
       var toolbarHidden;
       function handleScroll(e) {
+        if ($pageEl.hasClass('page-with-card-opened')) { return; }
+        if ($pageEl.hasClass('page-previous')) { return; }
         var scrollContent = this;
         if (e && e.target && e.target !== scrollContent) {
           return;
         }
-        if ($pageEl.hasClass('page-previous')) { return; }
         currentScrollTop = scrollContent.scrollTop;
         scrollHeight = scrollContent.scrollHeight;
         offsetHeight = scrollContent.offsetHeight;
@@ -12622,7 +13124,7 @@
           hide: Toolbar.hide.bind(app),
           show: Toolbar.show.bind(app),
           setHighlight: Toolbar.setHighlight.bind(app),
-          initHideToolbarOnScroll: Toolbar.initHideToolbarOnScroll.bind(app),
+          initToolbarOnScroll: Toolbar.initToolbarOnScroll.bind(app),
           init: Toolbar.init.bind(app),
         },
       });
@@ -12678,7 +13180,7 @@
           ) {
             return;
           }
-          app.toolbar.initHideToolbarOnScroll(page.el);
+          app.toolbar.initToolbarOnScroll(page.el);
         }
       },
       init: function init() {
@@ -12686,6 +13188,14 @@
         app.root.find('.tabbar, .tabbar-labels').each(function (index, tabbarEl) {
           app.toolbar.init(tabbarEl);
         });
+      },
+    },
+    vnode: {
+      tabbar: {
+        insert: function insert(vnode) {
+          var app = this;
+          app.toolbar.init(vnode.elm);
+        },
       },
     },
   };

@@ -1,8 +1,20 @@
-﻿$('#live-scoring-link').click(function() {
-    app.views.current.router.navigate("/chooseMatch/");
+﻿$$(document).on('page:init', '.page[data-name="home"]', function(e) {
+    bindHomePageLinks();
 });
 
-$('#debug-link').click(function() {
-    app.views.current.router.navigate("/debug/");
-});
+bindHomePageLinks();
+
+function bindHomePageLinks() {
+    $('#live-scoring-link').click(function() {
+        app.views.current.router.navigate("/chooseMatch/");
+    });
+
+    $('#debug-link').click(function() {
+        app.views.current.router.navigate("/debug/");
+    });
+
+    $('#scorecards-link').click(function() {
+        app.views.current.router.navigate("/scorecards/");
+    });
+};
 

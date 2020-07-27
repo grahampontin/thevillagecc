@@ -70,6 +70,16 @@ var app = new Framework7({
             name: 'debug',
             path: '/debug/',
             url: 'debug.html'
+        },
+        {
+            name: 'scorecards',
+            path: '/scorecards/',
+            url: 'scorecards.html'
+        },
+        {
+            name: 'editScorecard',
+            path: '/editScorecard/',
+            url: 'editScorecard.html'
         }
     ],
     on: {

@@ -31,6 +31,13 @@ public class CommandHandler : IHttpHandler
                 context.Response.Write(javaScriptSerializer.Serialize(matchDescriptors));
                 return;
             }
+            if (genericBallByBallCommand.command == "matchesBySeason")
+            {
+                var season = (int)genericBallByBallCommand.payload;
+                var matchDescriptors = Match.GetResults(new DateTime(season, 1,1), new DateTime(season,12,31)).Union(Match.GetFixtures().Where(m=>m.MatchDate < DateTime.Today.AddDays(1))).Select(m => new MatchDescriptor(m)).Distinct(MatchDescriptor.MatchIdComparer).ToList();
+                context.Response.Write(javaScriptSerializer.Serialize(matchDescriptors));
+                return;
+            }
             if (genericBallByBallCommand.command == "listPlayers")
             {
                 var players = Player.GetAll().Where(p => p.IsActive && p.ID > 0).OrderByDescending(p=>p.NumberOfMatchesPlayedThisSeason).ThenBy(p => p.FormalName).Select(p=>new PlayerDescriptor(p)).ToList();
