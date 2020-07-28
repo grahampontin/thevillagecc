@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Script.Serialization;
+using api.model;
 using CricketClubDAL;
 using CricketClubDomain;
 using CricketClubMiddle;
@@ -57,7 +58,7 @@ public class CommandHandler : IHttpHandler
                     break;
                 case "matchState":
                     ReturnCurrentMatchState(context, match);
-                    break; 
+                    break;
                 case "resetMatch":
                     match.ResetBallByBallData();
                     context.Response.ContentType = "text/plain";
@@ -97,6 +98,12 @@ public class CommandHandler : IHttpHandler
                 case "deleteLastOver":
                     match.DeleteLastBallByBallOver();
                     ReturnCurrentMatchState(context, match);
+                    break;
+                case "getScorecard":
+                    var scorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), new Extras(match.ID, ThemOrUs.Them));
+                    context.Response.ContentType = "text/json";
+                    context.Response.StatusCode = 200;
+                    context.Response.Write(javaScriptSerializer.Serialize(scorecard));
                     break;
                 default:
                     context.Response.ContentType = "text/plain";
@@ -153,91 +160,8 @@ public class CommandHandler : IHttpHandler
     }
 }
 
-public class PlayerDescriptor
-{
-    public int playerId;
-    public int matches;
-    public string name;
-
-    public PlayerDescriptor(Player player)
-    {
-        playerId = player.ID;
-        name = player.FormalName;
-        matches = player.NumberOfMatchesPlayedThisSeason;
-    }
-}
-
-public class MatchDescriptor
-{
-    public readonly int matchId;
-    public readonly string batOrBowl;
-    public readonly string opponent;
-    public readonly string dateString;
-    public readonly int overs;
-    private static readonly IEqualityComparer<MatchDescriptor> Comparer = new MatchIdEqualityComparer();
-
-    public MatchDescriptor(Match m)
-    {
-        matchId = m.ID;
-        var currentBallByBallState = m.GetCurrentBallByBallState();
-        if (m.GetIsBallByBallInProgress())
-        {
-            if (m.OurInningsInProgress)
-            {
-                batOrBowl = "Bat";
-                overs = currentBallByBallState.LastCompletedOver;
-            }
-            else if (m.TheirInningsInProgress)
-            {
-                batOrBowl = "Bowl";
-                overs = currentBallByBallState.OppositionOver;
-            }
-        }
-        else
-        {
-            batOrBowl = "";
-            overs = 0;
-        }
-
-        opponent = m.HomeOrAway == HomeOrAway.Home ? m.AwayTeamName : m.HomeTeamName;
-        dateString = m.MatchDate.ToShortDateString();
-    }
-
-    protected bool Equals(MatchDescriptor other)
-    {
-        return matchId == other.matchId;
-    }
-
-    private sealed class MatchIdEqualityComparer : IEqualityComparer<MatchDescriptor>
-    {
-        public bool Equals(MatchDescriptor x, MatchDescriptor y)
-        {
-            if (ReferenceEquals(x, y)) return true;
-            if (ReferenceEquals(x, null)) return false;
-            if (ReferenceEquals(y, null)) return false;
-            if (x.GetType() != y.GetType()) return false;
-            return x.matchId == y.matchId;
-        }
-
-        public int GetHashCode(MatchDescriptor obj)
-        {
-            return obj.matchId;
-        }
-    }
-
-    public static IEqualityComparer<MatchDescriptor> MatchIdComparer
-    {
-        get
-        {
-            return Comparer;
-        }
-    }
-}
 
 
-public class GenericBallByBallCommand
-{
-    public string command;
-    public object payload;
-    public int matchId;
-}
+
+
+
