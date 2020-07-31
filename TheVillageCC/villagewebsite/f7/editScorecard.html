@@ -36,7 +36,81 @@
     <div class="page-content">
         <div class="tabs">
             <div class="tab tab-active" id="homeBatting">
-                home batting
+                <div class="data-table">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th class="actions-cell" style="padding: 0"></th>
+                            <th class="label-cell col-40"></th>
+                            <th class="numeric-cell">R</th>
+                            <th class="numeric-cell">B</th>
+                            <th class="numeric-cell medium-only">4s</th>
+                            <th class="numeric-cell medium-only">6s</th>
+                        </tr>
+                        </thead>
+                        <tbody id="home-batting-scorecard">
+                            <tr class="batsman-row">
+                                <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18 ">edit</i></td>
+                                <td class="label-cell">G Pontin<br /><span style="white-space: nowrap">not out</span></td>
+                                <td class="numeric-cell">50</td>
+                                <td class="numeric-cell">155</td>
+                                <td class="numeric-cell medium-only">8</td>
+                                <td class="numeric-cell medium-only">0</td>
+                            </tr>
+                            <tr class="batsman-row">
+                                <td class="actions-cell scorecard-edit-item"><i class="material-icons md-18">edit</i></td>
+                                <td class="label-cell">P Mishra<br /><span class="scorecard-subtitle">ct. Fielder b. Bowler</span></td>
+                                <td class="numeric-cell">8</td>
+                                <td class="numeric-cell">5</td>
+                                <td class="numeric-cell medium-only">2</td>
+                                <td class="numeric-cell medium-only">0</td>
+                            </tr>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="home-batting-scorecard-add-row">add</i></td>
+                                <td class="label-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+
+                        <tr>
+                            <td class="actions-cell" style="padding-right: 0"></td>
+                            <td class="label-cell" style="text-align: right">Extras<br /><span class="scorecard-subtitle" id="home-batting-scorecard-extras-detail">nb 0,w 1,b 4,lb 12</span></td>
+                            <td class="numeric-cell" id="home-batting-scorecard-extras-total">17</td>
+                            <td class="" style="padding-left: 0"><i class="material-icons md-18">edit</i></td>
+                            <td class="numeric-cell medium-only"></td>
+                            <td class="numeric-cell medium-only"></td>
+                        </tr>
+                        <tr>
+                            <td class="actions-cell" style="padding-right: 0"></td>
+                            <td class="label-cell" style="text-align: right">Penalty</td>
+                            <td class="numeric-cell" id="home-batting-scorecard-penalty-total">0</td>
+                            <td class="" style="padding-left: 0"><i class="material-icons md-18">edit</i></td>
+                            <td class="numeric-cell medium-only"></td>
+                            <td class="numeric-cell medium-only"></td>
+                        </tr>
+                        <tr>
+                            <td class="actions-cell" style="padding-right: 0"></td>
+                            <td class="label-cell" style="text-align: right">Total<br/><span class="scorecard-subtitle" id="scorecard-wickets-text">1 Wickets</span></td>
+                            <td class="numeric-cell" id="home-batting-scorecard-total">254</td>
+                            <td class="" style="padding-left: 0"></td>
+                            <td class="numeric-cell medium-only"></td>
+                            <td class="numeric-cell medium-only"></td>
+                        </tr>
+                        <tr>
+                            <td class="actions-cell" style="padding-right: 0"></td>
+                            <td class="label-cell" style="text-align: right">Overs</td>
+                            <td class="numeric-cell" id="home-batting-scorecard-overs">12.3</td>
+                            <td class="" style="padding-left: 0"></td>
+                            <td class="numeric-cell medium-only"></td>
+                            <td class="numeric-cell medium-only"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                
             </div>
             <div class="tab" id="homeBowling">
                 home bowling

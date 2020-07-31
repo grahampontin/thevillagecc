@@ -1,7 +1,16 @@
-﻿$$(document).on('page:init', '.page[data-name="scorecards"]', function (e) {
+﻿var scoreCardsSeason = new Date().getFullYear();
+$$(document).on('page:init', '.page[data-name="scorecards"]', function (e) {
     if (e.detail.position != "next") {
         return;
     }
+    $("#scorecards-previous-season").click(function() {
+        scoreCardsSeason = scoreCardsSeason - 1;;
+        listScorecards();
+    });
+    $("#scorecards-next-season").click(function() {
+        scoreCardsSeason = scoreCardsSeason + 1;
+        listScorecards();
+    });
     //Bind handlers here
     listScorecards();
     //once bound...
@@ -9,8 +18,10 @@
 });
 
 function listScorecards() {
+    $('#matches ul').empty();
+    $("#scorecards-current-season").text(scoreCardsSeason);
     app.preloader.show();
-    var postData = { 'command': "matchesBySeason", 'payload': new Date().getFullYear() };
+    var postData = { 'command': "matchesBySeason", 'payload': scoreCardsSeason };
     $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
             JSON.stringify(postData),
             function(data) {
