@@ -188,3 +188,40 @@ html {
 .scorecard-edit-item {
     padding-right: 0 !important
 }
+
+/*
+    Removed from F7.css???
+*/
+:root {
+    --f7-color-darkgray: #4d4d4d;
+    --f7-color-darkgray-rgb: 77, 77, 77;
+    --f7-color-darkgray-shade: #393939;
+    --f7-color-darkgray-tint: #616161;
+}
+
+.color-darkgray {
+    --f7-theme-color: #4d4d4d;
+    --f7-theme-color-rgb: 77, 77, 77;
+    --f7-theme-color-shade: #393939;
+    --f7-theme-color-tint: #616161;
+}
+
+.text-color-darkgray {
+    --f7-theme-color-text-color: #4d4d4d;
+}
+
+.bg-color-darkgray {
+    --f7-theme-color-bg-color: #4d4d4d;
+}
+
+.border-color-darkgray {
+    --f7-theme-color-border-color: #4d4d4d;
+}
+
+.ripple-color-darkgray,
+.ripple-darkgray {
+    --f7-theme-color-ripple-color: rgba(77, 77, 77, 0.3);
+}
+/*
+    end removed section
+*/

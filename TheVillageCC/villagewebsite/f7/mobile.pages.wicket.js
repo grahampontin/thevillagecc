@@ -83,7 +83,7 @@ function validateWicketPage() {
         toast = showToastBottom("What happened to the poor chap?");
         return;
     }
-    if ($("#next-batter-in-select").val() == -1) {
+    if ($("#next-batter-in-select").val() == -1 && matchState.getWaitingPlayers().length > 0) {
         toast = showToastBottom("Who's next in?");
         return;
     }

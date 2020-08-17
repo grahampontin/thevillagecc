@@ -179,6 +179,9 @@ function evalPartnership() {
 }
 
 function evalStatsFor(batsman1) {
+    if (batsman1 == undefined) {
+        return;
+    }
     batsman1.Score = this.getCurrentScoreForBatsman(batsman1.PlayerId);
     batsman1.CurrentBallsFaced = this.getCurrentBallsFacedForBatsman(batsman1.PlayerId);
     batsman1.CurrentFours = this.getCurrentFoursForBatsman(batsman1.PlayerId);

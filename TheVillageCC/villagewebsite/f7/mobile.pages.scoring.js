@@ -230,6 +230,13 @@ function refreshBowlerView() {
 function refreshBatsmenView() {
     var batsman1 = matchState.getBattingPlayers()[0];
     var batsman2 = matchState.getBattingPlayers()[1];
+    if (batsman1 == undefined) {
+        batsman1 = new PlayerStub();
+    }
+    if (batsman2 == undefined) {
+        batsman2 = new PlayerStub();
+    }
+
     $("#batsman-one-name").text(batsman1.PlayerName);
     $("#batsman-two-name").text(batsman2.PlayerName);
     //coercing strings and ints here
