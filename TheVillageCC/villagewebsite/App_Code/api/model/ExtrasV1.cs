@@ -15,6 +15,11 @@ namespace api.model
         public int byes;
         public int legByes;
 
+        // ReSharper disable once UnusedMember.Global
+        public ExtrasV1()
+        {
+        }
+
         public ExtrasV1(Extras internalModelExtras)
         {
             this.wides = internalModelExtras.Wides;
@@ -24,9 +29,9 @@ namespace api.model
             this.legByes = internalModelExtras.LegByes;
         }
 
-        public Extras ToInternal(int matchId)
+        public Extras ToInternal(int matchId, ThemOrUs themOrUs)
         {
-            return new Extras(matchId, ThemOrUs.Us)
+            return new Extras(matchId, themOrUs)
             {
                 Byes = byes,
                 LegByes = legByes,
@@ -36,5 +41,9 @@ namespace api.model
             };
         }
 
+        public int GetTotal()
+        {
+            return byes + legByes + noBalls + penalties + wides;
+        }
     }
 }

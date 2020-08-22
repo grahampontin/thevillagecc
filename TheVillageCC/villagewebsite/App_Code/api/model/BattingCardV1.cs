@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using CricketClubDomain;
+using CricketClubMiddle;
 using CricketClubMiddle.Stats;
 
 namespace api.model
@@ -18,6 +20,27 @@ namespace api.model
         {
             this.entries = internalModel.ScorecardData.Select(d => new BattingEntryV1(d)).ToList();
             this.extras = new ExtrasV1(extras);
+        }
+
+
+        // ReSharper disable once UnusedMember.Global
+        public BattingCardV1()
+        {
+        }
+
+        public BattingCard ToInternalBattingCard(Match match, ThemOrUs themOrUs)
+        {
+            var battingCard = new BattingCard(match.ID, themOrUs);
+            battingCard.Extras = extras.GetTotal();
+            battingCard.ScorecardData.Clear();
+            battingCard.ScorecardData.AddRange(entries.Select(e=>e.ToInternal(match)));
+
+            return battingCard;
+        }
+
+        public Extras ToInternalExtras(int matchId, ThemOrUs themOrUs)
+        {
+            return extras.ToInternal(matchId, themOrUs);
         }
     }
 }

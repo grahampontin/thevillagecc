@@ -100,10 +100,56 @@ public class CommandHandler : IHttpHandler
                     ReturnCurrentMatchState(context, match);
                     break;
                 case "getScorecard":
-                    var scorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), new Extras(match.ID, ThemOrUs.Them));
+                    var scorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), new Extras(match.ID, ThemOrUs.Them), match);
                     context.Response.ContentType = "text/json";
                     context.Response.StatusCode = 200;
                     context.Response.Write(javaScriptSerializer.Serialize(scorecard));
+                    break;
+                case "saveScorecard":
+                    var unsavedScorecard = javaScriptSerializer.Deserialize<MatchScorecardV1>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                    if (unsavedScorecard.ourInnings.batting.entries.Any())
+                    {
+                        var internalBattingCard = unsavedScorecard.ourInnings.batting.ToInternalBattingCard(match, ThemOrUs.Us);
+                        internalBattingCard.Save(BattingOrBowling.Batting);
+                    }
+                    
+                    if (unsavedScorecard.theirInnings.batting.entries.Any())
+                    {
+                        var internalOppoBattingCard = unsavedScorecard.theirInnings.batting.ToInternalBattingCard(match, ThemOrUs.Them);
+                        internalOppoBattingCard.Save(BattingOrBowling.Bowling);
+                    }
+                    var internalExtras = unsavedScorecard.ourInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Us);
+                    internalExtras.Save();
+                    
+                    var internalOppoExtras = unsavedScorecard.theirInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Them);
+                    internalOppoExtras.Save();
+                    
+                    match.OurInningsLength = unsavedScorecard.ourInnings.inningsLength;
+                    match.TheirInningsLength = unsavedScorecard.theirInnings.inningsLength;
+                    match.Save();
+
+                    if (unsavedScorecard.ourInnings.bowling.entries.Any())
+                    {
+                        var theirBowlingStats = unsavedScorecard.ourInnings.bowling.ToInternal(match, ThemOrUs.Them);
+                        theirBowlingStats.Save();
+                    }
+                    
+                    if (unsavedScorecard.theirInnings.bowling.entries.Any())
+                    {
+                        var ourBowlingStats = unsavedScorecard.theirInnings.bowling.ToInternal(match, ThemOrUs.Us);
+                        ourBowlingStats.Save();
+                    }
+
+                    if (unsavedScorecard.ourInnings.fow.entries.Any())
+                    {
+                        var ourFowData = unsavedScorecard.ourInnings.fow.ToInternal(match, ThemOrUs.Us);
+                        ourFowData.Save();
+                    }
+                    
+                    var savedScorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), new Extras(match.ID, ThemOrUs.Them), match);
+                    context.Response.ContentType = "text/json";
+                    context.Response.StatusCode = 200;
+                    context.Response.Write(javaScriptSerializer.Serialize(savedScorecard));
                     break;
                 default:
                     context.Response.ContentType = "text/plain";

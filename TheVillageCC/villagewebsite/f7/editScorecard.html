@@ -10,6 +10,11 @@
                 </a>
             </div>
             <div class="title">Edit Scorecard</div>
+            <div class="right">
+                <a class="link icon-only" id="save-scorecard-button">
+                    <i class="icon material-icons" id="save-scorecard-button-icon">cloud_upload</i>
+                </a>
+            </div>
         </div>
     </div>
     <div class="toolbar tabbar tabbar-labels toolbar-bottom" id="home-tabbar">
@@ -21,7 +26,7 @@
     </div>
     <div class="toolbar tabbar tabbar-labels toolbar-bottom" id="opposition-tabbar">
         <div class="toolbar-inner">
-            <a class="tab-link" id="opposition-batting-card-link"  href="#oppositionBatting"><i class="material-icons">sports_cricket</i><span class="tabbar-label">Batting Card</span></a>
+            <a class="tab-link" id="opposition-batting-card-link" href="#oppositionBatting"><i class="material-icons">sports_cricket</i><span class="tabbar-label">Batting Card</span></a>
             <a class="tab-link" href="#oppositionBowling"><i class="material-icons ">sports_handball</i><span class="tabbar-label">Bowling Card</span></a>
             <a class="tab-link" href="#oppositionFow"><i class="material-icons ">people</i><span class="tabbar-label">P'ships / FoW</span></a>
         </div>
@@ -39,32 +44,16 @@
                 <div class="data-table">
                     <table>
                         <thead>
-                        <tr>
-                            <th class="actions-cell" style="padding: 0"></th>
-                            <th class="label-cell col-40"></th>
-                            <th class="numeric-cell">R</th>
-                            <th class="numeric-cell">B</th>
-                            <th class="numeric-cell medium-only">4s</th>
-                            <th class="numeric-cell medium-only">6s</th>
-                        </tr>
+                            <tr>
+                                <th class="actions-cell" style="padding: 0"></th>
+                                <th class="label-cell col-40"></th>
+                                <th class="numeric-cell">R</th>
+                                <th class="numeric-cell">B</th>
+                                <th class="numeric-cell medium-only">4s</th>
+                                <th class="numeric-cell medium-only">6s</th>
+                            </tr>
                         </thead>
                         <tbody id="home-batting-scorecard">
-                            <tr class="batsman-row">
-                                <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18 ">edit</i></td>
-                                <td class="label-cell">G Pontin<br /><span style="white-space: nowrap">not out</span></td>
-                                <td class="numeric-cell">50</td>
-                                <td class="numeric-cell">155</td>
-                                <td class="numeric-cell medium-only">8</td>
-                                <td class="numeric-cell medium-only">0</td>
-                            </tr>
-                            <tr class="batsman-row">
-                                <td class="actions-cell scorecard-edit-item"><i class="material-icons md-18">edit</i></td>
-                                <td class="label-cell">P Mishra<br /><span class="scorecard-subtitle">ct. Fielder b. Bowler</span></td>
-                                <td class="numeric-cell">8</td>
-                                <td class="numeric-cell">5</td>
-                                <td class="numeric-cell medium-only">2</td>
-                                <td class="numeric-cell medium-only">0</td>
-                            </tr>
                             <tr>
                                 <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="home-batting-scorecard-add-row">add</i></td>
                                 <td class="label-cell"></td>
@@ -73,60 +62,713 @@
                                 <td class="numeric-cell medium-only"></td>
                                 <td class="numeric-cell medium-only"></td>
                             </tr>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"></td>
+                                <td class="label-cell" style="text-align: right">Extras<br /><span class="scorecard-subtitle" id="home-batting-scorecard-extras-detail">nb <span class="no-balls">0</span>,w <span class="wides">0</span>,b <span class="byes">0</span>,lb <span class="leg-byes">0</span></span></td>
+                                <td class="numeric-cell" id="home-batting-scorecard-extras-total"></td>
+                                <td class="" style="padding-left: 0"><i class="material-icons md-18" id="home-batting-scorecard-edit-extras">edit</i></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"></td>
+                                <td class="label-cell" style="text-align: right">Penalty</td>
+                                <td class="numeric-cell" id="home-batting-scorecard-penalty-total">0</td>
+                                <td class="" style="padding-left: 0"><i class="material-icons md-18" id="home-batting-scorecard-edit-penalty">edit</i></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"></td>
+                                <td class="label-cell" style="text-align: right">Total<br /><span class="scorecard-subtitle" id="home-batting-scorecard-wickets-text"></span></td>
+                                <td class="numeric-cell" id="home-batting-scorecard-total"></td>
+                                <td class="" style="padding-left: 0"></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"></td>
+                                <td class="label-cell" style="text-align: right">Overs</td>
+                                <td class="numeric-cell" id="home-batting-scorecard-overs"></td>
+                                <td class="" style="padding-left: 0"><i class="material-icons md-18" id="home-batting-scorecard-edit-overs">edit</i></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab" id="homeBowling">
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="actions-cell" style="padding: 0"></th>
+                                <th class="label-cell col-40"></th>
+                                <th class="numeric-cell">Ovs</th>
+                                <th class="numeric-cell">M</th>
+                                <th class="numeric-cell">R</th>
+                                <th class="numeric-cell">Wkts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="home-bowling-scorecard">
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="home-bowling-scorecard-add-row">add</i></td>
+                                <td class="label-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab" id="homeFow">
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="actions-cell" style="padding: 0"></th>
+                                <th class="label-cell">Wkt</th>
+                                <th class="numeric-cell">Ovs</th>
+                                <th class="numeric-cell">Runs</th>
+                                <th class="label-cell medium-only">Not Out Batsman</th>
+                                <th class="label-cell">Out Batsman</th>
+                            </tr>
+                        </thead>
+                        <tbody id="home-fow-scorecard">
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="home-fow-scorecard-add-row">add</i></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="label-cell medium-only"></td>
+                                <td class="label-cell"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
+            </div>
+            <div class="tab" id="oppositionBatting">
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="actions-cell" style="padding: 0"></th>
+                                <th class="label-cell col-40"></th>
+                                <th class="numeric-cell">R</th>
+                                <th class="numeric-cell">B</th>
+                                <th class="numeric-cell medium-only">4s</th>
+                                <th class="numeric-cell medium-only">6s</th>
+                            </tr>
+                        </thead>
+                        <tbody id="oppo-batting-scorecard">
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="oppo-batting-scorecard-add-row">add</i></td>
+                                <td class="label-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"></td>
+                                <td class="label-cell" style="text-align: right">Extras<br /><span class="scorecard-subtitle" id="oppo-batting-scorecard-extras-detail">nb <span class="no-balls">0</span>,w <span class="wides">0</span>,b <span class="byes">0</span>,lb <span class="leg-byes">0</span></span></td>
+                                <td class="numeric-cell" id="oppo-batting-scorecard-extras-total"></td>
+                                <td class="" style="padding-left: 0"><i class="material-icons md-18" id="oppo-batting-scorecard-edit-extras">edit</i></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"></td>
+                                <td class="label-cell" style="text-align: right">Penalty</td>
+                                <td class="numeric-cell" id="oppo-batting-scorecard-penalty-total">0</td>
+                                <td class="" style="padding-left: 0"><i class="material-icons md-18" id="oppo-batting-scorecard-edit-penalty">edit</i></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"></td>
+                                <td class="label-cell" style="text-align: right">Total<br /><span class="scorecard-subtitle" id="oppo-batting-scorecard-wickets-text"></span></td>
+                                <td class="numeric-cell" id="oppo-batting-scorecard-total"></td>
+                                <td class="" style="padding-left: 0"></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"></td>
+                                <td class="label-cell" style="text-align: right">Overs</td>
+                                <td class="numeric-cell" id="oppo-batting-scorecard-overs"></td>
+                                <td class="" style="padding-left: 0"><i class="material-icons md-18" id="oppo-batting-scorecard-edit-overs">edit</i></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="tab" id="oppositionBowling">
+                <div class="data-table">
+                    <table>
+                        <thead>
                         <tr>
-                            <td class="actions-cell" style="padding-right: 0"></td>
-                            <td class="label-cell" style="text-align: right">Extras<br /><span class="scorecard-subtitle" id="home-batting-scorecard-extras-detail">nb 0,w 1,b 4,lb 12</span></td>
-                            <td class="numeric-cell" id="home-batting-scorecard-extras-total">17</td>
-                            <td class="" style="padding-left: 0"><i class="material-icons md-18">edit</i></td>
-                            <td class="numeric-cell medium-only"></td>
-                            <td class="numeric-cell medium-only"></td>
+                            <th class="actions-cell" style="padding: 0"></th>
+                            <th class="label-cell col-40"></th>
+                            <th class="numeric-cell">Ovs</th>
+                            <th class="numeric-cell">M</th>
+                            <th class="numeric-cell">R</th>
+                            <th class="numeric-cell">Wkts</th>
                         </tr>
+                        </thead>
+                        <tbody id="oppo-bowling-scorecard">
                         <tr>
-                            <td class="actions-cell" style="padding-right: 0"></td>
-                            <td class="label-cell" style="text-align: right">Penalty</td>
-                            <td class="numeric-cell" id="home-batting-scorecard-penalty-total">0</td>
-                            <td class="" style="padding-left: 0"><i class="material-icons md-18">edit</i></td>
-                            <td class="numeric-cell medium-only"></td>
-                            <td class="numeric-cell medium-only"></td>
-                        </tr>
-                        <tr>
-                            <td class="actions-cell" style="padding-right: 0"></td>
-                            <td class="label-cell" style="text-align: right">Total<br/><span class="scorecard-subtitle" id="scorecard-wickets-text">1 Wickets</span></td>
-                            <td class="numeric-cell" id="home-batting-scorecard-total">254</td>
-                            <td class="" style="padding-left: 0"></td>
-                            <td class="numeric-cell medium-only"></td>
-                            <td class="numeric-cell medium-only"></td>
-                        </tr>
-                        <tr>
-                            <td class="actions-cell" style="padding-right: 0"></td>
-                            <td class="label-cell" style="text-align: right">Overs</td>
-                            <td class="numeric-cell" id="home-batting-scorecard-overs">12.3</td>
-                            <td class="" style="padding-left: 0"></td>
-                            <td class="numeric-cell medium-only"></td>
-                            <td class="numeric-cell medium-only"></td>
+                            <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="oppo-bowling-scorecard-add-row">add</i></td>
+                            <td class="label-cell"></td>
+                            <td class="numeric-cell"></td>
+                            <td class="numeric-cell"></td>
+                            <td class="numeric-cell"></td>
+                            <td class="numeric-cell"></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
-                
-                
-            </div>
-            <div class="tab" id="homeBowling">
-                home bowling
-            </div>
-            <div class="tab" id="homeFow">
-                home fow
-            </div>
-            <div class="tab" id="oppositionBatting">
-                oppo batting
-            </div>
-            <div class="tab" id="oppositionBowling">
-                oppo bowling
             </div>
             <div class="tab" id="oppositionFow">
-                oppo fow
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="actions-cell" style="padding: 0"></th>
+                                <th class="label-cell">Wkt</th>
+                                <th class="numeric-cell">Ovs</th>
+                                <th class="numeric-cell">Runs</th>
+                                <th class="label-cell medium-only">Not Out Batsman</th>
+                                <th class="label-cell">Out Batsman</th>
+                            </tr>
+                        </thead>
+                        <tbody id="oppo-fow-scorecard">
+                        <tr>
+                            <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="oppo-fow-scorecard-add-row">add</i></td>
+                            <td class="numeric-cell"></td>
+                            <td class="numeric-cell"></td>
+                            <td class="numeric-cell"></td>
+                            <td class="label-cell medium-only"></td>
+                            <td class="label-cell"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
+    
+
+    <!--Popup Editors-->
+    <div class="popup edit-batsman-entry-popup">
+        <div class="page" id="edit-batsman-entry-page">
+            <div class="navbar">
+                <div class="navbar-bg"></div>
+                <div class="navbar-inner">
+                    <div class="left">
+                        <a class="link icon-only" id="save-batsman-entry-close-button">
+                            <i class="icon material-icons" id="save-batsman-entry-close-button-icon">close</i>
+                        </a>
+                    </div>
+                    <div class="title" id="edit-batsman-title">Edit</div>
+                    <div class="right">
+                        <a class="link icon-only" id="save-batsman-entry-button">
+                            <i class="icon material-icons" id="save-batsman-entry-button-icon">done</i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="list inline-labels">
+                    <ul>
+                        <li id="batsman-select-element">
+                            <a class="item-link smart-select smart-select-init" id="batsman-smart-select" data-open-in="popup" data-close-on-select="true" data-searchbar="true" data-searchbar-placeholder="Search players">
+                                <select name="batter" id="batter-select">
+                                    <option value="-1">Please select...</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Batsman</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="item-content item-input" id="batsman-text-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Batsman</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="Add name..." id="batsman-name-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a class="item-link smart-select smart-select-init" id="dismissal-type-smart-select" data-open-in="sheet" data-close-on-select="true">
+                                <select name="dismissal-type" id="dismissal-type-select">
+                                    <option value=" " data-placeholder="true">Select...</option>
+                                    <option value="Bowled">Bowled</option>
+                                    <option value="Caught">Caught</option>
+                                    <option value="CaughtAndBowled">Caught & Bowled</option>
+                                    <option value="LBW">LBW</option>
+                                    <option value="RunOut">Run Out</option>
+                                    <option value="Stumped">Stumped</option>
+                                    <option value="HitWicket">Hit Wicket</option>
+                                    <option value="Retired">Retired (out)</option>
+                                    <option value="RetiredHurt">Retired Hurt</option>
+                                    <option value="DidNotBat">Did Not Bat</option>
+                                    <option value="NotOut">Not Out</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Dismissal type</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="item-content item-input" id="bowler-text-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Bowler</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="Add name..." id="bowler-name-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li id="bowler-select-element">
+                            <a class="item-link smart-select smart-select-init" id="bowler-smart-select" data-open-in="popup" data-close-on-select="true" data-searchbar="true" data-searchbar-placeholder="Search players">
+                                <select name="batter" id="bowler-select">
+                                    <option value="-1">Please select...</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Bowler</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="item-content item-input" id="fielder-text-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Fielder</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="Add name..." id="fielder-name-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li id="fielder-select-element">
+                            <a class="item-link smart-select smart-select-init" id="fielder-smart-select" data-open-in="popup" data-close-on-select="true" data-searchbar="true" data-searchbar-placeholder="Search players">
+                                <select name="batter" id="fielder-select">
+                                    <option value="-1">Please select...</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Fielder</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="item-content item-input" id="runs-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Runs</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" placeholder="0" min="0" max="500" step="1" id="runs-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input" id="balls-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Balls</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" placeholder="0" min="0" max="500" step="1" id="balls-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input" id="fours-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Fours</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" placeholder="0" min="0" max="500" step="1" id="fours-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input" id="sixes-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Sixes</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" placeholder="0" min="0" max="500" step="1" id="sixes-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+<div class="popup edit-extras-popup">
+    <div class="page" id="edit-extras-page">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link icon-only" id="edit-extras-close-button">
+                        <i class="icon material-icons" id="edit-extras-close-button-icon">close</i>
+                    </a>
+                </div>
+                <div class="title" id="edit-extras-title">Edit Extras</div>
+                <div class="right">
+                    <a class="link icon-only" id="save-extras-button">
+                        <i class="icon material-icons" id="save-extras-button-icon">done</i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="list inline-labels">
+                <ul>
+                    <li class="item-content item-input" id="no-balls-element">
+                        <div class="item-inner">
+                            <div class="item-title item-label">No balls</div>
+                            <div class="item-input-wrap">
+                                <input type="number" placeholder="0" min="0" max="500" step="1" id="no-balls-input">
+                                <span class="input-clear-button"></span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item-content item-input" id="wides-element">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Wides</div>
+                            <div class="item-input-wrap">
+                                <input type="number" placeholder="0" min="0" max="500" step="1" id="wides-input">
+                                <span class="input-clear-button"></span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item-content item-input" id="byes-element">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Byes</div>
+                            <div class="item-input-wrap">
+                                <input type="number" placeholder="0" min="0" max="500" step="1" id="byes-input">
+                                <span class="input-clear-button"></span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item-content item-input" id="leg-byes-element">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Leg byes</div>
+                            <div class="item-input-wrap">
+                                <input type="number" placeholder="0" min="0" max="500" step="1" id="leg-byes-input">
+                                <span class="input-clear-button"></span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<div class="popup edit-bowler-stats-popup">
+    <div class="page" id="edit-bowler-page">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link icon-only" id="edit-bowler-close-button">
+                        <i class="icon material-icons" id="edit-bowler-close-button-icon">close</i>
+                    </a>
+                </div>
+                <div class="title" id="edit-bowler-title">Edit Figures</div>
+                <div class="right">
+                    <a class="link icon-only" id="save-bowler-button">
+                        <i class="icon material-icons" id="save-bowler-button-icon">done</i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="list inline-labels">
+                <ul>
+                    <li id="bowler-stats-select-element">
+                        <a class="item-link smart-select smart-select-init" id="bowler-stats-smart-select" data-open-in="popup" data-close-on-select="true" data-searchbar="true" data-searchbar-placeholder="Search players">
+                            <select name="bowler" id="bowler-stats-select">
+                                <option value="-1">Please select...</option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Bowler</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="item-content item-input" id="bowler-stats-text-element">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Bowler</div>
+                            <div class="item-input-wrap">
+                                <input type="text" placeholder="Add name..." id="bowler-stats-name-input">
+                                <span class="input-clear-button"></span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item-content item-input" id="bowler-overs-element">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Overs</div>
+                            <div class="item-input-wrap">
+                                <input type="number" placeholder="0" min="0" max="500" step="1" id="bowler-overs-input">
+                                <span class="input-clear-button"></span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item-content item-input" id="bowler-maidens-element">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Maidens</div>
+                            <div class="item-input-wrap">
+                                <input type="number" placeholder="0" min="0" max="500" step="1" id="bowler-maidens-input">
+                                <span class="input-clear-button"></span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item-content item-input" id="bowler-runs-element">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Runs</div>
+                            <div class="item-input-wrap">
+                                <input type="number" placeholder="0" min="0" max="500" step="1" id="bowler-runs-input">
+                                <span class="input-clear-button"></span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item-content item-input" id="bowler-wickets-element">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Wickets</div>
+                            <div class="item-input-wrap">
+                                <input type="number" placeholder="0" min="0" max="500" step="1" id="bowler-wickets-input">
+                                <span class="input-clear-button"></span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="popup edit-fow-popup">
+    <div class="page" id="edit-fow-page">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link icon-only" id="edit-fow-close-button">
+                        <i class="icon material-icons" id="edit-fow-close-button-icon">close</i>
+                    </a>
+                </div>
+                <div class="title" id="edit-fow-title">Edit Fall of Wicket</div>
+                <div class="right">
+                    <a class="link icon-only" id="save-fow-button">
+                        <i class="icon material-icons" id="save-fow-button-icon">done</i>
+                    </a>
+                    <a class="link icon-only" id="fow-incomplete">
+                        <i class="icon material-icons" id="fow-incomplete-icon" style="color: red">block</i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="card" id="fow-add-new-entry-message">
+                <div class="card-content card-content-padding">Complete the Batting Scorecard before entering FoW data - some of the information is sourced from the batting card.</div>
+            </div>
+            <div class="card" id="fow-edit-entry-message">
+                <div class="card-content card-content-padding">You can't edit batsmen details from here as it would have a cascading impact on other entries and probably not align with the scorecard. 
+                    If you need to edit the full details you need to delete this entry and any subsequent ones and then re-add.</div>
+            </div>
+            <div class="list inline-labels">
+                <div class="list-group">
+                    <ul>
+                        <li class="list-group-title">Wicket</li>
+                        <li class="item-content item-input" id="fow-overs-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Over</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="e.g. 12.2" id="fow-overs-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input" id="fow-score-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Score</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="e.g. 55" id="fow-score-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input" id="fow-partnership-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Partnership</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="" id="fow-parnership-input" disabled="disabled">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="list-group">
+                    <ul>
+                        <li class="list-group-title">Out batsman</li>
+                        <li id="fow-out-batsman-select-element">
+                            <a class="item-link smart-select smart-select-init" id="fow-out-batsman-smart-select" data-open-in="popup" data-close-on-select="true">
+                                <select name="fow-out-batsman" id="fow-out-batsman-select">
+                                    <option value="-1">Please select...</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Player</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="item-content item-input" id="fow-out-batsman-score-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Score</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="score when dismissed" id="fow-out-batsman-score-input" disabled="disabled">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="list-group">
+                    <ul>
+                        <li class="list-group-title">Not Out batsman</li>
+                        <li class="item-content item-input" id="fow-not-out-batsman-name-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Player</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="" id="fow-not-out-batsman-name-input" disabled="disabled">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input" id="fow-not-out-batsman-score-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Score</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="score when other player was dismissed" id="fow-not-out-batsman-score-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="popup edit-penalty-popup">
+        <div class="page" id="edit-penalty-page">
+            <div class="navbar">
+                <div class="navbar-bg"></div>
+                <div class="navbar-inner">
+                    <div class="left">
+                        <a class="link icon-only" id="edit-extras-penalty-button">
+                            <i class="icon material-icons" id="edit-penalty-close-button-icon">close</i>
+                        </a>
+                    </div>
+                    <div class="title" id="edit-penalty-title">Edit Penalty Runs</div>
+                    <div class="right">
+                        <a class="link icon-only" id="save-penalty-button">
+                            <i class="icon material-icons" id="save-penalty-button-icon">done</i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="list inline-labels">
+                    <ul>
+                        <li class="item-content item-input" id="penalty-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Penalty runs</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" placeholder="0" min="0" max="500" step="1" id="penalty-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="popup edit-overs-popup">
+        <div class="page" id="edit-overs-page">
+            <div class="navbar">
+                <div class="navbar-bg"></div>
+                <div class="navbar-inner">
+                    <div class="left">
+                        <a class="link icon-only" id="edit-overs-button">
+                            <i class="icon material-icons" id="edit-overs-close-button-icon">close</i>
+                        </a>
+                    </div>
+                    <div class="title" id="edit-overs-title">Edit Overs</div>
+                    <div class="right">
+                        <a class="link icon-only" id="save-overs-button">
+                            <i class="icon material-icons" id="save-overs-button-icon">done</i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="list inline-labels">
+                    <ul>
+                        <li class="item-content item-input" id="overs-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Overs</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" placeholder="0" min="0" max="100" step="1" id="overs-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <!--End Popup Editors-->
+
+
+
+
+
 </div>
