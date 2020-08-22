@@ -91,7 +91,7 @@ function isSix() {
 
 function getBallDescription() {
     if (this.wicket != null) {
-        return "<strong>OUT!</strong> " + this.wicket.description;
+        return "<strong>OUT!</strong> " + this.wicket.Description;
     }
     var sOrNoS = this.amount > 1 ? "s" : "";
     switch (this.thing) {

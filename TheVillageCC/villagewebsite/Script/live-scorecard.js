@@ -268,6 +268,7 @@ function renderMatchData(matchData) {
                     ballObj.BatsmanName,
                     ballObj.Bowler,
                     ballObj.Wicket);
+                ball.angle = ballObj.Angle;
 
                 var row = $("<div></div>");
                 row.addClass("row ball-row");
