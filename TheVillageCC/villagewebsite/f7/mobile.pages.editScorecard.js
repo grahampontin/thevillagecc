@@ -235,6 +235,9 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
     $("#home-batting-scorecard-add-row").click(function() {
 
         var battersArray = scorecardData.ourInnings.batting.entries;
+        if (battersArray.length == 0) {
+            battingAt = 1;
+        }
         var newBatter = {
             playerId: "-1",
             battingAt: battersArray.map(e => e.battingAt).sort().reverse()[0] + 1,
@@ -252,9 +255,13 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
     $("#oppo-batting-scorecard-add-row").click(function() {
 
         var battersArray = scorecardData.theirInnings.batting.entries;
+        var battingAt = battersArray.map(e => e.battingAt).sort((a, b) => a - b).reverse()[0] + 1;
+        if (battersArray.length == 0) {
+            battingAt = 1;
+        }
         var newBatter = {
             playerId: "0",
-            battingAt: battersArray.map(e => e.battingAt).sort((a, b) => a - b).reverse()[0] + 1,
+            battingAt: battingAt,
             runs: 0,
             fours: 0,
             sixes: 0,
