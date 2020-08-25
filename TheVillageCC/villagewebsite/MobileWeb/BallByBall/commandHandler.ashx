@@ -146,7 +146,7 @@ public class CommandHandler : IHttpHandler
                         ourFowData.Save();
                     }
                     
-                    var savedScorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), new Extras(match.ID, ThemOrUs.Them), match);
+                    var savedScorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), match);
                     context.Response.ContentType = "text/json";
                     context.Response.StatusCode = 200;
                     context.Response.Write(javaScriptSerializer.Serialize(savedScorecard));
