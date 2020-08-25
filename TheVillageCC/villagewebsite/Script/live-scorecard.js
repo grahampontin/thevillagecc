@@ -221,7 +221,7 @@ function renderMatchData(matchData) {
             if (ballsRendered >= 26) {
                 return;
             }
-            $.each(over.Over.Balls.reverse(), function(ballIndex, ball) {
+            $.each(over.Over.Balls.sort((a,b)=>a.BallNaumber-b.BallNumber), function(ballIndex, ball) {
                 if (ballsRendered >= 26) {
                     return;
                 }
@@ -261,7 +261,7 @@ function renderMatchData(matchData) {
 
 
             var actualBallNumber = 1;
-            $.each(over.Over.Balls.reverse(), function(ballIndex, ballObj) {
+            $.each(over.Over.Balls.sort((a,b)=>a.BallNaumber-b.BallNumber), function(ballIndex, ballObj) {
                 var ball = new Ball(ballObj.Amount,
                     ballObj.Thing,
                     ballObj.Batsman,

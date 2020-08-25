@@ -100,7 +100,7 @@ public class CommandHandler : IHttpHandler
                     ReturnCurrentMatchState(context, match);
                     break;
                 case "getScorecard":
-                    var scorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), new Extras(match.ID, ThemOrUs.Them), match);
+                    var scorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), match);
                     context.Response.ContentType = "text/json";
                     context.Response.StatusCode = 200;
                     context.Response.Write(javaScriptSerializer.Serialize(scorecard));
@@ -118,10 +118,10 @@ public class CommandHandler : IHttpHandler
                         var internalOppoBattingCard = unsavedScorecard.theirInnings.batting.ToInternalBattingCard(match, ThemOrUs.Them);
                         internalOppoBattingCard.Save(BattingOrBowling.Bowling);
                     }
-                    var internalExtras = unsavedScorecard.ourInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Us);
+                    var internalExtras = unsavedScorecard.ourInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Them);
                     internalExtras.Save();
                     
-                    var internalOppoExtras = unsavedScorecard.theirInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Them);
+                    var internalOppoExtras = unsavedScorecard.theirInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Us);
                     internalOppoExtras.Save();
                     
                     match.OurInningsLength = unsavedScorecard.ourInnings.inningsLength;
