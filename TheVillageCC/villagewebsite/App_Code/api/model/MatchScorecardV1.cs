@@ -15,11 +15,13 @@ namespace api.model
     {
         public InningsScoreCardV1 ourInnings;
         public InningsScoreCardV1 theirInnings;
+        public MatchConditionsV1 matchConditions;
 
         public MatchScorecardV1(BattingCard ourBatting, BowlingStats theirBowling, FoWStats ourFoW, BattingCard theirBatting, BowlingStats ourBowling, FoWStats theirFoW, Extras ourExtras, Extras theirExtras, Match match)
         {
             ourInnings = new InningsScoreCardV1(ourBatting, theirBowling, ourFoW, ourExtras,  match.OurInningsLength);
             theirInnings = new InningsScoreCardV1(theirBatting, ourBowling, theirFoW, theirExtras, match.TheirInningsLength);
+            matchConditions = new MatchConditionsV1(match);
         }
 
         // Deserialize
@@ -27,6 +29,32 @@ namespace api.model
         public MatchScorecardV1()
         {
 
+        }
+    }
+
+    public class MatchConditionsV1
+    {
+        public bool abandoned;
+        public int captainId;
+        public int wicketKeeperId;
+        public int overs;
+        public bool declaration;
+        public bool weWonTheToss;
+        public bool tossWinnerBatted;
+
+        public MatchConditionsV1()
+        {
+        }
+
+        public MatchConditionsV1(Match match)
+        {
+            abandoned = match.Abandoned;
+            captainId = match.Captain.ID;
+            wicketKeeperId = match.WicketKeeper.ID;
+            overs = match.Overs;
+            declaration = match.WasDeclaration;
+            weWonTheToss = match.TossWinner.IsUs;
+            tossWinnerBatted = match.TossWinnerBatted;
         }
     }
 

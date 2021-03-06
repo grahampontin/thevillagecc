@@ -13,7 +13,6 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
     if (e.detail.position != "next") {
         return;
     }
-    app.toolbar.hide("#opposition-tabbar", false);
 
     //Bind handlers here
     $("#opposition-scorecard-link").click(function() {
@@ -50,6 +49,14 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
         app.toolbar.setHighlight('#home-tabbar');
 
 
+        
+    });
+    $("#match-conditions-link").click(function() {
+        app.toolbar.hide("#opposition-tabbar", false);
+        app.toolbar.hide("#home-tabbar", false);        
+        $("#opposition-scorecard-link").removeClass("tab-link-active");
+        $("#home-scorecard-link").removeClass("tab-link-active");
+        app.toolbar.setHighlight('.toolbar-top');
     });
 
     $("#save-scorecard-button").click(function() {
@@ -495,6 +502,8 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
                 JSON.stringify(postData),
                 function(data) {
                     app.preloader.hide();
+                    app.toolbar.hide("#opposition-tabbar", false);
+                    app.toolbar.hide("#home-tabbar", false);
                     scorecardData = data;
                     //success
                     renderFullView(scorecardData);
@@ -601,6 +610,26 @@ function renderFullView(data) {
     renderBowlingData(data.theirInnings.bowling, "#oppo-bowling-scorecard");
     renderFoWData(data.ourInnings.fow, "#home-fow-scorecard", true);
     renderFoWData(data.theirInnings.fow, "#oppo-fow-scorecard", false);
+    renderMatchConditions();
+}
+
+function renderMatchConditions() {
+    $("#match-abandoned").prop( "checked", scorecardData.matchConditions.abandoned);
+    if (scorecardData.matchConditions.weWonTheToss) {
+        $("#tossSelect").val("We");
+    } else {
+        $("#tossSelect").val("They");
+    }
+    if (scorecardData.matchConditions.tossWinnerBatted) {
+        $("#tossWinnerBatBowlSelect").val("Bat");
+    } else {
+        $("#tossWinnerBatBowlSelect").val("Bowl");
+    }
+    $("#numberOfOversInput").val(scorecardData.matchConditions.overs);
+    app.smartSelect.get("#captain-smart-select").setValue(scorecardData.matchConditions.captainId);
+    app.smartSelect.get("#wicket-keeper-smart-select").setValue(scorecardData.matchConditions.wicketKeeperId);
+
+
 }
 
 var activeBatsmanEntry;
@@ -1010,6 +1039,8 @@ function makePlayerOption(player) {
         addPlayersToSelect(data, "#bowler-select");
         addPlayersToSelect(data, "#fielder-select");
         addPlayersToSelect(data, "#bowler-stats-select");
+        addPlayersToSelect(data, "#captainSelect");
+        addPlayersToSelect(data, "#wicketKeeperSelect");
     }
 
     function addPlayersToSelect(data, elementSelector) {

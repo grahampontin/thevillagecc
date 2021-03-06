@@ -17,14 +17,14 @@
             </div>
         </div>
     </div>
-    <div class="toolbar tabbar tabbar-labels toolbar-bottom" id="home-tabbar">
+    <div class="toolbar tabbar tabbar-labels toolbar-bottom toolbar-hidden" id="home-tabbar">
         <div class="toolbar-inner">
             <a class="tab-link tab-link-active" id="home-batting-card-link" href="#homeBatting"><i class="material-icons">sports_cricket</i><span class="tabbar-label">Batting Card</span></a>
             <a class="tab-link" href="#homeBowling"><i class="material-icons">sports_handball</i><span class="tabbar-label">Bowling Card</span></a>
             <a class="tab-link" href="#homeFow"><i class="material-icons">people</i><span class="tabbar-label">P'ships / FoW</span></a>
         </div>
     </div>
-    <div class="toolbar tabbar tabbar-labels toolbar-bottom" id="opposition-tabbar">
+    <div class="toolbar tabbar tabbar-labels toolbar-bottom toolbar-hidden" id="opposition-tabbar">
         <div class="toolbar-inner">
             <a class="tab-link" id="opposition-batting-card-link" href="#oppositionBatting"><i class="material-icons">sports_cricket</i><span class="tabbar-label">Batting Card</span></a>
             <a class="tab-link" href="#oppositionBowling"><i class="material-icons ">sports_handball</i><span class="tabbar-label">Bowling Card</span></a>
@@ -33,14 +33,15 @@
     </div>
     <div class="toolbar tabbar tabbar-labels toolbar-top">
         <div class="toolbar-inner">
-            <a class="tab-link tab-link-active" id="home-scorecard-link"><i class="material-icons">home</i><span class="tabbar-label">Village CC</span></a>
+            <a class="tab-link  tab-link-active" id="match-conditions-link" href="#match-conditions-tab"><i class="mdi mdi-weather-partly-cloudy"></i><span class="tabbar-label">Conditions</span></a>
+            <a class="tab-link" id="home-scorecard-link"><i class="material-icons">home</i><span class="tabbar-label">Village CC</span></a>
             <a class="tab-link" id="opposition-scorecard-link"><i class="material-icons">beach_access</i><span class="tabbar-label">Opponent</span></a>
         </div>
     </div>
 
     <div class="page-content">
         <div class="tabs">
-            <div class="tab tab-active" id="homeBatting">
+            <div class="tab" id="homeBatting">
                 <div class="data-table">
                     <table>
                         <thead>
@@ -214,24 +215,24 @@
                 <div class="data-table">
                     <table>
                         <thead>
-                        <tr>
-                            <th class="actions-cell" style="padding: 0"></th>
-                            <th class="label-cell col-40"></th>
-                            <th class="numeric-cell">Ovs</th>
-                            <th class="numeric-cell">M</th>
-                            <th class="numeric-cell">R</th>
-                            <th class="numeric-cell">Wkts</th>
-                        </tr>
+                            <tr>
+                                <th class="actions-cell" style="padding: 0"></th>
+                                <th class="label-cell col-40"></th>
+                                <th class="numeric-cell">Ovs</th>
+                                <th class="numeric-cell">M</th>
+                                <th class="numeric-cell">R</th>
+                                <th class="numeric-cell">Wkts</th>
+                            </tr>
                         </thead>
                         <tbody id="oppo-bowling-scorecard">
-                        <tr>
-                            <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="oppo-bowling-scorecard-add-row">add</i></td>
-                            <td class="label-cell"></td>
-                            <td class="numeric-cell"></td>
-                            <td class="numeric-cell"></td>
-                            <td class="numeric-cell"></td>
-                            <td class="numeric-cell"></td>
-                        </tr>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="oppo-bowling-scorecard-add-row">add</i></td>
+                                <td class="label-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -250,20 +251,136 @@
                             </tr>
                         </thead>
                         <tbody id="oppo-fow-scorecard">
-                        <tr>
-                            <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="oppo-fow-scorecard-add-row">add</i></td>
-                            <td class="numeric-cell"></td>
-                            <td class="numeric-cell"></td>
-                            <td class="numeric-cell"></td>
-                            <td class="label-cell medium-only"></td>
+                            <tr>
+                                <td class="actions-cell" style="padding-right: 0"><i class="material-icons md-18" id="oppo-fow-scorecard-add-row">add</i></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="numeric-cell"></td>
+                                <td class="label-cell medium-only"></td>
                             <td class="label-cell"></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
+        </div>
+        <div class="tab tab-active" id="match-conditions-tab">
+            <form class="list" id="my-form" style="margin-top: 16px;">
+                <div class="block-title block">MATCH ABANDONED</div>
+                <div class="simple-list">
+                    <ul>
+                        <li>
+                            <span>Was the match abandoned?</span>
+                            <label class="toggle toggle-init">
+                                <input type="checkbox" id="match-abandoned">
+                                <span class="toggle-icon"></span>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+                <div class="block-title" style="margin-top: 16px;">PLAYERS</div>
+                <ul>
+                    <li>
+                        <a id="captain-smart-select" class="item-link smart-select smart-select-init" data-open-in="popup" data-close-on-select="true" data-searchbar="true" data-searchbar-placeholder="Search players">
+                            <select name="captainSelect" id="captainSelect" class="form-validation">
+                                <option selected="selected"></option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Captain</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a id="wicket-keeper-smart-select" class="item-link smart-select smart-select-init" data-open-in="popup" data-close-on-select="true" data-searchbar="true" data-searchbar-placeholder="Search players">
+                            <select name="wicketKeeperSelect" id="wicketKeeperSelect" class="form-validation">
+                                <option selected="selected"></option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Wicket Keeper</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="block-title" style="margin-top: 16px;">MATCH FORMAT</div>
+                <ul>
+                    <li>
+                        <a class="item-link smart-select smart-select-init" data-close-on-select="true" data-open-in="sheet">
+                            <select name="matchFormatSelect" id="matchFormatSelect" class="form-validation">
+                                <option selected="selected"></option>
+                                <option value="Limited Overs">Limited Overs</option>
+                                <option value="Declaration">Declaration</option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Match Format</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li id="numberOfOversInput">
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Number of Overs</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" name="numberOfOvers" id="numberOfOvers" placeholder="Overs" class="form-validation" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="block-title" style="margin-top: 16px;">THE TOSS</div>
+                <ul>
+                    <li>
+                        <a class="item-link smart-select smart-select-init" data-close-on-select="true" data-open-in="sheet">
+                            <select name="tossWinnerSelect" id="tossWinnerSelect" placeholder="who won it?" class="form-validation">
+                                <option selected="selected"></option>
+                                <option value="We">We</option>
+                                <option value="They">They</option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Winner</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="item-link smart-select smart-select-init" data-close-on-select="true" data-open-in="sheet">
+                            <select name="tossWinnerBatBowlSelect" id="tossWinnerBatBowlSelect" class="form-validation">
+                                <option selected="selected"></option>
+                                <option value="Bat">Bat</option>
+                                <option value="Bowl">Bowl</option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Decided to</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <div class="block-title" style="margin-top: 16px;">REPORT</div>
+                <ul>
+                    <li>
+                        <a href="#" class="item-link">
+                            <div class="item-content">
+                                <div class="item-media"><i class="mdi mdi-file-document-edit-outline mdi-24px"></i></div>
+                                <div class="item-inner"><div class="item-title">
+                                    Create Match Report
+                                </div></div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                
+            </form>
+        </div>
             </div>
         </div>
-    </div>
     
 
     <!--Popup Editors-->

@@ -13,7 +13,8 @@
 
     <title>The Village Cricket Club Online | Fixtures</title>
     <CC:Styles runat=server ID=styles />    
-    <link href="http://addtocalendar.com/atc/1.5/atc-style-blue.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="https://addevent.com/libs/atc/1.6.1/atc.min.js" async defer></script>
+
 </head>
 <body>
     <script type="text/javascript">(function () {
@@ -53,20 +54,15 @@
                 <td><%#Eval("VenueName") %></td>
                 <td>(<%#Eval("Type") %>)</td>
                 <td>    
-                    <span class="addtocalendar">
-                        <a class="atcb-link"><img src="/img/cal-bw-01.png" width="24"></a> <!-- You can change button title by adding this line -->
-                        <var class="atc_event">
-                            <var class="atc_date_start"><%#Eval("MatchDateStartString") %></var>
-                            <var class="atc_date_end"><%#Eval("MatchDateEndString") %></var>
-                            <var class="atc_timezone">Europe/London</var>
-                            <var class="atc_title"><%#Eval("HomeTeamName") %> vs <%#Eval("AwayTeamName") %></var>
-                            <var class="atc_description"><%#Eval("HomeTeamName") %> vs <%#Eval("AwayTeamName") %> at <%#Eval("VenueName") %></var>
-                            <var class="atc_location"><%#Eval("VenueName") %></var>
-                            <var class="atc_organizer">The Village CC</var>
-                            <var class="atc_organizer_email">thevillagecc@gmail.com</var>
-                        </var>
-                    </span>
-
+                    <div title="Add to Calendar" class="addeventatc">
+                        Add
+                        <span class="start"><%#Eval("MatchDateString") %> 12:00</span>
+                        <span class="end"><%#Eval("MatchDateString") %> 23:00</span>
+                        <span class="timezone">United Kingdom/London</span>
+                        <span class="title"><%#Eval("HomeTeamName") %> vs <%#Eval("AwayTeamName") %></span>
+                        <span class="description"><%#Eval("HomeTeamName") %> vs <%#Eval("AwayTeamName") %> at <%#Eval("VenueName") %> </span>
+                        <span class="location"><%#Eval("VenueName") %></span>
+                    </div>
                 </td>
                 
             </tr>

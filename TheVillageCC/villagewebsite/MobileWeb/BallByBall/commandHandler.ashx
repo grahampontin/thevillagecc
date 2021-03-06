@@ -126,6 +126,13 @@ public class CommandHandler : IHttpHandler
                     
                     match.OurInningsLength = unsavedScorecard.ourInnings.inningsLength;
                     match.TheirInningsLength = unsavedScorecard.theirInnings.inningsLength;
+                    match.Abandoned = unsavedScorecard.matchConditions.abandoned;
+                    match.WasDeclaration = unsavedScorecard.matchConditions.declaration;
+                    match.Overs = unsavedScorecard.matchConditions.overs;
+                    match.Captain = new Player(unsavedScorecard.matchConditions.captainId);
+                    match.WicketKeeper = new Player(unsavedScorecard.matchConditions.wicketKeeperId);
+                    match.WonToss = unsavedScorecard.matchConditions.weWonTheToss;
+                    match.TossWinnerBatted = unsavedScorecard.matchConditions.tossWinnerBatted;
                     match.Save();
 
                     if (unsavedScorecard.ourInnings.bowling.entries.Any())
