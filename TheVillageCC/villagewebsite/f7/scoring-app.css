@@ -36,7 +36,7 @@
 
 .circle-button {
     line-height: unset !important;
-    font-size: 4.5vw;
+    font-size: 1em;
 }
 
 .circle-inner {
@@ -62,18 +62,11 @@
         display: inline-block;
     }
 .circle-responsive i {
-    font-size: 8vw;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    vertical-align: middle;
-    margin-top: 25%;
+    font-size: 3em;
 }
 
 .circle-large-font {
-    font-size: 7vw;
+    font-size: 3em;
 }
 
 .team-name {
@@ -225,3 +218,9 @@ html {
 /*
     end removed section
 */
+
+@media screen and (max-width: 30em) {
+    .display-if-over-30em {
+        display: none !important;
+    }
+}
