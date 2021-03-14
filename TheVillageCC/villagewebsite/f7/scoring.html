@@ -257,7 +257,73 @@
                     </div>
                     <!-- Second tab, should have "tab" class and unique id attribute -->
                     <div class="tab" id="scorecard-tab">
-                        Scorecard
+                        <div class="block-strong" style="text-align: center; font-weight: bold">
+                            Live Scorecard
+                        </div>
+                        <div class="data-table" style="background-color: white">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="label-cell col-40"></th>
+                                <th class="numeric-cell">R</th>
+                                <th class="numeric-cell">B</th>
+                                <th class="numeric-cell medium-only">4s</th>
+                                <th class="numeric-cell medium-only">6s</th>
+                            </tr>
+                        </thead>
+                        <tbody id="home-batting-scorecard">
+                        <tr class="batsman-row">
+                            <td class="label-cell">Chris Magnifique<br><span class="scorecard-subtitle">not out</span></td>
+                            <td class="numeric-cell">2</td>
+                            <td class="numeric-cell">0</td>
+                            <td class="numeric-cell medium-only">0</td>
+                            <td class="numeric-cell medium-only">0</td>
+                        </tr>
+                        <tr class="batsman-row">
+                            <td class="label-cell">P Misra<br><span class="scorecard-subtitle">not out</span></td><td class="numeric-cell">1</td>
+                            <td class="numeric-cell">0</td>
+                            <td class="numeric-cell medium-only">0</td>
+                            <td class="numeric-cell medium-only">0</td>
+                        </tr>
+                        <tr class="batsman-row">
+                            <td class="label-cell">E Gupte<br><span class="scorecard-subtitle">lbw bowler</span></td>
+                            <td class="numeric-cell">10</td>
+                            <td class="numeric-cell">0</td>
+                            <td class="numeric-cell medium-only">1</td>
+                            <td class="numeric-cell medium-only">1</td>
+                        </tr>
+                            <tr>
+                                <td class="label-cell" style="text-align: right">Extras<br><span class="scorecard-subtitle" id="home-batting-scorecard-extras-detail">nb <span class="no-balls">0</span>,w <span class="wides">0</span>,b <span class="byes">0</span>,lb <span class="leg-byes">0</span></span></td>
+                                <td class="numeric-cell" id="home-batting-scorecard-extras-total">0</td>
+                                <td class="" style="padding-left: 0"></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell" style="text-align: right">Penalty</td>
+                                <td class="numeric-cell" id="home-batting-scorecard-penalty-total">0</td>
+                                <td class="" style="padding-left: 0"></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell" style="text-align: right">Total<br><span class="scorecard-subtitle" id="home-batting-scorecard-wickets-text">for 1 wickets</span></td>
+                                <td class="numeric-cell" id="home-batting-scorecard-total">13</td>
+                                <td class="" style="padding-left: 0"></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell" style="text-align: right">Overs</td>
+                                <td class="numeric-cell" id="home-batting-scorecard-overs">0</td>
+                                <td class="" style="padding-left: 0"></td>
+                                <td class="numeric-cell medium-only"></td>
+                                <td class="numeric-cell medium-only"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
                     </div>
                     <!-- Third tab, should have "tab" class and unique id attribute -->
                     <div class="tab" id="wagon-wheel-tab">
@@ -267,9 +333,9 @@
             </div>
         <div class="display-if-over-30em toolbar tabbar" style="width: 3em; display: block; height: 100%">
             <div class="toolbar-inner" style="flex-direction: column">
-                <a class="tab-link tab-link-active" style="writing-mode: vertical-rl; text-orientation: mixed;" href="#current-over-tab"><i class="material-icons">sports_cricket</i><span class="tabbar-label" style="margin-top: 0.5em;">Current Over</span></a>
-                <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;" href="#scorecard-tab"><i class="material-icons">table_chart</i><span class="tabbar-label" style="margin-top: 0.5em;">Scorecard</span></a>
-                <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;" href="#wagon-wheel-tab"><i class="material-icons">radar</i><span class="tabbar-label" style="margin-top: 0.5em;">Wagonwheel</span></a>
+                <a class="tab-link tab-link-active" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 0 0 30%;" href="#current-over-tab"><i class="material-icons">sports_cricket</i><span class="tabbar-label" style="margin-top: 0.5em;">Current Over</span></a>
+                <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 0 0 30%;" href="#scorecard-tab"><i class="material-icons">table_chart</i><span class="tabbar-label" style="margin-top: 0.5em;">Scorecard</span></a>
+                <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 0 0 30%;" href="#wagon-wheel-tab"><i class="material-icons">radar</i><span class="tabbar-label" style="margin-top: 0.5em;">Wagonwheel</span></a>
             </div>
         </div>
         </div>
