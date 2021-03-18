@@ -147,6 +147,7 @@
 html {
     /* Disables pull-to-refresh but allows overscroll glow effects. */
     overscroll-behavior-y: contain;
+    position: fixed;
 }
 
 .show-five-plus {

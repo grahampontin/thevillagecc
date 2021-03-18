@@ -333,9 +333,9 @@
             </div>
         <div class="display-if-over-30em toolbar tabbar" style="width: 3em; display: block; height: 100%">
             <div class="toolbar-inner" style="flex-direction: column">
-                <a class="tab-link tab-link-active" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 0 0 30%;" href="#current-over-tab"><i class="material-icons">sports_cricket</i><span class="tabbar-label" style="margin-top: 0.5em;">Current Over</span></a>
-                <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 0 0 30%;" href="#scorecard-tab"><i class="material-icons">table_chart</i><span class="tabbar-label" style="margin-top: 0.5em;">Scorecard</span></a>
-                <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 0 0 30%;" href="#wagon-wheel-tab"><i class="material-icons">radar</i><span class="tabbar-label" style="margin-top: 0.5em;">Wagonwheel</span></a>
+                <a class="tab-link tab-link-active" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 1 1 auto;" href="#current-over-tab"><i class="material-icons">sports_cricket</i><span class="tabbar-label" style="margin-top: 0.5em;">Current Over</span></a>
+                <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 1 1 auto;" href="#scorecard-tab"><i class="material-icons">table_chart</i><span class="tabbar-label" style="margin-top: 0.5em;">Scorecard</span></a>
+                <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 1 1 auto;" href="#wagon-wheel-tab"><i class="material-icons">radar</i><span class="tabbar-label" style="margin-top: 0.5em;">Wagonwheel</span></a>
             </div>
         </div>
         </div>
@@ -349,9 +349,9 @@
             </div>
         </div>
         <div class="sheet-modal-inner">
-            <div class="row" style="padding: 10px 5px; margin-bottom: 5px; background-color: var(--f7-toolbar-bg-color, var(--f7-bars-bg-color, var(--f7-theme-color)));">
+            <div class="row" id="wagon-wheel-header-row" style="padding: 10px 5px; margin-bottom: 5px; background-color: var(--f7-toolbar-bg-color, var(--f7-bars-bg-color, var(--f7-theme-color)));">
                 <div class="col-10" style="padding-top: 7px;">13.4</div>
-                <div class="col-10">
+                <div>
                     <div class="button button-outline circle-small circle-responsive circle-button color-darkgray" style="height: 40px; width: 40px;">
                         <div id="ww-short-ball-score-description" class="circle-inner"></div>
                     </div>
@@ -362,7 +362,7 @@
                     <span id="ww-long-ball-score-description"></span> to <span id="ww-scoring-area"></span>
                 </div>
             </div>
-            <canvas id="wagon-wheel-canvas" style="margin-bottom: 40px">
+            <canvas id="wagon-wheel-canvas" style="margin-bottom: 40px; width: 100%">
             </canvas>
         </div>
     </div>

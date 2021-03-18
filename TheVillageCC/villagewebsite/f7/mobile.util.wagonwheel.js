@@ -10,11 +10,18 @@ var trackBoundary = false;
 function initializeWagonWheel(canvasElement, touchEndHandler) {
     canvas = document.getElementById(canvasElement);
     var ctx = canvas.getContext('2d');
+    var fontInPx = parseFloat(getComputedStyle(canvas).fontSize);
     
     img.onload = function() {
-        canvas.width = window.innerWidth;
-        canvas.height = img.naturalHeight * (canvas.width / img.naturalWidth);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        if (window.innerHeight > window.innerWidth) {
+            canvas.width = window.innerWidth;
+            canvas.height = img.naturalHeight * (canvas.width / img.naturalWidth);
+        } else {
+            canvas.height = window.innerHeight - (fontInPx*10); //minus 10ems
+            canvas.width = window.innerWidth;
+        }
+        var imageWidth = img.naturalWidth*(canvas.height/img.naturalHeight);
+        ctx.drawImage(img, canvas.width/2-imageWidth/2, 0, imageWidth, canvas.height);
     };
     img.src = '/img/wagon-wheel-grey.png';
     drawing = false;
@@ -47,15 +54,22 @@ function initializeWagonWheel(canvasElement, touchEndHandler) {
             return;
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        var imageWidth = img.naturalWidth*(canvas.height/img.naturalHeight);
+        ctx.drawImage(img, canvas.width/2-imageWidth/2, 0, imageWidth, canvas.height);
         ctx.beginPath();
         ctx.moveTo(stumpsX, stumpsY);
         ctx.lineWidth = 3;
         ctx.strokeStyle = '#2196f3';
         if (!trackBoundary) {
-            ctx.lineTo(mouseX, mouseY);
+            if (distanceBetweenTwoPoints(stumpsX, canvas.height/2, mouseX, mouseY) > imageWidth/2) {
+                var correctedLocation = moveToBoundary(stumpsX, stumpsY);
+                ctx.lineTo(correctedLocation.x, correctedLocation.y);
+            } else {
+                ctx.lineTo(mouseX, mouseY);
+            }
         } else {
-            var newLocation = moveToBoundary(mouseX, mouseY);
+            ctx.strokeStyle = '#FF0000';
+            var newLocation = moveToBoundary(stumpsX, stumpsY);
             ctx.lineTo(newLocation.x, newLocation.y);
         }
         ctx.stroke();
@@ -65,19 +79,22 @@ function initializeWagonWheel(canvasElement, touchEndHandler) {
 
 }
 
-function moveToBoundary() {
-    var squareBoundary = canvas.width / 2;
+function moveToBoundary(stumpsX, stumpsY) {
+    var imageWidth = img.naturalWidth*(canvas.height/img.naturalHeight);
+    var squareBoundary = imageWidth / 2;
+    var straightBoundary =  canvas.height / 2;
     var angle = getBallAngle();
     var result = {};
-    result.x = Math.round(Math.cos(angle - (Math.PI / 2)) * squareBoundary + mouseX);
-    result.y = Math.round(Math.sin(angle - (Math.PI / 2)) * squareBoundary + mouseY);
+    result.x = Math.round(Math.cos(angle - (Math.PI / 2)) * squareBoundary) + stumpsX;
+    result.y = Math.round(Math.sin(angle - (Math.PI / 2)) * straightBoundary) + canvas.height/2;
     return result;
 }
 
 function closeWagonWheel() {
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    var imageWidth = img.naturalWidth*(canvas.height/img.naturalHeight);
+    ctx.drawImage(img, canvas.width/2-imageWidth/2, 0, imageWidth, canvas.height);
     
 }
 

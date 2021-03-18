@@ -99,13 +99,7 @@ $$(document).on("page:init",
         //once bound...
         initializeMatchStateAndThen(false,
             function() {
-                initializeWagonWheel("wagon-wheel-canvas",
-                    function(angle, magnitude) {
-                        matchState.getLastBall().angle = angle;
-                        matchState.getLastBall().magnitude = magnitude;
-                        updateWagonWheelUiText();
-
-                    });
+                
                 matchState.evaluatePlayerScores();
                 refreshUi();
             });
@@ -168,6 +162,13 @@ function displayWagonWheel() {
                 closeWagonWheel();
             },
             opened: function() {
+                initializeWagonWheel("wagon-wheel-canvas",
+                    function(angle, magnitude) {
+                        matchState.getLastBall().angle = angle;
+                        matchState.getLastBall().magnitude = magnitude;
+                        updateWagonWheelUiText();
+
+                    });
                 if (matchState.getLastBall().isFour() || matchState.getLastBall().isSix()) {
                     setWagonWheelTrackBoundary(true);
                 } else {
