@@ -59,8 +59,17 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
         app.toolbar.setHighlight('.toolbar-top');
     });
 
+    $("#matchFormatSelect").on('change', function() {
+        if ($("#matchFormatSelect").val() == "Declaration") {
+            $("#numberOfOversInput").hide();
+        } else {
+            $("#numberOfOversInput").show();
+        }
+    });
+
     $("#save-scorecard-button").click(function() {
         app.preloader.show();
+        updateMatchConditions();
         //actually save it
         var postData = { 'command': "saveScorecard", 'matchId': matchId, "payload" : scorecardData };
         $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
@@ -491,30 +500,29 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
             return scorecardData.theirInnings.fow;
         }
     }
-    
+
     
     //once bound...
 
-    loadAndProcessPlayers();
     app.preloader.show();
-    var postData = { 'command': "getScorecard", 'matchId': matchId };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
+    loadAndProcessPlayers(function() {
+        var postData = { 'command': "getScorecard", 'matchId': matchId };
+        $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
                 JSON.stringify(postData),
                 function(data) {
-                    app.preloader.hide();
                     app.toolbar.hide("#opposition-tabbar", false);
                     app.toolbar.hide("#home-tabbar", false);
                     scorecardData = data;
                     //success
                     renderFullView(scorecardData);
+                    app.preloader.hide();
                 },
                 "json")
             .fail(function(data) {
                 app.preloader.hide();
                 showToastCenter(data.responseText);
-            })
-        ;
-
+            });
+    });
 
 });
 
@@ -616,20 +624,23 @@ function renderFullView(data) {
 function renderMatchConditions() {
     $("#match-abandoned").prop( "checked", scorecardData.matchConditions.abandoned);
     if (scorecardData.matchConditions.weWonTheToss) {
-        $("#tossSelect").val("We");
+        app.smartSelect.get("#toss-winner-smart-select").setValue("We");
     } else {
-        $("#tossSelect").val("They");
+        app.smartSelect.get("#toss-winner-smart-select").setValue("They");
     }
     if (scorecardData.matchConditions.tossWinnerBatted) {
-        $("#tossWinnerBatBowlSelect").val("Bat");
+        app.smartSelect.get("#toss-winner-bat-bowl-smart-select").setValue("Bat");
     } else {
-        $("#tossWinnerBatBowlSelect").val("Bowl");
+        app.smartSelect.get("#toss-winner-bat-bowl-smart-select").setValue("Bowl");
     }
-    $("#numberOfOversInput").val(scorecardData.matchConditions.overs);
+    if (scorecardData.matchConditions.declaration) {
+        app.smartSelect.get("#match-format-smart-select").setValue("Declaration");
+    } else {
+        app.smartSelect.get("#match-format-smart-select").setValue("Limited Overs");
+    }
+    $("#numberOfOvers").val(scorecardData.matchConditions.overs);
     app.smartSelect.get("#captain-smart-select").setValue(scorecardData.matchConditions.captainId);
     app.smartSelect.get("#wicket-keeper-smart-select").setValue(scorecardData.matchConditions.wicketKeeperId);
-
-
 }
 
 var activeBatsmanEntry;
@@ -1015,19 +1026,23 @@ function makePlayerOption(player) {
 
     var allPlayers = [];
 
-    function loadAndProcessPlayers() {
+    function loadAndProcessPlayers(completedCallback) {
         if (allPlayers.length != 0) {
             populatePlayerSelects(allPlayers);
+            completedCallback();
         } else {
             var postData = { 'command': "listPlayers" };
             $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
                     JSON.stringify(postData),
                     function(data) {
                         //success
+                        allPlayers = data;
                         populatePlayerSelects(data);
+                        completedCallback();
                     },
                     "json")
                 .fail(function(data) {
+                    app.preloader.hide();
                     showToastCenter("Failed to load player list: " + data.responseText);
                 });
         }
@@ -1045,17 +1060,27 @@ function makePlayerOption(player) {
 
     function addPlayersToSelect(data, elementSelector) {
         var select = $(elementSelector);
+        select.empty();
+        select.append($("<option></option>").attr("selected", "selected"));
         $.each(data,
             function(i, o) {
                 select.append($("<option></option>")
                     .attr("value", o.playerId)
                     .attr("playerid", o.playerId)
                     .text(o.shortName));
-                allPlayers.push(o);
-
             }
         );
     }
+
+function updateMatchConditions() {
+    scorecardData.matchConditions.captainId = parseInt($("#captainSelect").val());
+    scorecardData.matchConditions.wicketKeeperId = parseInt($("#wicketKeeperSelect").val());
+    scorecardData.matchConditions.weWonTheToss = $("#tossWinnerSelect").val() == "We";
+    scorecardData.matchConditions.tossWinnerBatted = $("#tossWinnerBatBowlSelect").val() == "Bat";
+    scorecardData.matchConditions.abandoned = $("#match-abandoned").prop("checked");
+    scorecardData.matchConditions.overs = $("#numberOfOvers").val();
+    scorecardData.matchConditions.declaration = $("#matchFormatSelect").val() == "Declaration";
+}
 
 
 

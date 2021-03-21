@@ -160,6 +160,7 @@ function displayWagonWheel() {
         on: {
             close: function() {
                 closeWagonWheel();
+                refreshCurrentOverBallsView();
             },
             opened: function() {
                 initializeWagonWheel("wagon-wheel-canvas",
@@ -194,6 +195,12 @@ function refreshUi() {
     refreshBowlerView();
     refreshCurrentOverView();
     refreshTeamScores();
+    refreshCurrentOverBallsView();
+}
+
+function refreshCurrentOverBallsView() {
+    $('#balls-this-over-list').empty();
+    renderBallsList('#balls-this-over-list');
 }
 
 

@@ -13,7 +13,7 @@
     
     //once bound...
     initializeMatchStateAndThen(false, function() {
-        renderBallsList();
+        renderBallsList('#balls ul');
 
     });
 });
@@ -29,7 +29,8 @@
         </div>
  */
 
-function renderBallsList() {
+function renderBallsList(elementSelector) {
+    var ballCounter = 1;
     $.each(matchState.Over.balls,
         function(i, ball) {
             var listItem = $("<li></li>");
@@ -41,7 +42,7 @@ function renderBallsList() {
             ballNumber.addClass("item-media");
             var ballNumberBadge = $("<span></span>");
             ballNumberBadge.addClass("badge");
-            ballNumberBadge.text(matchState.LastCompletedOver+1+"."+i);
+            ballNumberBadge.text(matchState.LastCompletedOver+1+"."+ballCounter);
             ballNumber.append(ballNumberBadge);
             
             var ballDescriptionInner =  $("<div></div>");
@@ -76,6 +77,9 @@ function renderBallsList() {
 
             listItem.append(itemContent);
 
-            $('#balls ul').append(listItem);
+            $(elementSelector).append(listItem);
+            if (ball.isLegalDelivery()) {
+                ballCounter++;
+            }
         });
 }
