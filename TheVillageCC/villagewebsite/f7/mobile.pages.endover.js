@@ -1,4 +1,5 @@
-﻿$$(document).on('page:init', '.page[data-name="endOver"]', function (e) {
+﻿var ballNumber;
+$$(document).on('page:init', '.page[data-name="endOver"]', function (e) {
     
     //Bind handlers here
     $("#end-over-done").click(function() {
@@ -10,6 +11,8 @@
         //Post to server and handle response.
         sendBallByBallCommand(postData);
     });
+
+   
     
     //once bound...
     initializeMatchStateAndThen(false, function() {
@@ -67,9 +70,16 @@ function renderBallsList(elementSelector) {
             var ballEditIcon = $("<i></i>");
             ballEditIcon.addClass("icon");
             ballEditIcon.addClass("material-icons");
+            ballEditIcon.addClass("ball-edit-link");
+            ballEditIcon.attr("ball-number", i);
             ballEditIcon.text("edit");
+            
+            var ballEditLink = $("<a></a>");
+            ballEditLink.attr("href", "/editBall/");
+            ballEditLink.addClass("link icon-only");
+            ballEditLink.append(ballEditIcon);
 
-            ballEditAfter.append(ballEditIcon);
+            ballEditAfter.append(ballEditLink);
 
             itemContent.append(ballNumber);
             ballDescriptionInner.append(ballEditAfter);
@@ -82,4 +92,7 @@ function renderBallsList(elementSelector) {
                 ballCounter++;
             }
         });
+    $(".ball-edit-link").click(function() {
+        ballNumber = $(this).attr("ball-number");
+    });
 }

@@ -80,7 +80,15 @@ var app = new Framework7({
             name: 'editScorecard',
             path: '/editScorecard/',
             url: 'editScorecard.html'
+        },
+        {
+            name: 'editBall',
+            path: '/editBall/',
+            popup: {
+                url: 'editBall.html'
+            }
         }
+
     ],
     on: {
         smartSelectBeforeOpen: function() {

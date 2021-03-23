@@ -1,0 +1,140 @@
+﻿<div class="popup" data-name="editBall">
+    <div class="page" id="edit-ball-page" >
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link icon-only popup-close" id="edit-ball-close-button">
+                        <i class="icon material-icons" id="edit-ball-close-button-icon">close</i>
+                    </a>
+                </div>
+                <div class="title" id="edit-bowler-title">Edit Ball</div>
+                <div class="right">
+                    <a class="link icon-only popup-close" id="save-ball-edit-button">
+                        <i class="icon material-icons" id="save-ball-edit-button-icon">done</i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="list inline-labels">
+                <ul>
+                    <li>
+                        <a class="item-link smart-select" id="bowler-for-ball-smart-select" data-open-in="sheet" data-close-on-select="true">
+                            <select name="next-batter-in" id="bowler-for-ball-select"></select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Bowler</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="item-link smart-select" id="batsman-for-ball-smart-select" data-open-in="sheet" data-close-on-select="true">
+                            <select name="next-batter-in" id="batsman-for-ball-select"></select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Batsman</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="item-content item-input" id="bowler-overs-element">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Score</div>
+                            <div class="item-input-wrap">
+                                <input type="number" placeholder="0" min="0" max="500" step="1" id="edit-ball-score">
+                                <span class="input-clear-button"></span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="item-link smart-select" data-open-in="sheet" data-close-on-select="true" id="edit-ball-type-smart-select">
+                            <select name="next-batter-in" id="edit-ball-type-select">
+                                <option value="">Runs</option>
+                                <option value="w">Wides</option>
+                                <option value="nb">No Balls</option>
+                                <option value="b">Byes</option>
+                                <option value="lb">Leg Byes</option>
+                            </select>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">Type</div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="item-content item-input">
+                        <span>Wicket?</span>
+                        <label class="toggle toggle-init">
+                            <input type="checkbox" id="edit-ball-was-wicket">
+                            <span class="toggle-icon"></span>
+                        </label>
+                    </li>
+                </ul>
+                <div id="edit-ball-wicket-details" style="display: none">
+                    <div class="block-title block">WICKET DETAILS</div>
+                    <ul>
+                        <li>
+                            <a class="item-link smart-select smart-select-init" data-open-in="sheet" data-close-on-select="true" id="edit-ball-out-bastman-smart-select">
+                                <select name="batter-out" id="edit-ball-out-bastman-select">
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Batsman out</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="item-link smart-select smart-select-init" data-open-in="sheet" data-close-on-select="true" id="edit-ball-dismissal-type-smart-select">
+                                <select name="dismissal-type" id="edit-ball-dismissal-type-select">
+                                    <option value=" " data-placeholder="true">Select...</option>
+                                    <option value="b">Bowled</option>
+                                    <option value="ct">Caught</option>
+                                    <option value="lbw">LBW</option>
+                                    <option value="ro">Run Out</option>
+                                    <option value="st">Stumped</option>
+                                    <option value="hw">Hit Wicket</option>
+                                    <option value="htb">Handled the Ball</option>
+                                    <option value="rt">Retired (out)</option>
+                                    <option value="rh">Retired Hurt</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Dismissal type</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="item-content item-input" id="fielder-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Fielder</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="Add name..." id ="edit-ball-fielder-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input">
+                            <div class="item-media">
+                                <i class="icon material-icons">comment</i>
+                            </div>
+                            <div class="item-inner">
+                                <div class="item-input-wrap">
+                                    <textarea id="edit-ball-wicket-commentary-textarea" placeholder="Ah nuts, talk us through it champ."></textarea>
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
