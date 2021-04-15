@@ -35,7 +35,7 @@ public class CommandHandler : IHttpHandler
             if (genericBallByBallCommand.command == "matchesBySeason")
             {
                 var season = (int)genericBallByBallCommand.payload;
-                var matchDescriptors = Match.GetResults(new DateTime(season, 1,1), new DateTime(season,12,31)).Union(Match.GetFixtures().Where(m=>m.MatchDate < DateTime.Today.AddDays(1))).Select(m => new MatchDescriptor(m)).Distinct(MatchDescriptor.MatchIdComparer).ToList();
+                var matchDescriptors = Match.GetResults(new DateTime(season, 1,1), new DateTime(season,12,31)).Union(Match.GetFixtures().Where(m=>m.MatchDate < DateTime.Today.AddMonths(1))).Select(m => new MatchDescriptor(m)).Distinct(MatchDescriptor.MatchIdComparer).ToList();
                 context.Response.Write(javaScriptSerializer.Serialize(matchDescriptors));
                 return;
             }

@@ -75,7 +75,6 @@ function renderBallsList(elementSelector) {
             ballEditIcon.text("edit");
             
             var ballEditLink = $("<a></a>");
-            ballEditLink.attr("href", "/editBall/");
             ballEditLink.addClass("link icon-only");
             ballEditLink.append(ballEditIcon);
 
@@ -94,5 +93,6 @@ function renderBallsList(elementSelector) {
         });
     $(".ball-edit-link").click(function() {
         ballNumber = $(this).attr("ball-number");
+
     });
 }
