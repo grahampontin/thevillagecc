@@ -11,8 +11,49 @@ function initializeWagonWheel(canvasElement, touchEndHandler) {
     canvas = document.getElementById(canvasElement);
     var ctx = canvas.getContext('2d');
     var fontInPx = parseFloat(getComputedStyle(canvas).fontSize);
-    
+
     img.onload = function() {
+        drawBackground();
+    };
+    if (img.src == "") {
+        img.src = '/img/wagon-wheel-grey.png';
+    } else {
+        drawBackground();
+    }
+
+    canvas.addEventListener("touchstart",
+        function(e) {
+            drawing = true;
+            var bounds = canvas.getBoundingClientRect();
+            stumpsY = bounds.height * 0.425;
+            stumpsX = bounds.width / 2;
+            mouseX = e.touches[0].clientX - bounds.left;
+            mouseY = e.touches[0].clientY - bounds.top;
+            update();
+        },
+        false);
+    canvas.addEventListener("touchend",
+        function(e) {
+            drawing = false;
+            var angle = getBallAngle();
+            var magnitude = trackBoundary
+                ? null
+                : distanceBetweenTwoPoints(stumpsX, stumpsY, mouseX, mouseY) / canvas.width;
+            touchEndHandler(angle, magnitude);
+        },
+        false);
+    canvas.addEventListener("touchmove",
+        function(e) {
+            var boundingClientRect = canvas.getBoundingClientRect();
+            mouseX = e.touches[0].clientX - boundingClientRect.left;
+            mouseY = e.touches[0].clientY - boundingClientRect.top;
+        },
+        false);
+
+    drawing = false;
+
+
+    function drawBackground() {
         if (window.innerHeight > window.innerWidth) {
             canvas.width = window.innerWidth;
             canvas.height = img.naturalHeight * (canvas.width / img.naturalWidth);
@@ -22,32 +63,7 @@ function initializeWagonWheel(canvasElement, touchEndHandler) {
         }
         var imageWidth = img.naturalWidth*(canvas.height/img.naturalHeight);
         ctx.drawImage(img, canvas.width/2-imageWidth/2, 0, imageWidth, canvas.height);
-    };
-    img.src = '/img/wagon-wheel-grey.png';
-    drawing = false;
-
-
-
-    canvas.addEventListener("touchstart", function (e) {
-        drawing = true;
-        var bounds = canvas.getBoundingClientRect();
-        stumpsY = bounds.height*0.425;
-        stumpsX = bounds.width/2;
-        mouseX = e.touches[0].clientX - bounds.left;
-        mouseY = e.touches[0].clientY - bounds.top;
-        update();
-    }, false);
-    canvas.addEventListener("touchend", function (e) {
-        drawing = false;
-        var angle = getBallAngle();
-        var magnitude = trackBoundary ? null : distanceBetweenTwoPoints(stumpsX, stumpsY, mouseX, mouseY) / canvas.width; 
-        touchEndHandler(angle, magnitude);
-    }, false);
-    canvas.addEventListener("touchmove", function (e) {
-        var boundingClientRect = canvas.getBoundingClientRect();
-        mouseX = e.touches[0].clientX - boundingClientRect.left;
-        mouseY = e.touches[0].clientY - boundingClientRect.top;
-    }, false);
+    }
 
     function update() {
         if (!drawing) {
