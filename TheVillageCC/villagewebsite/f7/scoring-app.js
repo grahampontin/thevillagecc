@@ -82,6 +82,11 @@ var app = new Framework7({
             url: 'editScorecard.html'
         },
         {
+            name: 'matchReport',
+            path: '/matchReport/',
+            url: 'matchReport.html'
+        },
+        {
             name: 'editBall',
             path: '/editBall/',
             popup: {

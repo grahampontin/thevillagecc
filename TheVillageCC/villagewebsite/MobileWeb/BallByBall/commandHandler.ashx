@@ -112,7 +112,7 @@ public class CommandHandler : IHttpHandler
                         var internalBattingCard = unsavedScorecard.ourInnings.batting.ToInternalBattingCard(match, ThemOrUs.Us);
                         internalBattingCard.Save(BattingOrBowling.Batting);
                     }
-                    
+
                     if (unsavedScorecard.theirInnings.batting.entries.Any())
                     {
                         var internalOppoBattingCard = unsavedScorecard.theirInnings.batting.ToInternalBattingCard(match, ThemOrUs.Them);
@@ -120,10 +120,10 @@ public class CommandHandler : IHttpHandler
                     }
                     var internalExtras = unsavedScorecard.ourInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Them);
                     internalExtras.Save();
-                    
+
                     var internalOppoExtras = unsavedScorecard.theirInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Us);
                     internalOppoExtras.Save();
-                    
+
                     match.OurInningsLength = unsavedScorecard.ourInnings.inningsLength;
                     match.TheirInningsLength = unsavedScorecard.theirInnings.inningsLength;
                     match.Abandoned = unsavedScorecard.matchConditions.abandoned;
@@ -140,7 +140,7 @@ public class CommandHandler : IHttpHandler
                         var theirBowlingStats = unsavedScorecard.ourInnings.bowling.ToInternal(match, ThemOrUs.Them);
                         theirBowlingStats.Save();
                     }
-                    
+
                     if (unsavedScorecard.theirInnings.bowling.entries.Any())
                     {
                         var ourBowlingStats = unsavedScorecard.theirInnings.bowling.ToInternal(match, ThemOrUs.Us);
@@ -152,11 +152,27 @@ public class CommandHandler : IHttpHandler
                         var ourFowData = unsavedScorecard.ourInnings.fow.ToInternal(match, ThemOrUs.Us);
                         ourFowData.Save();
                     }
-                    
+
                     var savedScorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), match);
                     context.Response.ContentType = "text/json";
                     context.Response.StatusCode = 200;
                     context.Response.Write(javaScriptSerializer.Serialize(savedScorecard));
+                    break;
+                case "saveMatchReport":
+                    var report = javaScriptSerializer.Deserialize<MatchReportV1>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                    match.CreateOrUpdateMatchReport(report.Conditions, report.Report);
+                    var updatedReport = match.GetMatchReport();
+                    var updatedMatchReport = new MatchReportV1(updatedReport.Conditions, updatedReport.Report);
+                    context.Response.ContentType = "text/json";
+                    context.Response.StatusCode = 200;
+                    context.Response.Write(javaScriptSerializer.Serialize(updatedMatchReport));
+                    break;
+                case "getMatchReport":
+                    var savedReport = match.GetMatchReport();
+                    var matchReport = new MatchReportV1(savedReport.Conditions, savedReport.Report);
+                    context.Response.ContentType = "text/json";
+                    context.Response.StatusCode = 200;
+                    context.Response.Write(javaScriptSerializer.Serialize(matchReport));
                     break;
                 default:
                     context.Response.ContentType = "text/plain";
@@ -210,6 +226,22 @@ public class CommandHandler : IHttpHandler
     public bool IsReusable
     {
         get { return false; }
+    }
+}
+
+public class MatchReportV1
+{
+    public MatchReportV1()
+    {
+    }
+
+    public string Conditions { get; set; }
+    public string Report { get; set; }
+
+    public MatchReportV1(string conditions, string report)
+    {
+        Conditions = conditions;
+        Report = report;
     }
 }
 
