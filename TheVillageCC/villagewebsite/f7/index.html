@@ -32,87 +32,90 @@
 
 </head>
 <body>
-<!-- App root element -->
-<div id="app">
+    <!-- App root element -->
+    <div id="app">
 
-    <!-- Your main view, should have "view-main" class -->
-    <div class="view view-main">
-        <!-- Initial Page, "data-name" contains page name -->
-        <div data-name="home" class="page">
+        <!-- Your main view, should have "view-main" class -->
+        <div class="view view-main">
+            <!-- Initial Page, "data-name" contains page name -->
+            <div data-name="home" class="page">
 
-            <div class="navbar">
-                <div class="navbar-bg"></div>
-                <div class="navbar-inner">
-                    <div class="title">Village Online</div>
+                <div class="navbar">
+                    <div class="navbar-bg"></div>
+                    <div class="navbar-inner">
+                        <div class="title">Village Online</div>
+                    </div>
                 </div>
-            </div>
-            <div class="page-content">
-                <div class="row" style="margin-top: 20px;" >
-                    <div class="col-33 tabbar-labels"><div class="tab-link" id="scorecards-link"><i class="icon material-icons">table_chart</i><span class="tabbar-label">Scorecards</span></div></div>
-                    <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">emoji_events</i><span class="tabbar-label">Matches</span></div></div>
-                    <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">people</i><span class="tabbar-label">Players</span></div></div>
-                </div>
-                <div class="row" style="margin-top: 20px;">
-                    <div class="col-33 tabbar-labels"><div class="tab-link" id="live-scoring-link"><i class="icon material-icons">sports_cricket</i><span class="tabbar-label">Live Scoring</span></div></div>
-                    <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">settings</i><span class="tabbar-label">Admin</span></div></div>
-                    <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">show_chart</i><span class="tabbar-label">Stats</span></div></div>
-                </div>
-                <div class="row" style="margin-top: 20px;">
-                    <div class="col-33 tabbar-labels"><div class="tab-link" id="debug-link"><i class="icon material-icons">bug_report</i><span class="tabbar-label">Debug</span></div></div>
+                <div class="page-content">
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-33 tabbar-labels"><div class="tab-link" id="scorecards-link"><i class="icon material-icons">table_chart</i><span class="tabbar-label">Scorecards</span></div></div>
+                        <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">emoji_events</i><span class="tabbar-label">Matches</span></div></div>
+                        <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">people</i><span class="tabbar-label">Players</span></div></div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-33 tabbar-labels"><div class="tab-link" id="live-scoring-link"><i class="icon material-icons">sports_cricket</i><span class="tabbar-label">Live Scoring</span></div></div>
+                        <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">settings</i><span class="tabbar-label">Admin</span></div></div>
+                        <div class="col-33 tabbar-labels"><div class="tab-link"><i class="icon material-icons">show_chart</i><span class="tabbar-label">Stats</span></div></div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-33 tabbar-labels"><div class="tab-link" id="debug-link"><i class="icon material-icons">bug_report</i><span class="tabbar-label">Debug</span></div></div>
 
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Path to Framework7 Library Bundle JS-->
-<script type="text/javascript" src="./js/framework7.bundle.min.js"></script>
+    <!-- Path to Framework7 Library Bundle JS-->
+    <script type="text/javascript" src="./js/framework7.bundle.min.js"></script>
 
-<!-- Externals -->
-<script src="./js/jquery-2.1.0.js"></script>
-<script src="./js/jquery.pulse.min.js"></script>
-<script src="/MobileWeb/script/URI.js"></script>
-<script src="/MobileWeb/script/purl.js"></script>
-<script src="/MobileWeb/script/jquery.json-2.3.min.js" type="text/javascript"></script>
-<script src="/MobileWeb/script/jquery.Storage.js" type="text/javascript"></script>
-<script src="/MobileWeb/script/raphael-min.js" type="text/javascript"></script>
+    <!-- Externals -->
+    <script src="./js/jquery-2.1.0.js"></script>
+    <script src="./js/jquery.pulse.min.js"></script>
+    <script src="/MobileWeb/script/URI.js"></script>
+    <script src="/MobileWeb/script/purl.js"></script>
+    <script src="/MobileWeb/script/jquery.json-2.3.min.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/jquery.Storage.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/raphael-min.js" type="text/javascript"></script>
+    <script src="/Plugins/jqCropper/cropper.min.js"></script><!-- Cropper.js is required -->
+    <link href="/Plugins/jqCropper/cropper.min.css" rel="stylesheet">
+    <script src="/Plugins/jqCropper/jquery-cropper.min.js"></script>
 
-<!-- Object definitions -->
-<script src="/MobileWeb/script/ballbyball.globals.js" type="text/javascript"></script>
-<script src="/MobileWeb/script/ballbyball.ball.js" type="text/javascript"></script>
-<script src="/MobileWeb/script/ballbyball.over.js" type="text/javascript"></script>
-<script src="/MobileWeb/script/ballbyball.wicket.js" type="text/javascript"></script>
-<script src="/MobileWeb/script/ballbyball.matchState.js" type="text/javascript"></script>
-<script src="/MobileWeb/script/ballbyball.playerStub.js" type="text/javascript"></script>
-<script src="/MobileWeb/script/ballbyball.matchConditionsType.js" type="text/javascript"></script>
+    <!-- Object definitions -->
+    <script src="/MobileWeb/script/ballbyball.globals.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.ball.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.over.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.wicket.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.matchState.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.playerStub.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.matchConditionsType.js" type="text/javascript"></script>
 
-<!-- Core functionality -->
-<script src="/MobileWeb/script/ballbyball.functions.js" type="text/javascript"></script>
-<script src="/MobileWeb/script/ballbyball.photoCapture.js" type="text/javascript"></script>
+    <!-- Core functionality -->
+    <script src="/MobileWeb/script/ballbyball.functions.js" type="text/javascript"></script>
+    <script src="/MobileWeb/script/ballbyball.photoCapture.js" type="text/javascript"></script>
 
-<!-- Path to your app js-->
-<script type="text/javascript" src="./scoring-app.js"></script>
+    <!-- Path to your app js-->
+    <script type="text/javascript" src="./scoring-app.js"></script>
 
-<!-- Pages -->
-<script type="text/javascript" src="./mobile.pages.newover.js"></script>
-<script type="text/javascript" src="./mobile.pages.scoring.js"></script>
-<script type="text/javascript" src="./mobile.pages.wicket.js"></script>
-<script type="text/javascript" src="./mobile.pages.endover.js"></script>
-<script type="text/javascript" src="./mobile.pages.endInnings.js"></script>
-<script type="text/javascript" src="./mobile.pages.oppositionscoring.js"></script>
-<script type="text/javascript" src="./mobile.pages.chooseMatch.js"></script>
-<script type="text/javascript" src="./mobile.pages.selectTeam.js"></script>
-<script type="text/javascript" src="./mobile.pages.matchConditions.js"></script>
-<script type="text/javascript" src="./mobile.pages.debug.js"></script>
-<script type="text/javascript" src="./mobile.pages.scorecards.js"></script>
-<script type="text/javascript" src="./mobile.pages.editScorecard.js"></script>
-<script type="text/javascript" src="./mobile.pages.editBall.js"></script>
-<script type="text/javascript" src="./mobile.pages.home.js"></script>
-<script type="text/javascript" src="./mobile.pages.matchReport.js"></script>
+    <!-- Pages -->
+    <script type="text/javascript" src="./mobile.pages.newover.js"></script>
+    <script type="text/javascript" src="./mobile.pages.scoring.js"></script>
+    <script type="text/javascript" src="./mobile.pages.wicket.js"></script>
+    <script type="text/javascript" src="./mobile.pages.endover.js"></script>
+    <script type="text/javascript" src="./mobile.pages.endInnings.js"></script>
+    <script type="text/javascript" src="./mobile.pages.oppositionscoring.js"></script>
+    <script type="text/javascript" src="./mobile.pages.chooseMatch.js"></script>
+    <script type="text/javascript" src="./mobile.pages.selectTeam.js"></script>
+    <script type="text/javascript" src="./mobile.pages.matchConditions.js"></script>
+    <script type="text/javascript" src="./mobile.pages.debug.js"></script>
+    <script type="text/javascript" src="./mobile.pages.scorecards.js"></script>
+    <script type="text/javascript" src="./mobile.pages.editScorecard.js"></script>
+    <script type="text/javascript" src="./mobile.pages.editBall.js"></script>
+    <script type="text/javascript" src="./mobile.pages.home.js"></script>
+    <script type="text/javascript" src="./mobile.pages.matchReport.js"></script>
 
-<!--Utils-->
-<script type="text/javascript" src="./mobile.util.wagonwheel.js"></script>
-<script type="text/javascript" src="./mobile.functions.maths.js"></script>
-<script type="text/javascript" src="./mobile.functions.stringutils.js"></script>
+    <!--Utils-->
+    <script type="text/javascript" src="./mobile.util.wagonwheel.js"></script>
+    <script type="text/javascript" src="./mobile.functions.maths.js"></script>
+    <script type="text/javascript" src="./mobile.functions.stringutils.js"></script>
 </body>
 </html>

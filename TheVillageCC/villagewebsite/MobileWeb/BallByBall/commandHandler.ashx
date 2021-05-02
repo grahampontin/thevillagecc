@@ -160,16 +160,16 @@ public class CommandHandler : IHttpHandler
                     break;
                 case "saveMatchReport":
                     var report = javaScriptSerializer.Deserialize<MatchReportV1>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
-                    match.CreateOrUpdateMatchReport(report.Conditions, report.Report);
+                    match.CreateOrUpdateMatchReport(report.Conditions, report.Report, report.Base64EncodedImage);
                     var updatedReport = match.GetMatchReport();
-                    var updatedMatchReport = new MatchReportV1(updatedReport.Conditions, updatedReport.Report);
+                    var updatedMatchReport = new MatchReportV1(updatedReport.Conditions, updatedReport.Report, updatedReport.ReportImage);
                     context.Response.ContentType = "text/json";
                     context.Response.StatusCode = 200;
                     context.Response.Write(javaScriptSerializer.Serialize(updatedMatchReport));
                     break;
                 case "getMatchReport":
                     var savedReport = match.GetMatchReport();
-                    var matchReport = new MatchReportV1(savedReport.Conditions, savedReport.Report);
+                    var matchReport = new MatchReportV1(savedReport.Conditions, savedReport.Report, savedReport.ReportImage);
                     context.Response.ContentType = "text/json";
                     context.Response.StatusCode = 200;
                     context.Response.Write(javaScriptSerializer.Serialize(matchReport));
@@ -237,11 +237,13 @@ public class MatchReportV1
 
     public string Conditions { get; set; }
     public string Report { get; set; }
+    public string Base64EncodedImage { get; set; }
 
-    public MatchReportV1(string conditions, string report)
+    public MatchReportV1(string conditions, string report, string base64EncodedImage)
     {
         Conditions = conditions;
         Report = report;
+        Base64EncodedImage = base64EncodedImage;
     }
 }
 

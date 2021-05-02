@@ -43,6 +43,24 @@
                         </div>
                     </div>
                 </li>
+                <li class="item-content item-input">
+                    <div class="item-media">
+                        <i class="icon material-icons">photo_camera</i>
+                    </div>
+                    <div class="item-inner">
+                        <div class="item-input-wrap">
+                            <p id="match-report-image-buttons-container">
+                                <button class="col button button-fill" id="match-report-image-chooser-button">Go on, add a pic...</button>
+                                <button class="col button button-fill" id="match-report-image-crop-button" style="display: none">Done!</button>
+                            </p>
+                            <input id="match-report-file-input" type="file" accept="image/*" hidden>
+                            <div>
+                                <canvas id="match-report-canvas" style="max-width: 100%"></canvas>
+                            </div>
+                            <img id="match-report-image" style="max-width: 100%;margin-left: auto;margin-right: auto;display: block;"/>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </div>
 
