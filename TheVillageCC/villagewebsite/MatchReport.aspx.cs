@@ -10,6 +10,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Xml.Linq;
+using CricketClubDAL;
 using CricketClubMiddle;
 using CricketClubMiddle.Stats;
 
@@ -38,23 +39,34 @@ public partial class MatchReport : System.Web.UI.Page
         OurFoWCard.stats = new FoWStats(match.ID, CricketClubDomain.ThemOrUs.Us);
         TheirFoWCard.stats = new FoWStats(match.ID, CricketClubDomain.ThemOrUs.Them);
 
-        CricketClubMiddle.MatchReport report = match.GetMatchReport(Server.MapPath("./match_reports/"));
-        try
+        var matchReportAndConditions = match.GetMatchReport();
+        if (matchReportAndConditions != null && matchReportAndConditions != MatchReportAndConditions.None)
         {
-            ReportText.Text = report.Report.Substring(report.Report.IndexOf("</conditions>") + 13);
+            ReportText.Text = matchReportAndConditions.Report;
+            Conditions.Text = matchReportAndConditions.Conditions;
         }
-        catch
+        else
         {
-            //
+            CricketClubMiddle.MatchReport report = match.GetMatchReport(Server.MapPath("./match_reports/"));
+            try
+            {
+                ReportText.Text = report.Report.Substring(report.Report.IndexOf("</conditions>") + 13);
+            }
+            catch
+            {
+                //
+            }
+            try
+            {
+                Conditions.Text = report.Report.Substring(0, report.Report.IndexOf("</conditions>")).Replace("<conditions>", "");
+            }
+            catch
+            {
+                //
+            }
         }
-        try
-        {
-            Conditions.Text = report.Report.Substring(0, report.Report.IndexOf("</conditions>")).Replace("<conditions>", "");
-        }
-        catch
-        {
-            //
-        }
+
+        
 
     }
 }
