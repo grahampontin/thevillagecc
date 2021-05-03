@@ -41,7 +41,7 @@ public partial class Test : System.Web.UI.Page
                         
                     }
 
-                    string pitch = "Not recoreded";
+                    string pitch = "Not recorded";
                     try
                     {
                         pitch = Regex.Matches(html,
