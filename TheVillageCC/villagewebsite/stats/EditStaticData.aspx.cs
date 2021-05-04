@@ -26,7 +26,7 @@ public partial class stats_EditStaticData : System.Web.UI.Page
                     message.Text = "new player created with ID: " + newPlayer.ID;
                     break;
                 case "Add Venue":
-                    Venue newVenue = Venue.CreateNewVenue(Request["thing_to_add"]);
+                    Venue newVenue = Venue.CreateNewVenue(Request["thing_to_add"], "");
                     message.Text = "new Venue created with ID: " + newVenue.ID;
                     break;
                 case "Add Opponent":

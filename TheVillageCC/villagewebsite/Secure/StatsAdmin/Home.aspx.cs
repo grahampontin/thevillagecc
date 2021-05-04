@@ -149,7 +149,7 @@ public partial class Secure_StatsAdmin_Home : CricketClubMiddle.Web.SecurePage
             {
                 if (Venue.GetByName(VenueName.Text) == null)
                 {
-                    v = Venue.CreateNewVenue(VenueName.Text);
+                    v = Venue.CreateNewVenue(VenueName.Text, "");
                     Message.InnerText = "Venue Created";
                 }
                 else

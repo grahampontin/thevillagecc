@@ -29,7 +29,7 @@ function listScorecards() {
                 //success
                 $.each(data,
                     function(i, o) {
-                        $('#matches ul').append('<li><a class="item-link item-content edit-scorecard" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.dateString+')</div></div></a></li>');
+                        $('#matches ul').append('<li><a class="item-link item-content edit-scorecard" matchId="'+o.Id+'"><div class="item-inner"><div class="item-title">'+o.Opposition.Name+' ('+o.Date+')</div></div></a></li>');
                     });
                 $(".edit-scorecard").click(function() {
                     matchId = $(this).attr("matchId");
