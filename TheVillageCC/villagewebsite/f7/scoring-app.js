@@ -75,6 +75,10 @@ var app = new Framework7({
             name: 'scorecards',
             path: '/scorecards/',
             url: 'scorecards.html'
+        },{
+            name: 'teams',
+            path: '/teams/',
+            url: 'teams.html'
         },
         {
             name: 'editScorecard',

@@ -45,6 +45,31 @@ public class CommandHandler : IHttpHandler
                 context.Response.Write(javaScriptSerializer.Serialize(players));
                 return;
             }
+            if (genericBallByBallCommand.command == "listTeams")
+            {
+                var teams = Team.GetAll().Where(t => !t.IsUs)
+                    .Select(t => new TeamV1(t.ID, t.Name)).OrderBy(t => t.Name).ToList();
+                context.Response.Write(javaScriptSerializer.Serialize(teams));
+                return;
+            }
+
+            if (genericBallByBallCommand.command == "updateTeam")
+            {
+                var updatedTeam = javaScriptSerializer.Deserialize<TeamV1>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                var team = new Team(updatedTeam.Id) {Name = updatedTeam.Name};
+                team.Save();
+                context.Response.ContentType = "text/plain";
+                context.Response.StatusCode = 204;
+                return;
+            }
+            if (genericBallByBallCommand.command == "createTeam")
+            {
+                var newTeam = javaScriptSerializer.Deserialize<TeamV1>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                Team.CreateNewTeam(newTeam.Name);
+                context.Response.ContentType = "text/plain";
+                context.Response.StatusCode = 204;
+                return;
+            }
             var match = new Match(genericBallByBallCommand.matchId);
             switch (genericBallByBallCommand.command)
             {

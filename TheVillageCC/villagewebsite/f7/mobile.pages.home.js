@@ -16,5 +16,8 @@ function bindHomePageLinks() {
     $('#scorecards-link').click(function() {
         app.views.current.router.navigate("/scorecards/");
     });
+    $('#teams-link').click(function() {
+        app.views.current.router.navigate("/teams/");
+    });
 };
 
