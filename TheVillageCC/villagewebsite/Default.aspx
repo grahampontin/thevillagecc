@@ -79,7 +79,7 @@
         
         </div>
         <div class="col-md-5">
-          <img class="featurette-image img-responsive center-block" src="match_reports/images/no_match_report_image.jpg" alt="Generic placeholder image" runat="server" id="mathcReportOne_Image" width="500px" height="500px">
+          <img class="featurette-image img-responsive center-block" src="match_reports/images/no_match_report_image.jpg" alt="Generic placeholder image" runat="server" id="mathcReportOne_Image" width="500" height="500">
         </div>
       </div>
 
@@ -92,7 +92,7 @@
             <p><a class="btn btn-default" href='/MatchReport.aspx?MatchID=<asp:Literal runat="server" ID="matchReportTwo_Id"></asp:Literal>' role="button">Read more &raquo;</a></p>
         </div>
         <div class="col-md-5 col-md-pull-7">
-          <img class="featurette-image img-responsive center-block" src="match_reports/images/no_match_report_image.jpg" alt="Generic placeholder image" runat="server" id="mathcReportTwo_Image" width="500px" height="500px">
+          <img class="featurette-image img-responsive center-block" src="match_reports/images/no_match_report_image.jpg" alt="Generic placeholder image" runat="server" id="mathcReportTwo_Image" width="500" height="500">
         </div>
       </div>
 
@@ -105,7 +105,7 @@
             <p><a class="btn btn-default" href='/MatchReport.aspx?MatchID=<asp:Literal runat="server" ID="matchReportThree_Id"></asp:Literal>' role="button">Read more &raquo;</a></p>
         </div>
         <div class="col-md-5">
-          <img class="featurette-image img-responsive center-block" src="match_reports/images/no_match_report_image.jpg" alt="Generic placeholder image" runat="server" id="mathcReportThree_Image" width="500px" height="500px">
+          <img class="featurette-image img-responsive center-block" src="match_reports/images/no_match_report_image.jpg" alt="Generic placeholder image" runat="server" id="mathcReportThree_Image" width="500" height="500">
         </div>
       </div>
 
