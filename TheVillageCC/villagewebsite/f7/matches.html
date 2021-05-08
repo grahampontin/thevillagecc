@@ -1,0 +1,114 @@
+﻿<div data-name="matches" class="page">
+
+    <!-- Top Navbar -->
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="navbar-bg"></div>
+            <div class="left">
+                <a href="#" class="link icon-only back-button">
+                    <i class="icon icon-back"></i>
+                </a>
+            </div>
+            <div class="title">Add / Edit Matches</div>
+            <div class="right">
+                <a class="link icon-only" id="add-match-button">
+                    <i class="icon material-icons" id="add-match-button-icon">add</i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="toolbar toolbar-bottom">
+        <div class="toolbar-inner">
+            <a href="#" class="link" id="matches-previous-season"><i class="material-icons">chevron_left</i></a>
+            <div>Season <span id="matches-current-season"></span></div>
+            <a href="#" class="link" id="matches-next-season"><i class="material-icons">chevron_right</i></a>
+        </div>
+    </div>
+
+
+
+    <div class="page-content">
+        <div class="list" id="matches">
+            <ul>
+            </ul>
+        </div>
+    </div>
+
+    <div class="popup edit-match-popup">
+        <div class="page" id="edit-match-page">
+            <div class="navbar">
+                <div class="navbar-bg"></div>
+                <div class="navbar-inner">
+                    <div class="left">
+                        <a class="link icon-only" id="edit-match-close-button">
+                            <i class="icon material-icons" id="edit-match-close-button-icon">close</i>
+                        </a>
+                    </div>
+                    <div class="title" id="edit-match-title">Edit Match</div>
+                    <div class="right">
+                        <a class="link icon-only" id="save-match-button">
+                            <i class="icon material-icons" id="save-match-button-icon">done</i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="list inline-labels">
+                    <ul>
+                        <li id="opposition-select-element">
+                            <a class="item-link smart-select smart-select-init" id="opposition-smart-select" data-open-in="popup" data-close-on-select="true">
+                                <select name="opposition" id="opposition-select">
+                                    <option value="-1">Please select...</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">The Village CC vs</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li id="venue-select-element">
+                            <a class="item-link smart-select smart-select-init" id="venue-smart-select" data-open-in="popup" data-close-on-select="true">
+                                <select name="venue" id="venue-select">
+                                    <option value="-1">Please select...</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">At</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="item-content item-input" id="match-date-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">On</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="Enter date" readonly="readonly" id="match-date-input" />
+                                </div>
+                            </div>
+                        </li>
+                        <li id="match-type-select-element">
+                            <a class="item-link smart-select smart-select-init" id="match-type-smart-select" data-open-in="popup" data-close-on-select="true">
+                                <select name="venue" id="match-type-select">
+                                    <option value="Friendly">Friendly</option>
+                                    <option value="Tour">Tour</option>
+                                    <option value="Twenty20">T20</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Match Type</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

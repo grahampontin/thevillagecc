@@ -22,5 +22,8 @@ function bindHomePageLinks() {
     $('#venues-link').click(function() {
         app.views.current.router.navigate("/venues/");
     });
+    $('#matches-link').click(function() {
+        app.views.current.router.navigate("/matches/");
+    });
 };
 

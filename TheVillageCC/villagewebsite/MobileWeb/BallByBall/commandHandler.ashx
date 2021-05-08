@@ -99,7 +99,7 @@ public class CommandHandler : IHttpHandler
                     CreateOrUpdateStaticDataItem<VenueV1>(context, genericBallByBallCommand, v => Venue.CreateNewVenue(v.Name, v.MapUrl));
                     return;
                 case "createMatch":
-                    CreateOrUpdateStaticDataItem<MatchV1>(context, genericBallByBallCommand, v => Match.CreateNewMatch(new Team(v.Id), DateTime.Parse(v.Date), new Venue(v.Venue.Id), ParseMatchType(v), HomeOrAway(v)));
+                    CreateOrUpdateStaticDataItem<MatchV1>(context, genericBallByBallCommand, v => Match.CreateNewMatch(new Team(v.Opposition.Id), DateTime.Parse(v.Date), new Venue(v.Venue.Id), ParseMatchType(v), HomeOrAway(v)));
                     return; 
                 case "createPlayer":
                     CreateOrUpdateStaticDataItem<PlayerV1>(context, genericBallByBallCommand, p => UpdatePlayer(Player.CreateNewPlayer(p.firstName + " " + p.surname), p));
