@@ -1,0 +1,78 @@
+﻿<div data-name="venues" class="page">
+
+    <!-- Top Navbar -->
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="navbar-bg"></div>
+            <div class="left">
+                <a href="#" class="link icon-only back-button">
+                    <i class="icon icon-back"></i>
+                </a>
+            </div>
+            <div class="title">Add / Edit Venues</div>
+            <div class="right">
+                <a class="link icon-only" id="add-venue-button">
+                    <i class="icon material-icons" id="add-venue-button-icon">add</i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="page-content">
+        <div class="list" id="venues">
+            <ul>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="popup edit-venue-popup">
+        <div class="page" id="edit-venue-page">
+            <div class="navbar">
+                <div class="navbar-bg"></div>
+                <div class="navbar-inner">
+                    <div class="left">
+                        <a class="link icon-only" id="edit-venue-close-button">
+                            <i class="icon material-icons" id="edit-venue-close-button-icon">close</i>
+                        </a>
+                    </div>
+                    <div class="title" id="edit-team-title">Edit Venue</div>
+                    <div class="right">
+                        <a class="link icon-only" id="save-venue-button">
+                            <i class="icon material-icons" id="save-venue-button-icon">done</i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="list inline-labels">
+                    <ul>
+                        <li class="item-content item-input" id="name-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Name</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="What do we call this idyllic setting?" id="venue-name-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input" id="map-url-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Location</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="A Google Maps URL please" id="venue-location-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

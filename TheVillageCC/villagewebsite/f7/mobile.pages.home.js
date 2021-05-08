@@ -19,5 +19,8 @@ function bindHomePageLinks() {
     $('#teams-link').click(function() {
         app.views.current.router.navigate("/teams/");
     });
+    $('#venues-link').click(function() {
+        app.views.current.router.navigate("/venues/");
+    });
 };
 
