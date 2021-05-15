@@ -6,7 +6,7 @@ $$(document).on('page:init', '.page[data-name="matches"]', function (e) {
     }
     populateTeamsAndVenues();
     //Bind handlers here
-    listMatches();
+    listMatchesToEdit();
     //once bound...
 
     editMatchPopup = app.popup.create({
@@ -37,7 +37,7 @@ $$(document).on('page:init', '.page[data-name="matches"]', function (e) {
                     JSON.stringify(postData),
                     function(data) {
                         app.preloader.hide();
-                        listMatches();
+                        listMatchesToEdit();
                     },
                     "json")
                 .fail(function(data) {
@@ -67,11 +67,11 @@ $$(document).on('page:init', '.page[data-name="matches"]', function (e) {
 
     $("#matches-previous-season").click(function() {
         matchesSeason = matchesSeason - 1;;
-        listMatches();
+        listMatchesToEdit();
     });
     $("#matches-next-season").click(function() {
         matchesSeason = matchesSeason + 1;
-        listMatches();
+        listMatchesToEdit();
     });
 
     editMatchCalendar = app.calendar.create({
@@ -82,7 +82,7 @@ $$(document).on('page:init', '.page[data-name="matches"]', function (e) {
 });
 var matchBeingEdited;
 var matchesSeason = new Date().getFullYear(); 
-function listMatches() {
+function listMatchesToEdit() {
     $('#matches ul').empty();
     app.preloader.show();
     var postData = { 'command': "matchesBySeason", 'payload' : matchesSeason};

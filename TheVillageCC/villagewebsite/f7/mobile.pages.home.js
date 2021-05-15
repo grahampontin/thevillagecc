@@ -24,6 +24,9 @@ function bindHomePageLinks() {
     });
     $('#matches-link').click(function() {
         app.views.current.router.navigate("/matches/");
+    }); 
+    $('#players-link').click(function() {
+        app.views.current.router.navigate("/players/");
     });
 };
 
