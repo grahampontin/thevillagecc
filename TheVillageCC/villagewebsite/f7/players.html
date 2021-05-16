@@ -49,21 +49,66 @@
             <div class="page-content">
                 <div class="list inline-labels">
                     <ul>
-                        <li class="item-content item-input" id="name-element">
+                        <li class="item-content item-input">
                             <div class="item-inner">
-                                <div class="item-title item-label">Name</div>
+                                <div class="item-title item-label">First Name</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" placeholder="What do we call this idyllic setting?" id="venue-name-input">
+                                    <input type="text" placeholder=" " id="player-firstname-input">
                                     <span class="input-clear-button"></span>
                                 </div>
                             </div>
                         </li>
-                        <li class="item-content item-input" id="map-url-element">
+                        <li class="item-content item-input">
                             <div class="item-inner">
-                                <div class="item-title item-label">Location</div>
+                                <div class="item-title item-label">Surname</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" placeholder="A Google Maps URL please" id="venue-location-input">
+                                    <input type="text" placeholder=" " id="player-surname-input">
                                     <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Middle Initials</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder=" " id="player-middle-initials-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Batting Style</div>
+                                <div class="item-input-wrap list">
+                                    <ul>
+                                        <li class="item-content">
+                                            Right Hand<label class="radio"><input type="radio" name="player-left-right-hand-radio" value="true" checked="checked" /><i class="icon-radio"></i></label>
+                                        </li>
+                                        <li class="item-content">
+                                            Left Hand<label class="radio"><input type="radio" name="player-left-right-hand-radio" value="false" /><i class="icon-radio"></i></label>
+                                        </li>
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a class="item-link smart-select smart-select-init" data-open-in="sheet" data-close-on-select="true" id="club-connection-smart-select">
+                                <select name="club-connection-select" id="club-connection-select" class="form-validation">
+                                    <option selected="selected"></option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Club Connection</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Active Player?</div>
+                                <div class="item-input-wrap">
+                                    <input type="checkbox" id="player-is-active-checkbox">
                                 </div>
                             </div>
                         </li>
