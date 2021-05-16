@@ -24,7 +24,7 @@
 	                <li runat=server id="Chat"      ><a href="/Chat.aspx" title="Chat">Chat</a></li>
 	                <li runat=server id="Join"      ><a href="/Join.aspx" title="Interested in Joining?" >Join</a></li>
 	                <li runat=server id="Shop"      ><a href="/Shop.aspx" title="Buy Village kit online!">Shop!</a></li>
-	                <li runat=server id="Admin"     ><a href="/Admin.aspx" title=" ">Admin</a></li>
+	                <li runat=server id="Admin"     ><a href="/f7" title=" ">Admin</a></li>
 	            </ul>
             </div>
             </div>
