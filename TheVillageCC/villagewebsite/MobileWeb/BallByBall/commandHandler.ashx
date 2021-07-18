@@ -315,7 +315,6 @@ public class CommandHandler : IHttpHandler
         context.Response.ContentType = "text/plain";
         context.Response.Write(ex.Message + Environment.NewLine + ex.StackTrace);
         context.Response.StatusCode = statusCode;
-        DbLogger.Log(ex.Message, ex, Severity.Error);
     }
 
     private static void ReportInvalidInput(HttpContext context, string userMessage)
