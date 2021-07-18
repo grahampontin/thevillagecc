@@ -257,7 +257,7 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
         }
         var newBatter = {
             playerId: "-1",
-            battingAt: battingAt,
+            battingAt: battingAt ,
             runs: 0,
             fours: 0,
             sixes: 0,
