@@ -28,8 +28,8 @@ public partial class UserControls_TopMenu : System.Web.UI.UserControl
             PageID = "Home";
         }
 
-        HtmlControl active = (HtmlControl)FindControl(PageID);
-        active.Attributes["class"] = "active";
+        // HtmlControl active = (HtmlControl)FindControl(PageID);
+        // active.Attributes["class"] = "active";
 
         
     }

@@ -1,31 +1,42 @@
-/* ---------------------- Blueslate nav ---------------------- */
-.blue #slatenav{position:relative;display:block;height:42px;font-size:11px;font-weight:bold;background:transparent url(../images/menu/blueslate_background.gif) repeat-x top left;font-family:Arial,Verdana,Helvitica,sans-serif;text-transform:uppercase;}
-.blue #slatenav ul{margin:0px;padding:0;list-style-type:none;width:auto;}
-.blue #slatenav ul li{display:block;float:left;margin:0 1px 0 0;}
-.blue #slatenav ul li a{display:block;float:left;color:#D5F1FF;text-decoration:none;padding:14px 18px 0 18px;height:28px;}
-.blue #slatenav ul li a:hover,.blue #slatenav ul li a.current{color:#fff;background:transparent url(../images/menu/blueslate_backgroundOVER.gif) no-repeat top center;}
-/* ---------------------- END Blueslate nav ---------------------- */
+.nav-scroller {
+    position: relative;
+    z-index: 2;
+    height: 2.75rem;
+    overflow-y: hidden;
+}
 
-/* ---------------------- Greenslate nav ---------------------- */
-.green #slatenav{position:relative;display:block;height:42px;font-size:11px;font-weight:bold;background:transparent url(../images/menu/greenslate_background.gif) repeat-x top left;font-family:Arial,Verdana,Helvitica,sans-serif;text-transform:uppercase;}
-.green #slatenav ul{margin:0px;padding:0;list-style-type:none;width:auto;}
-.green #slatenav ul li{display:block;float:left;margin:0 1px 0 0;}
-.green #slatenav ul li a{display:block;float:left;color:#EEFFDF;text-decoration:none;padding:14px 14px 0 14px;height:28px;}
-.green #slatenav ul li a:hover,.green #slatenav ul li a.current{color:#fff;background:transparent url(../images/menu/greenslate_backgroundOVER.gif) no-repeat top center;}
-/* ---------------------- END Greenslate nav ---------------------- */
+.nav-scroller .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    padding-bottom: 1rem;
+    margin-top: -1px;
+    overflow-x: auto;
+    text-align: center;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+}
 
-/* ---------------------- Redslate nav ---------------------- */
-.red #slatenav{position:relative;display:block;height:42px;font-size:11px;font-weight:bold;background:transparent url(images/redslate_background.gif) repeat-x top left;font-family:Arial,Verdana,Helvitica,sans-serif;text-transform:uppercase;}
-.red #slatenav ul{margin:0px;padding:0;list-style-type:none;width:auto;}
-.red #slatenav ul li{display:block;float:left;margin:0 1px 0 0;}
-.red #slatenav ul li a{display:block;float:left;color:#FECCC3;text-decoration:none;padding:14px 22px 0 22px;height:28px;}
-.red #slatenav ul li a:hover,.red #slatenav ul li a.current{color:#fff;background:transparent url(images/redslate_backgroundOVER.gif) no-repeat top center;}
-/* ---------------------- END Redslate nav ---------------------- */
+.nav-scroller .nav-link {
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+    font-size: .875rem;
+}
 
-/* ---------------------- Purpleslate nav ---------------------- */
-.purple #slatenav{position:relative;display:block;height:42px;font-size:11px;font-weight:bold;background:transparent url(images/purpleslate_background.gif) repeat-x top left;font-family:Arial,Verdana,Helvitica,sans-serif;text-transform:uppercase;}
-.purple #slatenav ul{margin:0px;padding:0;list-style-type:none;width:auto;}
-.purple #slatenav ul li{display:block;float:left;margin:0 1px 0 0;}
-.purple #slatenav ul li a{display:block;float:left;color:#FBDAFA;text-decoration:none;padding:14px 22px 0 22px;height:28px;}
-.purple #slatenav ul li a:hover,.purple #slatenav ul li a.current{color:#fff;background:transparent url(images/purpleslate_backgroundOVER.gif) no-repeat top center;}
-/* ---------------------- END Purpleslate nav ---------------------- */
+#headerMenu {
+    border-top: solid 1px #e5e5e5;
+    border-bottom: solid 1px #e5e5e5;
+}
+
+.blog-header {
+    line-height: 1;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.blog-header-logo {
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif /*rtl:Amiri, Georgia, "Times New Roman", serif*/;
+    font-size: 2.25rem;
+}
+
+.blog-header-logo:hover {
+    text-decoration: none;
+}

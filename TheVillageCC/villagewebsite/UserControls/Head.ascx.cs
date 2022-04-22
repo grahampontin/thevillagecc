@@ -22,6 +22,6 @@ public partial class UserControls_Head : System.Web.UI.UserControl
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        TopMenu.PageID = PageID;
+        // TopMenu.PageID = PageID;
     }
 }

@@ -311,3 +311,17 @@ function refreshCurrentOverView() {
             parent.append(ballElement);
         });
 }
+
+function initializeWagonWheel(wagonWheelPaper) {
+    var wagonWheelImage = wagonWheelPaper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", 0, 30, 283, 280);
+    wagonWheelPaper.text(55, 175, 'Off\nSide').attr({ fill: '#fff', 'font-size': 20 });
+    wagonWheelPaper.text(235, 175, 'Leg\nSide').attr({ fill: '#fff', 'font-size': 20 });
+    wagonWheelPaper.text(20, 325, 'Runs').attr({ 'font-size': 12 });
+    wagonWheelPaper.path('M40 325L80 325').attr({ stroke: '#ff0', 'stroke-width': 4 });
+    wagonWheelPaper.text(120, 325, 'Fours').attr({ 'font-size': 12 });
+    wagonWheelPaper.path('M140 325L180 325').attr({ stroke: '#00f', 'stroke-width': 4 });
+    wagonWheelPaper.text(220, 325, 'Sixes').attr({ 'font-size': 12 });
+    wagonWheelPaper.path('M240 325L280 325').attr({ stroke: '#f00', 'stroke-width': 4 });
+
+    return wagonWheelImage;
+}

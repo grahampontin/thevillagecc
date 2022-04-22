@@ -1,0 +1,9 @@
+﻿@media (min-width: 768px) {
+    .d-md-table-head {
+        display: table-header-group !important;
+    }
+}
+
+.font-36px {
+   font-size: 36px; 
+}

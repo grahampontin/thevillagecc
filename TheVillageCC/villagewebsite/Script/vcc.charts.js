@@ -19,7 +19,7 @@
 
     var theirRawData = [];
     var maxBallNumber;
-    if (matchData.TheirCompleteOvers != null) {
+    if (matchData.TheirCompletedOvers != null) {
         $.each(matchData.TheirCompletedOvers, function(index, over) {
             var ballNumber = over.Over * 6;
             theirRawData.push([ballNumber, over.Score]);
@@ -92,16 +92,67 @@
 
 }
 
-function drawTeamWagonWheel(paper, matchData) {
-    var image = drawWagonWheelBackground(paper);
+function addHeader(maybePlayer, paper) {
+    if (maybePlayer !== undefined) {
+        drawPlayerNameAndScore(maybePlayer, paper);
+    } else {
+        paper.text(350, 15, 'Village CC Batting').attr({fill: '#000', 'font-size': 20});
+        ;
+    }
+}
+
+function drawWagonWheel(paper, matchData, maybePlayer) {
+    var image = drawPitchImageScaledToPaper(paper, "\\MobileWeb\\images\\wagon-wheel-new.jpg");
     drawWagonWheelKey(paper);
+    addHeader(maybePlayer, paper);
     $.each(matchData.CompletedOvers, function (index, over) {
         $.each(over.Over.Balls, function (index, ball) {
-            if (ball.Thing === "" || (ball.Thing === "nb" && ball.Amount > 1)) {
+            if ((maybePlayer === undefined || ball.Batsman.toString() === maybePlayer.attr("playerId")) &&  (ball.Thing === "" || (ball.Thing === "nb" && ball.Amount > 1)) && ball.Angle !== null) {
                 drawBall(ball, paper, image);
             }
         });
     });
+}
+
+function addScoreToZone(zoneIndex, scoreBuckets, paper) {
+    var point = findNewPoint(paper.width / 2, paper.height / 2, Math.PI / 8 * (zoneIndex * 2 + 1), paper.height / 3);
+    paper.text(point.x, point.y, scoreBuckets[zoneIndex]).attr({
+        'font-size': 20, fill: '#fff'
+    });
+
+}
+
+function addBallToBucket(ball, scoreBuckets) {
+    var modulo = Math.floor(ball.Angle / (Math.PI / 4));
+    scoreBuckets[modulo] += ball.Amount;
+}
+
+
+function drawZones(maybePlayer, paper, overs) {
+    drawPitchImageScaledToPaper(paper,"\\Images\\liveScorecard\\zones-background.png");
+    var scoreBuckets = [0, 0, 0, 0, 0, 0, 0, 0];
+    addHeader(maybePlayer, paper);
+    $.each(overs, function (index, over) {
+        $.each(over.Over.Balls, function (index, ball) {
+            if ((maybePlayer === undefined || ball.Batsman.toString() === maybePlayer.attr("playerId")) && (ball.Thing === "" || (ball.Thing === "nb" && ball.Amount > 1)) && ball.Angle !== null) {
+                addBallToBucket(ball, scoreBuckets);
+            }
+        });
+    });
+    $.each(scoreBuckets, function (index) {
+        addScoreToZone(index, scoreBuckets, paper);
+    });
+}
+
+
+
+function drawPlayerNameAndScore(player, paper) {
+    var playerText = player.attr("playerName") + " (" + player.attr("playerScore");
+    if (player.attr("playerIsOut") !== "true") {
+        playerText = playerText + "*";
+    }
+    playerText = playerText + ")";
+    paper.text(paper.width / 2, 20, playerText).attr({ 'font-size': 20 });
 }
 
 function drawBall(ball, paper, image) {
@@ -115,12 +166,18 @@ function drawBall(ball, paper, image) {
     paper.path("M" + stumpsX + " " + stumpsY + "L" + result.x + " " + result.y).attr({ stroke: getColour(batsmansScoreForBall), 'stroke-width': 2 });
 }
 
-function drawWagonWheelBackground(paper) {
-    var widthOfWheel = paper.height-30;
-    var image = paper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", (paper.width/2)-(widthOfWheel/2), 30, widthOfWheel, widthOfWheel);
-    paper.text(image.attrs.x + (image.attrs.width * (1 / 4)), image.attrs.height / 2 + image.attrs.y, 'Off\nSide').attr({ fill: '#fff', 'font-size': 20 });
-    paper.text(image.attrs.x + (image.attrs.width * (3 / 4)), image.attrs.height / 2 + image.attrs.y, 'Leg\nSide').attr({ fill: '#fff', 'font-size': 20 });
-    paper.text(350, 15, 'Village CC Batting').attr({ fill: '#000', 'font-size': 20 });;
+function drawPitchImageScaledToPaper(paper, imageLocation ) {
+    var widthOfWheel = paper.height - 30;
+    var image = paper.image(imageLocation, (paper.width / 2) - (widthOfWheel / 2), 30, widthOfWheel, widthOfWheel);
+    paper.text(image.attrs.x + (image.attrs.width * (1 / 4)), image.attrs.height / 2 + image.attrs.y - (widthOfWheel/20), 'Off Side').attr({
+        fill: '#fff',
+        'font-size': 20
+    });
+    paper.text(image.attrs.x + (image.attrs.width * (3 / 4)), image.attrs.height / 2 + image.attrs.y  - (widthOfWheel/20), 'Leg Side').attr({
+        fill: '#fff',
+        'font-size': 20
+    });
+
     return image;
 }
 

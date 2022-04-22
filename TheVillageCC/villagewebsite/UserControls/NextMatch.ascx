@@ -2,12 +2,9 @@
 <div class="headerFixture">
     <div class=hfTitle>Next Fixture</div>
     <div id=hasFixture runat=server>
-        <div class=hfHomeTeam><asp:Literal runat="server" ID="HomeTeam" /></div>
-        <div class=hfVS>Vs</div>
-        <div class=hfAwayTeam><asp:Literal runat="server" ID="AwayTeam" /></div>
+        <div class=hfHomeTeam><asp:Literal runat="server" ID="HomeTeam" /> vs <asp:Literal runat="server" ID="AwayTeam" /></div>
         <div class=hfDate><asp:Literal runat="server" ID="MatchDate" /></div>
-        <div class=hfAt>at</div>
-        <div class=hfVenue><asp:Literal runat="server" ID="MatchVenue" /></div>
+        <div class=hfVenue>at <asp:Literal runat="server" ID="MatchVenue" /></div>
     </div>
     <div id="noFixture" runat=server visible=false>
         No upcoming fixtures

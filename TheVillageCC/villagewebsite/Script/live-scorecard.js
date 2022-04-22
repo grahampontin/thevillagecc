@@ -1,10 +1,9 @@
 ﻿$(function () {
-    $('#tabs').tab();
+
     $('#analysisTabs').tab();
 
-
     var matchId = $.url().param('matchId');
-    if (matchId === null) {
+    if (matchId === null || matchId === undefined) {
         showError("No match id speified. How did you get here exactly?");
         return;
     }
@@ -18,18 +17,19 @@
         });
 });
 
-function drawTeamChart(chartType, matchData) {
-    $("#chartPlaceholder").html('');
-    var paper = Raphael("chartPlaceholder", 700, 400);
+function drawTeamChart(chartType, matchData, divName) {
+    $("#"+divName).html('');
+    var paper = Raphael(divName, 700, 400);
+    paper.setViewBox(0,0,700,400, true);
     paper.image("\\Images\\livescorecard\\vcc-logo-opaque.jpg", 100, 90, 500, 214);
     switch (chartType) {
         case "worm":
             drawTeamWorm(paper, matchData);
             break;
         case "wagon":
-            drawTeamWagonWheel(paper, matchData);
+            drawWagonWheel(paper, matchData);
             break;
-        case "manahttan":
+        case "manhattan":
             drawTeamManahttan(paper, matchData);
             break;
         case "partnerships":
@@ -37,23 +37,23 @@ function drawTeamChart(chartType, matchData) {
             break;
     }
 
-    var image = $("#chartPlaceholder image").detach();
-    $("#chartPlaceholder svg").prepend(image);
+    var image = $("#"+divName+" image").detach();
+    $("#"+divName+" svg").prepend(image);
+    $("#"+divName+" svg").removeAttr("width");
+    $("#"+divName+" svg").removeAttr("height");
 }
 
 function showError(text) {
-    BootstrapDialog.show({
-        title: "Oops! Something went wrong.",
-        message: text,
-        closable: false,
-        buttons: [{
-            label: 'Close',
-            cssClass: 'btn-default',
-            action: function (dialogRef) {
-                dialogRef.close();
-            }
-        }]
-    });
+    $("#errorModal .modal-body p").text(text);
+    var errorModal = new bootstrap.Modal(document.getElementById('errorModal'), {});
+    errorModal.show();
+}
+
+function addAttributesTo(playerIcon, player) {
+    playerIcon.attr("playerName", player.BatsmanInningsDetails.Name);
+    playerIcon.attr("playerScore", player.BatsmanInningsDetails.Score);
+    playerIcon.attr("playerIsOut", player.Wicket != null);
+    playerIcon.attr("playerId", player.Id);
 }
 
 function renderMatchData(matchData) {
@@ -305,7 +305,9 @@ function renderMatchData(matchData) {
             });
             overBody.prepend(overCommentary);
             overContainer.append(overBody);
-            $("#overDetails").prepend(overContainer);
+            
+            $("#overDetails").prepend(overContainer.clone());
+            $("#accordian-over-details").prepend(overContainer.clone());
         });
         
         if (matchData.OurInningsStatus === 'Completed') {
@@ -326,7 +328,8 @@ function renderMatchData(matchData) {
             commentary.html(matchData.OurInningsCommentary);
             body.prepend(commentary);
             endOfInningsContainer.append(body);
-            $("#overDetails").prepend(endOfInningsContainer);
+            $("#overDetails").prepend(endOfInningsContainer.clone());
+            $("#accordian-over-details").prepend(endOfInningsContainer.clone());
 
         }
         if (matchData.TheirCompletedOvers !== null) {
@@ -351,7 +354,8 @@ function renderMatchData(matchData) {
                 overBody.append(overCommentary);
                 overContainer.append(overBody);
 
-                $("#theirOverDetails").append(overContainer);
+                $("#theirOverDetails").append(overContainer.clone());
+                $("#accordian-oppo-commentary").append(overContainer.clone());
             });
 
         }
@@ -374,18 +378,27 @@ function renderMatchData(matchData) {
             commentary.html(matchData.TheirInningsCommentary);
             body.prepend(commentary);
             endOfInningsContainer.append(body);
-            $("#theirOverDetails").prepend(endOfInningsContainer);
+            $("#theirOverDetails").prepend(endOfInningsContainer.clone());
+            $("#accordian-oppo-commentary").prepend(endOfInningsContainer.clone());
         }
 
 
         $.each(matchData.LiveBattingCard.Players, function (index, player) {
             var playerIcon = $("<div></div");
-            playerIcon.addClass("img-circle player-icon pull-left");
+            var playerOption = $("<option></option>")
+            playerIcon.addClass("rounded-circle player-icon float-start");
+            if (index === "1"){
+                playerIcon.addClass("player-icon-active");
+                playerOption.attr("selected", "selected")
+            }
             playerIcon.attr("playerId", player.BatsmanInningsDetails.PlayerId);
+            playerOption.attr("playerId", player.BatsmanInningsDetails.PlayerId)
+
             var playerName = player.BatsmanInningsDetails.Name;
-            playerIcon.attr("playerName", player.BatsmanInningsDetails.Name);
-            playerIcon.attr("playerScore", player.BatsmanInningsDetails.Score);
-            playerIcon.attr("playerIsOut", player.Wicket != null);
+            playerOption.text(playerName);
+
+            addAttributesTo(playerIcon, player);
+            addAttributesTo(playerOption, player);
 
 
             var parts = playerName.split(' ');
@@ -398,45 +411,92 @@ function renderMatchData(matchData) {
             }
             playerIcon.html(shortName);
             $('#player-icons').append(playerIcon);
+            $('#mobile-player-analysis-select').append(playerOption);
 
         });
+        let activePlayer = $(".player-icon-active");
+        let chartToDraw = $("#chart-types button.active").attr("chartType");
+        drawPlayerChart(activePlayer, matchData,  chartToDraw,  "player-analysis-chart");
+        drawPlayerChart(activePlayer, matchData,  chartToDraw,  "player-analysis-chart-mobile");
+        drawTeamChart("worm", matchData, "chartPlaceholder");
+        drawTeamChart("worm", matchData, "accordian-chart-placeholder");
 
-        $('#player-icons').width($(".player-icon").length * 60);
         $(".player-icon").click(function () {
             $("#chart-types").removeClass("hidden");
             var clickedPlayer = $(this);
             $('.player-icon').removeClass('player-icon-active');
+            let playerOptions = $('#mobile-player-analysis-select option');
+            playerOptions.removeAttr("selected");
+            playerOptions.filter(function() {
+                return $(this).attr('playerId')===clickedPlayer.attr('playerId');
+            }).attr('selected', 'selected');
             clickedPlayer.addClass('player-icon-active');
-            drawChart(clickedPlayer, matchData);
-
-
+            let chartButton = $("#chart-types button.active");
+            drawPlayerChart(clickedPlayer, matchData,  chartButton.attr("chartType"),  "player-analysis-chart");
+            drawPlayerChart(clickedPlayer, matchData,  chartButton.attr("chartType"),  "player-analysis-chart-mobile");
         });
+        $('#mobile-player-analysis-select').change(function (){
+            var clickedPlayer = $('#mobile-player-analysis-select :selected');
+            $('.player-icon').removeClass('player-icon-active');
+            $('.player-icon').filter(function() {
+                return $(this).attr('playerId')===clickedPlayer.attr('playerId');
+            }).addClass('player-icon-active');
+            let chartButton = $("#player-chart-types-mobile button.active");
+            drawPlayerChart(clickedPlayer, matchData,  chartButton.attr("chartType"),  "player-analysis-chart-mobile");
+            drawPlayerChart(clickedPlayer, matchData,  chartButton.attr("chartType"),  "player-analysis-chart");
+        });
+        
     } else {
         $("#live-batting-info").hide();
     }    
 
-    $(".chart-type").click(function() {
-        var clickedChart = $(this);
-        $(".chart-type").removeClass("chart-type-active");
-        clickedChart.addClass("chart-type-active");
-
-        drawChart($(".player-icon-active"), matchData);
+    $("#chart-types button").click(function() {
+        let chartType = $("#chart-types button.active").attr("chartType");
+        let clickedPlayer1 = $(".player-icon-active");
+        drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart");
+        drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart-mobile");
+    });
+    $("#player-chart-types-mobile button").click(function() {
+        let chartType = $("#player-chart-types-mobile button.active").attr("chartType");
+        let clickedPlayer1 = $('#mobile-player-analysis-select :selected');
+        drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart");
+        drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart-mobile");
     });
 
-    $('#analysisTabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        var pattern = /#.+/gi //use regex to get anchor(==selector)
-        var chart = e.target.toString().match(pattern)[0].replace('#', ''); //get anchor         
-        drawTeamChart(chart, matchData);
+    $('#analysisTabs button').on('shown.bs.tab', function (e) {
+        var chart = $(e.target).attr("data-bs-target").replace('#', '');      
+        drawTeamChart(chart, matchData, "chartPlaceholder");
+        drawTeamChart(chart, matchData, "accordian-chart-placeholder");
+    });
+    
+    $('#accordian-analysis-tabs button').on('shown.bs.tab', function (e) {
+        var chart = $(e.target).attr("data-bs-target").replace('#', '');
+        drawTeamChart(chart, matchData, "chartPlaceholder");
+        drawTeamChart(chart, matchData, "accordian-chart-placeholder");
     });
 
 
-    renderLiveBattingScoreCard(matchData);
-    renderLiveBowlingScoreCard(matchData);
+    renderLiveBattingScoreCard(matchData, $("#inPlayScorecard"));
+    renderLiveBattingScoreCard(matchData, $("#mobile-view-in-play-batting-scorecard"));
+    renderLiveBowlingScoreCard(matchData, $("#inPlayBowlingScorecard"));
+    renderLiveBowlingScoreCard(matchData, $("#mobile-view-in-play-bowling-scorecard"));
 
 }
 
-function renderLiveBowlingScoreCard(matchData) {
+function renderLiveBowlingScoreCard(matchData, table) {
     //Scorecard
+    let header = $("<thead></thead>");
+    let headerRow = $("<tr></tr>");
+    headerRow.append($("<th></th>"));
+    headerRow.append($("<th>O</th>"));
+    headerRow.append($("<th>M</th>"));
+    headerRow.append($("<th>R</th>"));
+    headerRow.append($("<th>W</th>"));
+    headerRow.append($("<th>Econ</th>"));
+    header.append(headerRow)
+    
+    let body = $("<tbody></tbody>");
+    
     $.each(matchData.LiveBowlingCard, function(index, bowler) {
         var details = bowler.Details;
         var name = bowler.Name;
@@ -468,32 +528,105 @@ function renderLiveBowlingScoreCard(matchData) {
         row.append(econCell);
 
 
-        $("#inPlayBowlingScorecard").append(row);
+        body.append(row);
 
 
     });
+    table.append(header);
+    table.append(body);
+    
 }
 
-function renderLiveBattingScoreCard(matchData) {
+function showOnlyOnLargerScreens(dismissalPart1) {
+    dismissalPart1.addClass("d-none");
+    dismissalPart1.addClass("d-md-table-cell");
+}
+
+function renderLiveBattingScoreCard(matchData, table) {
     //Scorecard
+    
+    var thead = $("<thead></thead>")
+    var tbody = $("<tbody></tbody>")
+    var tfoot = $("<tfoot></tfoot>")
+    
+    var header = $("<tr></tr>");
+    let nameHeaderLargeScreens = $("<th></th>");
+    showOnlyOnLargerScreens(nameHeaderLargeScreens)
+    header.append(nameHeaderLargeScreens);
+
+    let nameHeaderSmallScreens = $("<th></th>");
+    nameHeaderSmallScreens.addClass("d-md-none");
+    header.append(nameHeaderSmallScreens);
+
+    let dismissalPart1 = $("<th></th>");
+    showOnlyOnLargerScreens(dismissalPart1);
+    header.append(dismissalPart1);
+
+    let dismissalPart2 = $("<th></th>");
+    showOnlyOnLargerScreens(dismissalPart2);
+    header.append(dismissalPart2);
+
+    let runsHeader = $("<th>Runs</th>");
+    header.append(runsHeader);
+
+    let ballsHeader = $("<th>Balls</th>");
+    header.append(ballsHeader);
+
+    let dotsHeader = $("<th>Dots</th>");
+    showOnlyOnLargerScreens(dotsHeader);
+    header.append(dotsHeader);
+
+    let foursHeader = $("<th>4s</th>");
+    header.append(foursHeader);
+
+    let sixesHeader = $("<th>6s</th>");
+    header.append(sixesHeader);
+
+    let srHeader = $("<th>SR</th>");
+    showOnlyOnLargerScreens(srHeader);
+    header.append(srHeader);
+
+    thead.append(header);
+    
     $.each(matchData.LiveBattingCard.Players, function (index, player) {
+        
         var row = $("<tr></tr>");
 
         var name = $("<td></td>");
         name.text(player.BatsmanInningsDetails.Name);
+        showOnlyOnLargerScreens(name);
         row.append(name);
 
+        var nameAndDismissal = $("<td></td>");
+        nameAndDismissal.addClass("d-md-none");
+        let nameDiv = $("<div></div>");
+        nameDiv.addClass("fst-italic");
+        nameDiv.text(player.BatsmanInningsDetails.Name);
+        let dismissalDiv = $("<div></div>");
+        let smallDismissalText = $("<small></small>")
+        dismissalDiv.append(smallDismissalText);
+        
+        
         var dismissal1 = $("<td></td>");
+        showOnlyOnLargerScreens(dismissal1);
         var dismissal2 = $("<td></td>");
+        showOnlyOnLargerScreens(dismissal2);
         var wicket = player.Wicket;
         if (wicket === null) {
+            dismissalDiv.text("not out");
             dismissal1.text("not");
             dismissal2.text("out");
         } else {
             dismissal2.text("");
             dismissal1.text("");
             setDismissalText(dismissal1, dismissal2, wicket);
+            smallDismissalText.text(dismissal1.text() + " " + dismissal2.text());
+
         }
+        nameAndDismissal.append(nameDiv)
+        nameAndDismissal.append(dismissalDiv)
+        row.append(nameAndDismissal);
+
         row.append(dismissal1);
         row.append(dismissal2);
 
@@ -507,6 +640,7 @@ function renderLiveBattingScoreCard(matchData) {
 
         var dots = $("<td></td>");
         dots.text(player.BatsmanInningsDetails.Dots);
+        showOnlyOnLargerScreens(dots);
         row.append(dots);
 
         var fours = $("<td></td>");
@@ -520,40 +654,66 @@ function renderLiveBattingScoreCard(matchData) {
 
         var strikeRate = $("<td></td>");
         strikeRate.text(player.BatsmanInningsDetails.StrikeRate);
+        showOnlyOnLargerScreens(strikeRate);
         row.append(strikeRate);
 
-        $("#inPlayScorecard").append(row);
+       tbody.append(row);
     });
 
     var extrasRow = $("<tr></tr>");
-    extrasRow.append($("<td></td>"));
-    extrasRow.append($("<td></td>"));
+    let blank1 = $("<td></td>");
+    showOnlyOnLargerScreens(blank1);
+    extrasRow.append(blank1);
+    let blank2 = $("<td></td>");
+    showOnlyOnLargerScreens(blank2);
+    extrasRow.append(blank2);
     var extrasTitle = $("<td>Extras</td>");
     extrasRow.append(extrasTitle);
     var extrasTotal = $("<td></td>");
     extrasTotal.text(matchData.LiveBattingCard.Extras.Total);
     extrasRow.append(extrasTotal);
     var extrasDetails = $("<td colspan=5></td>");
+    showOnlyOnLargerScreens(extrasDetails);
     extrasDetails.text("(" + matchData.LiveBattingCard.Extras.DetailString + ")");
     extrasRow.append(extrasDetails);
 
-    $("#inPlayScorecard").append(extrasRow);
+    var extrasBlankSpace = $("<td colspan=3></td>");
+    extrasBlankSpace.addClass("d-md-none");
+    extrasRow.append(extrasBlankSpace);
+    
+
+    tfoot.append(extrasRow);
 
     var totalRow = $("<tr></tr>");
-    totalRow.append($("<td></td>"));
-    totalRow.append($("<td></td>"));
+    let blank3 = $("<td></td>");
+    showOnlyOnLargerScreens(blank3);
+    totalRow.append(blank3);
+    let blank4 = $("<td></td>");
+    showOnlyOnLargerScreens(blank4);
+    totalRow.append(blank4);
     var totalTitle = $("<td><strong>Total</strong></td>");
     totalRow.append(totalTitle);
     var scoreTotal = $("<td></td>");
     var scoreTotalText = $("<strong></strong>");
     scoreTotalText.text(matchData.Score);
     scoreTotal.append(scoreTotalText);
+    showOnlyOnLargerScreens(scoreTotal);
     totalRow.append(scoreTotal);
     var scoreDetails = $("<td colspan=5></td>");
+    showOnlyOnLargerScreens(scoreDetails);
     scoreDetails.text("for " + matchData.Wickets + " wickets");
     totalRow.append(scoreDetails);
 
-    $("#inPlayScorecard").append(totalRow);
+    var smallScoreDetails = $("<td colspan=4></td>");
+    smallScoreDetails.addClass("d-md-none fw-bold");
+    smallScoreDetails.text(matchData.Score + " for " + matchData.Wickets);
+    totalRow.append(smallScoreDetails);
+
+    tfoot.append(totalRow);
+    
+    table.append(thead);
+    table.append(tbody);
+    table.append(tfoot);
 }
 
 
@@ -603,46 +763,37 @@ function getLeadTrailByRuns(matchData) {
     }
 }
 
-function drawChart(clickedPlayer, matchData) {
-    $('#wagon-wheel').html('');
+function drawPlayerChart(clickedPlayer, matchData, chartToDraw, divId) {
+    let divName = divId;
+     
+    $("#"+divName).html('');
+    var paper = Raphael(divName, 700, 400);
+    paper.setViewBox(0,0,700,400, true);
+    paper.image("\\Images\\livescorecard\\vcc-logo-opaque.jpg", 100, 90, 500, 214);
 
-    var chartToDraw = $(".chart-type-active").attr("chartType");
-    var paper;
-    if (chartToDraw === "wagon") {
-        paper = Raphael("wagon-wheel", 283, 330);
-        var image = initializeWagonWheel(paper);
-        drawWagonWheel(clickedPlayer, matchData.CompletedOvers, paper, image);
+    switch (chartToDraw) {
+        case "wagon":
+            drawWagonWheel(paper, matchData, clickedPlayer);
+            break;
+        case "zones":
+            drawZones(clickedPlayer, paper, matchData.CompletedOvers);
+            break;
+        case "worm":
+            drawPlayerWorm(clickedPlayer, paper, matchData.CompletedOvers);
+            break;
     }
-    if (chartToDraw === "zones") {
-        paper = initializeZones();
-        drawZones(clickedPlayer, paper, matchData.CompletedOvers);
-    }
-    if (chartToDraw === "worm") {
-        paper = initializeWorm();
-        drawWorm(clickedPlayer, paper, matchData.CompletedOvers);
-    }
+
+    let svgElement = $("#"+divName+" svg");
+    svgElement.removeAttr("width");
+    svgElement.removeAttr("height");
+    
 }
 
-function drawZones(player, paper, overs) {
-    var scoreBuckets = [0, 0, 0, 0, 0, 0, 0, 0];
-    drawPlayerNameAndScore(player, paper);
-    $.each(overs, function (index, over) {
-        $.each(over.Over.Balls, function (index, ball) {
-            if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing === "" || (ball.Thing === "nb" && ball.Amount > 1))) {
-                addBallToBucket(ball, scoreBuckets);
-            }
-        });
-    });
-    $.each(scoreBuckets, function (index) {
-        addScoreToZone(index, scoreBuckets, paper);
-    });
-}
 
-function drawWorm(player, paper, overs) {
+function drawPlayerWorm(player, paper, overs) {
     var colour1 = '#009933';
     var colour2 = '#ffd633';
 
-    paper.image("\\Images\\livescorecard\\vcc-logo-opaque.jpg", 35, 90, 200, 85);
     var xValues = [];
     var scoreValues = [];
     var strikeRateValues = [];
@@ -675,16 +826,16 @@ function drawWorm(player, paper, overs) {
 
     var x = 10,
         y = 10,
-        xlen = paper.width - 30,
+        xlen = paper.width - 50,
         ylen = paper.height - 40,
-        gutter = 20,
+        gutter = 40,
         xdata = xValues;
     var chrt = r.linechart(x, y, xlen, ylen, xdata, [scoreValues, strikeRateValues], {
         gutter: gutter,
         nostroke: false,
         axis: "0 0 0 1",
         symbol: "",
-        smooth: true,
+        smooth: false,
         colors: [
                     colour1,
                     colour2
@@ -701,21 +852,23 @@ function drawWorm(player, paper, overs) {
         r // you need to provide the Raphael object
     );
     Raphael.g.axis(
-        paper.width - gutter - 20, // 10 + gutter
+        paper.width - gutter - 40, // 10 + gutter
         y + ylen - gutter, //y pos
-        paper.height - 80, 0, maxStrikeRate, // used to pass the initial value and last value (number) if no labels are provided
+        paper.height - gutter - 80, 0, maxStrikeRate, // used to pass the initial value and last value (number) if no labels are provided
         null, // number of steps 
         3, null, // the labels
         r // you need to provide the Raphael object
     );
 
-    paper.text(40, 320, 'Score').attr({ 'font-size': 12 });
-    paper.path('M70 320L110 320').attr({ stroke: colour1, 'stroke-width': 4 });
-    paper.text(160, 320, 'Strike Rate').attr({ 'font-size': 12 });
-    paper.path('M200 320L240 320').attr({ stroke: colour2, 'stroke-width': 4 });
+    let keyYPosition = paper.height-20;
+    paper.text(40, keyYPosition, 'Score').attr({ 'font-size': 12 });
+    paper.path('M70 '+keyYPosition+'L110 '+keyYPosition).attr({ stroke: colour1, 'stroke-width': 4 });
+    paper.text(160, keyYPosition, 'Strike Rate').attr({ 'font-size': 12 });
+    paper.path('M200 '+keyYPosition+'L240 '+keyYPosition).attr({ stroke: colour2, 'stroke-width': 4 });
 
-    paper.text(5, 160, 'Runs').attr({ 'font-size': 12 }).rotate(-90, true);
-    paper.text(275, 160, 'Strike Rate').attr({ 'font-size': 12 }).rotate(90, true);
+    paper.text(paper.width/2, y+ylen-gutter+30, 'Balls Faced').attr({ 'font-size': 18 });
+    paper.text(10, paper.height/2, 'Score').attr({ 'font-size': 18 }).rotate(-90, true);
+    paper.text(paper.width - 30, paper.height/2, 'Strike Rate').attr({ 'font-size': 18 }).rotate(90, true);
 
 }
 
@@ -729,75 +882,6 @@ function maxValue(values) {
     return maxValue;
 }
 
-function addScoreToZone(zoneIndex, scoreBuckets, paper) {
-    var point = findNewPoint(paper.width / 2, paper.height / 2, Math.PI / 8 * (zoneIndex * 2 + 1), paper.width / 3);
-    paper.text(point.x, point.y, scoreBuckets[zoneIndex]).attr({
-        'font-size': 20, fill: '#fff'
-    });
-
-}
-
-function addBallToBucket(ball, scoreBuckets) {
-    var modulo = Math.floor(ball.Angle / (Math.PI / 4));
-    scoreBuckets[modulo] += ball.Amount;
-}
-
-function drawWagonWheel(player, overs, paper, image) {
-    drawPlayerNameAndScore(player, paper);
-    $.each(overs, function(index, over) {
-        $.each(over.Over.Balls, function (index, ball) {
-            if (ball.Batsman.toString() === player.attr("playerId") && (ball.Thing ==="" || (ball.Thing === "nb" && ball.Amount > 1))) {
-                drawBall(ball, paper, image);
-            }
-        });
-    });
-}
-
-function drawPlayerNameAndScore(player, paper) {
-    var playerText = player.attr("playerName") + " (" + player.attr("playerScore");
-    if (player.attr("playerIsOut") !== "true") {
-        playerText = playerText + "*";
-    }
-    playerText = playerText + ")";
-    paper.text(paper.width / 2, 20, playerText).attr({ 'font-size': 20 });
-}
-
-function drawBall(ball, paper) {
-    var stumpsX = Math.round(paper.width * 0.5);
-    var stumpsY = Math.round((paper.height-30) * .4 + 30);
-    var batsmansScoreForBall = ball.Amount;
-    if (ball.Thing === "nb") {
-        batsmansScoreForBall = batsmansScoreForBall - 1;
-    }
-    var result = findNewPoint(stumpsX, stumpsY, ball.Angle, getDistance(batsmansScoreForBall, ball.Angle, paper.width/2));
-    paper.path("M" + stumpsX + " " + stumpsY + "L" + result.x + " " + result.y).attr({ stroke: getColour(batsmansScoreForBall), 'stroke-width': 2 });
-}
-
-function initializeWagonWheel(wagonWheelPaper) {
-    var wagonWheelImage = wagonWheelPaper.image("\\MobileWeb\\images\\wagon-wheel-new.jpg", 0, 30, 283, 280);
-    wagonWheelPaper.text(55, 175, 'Off\nSide').attr({ fill: '#fff', 'font-size': 20 });
-    wagonWheelPaper.text(235, 175, 'Leg\nSide').attr({ fill: '#fff', 'font-size': 20 });
-    wagonWheelPaper.text(20, 325, 'Runs').attr({ 'font-size': 12 });
-    wagonWheelPaper.path('M40 325L80 325').attr({ stroke: '#ff0', 'stroke-width': 4 });
-    wagonWheelPaper.text(120, 325, 'Fours').attr({ 'font-size': 12 });
-    wagonWheelPaper.path('M140 325L180 325').attr({ stroke: '#00f', 'stroke-width': 4 });
-    wagonWheelPaper.text(220, 325, 'Sixes').attr({ 'font-size': 12 });
-    wagonWheelPaper.path('M240 325L280 325').attr({ stroke: '#f00', 'stroke-width': 4 });
-
-    return wagonWheelImage;
-}
-
-
-function initializeZones() {
-    var paper = Raphael("wagon-wheel", 283, 330);
-    paper.image("\\Images\\liveScorecard\\zones-background.png", 0, 30, 280, 280);
-    return paper;
-}
-
-function initializeWorm() {
-    var paper = Raphael("wagon-wheel", 283, 330);
-    return paper;
-}
 
 function needsToBeReBowled(ball) {
     return !ball.isLegalDelivery();
