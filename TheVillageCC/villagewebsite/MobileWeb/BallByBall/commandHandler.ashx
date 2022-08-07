@@ -140,14 +140,17 @@ public class CommandHandler : IHttpHandler
                                 ReturnCurrentMatchState(context, match);
                                 break;
                             case "liveScorecard":
-                                //do stuff
-                                if (!match.GetIsBallByBallInProgress())
+                                var matchReportAndConditions = match.GetMatchReport();
+                                var external = new LiveScorecardV1
                                 {
-                                    throw new InvalidOperationException("Match " + genericBallByBallCommand.matchId + " does not have any ball by ball coverage");
-                                }
+                                    MatchData = MatchV1.FromInternal(match),
+                                    InPlayData = match.GetLiveScorecard(),
+                                    FinalScorecard = GetExternalScorecard(match),
+                                    MatchReport = new MatchReportV1(matchReportAndConditions.Conditions,
+                                        matchReportAndConditions.Report, matchReportAndConditions.ReportImage)
+                                };
 
-                                var liveScorecard = match.GetLiveScorecard();
-                                string json = javaScriptSerializer.Serialize(liveScorecard);
+                                string json = javaScriptSerializer.Serialize(external);
                                 context.Response.ContentType = "text/json";
                                 context.Response.StatusCode = 200;
                                 context.Response.Write(json);
@@ -170,7 +173,7 @@ public class CommandHandler : IHttpHandler
                                 ReturnCurrentMatchState(context, match);
                                 break;
                             case "getScorecard":
-                                var scorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), match);
+                                var scorecard = GetExternalScorecard(match);
                                 context.Response.ContentType = "text/json";
                                 context.Response.StatusCode = 200;
                                 context.Response.Write(javaScriptSerializer.Serialize(scorecard));
@@ -267,6 +270,11 @@ public class CommandHandler : IHttpHandler
 
     }
 
+    private static MatchScorecardV1 GetExternalScorecard(Match match)
+    {
+        return new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), match);
+    }
+
     private static void UpdatePlayer(Player newPlayer, PlayerV1 p)
     {
         newPlayer.Nickname = p.nickname;
@@ -334,6 +342,14 @@ public class CommandHandler : IHttpHandler
     {
         get { return false; }
     }
+}
+
+public class LiveScorecardV1
+{
+    public LiveScorecard InPlayData { get; set; }
+    public MatchScorecardV1 FinalScorecard { get; set; }
+    public MatchReportV1 MatchReport { get; set; }
+    public MatchV1 MatchData { get; set; }
 }
 
 public class MatchReportV1

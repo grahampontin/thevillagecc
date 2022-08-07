@@ -56,7 +56,28 @@ function addAttributesTo(playerIcon, player) {
     playerIcon.attr("playerId", player.Id);
 }
 
-function renderMatchData(matchData) {
+function renderMatchReport(matchReport) {
+    $("#match-report-conditions").html(matchReport.Conditions);
+    $("#match-report-text").html(matchReport.Report);
+}
+
+function renderMatchData(liveScorecard) {
+    let matchData = liveScorecard.InPlayData;
+
+    let isInPlay = matchData.TheirInningsStatus === "InProgress" || matchData.OurInningsStatus === "InProgress";
+    let matchIsCompleted = (matchData.TheirInningsStatus === "Completed" && matchData.OurInningsStatus === "Completed") || liveScorecard.FinalScorecard.ourInnings.size()>0;
+    
+    
+    if (!isInPlay) {
+        $(".hide-if-not-in-play").hide();
+    }
+    
+    if (matchIsCompleted){
+        $(".hide-if-completed").hide();
+        $(".completed-only").show();
+        renderMatchReport(liveScorecard.MatchReport);
+    }
+    
     $(".opposition").text(matchData.Opposition);
     $("#oversRemaining").text(matchData.OversRemaining);
     
@@ -72,7 +93,7 @@ function renderMatchData(matchData) {
     $("#toss-winner").text(matchData.WonToss ? "The Village CC" : matchData.Opposition);
     $("#bat-or-bowl").text(matchData.TossWinnerBatted ? "bat" : "bowl");
 
-    if (!matchData.IsMatchComplete) {
+    if (!matchIsCompleted) {
         $("#resultSummary").hide();
         $("#scoreSummary").show();
         $(".teamCurrentlyBatting").text(matchData.OurInningsStatus === "InProgress" ? "The Village" : matchData.Opposition);
@@ -92,6 +113,7 @@ function renderMatchData(matchData) {
     } else {
         $("#resultSummary").show();
         $("#scoreSummary").hide();
+        $("#live-batting-info").hide();
         $("#resultSummaryText").text(matchData.ResultText);
     }
     
@@ -114,7 +136,7 @@ function renderMatchData(matchData) {
     }
 
 
-    if (matchData.OurInningsStatus !== "NotStarted" && matchData.CompletedOvers.length > 0) {
+    if (matchData.OurInningsStatus !== "NotStarted" && matchData.CompletedOvers.length > 0 && !matchIsCompleted) {
         $("#live-batting-info").show();
 
         //On strike batsman
@@ -244,16 +266,16 @@ function renderMatchData(matchData) {
         //Overs text
         $.each(matchData.CompletedOvers.reverse(), function(index, over) {
             var overContainer = $("<div></div>");
-            overContainer.addClass("panel panel-default");
+            overContainer.addClass("over-commentary");
 
             var overHeader = $("<div></div>");
-            overHeader.addClass("panel-heading");
+            overHeader.addClass("over-commentary-heading");
             overHeader.html("<small><strong>End of over " + over.Over.OverNumber + "</strong> (" + getScoreString(over.ScoreForThisOver) + ") <strong>Village " + over.ScoreAtEndOfOver + "/" + over.WicketsAtEndOfOver + "</strong></small>");
 
             overContainer.append(overHeader);
 
             var overBody = $("<div></div>");
-            overBody.addClass("panel-body");
+            overBody.addClass("over-commentary-body");
 
             var overCommentary = $("<div></div>");
             overCommentary.addClass("over-comment");
@@ -312,16 +334,16 @@ function renderMatchData(matchData) {
         
         if (matchData.OurInningsStatus === 'Completed') {
             var endOfInningsContainer = $("<div></div>");
-            endOfInningsContainer.addClass("panel panel-default");
+            endOfInningsContainer.addClass("over-commentary");
 
             var header = $("<div></div>");
-            header.addClass("panel-heading");
+            header.addClass("over-commentary-heading");
             header.html("<small><strong>End of Innings. </strong><strong>Village " + matchData.Score + "/" + matchData.Wickets + "</strong></small>");
 
             endOfInningsContainer.append(header);
 
             var body = $("<div></div>");
-            body.addClass("panel-body");
+            body.addClass("over-commentary-body");
 
             var commentary = $("<div></div>");
             commentary.addClass("over-comment");
@@ -335,16 +357,16 @@ function renderMatchData(matchData) {
         if (matchData.TheirCompletedOvers !== null) {
             $.each(matchData.TheirCompletedOvers.reverse(), function (index, over) {
                 var overContainer = $("<div></div>");
-                overContainer.addClass("panel panel-default");
+                overContainer.addClass("over-commentary");
 
                 var overHeader = $("<div></div>");
-                overHeader.addClass("panel-heading");
+                overHeader.addClass("over-commentary-heading");
                 overHeader.html("<small><strong>End of over " + over.Over + "</strong> <strong> " + matchData.Opposition + " " + over.Score + "/" + over.Wickets + "</strong></small>");
 
                 overContainer.append(overHeader);
 
                 var overBody = $("<div></div>");
-                overBody.addClass("panel-body");
+                overBody.addClass("over-commentary-body");
 
                 var overCommentary = $("<div></div>");
                 overCommentary.addClass("over-comment");
@@ -362,16 +384,16 @@ function renderMatchData(matchData) {
         
         if (matchData.TheirInningsStatus === 'Completed') {
             var endOfInningsContainer = $("<div></div>");
-            endOfInningsContainer.addClass("panel panel-default");
+            endOfInningsContainer.addClass("over-commentary");
 
             var header = $("<div></div>");
-            header.addClass("panel-heading");
+            header.addClass("over-commentary-heading");
             header.html("<small><strong>End of Innings. </strong><strong>"+ matchData.Opposition + " " + matchData.TheirScore + "/" + matchData.TheirWickets + "</strong></small>");
 
             endOfInningsContainer.append(header);
 
             var body = $("<div></div>");
-            body.addClass("panel-body");
+            body.addClass("over-commentary-body");
 
             var commentary = $("<div></div>");
             commentary.addClass("over-comment");
@@ -450,36 +472,43 @@ function renderMatchData(matchData) {
         $("#live-batting-info").hide();
     }    
 
-    $("#chart-types button").click(function() {
-        let chartType = $("#chart-types button.active").attr("chartType");
-        let clickedPlayer1 = $(".player-icon-active");
-        drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart");
-        drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart-mobile");
-    });
-    $("#player-chart-types-mobile button").click(function() {
-        let chartType = $("#player-chart-types-mobile button.active").attr("chartType");
-        let clickedPlayer1 = $('#mobile-player-analysis-select :selected');
-        drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart");
-        drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart-mobile");
-    });
+     if (matchData.TheirInningsStatus === "NotStarted" && matchData.OurInningsStatus === "NotStarted") {
+        //No data to render
+         $('#live-analysis').hide();
+     } else {
 
-    $('#analysisTabs button').on('shown.bs.tab', function (e) {
-        var chart = $(e.target).attr("data-bs-target").replace('#', '');      
-        drawTeamChart(chart, matchData, "chartPlaceholder");
-        drawTeamChart(chart, matchData, "accordian-chart-placeholder");
-    });
+         $("#chart-types button").click(function() {
+             let chartType = $("#chart-types button.active").attr("chartType");
+             let clickedPlayer1 = $(".player-icon-active");
+             drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart");
+             drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart-mobile");
+         });
+         $("#player-chart-types-mobile button").click(function() {
+             let chartType = $("#player-chart-types-mobile button.active").attr("chartType");
+             let clickedPlayer1 = $('#mobile-player-analysis-select :selected');
+             drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart");
+             drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart-mobile");
+         });
+
+         $('#analysisTabs button').on('shown.bs.tab', function (e) {
+             var chart = $(e.target).attr("data-bs-target").replace('#', '');
+             drawTeamChart(chart, matchData, "chartPlaceholder");
+             drawTeamChart(chart, matchData, "accordian-chart-placeholder");
+         });
+
+         $('#accordian-analysis-tabs button').on('shown.bs.tab', function (e) {
+             var chart = $(e.target).attr("data-bs-target").replace('#', '');
+             drawTeamChart(chart, matchData, "chartPlaceholder");
+             drawTeamChart(chart, matchData, "accordian-chart-placeholder");
+         });
+
+
+         renderLiveBattingScoreCard(matchData, $("#inPlayScorecard"));
+         renderLiveBattingScoreCard(matchData, $("#mobile-view-in-play-batting-scorecard"));
+         renderLiveBowlingScoreCard(matchData, $("#inPlayBowlingScorecard"));
+         renderLiveBowlingScoreCard(matchData, $("#mobile-view-in-play-bowling-scorecard"));
+     }
     
-    $('#accordian-analysis-tabs button').on('shown.bs.tab', function (e) {
-        var chart = $(e.target).attr("data-bs-target").replace('#', '');
-        drawTeamChart(chart, matchData, "chartPlaceholder");
-        drawTeamChart(chart, matchData, "accordian-chart-placeholder");
-    });
-
-
-    renderLiveBattingScoreCard(matchData, $("#inPlayScorecard"));
-    renderLiveBattingScoreCard(matchData, $("#mobile-view-in-play-batting-scorecard"));
-    renderLiveBowlingScoreCard(matchData, $("#inPlayBowlingScorecard"));
-    renderLiveBowlingScoreCard(matchData, $("#mobile-view-in-play-bowling-scorecard"));
 
 }
 
