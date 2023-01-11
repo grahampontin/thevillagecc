@@ -7,20 +7,20 @@
         showError("No match id speified. How did you get here exactly?");
         return;
     }
-    var postData = { 'command': "liveScorecard", 'matchId': matchId };
+    var postData = {'command': "liveScorecard", 'matchId': matchId};
     $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
         //success
-            renderMatchData(data);
-        }, 'json')
+        renderMatchData(data);
+    }, 'json')
         .fail(function (data) {
             showError(data.responseText);
         });
 });
 
 function drawTeamChart(chartType, matchData, divName) {
-    $("#"+divName).html('');
+    $("#" + divName).html('');
     var paper = Raphael(divName, 700, 400);
-    paper.setViewBox(0,0,700,400, true);
+    paper.setViewBox(0, 0, 700, 400, true);
     paper.image("\\Images\\livescorecard\\vcc-logo-opaque.jpg", 100, 90, 500, 214);
     switch (chartType) {
         case "worm":
@@ -37,10 +37,11 @@ function drawTeamChart(chartType, matchData, divName) {
             break;
     }
 
-    var image = $("#"+divName+" image").detach();
-    $("#"+divName+" svg").prepend(image);
-    $("#"+divName+" svg").removeAttr("width");
-    $("#"+divName+" svg").removeAttr("height");
+    var image = $("#" + divName + " image").detach();
+    let svg = $("#" + divName + " svg");
+    svg.prepend(image);
+    svg.removeAttr("width");
+    svg.removeAttr("height");
 }
 
 function showError(text) {
@@ -61,81 +62,179 @@ function renderMatchReport(matchReport) {
     $("#match-report-text").html(matchReport.Report);
 }
 
-function renderMatchData(liveScorecard) {
-    let matchData = liveScorecard.InPlayData;
+function renderFinalBowlingScoreCard(bowling, table) {
+    let {header, body} = setupBowlingScorecardTable();
 
-    let isInPlay = matchData.TheirInningsStatus === "InProgress" || matchData.OurInningsStatus === "InProgress";
-    let matchIsCompleted = (matchData.TheirInningsStatus === "Completed" && matchData.OurInningsStatus === "Completed") || liveScorecard.FinalScorecard.ourInnings.size()>0;
-    
-    
-    if (!isInPlay) {
-        $(".hide-if-not-in-play").hide();
-    }
-    
-    if (matchIsCompleted){
-        $(".hide-if-completed").hide();
-        $(".completed-only").show();
-        renderMatchReport(liveScorecard.MatchReport);
-    }
-    
-    $(".opposition").text(matchData.Opposition);
-    $("#oversRemaining").text(matchData.OversRemaining);
-    
-    $("#lastCompletedOver").text(matchData.OurLastCompletedOver);
-    $("#teamScore").text(matchData.Score);
-    $("#teamWickets").text(matchData.Wickets);
-    $("#teamRunRate").text(matchData.OurInningsStatus === "NotStarted" ? "N/A" : matchData.RunRate);
-    $("#oppositionScore").text(matchData.TheirScore);
-    $("#oppositionWickets").text(matchData.TheirWickets);
-    $("#oppositionLastCompletedOver").text(matchData.TheirOver);
-    $("#oppositionRunRate").text(matchData.TheirInningsStatus === "NotStarted" ? "N/A" : matchData.TheirRunRate);
-    $("#match-format").text(matchData.Declaration ? "Declaration" : matchData.Overs + " overs");
-    $("#toss-winner").text(matchData.WonToss ? "The Village CC" : matchData.Opposition);
-    $("#bat-or-bowl").text(matchData.TossWinnerBatted ? "bat" : "bowl");
+    $.each(bowling.entries, function (index, bowler) {
+        var name = bowler.playerName;
+        var economy = Math.round((bowler.runs / bowler.overs) * 100) / 100;
+        var overBowled = bowler.overs;
+        var maidens = bowler.maidens;
+        var runsConceeded = bowler.runs;
+        var wicketsTaken = bowler.wickets;
 
-    if (!matchIsCompleted) {
-        $("#resultSummary").hide();
-        $("#scoreSummary").show();
-        $(".teamCurrentlyBatting").text(matchData.OurInningsStatus === "InProgress" ? "The Village" : matchData.Opposition);
-        $(".teamCorrentlyBowling").text(matchData.TheirInningsStatus === "InProgress" ? "The Village" : matchData.Opposition);
-        $(".leadOrTrail").text(matchData.IsFirstInnings ? "lead" : "trail");
-        var leadTrailByRuns = getLeadTrailByRuns(matchData);
-        $("#leadTrailByRuns").text(leadTrailByRuns);
-        $("#wicketsRemaining").text(matchData.OurInningsStatus === "InProgress" ? 10 - matchData.Wickets : 10 - matchData.TheirWickets);
+        addBowlerRowToScorecardTable(name, overBowled, maidens, runsConceeded, wicketsTaken, economy, body);
 
-        var requiredRunRate = "N/A";
-        if (!matchData.IsFirstInnings && !matchData.Declaration && !matchData.IsMatchComplete) {
-            requiredRunRate = leadTrailByRuns / matchData.OversRemaining;
-            requiredRunRate = Math.round(requiredRunRate * 100) / 100;
+
+    });
+    table.append(header);
+    table.append(body);
+}
+
+function renderOurCommentary(matchData) {
+    if (matchData.CompletedOvers !== null && matchData.CompletedOvers.length > 0) {
+        $.each(matchData.CompletedOvers.reverse(), function (index, over) {
+            var overContainer = $("<div></div>");
+            overContainer.addClass("over-commentary");
+
+            var overHeader = $("<div></div>");
+            overHeader.addClass("over-commentary-heading");
+            overHeader.html("<small><strong>End of over " + over.Over.OverNumber + "</strong> (" + getScoreString(over.ScoreForThisOver) + ") <strong>Village " + over.ScoreAtEndOfOver + "/" + over.WicketsAtEndOfOver + "</strong></small>");
+
+            overContainer.append(overHeader);
+
+            var overBody = $("<div></div>");
+            overBody.addClass("over-commentary-body");
+
+            var overCommentary = $("<div></div>");
+            overCommentary.addClass("over-comment");
+            overCommentary.html(over.Over.Commentary);
+
+
+            var actualBallNumber = 1;
+            $.each(over.Over.Balls.sort((a, b) => a.BallNaumber - b.BallNumber), function (ballIndex, ballObj) {
+                var ball = new Ball(ballObj.Amount,
+                    ballObj.Thing,
+                    ballObj.Batsman,
+                    ballObj.BatsmanName,
+                    ballObj.Bowler,
+                    ballObj.Wicket);
+                ball.angle = ballObj.Angle;
+
+                var row = $("<div></div>");
+                row.addClass("row ball-row");
+
+                var ballNumber = $("<div></div>");
+                ballNumber.addClass("col-sm-1");
+
+                ballNumber.html("<strong>" + index + "." + actualBallNumber + "</strong>");
+
+                var ballDescription = $("<div></div>");
+                ballDescription.addClass("col-sm-11");
+                ballDescription.html(ball.bowler + " to " + ball.batsmanName + ", " + ball.getBallDescription());
+                row.append(ballNumber);
+                row.append(ballDescription);
+
+                if (ball.wicket !== null) {
+                    var wicketRow = $("<div></div>");
+                    wicketRow.addClass("row wicket-row");
+                    var emptyColumn = $("<div></div>");
+                    emptyColumn.addClass("col-sm-1");
+                    wicketRow.append(emptyColumn);
+
+                    var wicketDetails = $("<div></div>");
+                    wicketDetails.addClass("col-sm-11");
+                    wicketDetails.html("<strong>" + getDismissalText(ball.wicket, matchData.FallOfWickets) + "</strong>");
+                    wicketRow.append(wicketDetails);
+
+                    overBody.prepend(wicketRow);
+                }
+                overBody.prepend(row);
+                if (!needsToBeReBowled(ball)) {
+                    actualBallNumber++;
+                }
+            });
+            overBody.prepend(overCommentary);
+            overContainer.append(overBody);
+
+            $("#overDetails").prepend(overContainer.clone());
+            $("#accordian-over-details").prepend(overContainer.clone());
+        });
+
+        if (matchData.OurInningsStatus === 'Completed') {
+            var endOfInningsContainer = $("<div></div>");
+            endOfInningsContainer.addClass("over-commentary");
+
+            var header = $("<div></div>");
+            header.addClass("over-commentary-heading");
+            header.html("<small><strong>End of Innings. </strong><strong>Village " + matchData.Score + "/" + matchData.Wickets + "</strong></small>");
+
+            endOfInningsContainer.append(header);
+
+            var body = $("<div></div>");
+            body.addClass("over-commentary-body");
+
+            var commentary = $("<div></div>");
+            commentary.addClass("over-comment");
+            commentary.html(matchData.OurInningsCommentary);
+            body.prepend(commentary);
+            endOfInningsContainer.append(body);
+            $("#overDetails").prepend(endOfInningsContainer.clone());
+            $("#accordian-over-details").prepend(endOfInningsContainer.clone());
+
         }
-        $("#requiredRunRate").text(requiredRunRate);
+    } else {
+        $("#nav-our-commentary-tab").hide();
+        $("#accordian-our-commentary").hide();
+    }
+}
+
+function renderTheirCommentary(matchData) {
+    if (matchData.TheirCompletedOvers !== null && matchData.TheirCompletedOvers.length > 0) {
+        $.each(matchData.TheirCompletedOvers.reverse(), function (index, over) {
+            var overContainer = $("<div></div>");
+            overContainer.addClass("over-commentary");
+
+            var overHeader = $("<div></div>");
+            overHeader.addClass("over-commentary-heading");
+            overHeader.html("<small><strong>End of over " + over.Over + "</strong> <strong> " + matchData.Opposition + " " + over.Score + "/" + over.Wickets + "</strong></small>");
+
+            overContainer.append(overHeader);
+
+            var overBody = $("<div></div>");
+            overBody.addClass("over-commentary-body");
+
+            var overCommentary = $("<div></div>");
+            overCommentary.addClass("over-comment");
+            overCommentary.html(over.Commentary);
+
+
+            overBody.append(overCommentary);
+            overContainer.append(overBody);
+
+            $("#theirOverDetails").append(overContainer.clone());
+            $("#accordian-oppo-commentary").append(overContainer.clone());
+        });
+
+        if (matchData.TheirInningsStatus === 'Completed') {
+            var endOfInningsContainer = $("<div></div>");
+            endOfInningsContainer.addClass("over-commentary");
+
+            var header = $("<div></div>");
+            header.addClass("over-commentary-heading");
+            header.html("<small><strong>End of Innings. </strong><strong>" + matchData.Opposition + " " + matchData.TheirScore + "/" + matchData.TheirWickets + "</strong></small>");
+
+            endOfInningsContainer.append(header);
+
+            var body = $("<div></div>");
+            body.addClass("over-commentary-body");
+
+            var commentary = $("<div></div>");
+            commentary.addClass("over-comment");
+            commentary.html(matchData.TheirInningsCommentary);
+            body.prepend(commentary);
+            endOfInningsContainer.append(body);
+            $("#theirOverDetails").prepend(endOfInningsContainer.clone());
+            $("#accordian-oppo-commentary").prepend(endOfInningsContainer.clone());
+        }
 
     } else {
-        $("#resultSummary").show();
-        $("#scoreSummary").hide();
-        $("#live-batting-info").hide();
-        $("#resultSummaryText").text(matchData.ResultText);
+        $("#nav-their-commentary-tab").hide();
+        $("#accordian-their-commentary").hide();
     }
-    
-    
+}
 
-
-    if (matchData.OurInningsStatus === "NotStarted") {
-        $("#ourScoreSummary").hide();
-        $("#usYetToBat").show();
-    } else {
-        $("#ourScoreSummary").show();
-        $("#usYetToBat").hide();
-    }
-    if (matchData.TheirInningsStatus === "NotStarted") {
-        $("#oppositionScoreSummary").hide();
-        $("#oppositionYetToBat").show();
-    } else {
-        $("#oppositionScoreSummary").show();
-        $("#oppositionYetToBat").hide();
-    }
-
-
+function rednerLiveBattingAndBowlingData(matchData, matchIsCompleted) {
     if (matchData.OurInningsStatus !== "NotStarted" && matchData.CompletedOvers.length > 0 && !matchIsCompleted) {
         $("#live-batting-info").show();
 
@@ -203,7 +302,7 @@ function renderMatchData(liveScorecard) {
             $("#bowlerTwoThisSpell").text(spell.Overs + "-" + spell.Maidens + "-" + spell.Runs + "-" + spell.Wickets);
 
         }
-        
+
 
         //Current partnership
         if (matchData.CurrentPartnership !== null) {
@@ -215,7 +314,7 @@ function renderMatchData(liveScorecard) {
             $("#currentPartnershipPlayer2Name").text(matchData.CurrentPartnership.Player2Name);
             $("#currentPartnershipPlayer2Runs").text(matchData.CurrentPartnership.Player2Score);
         }
-        
+
         if (matchData.LastManOut != null) {
             $(".last-batsman").show();
 
@@ -239,11 +338,11 @@ function renderMatchData(liveScorecard) {
 
         //Recent overs
         var ballsRendered = 0;
-        $.each(matchData.CompletedOvers.reverse(), function(index, over) {
+        $.each(matchData.CompletedOvers.reverse(), function (index, over) {
             if (ballsRendered >= 26) {
                 return;
             }
-            $.each(over.Over.Balls.sort((a,b)=>a.BallNaumber-b.BallNumber), function(ballIndex, ball) {
+            $.each(over.Over.Balls.sort((a, b) => a.BallNaumber - b.BallNumber), function (ballIndex, ball) {
                 if (ballsRendered >= 26) {
                     return;
                 }
@@ -263,153 +362,19 @@ function renderMatchData(liveScorecard) {
             $("#recentOvers").prepend("<div class=\"over-divider\">&nbsp</div>");
         });
 
-        //Overs text
-        $.each(matchData.CompletedOvers.reverse(), function(index, over) {
-            var overContainer = $("<div></div>");
-            overContainer.addClass("over-commentary");
 
-            var overHeader = $("<div></div>");
-            overHeader.addClass("over-commentary-heading");
-            overHeader.html("<small><strong>End of over " + over.Over.OverNumber + "</strong> (" + getScoreString(over.ScoreForThisOver) + ") <strong>Village " + over.ScoreAtEndOfOver + "/" + over.WicketsAtEndOfOver + "</strong></small>");
+    } else {
+        $("#live-batting-info").hide();
+    }
+}
 
-            overContainer.append(overHeader);
-
-            var overBody = $("<div></div>");
-            overBody.addClass("over-commentary-body");
-
-            var overCommentary = $("<div></div>");
-            overCommentary.addClass("over-comment");
-            overCommentary.html(over.Over.Commentary);
-
-
-            var actualBallNumber = 1;
-            $.each(over.Over.Balls.sort((a,b)=>a.BallNaumber-b.BallNumber), function(ballIndex, ballObj) {
-                var ball = new Ball(ballObj.Amount,
-                    ballObj.Thing,
-                    ballObj.Batsman,
-                    ballObj.BatsmanName,
-                    ballObj.Bowler,
-                    ballObj.Wicket);
-                ball.angle = ballObj.Angle;
-
-                var row = $("<div></div>");
-                row.addClass("row ball-row");
-
-                var ballNumber = $("<div></div>");
-                ballNumber.addClass("col-sm-1");
-
-                ballNumber.html("<strong>" + index + "." + actualBallNumber + "</strong>");
-
-                var ballDescription = $("<div></div>");
-                ballDescription.addClass("col-sm-11");
-                ballDescription.html(ball.bowler + " to " + ball.batsmanName + ", " + ball.getBallDescription());
-                row.append(ballNumber);
-                row.append(ballDescription);
-
-                if (ball.wicket !== null) {
-                    var wicketRow = $("<div></div>");
-                    wicketRow.addClass("row wicket-row");
-                    var emptyColumn = $("<div></div>");
-                    emptyColumn.addClass("col-sm-1");
-                    wicketRow.append(emptyColumn);
-
-                    var wicketDetails = $("<div></div>");
-                    wicketDetails.addClass("col-sm-11");
-                    wicketDetails.html("<strong>" + getDismissalText(ball.wicket, matchData.FallOfWickets) + "</strong>");
-                    wicketRow.append(wicketDetails);
-
-                    overBody.prepend(wicketRow);
-                }
-                overBody.prepend(row);
-                if (!needsToBeReBowled(ball)) {
-                    actualBallNumber++;
-                }
-            });
-            overBody.prepend(overCommentary);
-            overContainer.append(overBody);
-            
-            $("#overDetails").prepend(overContainer.clone());
-            $("#accordian-over-details").prepend(overContainer.clone());
-        });
-        
-        if (matchData.OurInningsStatus === 'Completed') {
-            var endOfInningsContainer = $("<div></div>");
-            endOfInningsContainer.addClass("over-commentary");
-
-            var header = $("<div></div>");
-            header.addClass("over-commentary-heading");
-            header.html("<small><strong>End of Innings. </strong><strong>Village " + matchData.Score + "/" + matchData.Wickets + "</strong></small>");
-
-            endOfInningsContainer.append(header);
-
-            var body = $("<div></div>");
-            body.addClass("over-commentary-body");
-
-            var commentary = $("<div></div>");
-            commentary.addClass("over-comment");
-            commentary.html(matchData.OurInningsCommentary);
-            body.prepend(commentary);
-            endOfInningsContainer.append(body);
-            $("#overDetails").prepend(endOfInningsContainer.clone());
-            $("#accordian-over-details").prepend(endOfInningsContainer.clone());
-
-        }
-        if (matchData.TheirCompletedOvers !== null) {
-            $.each(matchData.TheirCompletedOvers.reverse(), function (index, over) {
-                var overContainer = $("<div></div>");
-                overContainer.addClass("over-commentary");
-
-                var overHeader = $("<div></div>");
-                overHeader.addClass("over-commentary-heading");
-                overHeader.html("<small><strong>End of over " + over.Over + "</strong> <strong> " + matchData.Opposition + " " + over.Score + "/" + over.Wickets + "</strong></small>");
-
-                overContainer.append(overHeader);
-
-                var overBody = $("<div></div>");
-                overBody.addClass("over-commentary-body");
-
-                var overCommentary = $("<div></div>");
-                overCommentary.addClass("over-comment");
-                overCommentary.html(over.Commentary);
-
-
-                overBody.append(overCommentary);
-                overContainer.append(overBody);
-
-                $("#theirOverDetails").append(overContainer.clone());
-                $("#accordian-oppo-commentary").append(overContainer.clone());
-            });
-
-        }
-        
-        if (matchData.TheirInningsStatus === 'Completed') {
-            var endOfInningsContainer = $("<div></div>");
-            endOfInningsContainer.addClass("over-commentary");
-
-            var header = $("<div></div>");
-            header.addClass("over-commentary-heading");
-            header.html("<small><strong>End of Innings. </strong><strong>"+ matchData.Opposition + " " + matchData.TheirScore + "/" + matchData.TheirWickets + "</strong></small>");
-
-            endOfInningsContainer.append(header);
-
-            var body = $("<div></div>");
-            body.addClass("over-commentary-body");
-
-            var commentary = $("<div></div>");
-            commentary.addClass("over-comment");
-            commentary.html(matchData.TheirInningsCommentary);
-            body.prepend(commentary);
-            endOfInningsContainer.append(body);
-            $("#theirOverDetails").prepend(endOfInningsContainer.clone());
-            $("#accordian-oppo-commentary").prepend(endOfInningsContainer.clone());
-        }
-
-
+function rednerTeamAndPlayerAnalysis(matchData) {
+    if (matchData.LiveBattingCard !== null && matchData.LiveBattingCard.Players !== null && Object.keys(matchData.LiveBattingCard.Players).length > 0) {
         $.each(matchData.LiveBattingCard.Players, function (index, player) {
             var playerIcon = $("<div></div");
             var playerOption = $("<option></option>")
             playerIcon.addClass("rounded-circle player-icon float-start");
-            if (index === "1"){
+            if (index === "1") {
                 playerIcon.addClass("player-icon-active");
                 playerOption.attr("selected", "selected")
             }
@@ -438,8 +403,8 @@ function renderMatchData(liveScorecard) {
         });
         let activePlayer = $(".player-icon-active");
         let chartToDraw = $("#chart-types button.active").attr("chartType");
-        drawPlayerChart(activePlayer, matchData,  chartToDraw,  "player-analysis-chart");
-        drawPlayerChart(activePlayer, matchData,  chartToDraw,  "player-analysis-chart-mobile");
+        drawPlayerChart(activePlayer, matchData, chartToDraw, "player-analysis-chart");
+        drawPlayerChart(activePlayer, matchData, chartToDraw, "player-analysis-chart-mobile");
         drawTeamChart("worm", matchData, "chartPlaceholder");
         drawTeamChart("worm", matchData, "accordian-chart-placeholder");
 
@@ -449,71 +414,215 @@ function renderMatchData(liveScorecard) {
             $('.player-icon').removeClass('player-icon-active');
             let playerOptions = $('#mobile-player-analysis-select option');
             playerOptions.removeAttr("selected");
-            playerOptions.filter(function() {
-                return $(this).attr('playerId')===clickedPlayer.attr('playerId');
+            playerOptions.filter(function () {
+                return $(this).attr('playerId') === clickedPlayer.attr('playerId');
             }).attr('selected', 'selected');
             clickedPlayer.addClass('player-icon-active');
             let chartButton = $("#chart-types button.active");
-            drawPlayerChart(clickedPlayer, matchData,  chartButton.attr("chartType"),  "player-analysis-chart");
-            drawPlayerChart(clickedPlayer, matchData,  chartButton.attr("chartType"),  "player-analysis-chart-mobile");
+            drawPlayerChart(clickedPlayer, matchData, chartButton.attr("chartType"), "player-analysis-chart");
+            drawPlayerChart(clickedPlayer, matchData, chartButton.attr("chartType"), "player-analysis-chart-mobile");
         });
-        $('#mobile-player-analysis-select').change(function (){
+        $('#mobile-player-analysis-select').change(function () {
             var clickedPlayer = $('#mobile-player-analysis-select :selected');
             $('.player-icon').removeClass('player-icon-active');
-            $('.player-icon').filter(function() {
-                return $(this).attr('playerId')===clickedPlayer.attr('playerId');
+            $('.player-icon').filter(function () {
+                return $(this).attr('playerId') === clickedPlayer.attr('playerId');
             }).addClass('player-icon-active');
             let chartButton = $("#player-chart-types-mobile button.active");
-            drawPlayerChart(clickedPlayer, matchData,  chartButton.attr("chartType"),  "player-analysis-chart-mobile");
-            drawPlayerChart(clickedPlayer, matchData,  chartButton.attr("chartType"),  "player-analysis-chart");
+            drawPlayerChart(clickedPlayer, matchData, chartButton.attr("chartType"), "player-analysis-chart-mobile");
+            drawPlayerChart(clickedPlayer, matchData, chartButton.attr("chartType"), "player-analysis-chart");
         });
-        
+
+
+        if (matchData.CompletedOvers !== null && matchData.CompletedOvers.length > 0) {
+            $("#chart-types button").click(function () {
+                let chartType = $("#chart-types button.active").attr("chartType");
+                let clickedPlayer1 = $(".player-icon-active");
+                drawPlayerChart(clickedPlayer1, matchData, chartType, "player-analysis-chart");
+                drawPlayerChart(clickedPlayer1, matchData, chartType, "player-analysis-chart-mobile");
+            });
+            $("#player-chart-types-mobile button").click(function () {
+                let chartType = $("#player-chart-types-mobile button.active").attr("chartType");
+                let clickedPlayer1 = $('#mobile-player-analysis-select :selected');
+                drawPlayerChart(clickedPlayer1, matchData, chartType, "player-analysis-chart");
+                drawPlayerChart(clickedPlayer1, matchData, chartType, "player-analysis-chart-mobile");
+            });
+
+            $('#analysisTabs button').on('shown.bs.tab', function (e) {
+                var chart = $(e.target).attr("data-bs-target").replace('#', '');
+                drawTeamChart(chart, matchData, "chartPlaceholder");
+                drawTeamChart(chart, matchData, "accordian-chart-placeholder");
+            });
+
+            $('#accordian-analysis-tabs button').on('shown.bs.tab', function (e) {
+                var chart = $(e.target).attr("data-bs-target").replace('#', '');
+                drawTeamChart(chart, matchData, "chartPlaceholder");
+                drawTeamChart(chart, matchData, "accordian-chart-placeholder");
+            });
+        }
     } else {
-        $("#live-batting-info").hide();
-    }    
-
-     if (matchData.TheirInningsStatus === "NotStarted" && matchData.OurInningsStatus === "NotStarted") {
-        //No data to render
-         $('#live-analysis').hide();
-     } else {
-
-         $("#chart-types button").click(function() {
-             let chartType = $("#chart-types button.active").attr("chartType");
-             let clickedPlayer1 = $(".player-icon-active");
-             drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart");
-             drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart-mobile");
-         });
-         $("#player-chart-types-mobile button").click(function() {
-             let chartType = $("#player-chart-types-mobile button.active").attr("chartType");
-             let clickedPlayer1 = $('#mobile-player-analysis-select :selected');
-             drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart");
-             drawPlayerChart(clickedPlayer1, matchData,  chartType,  "player-analysis-chart-mobile");
-         });
-
-         $('#analysisTabs button').on('shown.bs.tab', function (e) {
-             var chart = $(e.target).attr("data-bs-target").replace('#', '');
-             drawTeamChart(chart, matchData, "chartPlaceholder");
-             drawTeamChart(chart, matchData, "accordian-chart-placeholder");
-         });
-
-         $('#accordian-analysis-tabs button').on('shown.bs.tab', function (e) {
-             var chart = $(e.target).attr("data-bs-target").replace('#', '');
-             drawTeamChart(chart, matchData, "chartPlaceholder");
-             drawTeamChart(chart, matchData, "accordian-chart-placeholder");
-         });
-
-
-         renderLiveBattingScoreCard(matchData, $("#inPlayScorecard"));
-         renderLiveBattingScoreCard(matchData, $("#mobile-view-in-play-batting-scorecard"));
-         renderLiveBowlingScoreCard(matchData, $("#inPlayBowlingScorecard"));
-         renderLiveBowlingScoreCard(matchData, $("#mobile-view-in-play-bowling-scorecard"));
-     }
-    
-
+        $("#nav-players-tab").hide();
+        $("#nav-analysis-tab").hide();
+        $("#accordian-analysis").hide();
+        $("#accordian-players").hide();
+    }
 }
 
-function renderLiveBowlingScoreCard(matchData, table) {
-    //Scorecard
+function renderLiveScoreCards(matchIsCompleted, matchData) {
+    if (!matchIsCompleted && matchData.LiveBattingCard !== undefined) {
+        renderLiveBattingScoreCard(matchData, $("#inPlayScorecard"));
+        renderLiveBattingScoreCard(matchData, $("#mobile-view-in-play-batting-scorecard"));
+        renderLiveBowlingScoreCard(matchData, $("#inPlayBowlingScorecard"));
+        renderLiveBowlingScoreCard(matchData, $("#mobile-view-in-play-bowling-scorecard"));
+    }
+}
+
+function renderFinalScoreCards(matchIsCompleted, liveScorecard) {
+    if (matchIsCompleted) {
+        $("#nav-scorecard-tab").tab("show");
+        $("#collapseFour").collapse("toggle");
+        renderFinalBattingScoreCard(liveScorecard.FinalScorecard.ourInnings.batting, $("#final-scorecard-our-batting"));
+        renderFinalBattingScoreCard(liveScorecard.FinalScorecard.ourInnings.batting, $("#final-scorecard-our-batting-mobile"));
+        renderFinalBattingScoreCard(liveScorecard.FinalScorecard.theirInnings.batting, $("#final-scorecard-their-batting"));
+        renderFinalBattingScoreCard(liveScorecard.FinalScorecard.theirInnings.batting, $("#final-scorecard-their-batting-mobile"));
+        renderFinalBowlingScoreCard(liveScorecard.FinalScorecard.theirInnings.bowling, $("#final-scorecard-our-bowling"));
+        renderFinalBowlingScoreCard(liveScorecard.FinalScorecard.theirInnings.bowling, $("#final-scorecard-our-bowling-mobile"));
+        renderFinalBowlingScoreCard(liveScorecard.FinalScorecard.ourInnings.bowling, $("#final-scorecard-their-bowling"));
+        renderFinalBowlingScoreCard(liveScorecard.FinalScorecard.ourInnings.bowling, $("#final-scorecard-their-bowling-mobile"));
+
+    }
+}
+
+function renderMatchData(liveScorecard) {
+    let matchData = liveScorecard.InPlayData;
+
+    let isInPlay = matchData.TheirInningsStatus === "InProgress" || matchData.OurInningsStatus === "InProgress";
+    let matchIsCompleted = (matchData.TheirInningsStatus === "Completed" && matchData.OurInningsStatus === "Completed") || (liveScorecard.FinalScorecard.ourInnings != null && liveScorecard.FinalScorecard.ourInnings.batting.entries.length > 0);
+
+
+    if (!isInPlay) {
+        $(".hide-if-not-in-play").hide();
+    }
+
+    if (matchIsCompleted) {
+        $(".hide-if-completed").hide();
+        $(".show-if-completed").show();
+        renderMatchReport(liveScorecard.MatchReport);
+    }
+
+    $(".opposition").text(matchData.Opposition);
+    $("#oversRemaining").text(matchData.OversRemaining);
+
+    $("#lastCompletedOver").text(matchData.OurLastCompletedOver);
+    $("#teamScore").text(matchData.Score);
+    $("#teamWickets").text(matchData.Wickets);
+    $("#teamRunRate").text(matchData.OurInningsStatus === "NotStarted" ? "N/A" : matchData.RunRate);
+    $("#oppositionScore").text(matchData.TheirScore);
+    $("#oppositionWickets").text(matchData.TheirWickets);
+    $("#oppositionLastCompletedOver").text(matchData.TheirOver);
+    $("#oppositionRunRate").text(matchData.TheirInningsStatus === "NotStarted" ? "N/A" : matchData.TheirRunRate);
+    $("#match-format").text(matchData.Declaration ? "Declaration" : matchData.Overs + " overs");
+    $("#toss-winner").text(matchData.WonToss ? "The Village CC" : matchData.Opposition);
+    $("#bat-or-bowl").text(matchData.TossWinnerBatted ? "bat" : "bowl");
+
+    if (!matchIsCompleted) {
+        $("#resultSummary").hide();
+        $("#scoreSummary").show();
+        $(".teamCurrentlyBatting").text(matchData.OurInningsStatus === "InProgress" ? "The Village" : matchData.Opposition);
+        $(".teamCorrentlyBowling").text(matchData.TheirInningsStatus === "InProgress" ? "The Village" : matchData.Opposition);
+        $(".leadOrTrail").text(matchData.IsFirstInnings ? "lead" : "trail");
+        var leadTrailByRuns = getLeadTrailByRuns(matchData);
+        $("#leadTrailByRuns").text(leadTrailByRuns);
+        $("#wicketsRemaining").text(matchData.OurInningsStatus === "InProgress" ? 10 - matchData.Wickets : 10 - matchData.TheirWickets);
+
+        var requiredRunRate = "N/A";
+        if (!matchData.IsFirstInnings && !matchData.Declaration && !matchData.IsMatchComplete) {
+            requiredRunRate = leadTrailByRuns / matchData.OversRemaining;
+            requiredRunRate = Math.round(requiredRunRate * 100) / 100;
+        }
+        $("#requiredRunRate").text(requiredRunRate);
+
+        if (matchData.OurInningsStatus === "NotStarted") {
+            $("#ourScoreSummary").hide();
+            $("#usYetToBat").show();
+        } else {
+            $("#ourScoreSummary").show();
+            $("#usYetToBat").hide();
+        }
+        if (matchData.TheirInningsStatus === "NotStarted") {
+            $("#oppositionScoreSummary").hide();
+            $("#oppositionYetToBat").show();
+        } else {
+            $("#oppositionScoreSummary").show();
+            $("#oppositionYetToBat").hide();
+        }
+
+
+    } else {
+        $("#resultSummary").show();
+        $("#scoreSummary").hide();
+        $("#live-batting-info").hide();
+        $(".show-only-if-match-tied").hide();
+        $(".show-only-if-match-not-tied").hide();
+
+        $("#usYetToBat").hide();
+        $("#oppositionYetToBat").hide();
+        var result = liveScorecard.Result;
+
+        $("#teamScore").text(result.OurScore);
+        $("#teamWickets").text(result.OurWickets);
+        $("#lastCompletedOver").text(result.OurOversFaced);
+
+        $("#oppositionScore").text(result.TheirScore);
+        $("#oppositionWickets").text(result.TheirWickets);
+        $("#oppositionLastCompletedOver").text(result.TheirOversFaced);
+
+
+        if (result.IsTied) {
+            $(".show-only-if-match-tied").show();
+        } else {
+            $(".show-only-if-match-not-tied").show();
+            $(".winning-team").text(result.WinningTeam);
+            $(".losing-team").text(result.LosingTeam);
+            $("#margin-of-victory").text(result.Margin);
+        }
+
+    }
+
+    rednerLiveBattingAndBowlingData(matchData, matchIsCompleted);
+    renderOurCommentary(matchData);
+    renderTheirCommentary(matchData);
+    rednerTeamAndPlayerAnalysis(matchData);
+    renderLiveScoreCards(matchIsCompleted, matchData);
+    renderFinalScoreCards(matchIsCompleted, liveScorecard);
+}
+
+function renderFinalBattingScoreCard(data, target) {
+    var {thead, tbody, tfoot} = setupBattingScoreCardTable();
+
+    $.each(data.entries, function (index, player) {
+
+        var batsmanName = player.playerName;
+        var wicket = player.wicket;
+        var batsmanStrikeRate = player.ballsFaced === 0 ? 0 : player.runs / player.ballsFaced;
+        var ballsFaced = player.ballsFaced;
+        var foursHit = player.fours;
+        var dotsPlayed = player.dotBalls;
+        var sixesHit = player.sixes;
+        var score = player.runs;
+
+        addBatsmanRowToBattingScoreCard(batsmanName, wicket, score, ballsFaced, dotsPlayed, foursHit, sixesHit, batsmanStrikeRate, tbody);
+    });
+
+    var totalExtras = data.extras.total;
+    var extrasDetail = data.extras.wides + "w, " + data.extras.noBalls + "nb, " + data.extras.penalties + "p, " + data.extras.byes + "b, " + data.extras.legByes + "lb";
+    var matchScore = data.score;
+    var matchWickets = data.wickets;
+
+    addBattingScoreCardFoooter(totalExtras, extrasDetail, tfoot, matchScore, matchWickets, target, thead, tbody);
+}
+
+function setupBowlingScorecardTable() {
     let header = $("<thead></thead>");
     let headerRow = $("<tr></tr>");
     headerRow.append($("<th></th>"));
@@ -523,47 +632,62 @@ function renderLiveBowlingScoreCard(matchData, table) {
     headerRow.append($("<th>W</th>"));
     headerRow.append($("<th>Econ</th>"));
     header.append(headerRow)
-    
+
     let body = $("<tbody></tbody>");
-    
-    $.each(matchData.LiveBowlingCard, function(index, bowler) {
+    return {header, body};
+}
+
+function addBowlerRowToScorecardTable(name, overBowled, maidens, runsConceeded, wicketsTaken, economy, body) {
+    var row = $("<tr></tr>");
+
+    var nameCell = $("<td></td>");
+    nameCell.text(name);
+    row.append(nameCell);
+
+    var oversCell = $("<td></td>");
+    oversCell.text(overBowled);
+    row.append(oversCell);
+
+    var maidensCell = $("<td></td>");
+    maidensCell.text(maidens);
+    row.append(maidensCell);
+
+    var runsCell = $("<td></td>");
+    runsCell.text(runsConceeded);
+    row.append(runsCell);
+
+    var wicketsCell = $("<td></td>");
+    wicketsCell.text(wicketsTaken);
+    row.append(wicketsCell);
+
+    var econCell = $("<td></td>");
+    econCell.text(economy);
+    row.append(econCell);
+
+
+    body.append(row);
+}
+
+function renderLiveBowlingScoreCard(matchData, table) {
+    //Scorecard
+    let {header, body} = setupBowlingScorecardTable();
+
+    $.each(matchData.LiveBowlingCard, function (index, bowler) {
         var details = bowler.Details;
         var name = bowler.Name;
+        var economy = details.Economy;
+        var overBowled = details.Overs;
+        var maidens = details.Maidens;
+        var runsConceeded = details.Runs;
+        var wicketsTaken = details.Wickets;
 
-        var row = $("<tr></tr>");
-
-        var nameCell = $("<td></td>");
-        nameCell.text(name);
-        row.append(nameCell);
-
-        var oversCell = $("<td></td>");
-        oversCell.text(details.Overs);
-        row.append(oversCell);
-
-        var maidensCell = $("<td></td>");
-        maidensCell.text(details.Maidens);
-        row.append(maidensCell);
-
-        var runsCell = $("<td></td>");
-        runsCell.text(details.Runs);
-        row.append(runsCell);
-
-        var wicketsCell = $("<td></td>");
-        wicketsCell.text(details.Wickets);
-        row.append(wicketsCell);
-
-        var econCell = $("<td></td>");
-        econCell.text(details.Economy);
-        row.append(econCell);
-
-
-        body.append(row);
+        addBowlerRowToScorecardTable(name, overBowled, maidens, runsConceeded, wicketsTaken, economy, body);
 
 
     });
     table.append(header);
     table.append(body);
-    
+
 }
 
 function showOnlyOnLargerScreens(dismissalPart1) {
@@ -571,13 +695,11 @@ function showOnlyOnLargerScreens(dismissalPart1) {
     dismissalPart1.addClass("d-md-table-cell");
 }
 
-function renderLiveBattingScoreCard(matchData, table) {
-    //Scorecard
-    
+function setupBattingScoreCardTable() {
     var thead = $("<thead></thead>")
     var tbody = $("<tbody></tbody>")
     var tfoot = $("<tfoot></tfoot>")
-    
+
     var header = $("<tr></tr>");
     let nameHeaderLargeScreens = $("<th></th>");
     showOnlyOnLargerScreens(nameHeaderLargeScreens)
@@ -616,79 +738,79 @@ function renderLiveBattingScoreCard(matchData, table) {
     header.append(srHeader);
 
     thead.append(header);
-    
-    $.each(matchData.LiveBattingCard.Players, function (index, player) {
-        
-        var row = $("<tr></tr>");
+    return {thead, tbody, tfoot};
+}
 
-        var name = $("<td></td>");
-        name.text(player.BatsmanInningsDetails.Name);
-        showOnlyOnLargerScreens(name);
-        row.append(name);
+function addBatsmanRowToBattingScoreCard(batsmanName, wicket, score, ballsFaced, dotsPlayed, foursHit, sixesHit, batsmanStrikeRate, tbody) {
+    var row = $("<tr></tr>");
+    var name = $("<td></td>");
+    name.text(batsmanName);
+    showOnlyOnLargerScreens(name);
+    row.append(name);
 
-        var nameAndDismissal = $("<td></td>");
-        nameAndDismissal.addClass("d-md-none");
-        let nameDiv = $("<div></div>");
-        nameDiv.addClass("fst-italic");
-        nameDiv.text(player.BatsmanInningsDetails.Name);
-        let dismissalDiv = $("<div></div>");
-        let smallDismissalText = $("<small></small>")
-        dismissalDiv.append(smallDismissalText);
-        
-        
-        var dismissal1 = $("<td></td>");
-        showOnlyOnLargerScreens(dismissal1);
-        var dismissal2 = $("<td></td>");
-        showOnlyOnLargerScreens(dismissal2);
-        var wicket = player.Wicket;
-        if (wicket === null) {
-            dismissalDiv.text("not out");
-            dismissal1.text("not");
-            dismissal2.text("out");
-        } else {
-            dismissal2.text("");
-            dismissal1.text("");
-            setDismissalText(dismissal1, dismissal2, wicket);
-            smallDismissalText.text(dismissal1.text() + " " + dismissal2.text());
-
-        }
-        nameAndDismissal.append(nameDiv)
-        nameAndDismissal.append(dismissalDiv)
-        row.append(nameAndDismissal);
-
-        row.append(dismissal1);
-        row.append(dismissal2);
-
-        var runs = $("<td></td>");
-        runs.text(player.BatsmanInningsDetails.Score);
-        row.append(runs);
-
-        var balls = $("<td></td>");
-        balls.text(player.BatsmanInningsDetails.Balls);
-        row.append(balls);
-
-        var dots = $("<td></td>");
-        dots.text(player.BatsmanInningsDetails.Dots);
-        showOnlyOnLargerScreens(dots);
-        row.append(dots);
-
-        var fours = $("<td></td>");
-        fours.text(player.BatsmanInningsDetails.Fours);
-        row.append(fours);
-
-        var sixes = $("<td></td>");
-        sixes.text(player.BatsmanInningsDetails.Sixes);
-        row.append(sixes);
+    var nameAndDismissal = $("<td></td>");
+    nameAndDismissal.addClass("d-md-none");
+    let nameDiv = $("<div></div>");
+    nameDiv.addClass("fst-italic");
+    nameDiv.text(batsmanName);
+    let dismissalDiv = $("<div></div>");
+    let smallDismissalText = $("<small></small>")
+    dismissalDiv.append(smallDismissalText);
 
 
-        var strikeRate = $("<td></td>");
-        strikeRate.text(player.BatsmanInningsDetails.StrikeRate);
-        showOnlyOnLargerScreens(strikeRate);
-        row.append(strikeRate);
+    var dismissal1 = $("<td></td>");
+    showOnlyOnLargerScreens(dismissal1);
+    var dismissal2 = $("<td></td>");
+    showOnlyOnLargerScreens(dismissal2);
+    if (wicket === null) {
+        dismissalDiv.text("not out");
+        dismissal1.text("not");
+        dismissal2.text("out");
+    } else {
+        dismissal2.text("");
+        dismissal1.text("");
+        setDismissalText(dismissal1, dismissal2, wicket);
+        smallDismissalText.text(dismissal1.text() + " " + dismissal2.text());
 
-       tbody.append(row);
-    });
+    }
+    nameAndDismissal.append(nameDiv)
+    nameAndDismissal.append(dismissalDiv)
+    row.append(nameAndDismissal);
 
+    row.append(dismissal1);
+    row.append(dismissal2);
+
+    var runs = $("<td></td>");
+    runs.text(score);
+    row.append(runs);
+
+    var balls = $("<td></td>");
+    balls.text(ballsFaced);
+    row.append(balls);
+
+    var dots = $("<td></td>");
+    dots.text(dotsPlayed);
+    showOnlyOnLargerScreens(dots);
+    row.append(dots);
+
+    var fours = $("<td></td>");
+    fours.text(foursHit);
+    row.append(fours);
+
+    var sixes = $("<td></td>");
+    sixes.text(sixesHit);
+    row.append(sixes);
+
+
+    var strikeRate = $("<td></td>");
+    strikeRate.text(batsmanStrikeRate);
+    showOnlyOnLargerScreens(strikeRate);
+    row.append(strikeRate);
+
+    tbody.append(row);
+}
+
+function addBattingScoreCardFoooter(totalExtras, extrasDetail, tfoot, matchScore, matchWickets, table, thead, tbody) {
     var extrasRow = $("<tr></tr>");
     let blank1 = $("<td></td>");
     showOnlyOnLargerScreens(blank1);
@@ -699,17 +821,18 @@ function renderLiveBattingScoreCard(matchData, table) {
     var extrasTitle = $("<td>Extras</td>");
     extrasRow.append(extrasTitle);
     var extrasTotal = $("<td></td>");
-    extrasTotal.text(matchData.LiveBattingCard.Extras.Total);
+    extrasTotal.text(totalExtras);
     extrasRow.append(extrasTotal);
     var extrasDetails = $("<td colspan=5></td>");
     showOnlyOnLargerScreens(extrasDetails);
-    extrasDetails.text("(" + matchData.LiveBattingCard.Extras.DetailString + ")");
+
+    extrasDetails.text("(" + extrasDetail + ")");
     extrasRow.append(extrasDetails);
 
     var extrasBlankSpace = $("<td colspan=3></td>");
     extrasBlankSpace.addClass("d-md-none");
     extrasRow.append(extrasBlankSpace);
-    
+
 
     tfoot.append(extrasRow);
 
@@ -724,25 +847,54 @@ function renderLiveBattingScoreCard(matchData, table) {
     totalRow.append(totalTitle);
     var scoreTotal = $("<td></td>");
     var scoreTotalText = $("<strong></strong>");
-    scoreTotalText.text(matchData.Score);
+    scoreTotalText.text(matchScore);
     scoreTotal.append(scoreTotalText);
     showOnlyOnLargerScreens(scoreTotal);
     totalRow.append(scoreTotal);
     var scoreDetails = $("<td colspan=5></td>");
     showOnlyOnLargerScreens(scoreDetails);
-    scoreDetails.text("for " + matchData.Wickets + " wickets");
+    scoreDetails.text("for " + matchWickets + " wickets");
     totalRow.append(scoreDetails);
 
     var smallScoreDetails = $("<td colspan=4></td>");
     smallScoreDetails.addClass("d-md-none fw-bold");
-    smallScoreDetails.text(matchData.Score + " for " + matchData.Wickets);
+    smallScoreDetails.text(matchScore + " for " + matchWickets);
     totalRow.append(smallScoreDetails);
 
     tfoot.append(totalRow);
-    
+
     table.append(thead);
     table.append(tbody);
     table.append(tfoot);
+}
+
+function renderLiveBattingScoreCard(matchData, table) {
+    if (matchData.LiveBattingCard === null){
+        return;
+    }
+    //Scorecard
+    var {thead, tbody, tfoot} = setupBattingScoreCardTable();
+
+    $.each(matchData.LiveBattingCard.Players, function (index, player) {
+
+        var batsmanName = player.BatsmanInningsDetails.Name;
+        var wicket = player.Wicket;
+        var batsmanStrikeRate = player.BatsmanInningsDetails.StrikeRate;
+        var ballsFaced = player.BatsmanInningsDetails.Balls;
+        var foursHit = player.BatsmanInningsDetails.Fours;
+        var dotsPlayed = player.BatsmanInningsDetails.Dots;
+        var sixesHit = player.BatsmanInningsDetails.Sixes;
+        var score = player.BatsmanInningsDetails.Score;
+
+        addBatsmanRowToBattingScoreCard(batsmanName, wicket, score, ballsFaced, dotsPlayed, foursHit, sixesHit, batsmanStrikeRate, tbody);
+    });
+
+    var totalExtras = matchData.LiveBattingCard.Extras.Total;
+    var extrasDetail = matchData.LiveBattingCard.Extras.DetailString;
+    var matchScore = matchData.Score;
+    var matchWickets = matchData.Wickets;
+
+    addBattingScoreCardFoooter(totalExtras, extrasDetail, tfoot, matchScore, matchWickets, table, thead, tbody);
 }
 
 
@@ -794,10 +946,10 @@ function getLeadTrailByRuns(matchData) {
 
 function drawPlayerChart(clickedPlayer, matchData, chartToDraw, divId) {
     let divName = divId;
-     
-    $("#"+divName).html('');
+
+    $("#" + divName).html('');
     var paper = Raphael(divName, 700, 400);
-    paper.setViewBox(0,0,700,400, true);
+    paper.setViewBox(0, 0, 700, 400, true);
     paper.image("\\Images\\livescorecard\\vcc-logo-opaque.jpg", 100, 90, 500, 214);
 
     switch (chartToDraw) {
@@ -812,10 +964,10 @@ function drawPlayerChart(clickedPlayer, matchData, chartToDraw, divId) {
             break;
     }
 
-    let svgElement = $("#"+divName+" svg");
+    let svgElement = $("#" + divName + " svg");
     svgElement.removeAttr("width");
     svgElement.removeAttr("height");
-    
+
 }
 
 
@@ -866,8 +1018,8 @@ function drawPlayerWorm(player, paper, overs) {
         symbol: "",
         smooth: false,
         colors: [
-                    colour1,
-                    colour2
+            colour1,
+            colour2
         ]
     });
     // default gutter: 10
@@ -889,15 +1041,15 @@ function drawPlayerWorm(player, paper, overs) {
         r // you need to provide the Raphael object
     );
 
-    let keyYPosition = paper.height-20;
-    paper.text(40, keyYPosition, 'Score').attr({ 'font-size': 12 });
-    paper.path('M70 '+keyYPosition+'L110 '+keyYPosition).attr({ stroke: colour1, 'stroke-width': 4 });
-    paper.text(160, keyYPosition, 'Strike Rate').attr({ 'font-size': 12 });
-    paper.path('M200 '+keyYPosition+'L240 '+keyYPosition).attr({ stroke: colour2, 'stroke-width': 4 });
+    let keyYPosition = paper.height - 20;
+    paper.text(40, keyYPosition, 'Score').attr({'font-size': 12});
+    paper.path('M70 ' + keyYPosition + 'L110 ' + keyYPosition).attr({stroke: colour1, 'stroke-width': 4});
+    paper.text(160, keyYPosition, 'Strike Rate').attr({'font-size': 12});
+    paper.path('M200 ' + keyYPosition + 'L240 ' + keyYPosition).attr({stroke: colour2, 'stroke-width': 4});
 
-    paper.text(paper.width/2, y+ylen-gutter+30, 'Balls Faced').attr({ 'font-size': 18 });
-    paper.text(10, paper.height/2, 'Score').attr({ 'font-size': 18 }).rotate(-90, true);
-    paper.text(paper.width - 30, paper.height/2, 'Strike Rate').attr({ 'font-size': 18 }).rotate(90, true);
+    paper.text(paper.width / 2, y + ylen - gutter + 30, 'Balls Faced').attr({'font-size': 18});
+    paper.text(10, paper.height / 2, 'Score').attr({'font-size': 18}).rotate(-90, true);
+    paper.text(paper.width - 30, paper.height / 2, 'Strike Rate').attr({'font-size': 18}).rotate(90, true);
 
 }
 
@@ -926,10 +1078,9 @@ function getScoreString(score) {
 }
 
 
-
 function getFallOfWicketForPlayer(playerId, fallOfWickets) {
     var wicketToReturn;
-        $.each(fallOfWickets, function(index, fallOfWicket) {
+    $.each(fallOfWickets, function (index, fallOfWicket) {
             if (fallOfWicket.OutGoingPlayerId === playerId) {
                 return wicketToReturn = fallOfWicket;
             }

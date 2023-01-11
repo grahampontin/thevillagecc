@@ -14,6 +14,7 @@ namespace api.model
         public int penalties;
         public int byes;
         public int legByes;
+        public int total;
 
         // ReSharper disable once UnusedMember.Global
         public ExtrasV1()
@@ -27,6 +28,7 @@ namespace api.model
             this.penalties = internalModelExtras.Penalty;
             this.byes = internalModelExtras.Byes;
             this.legByes = internalModelExtras.LegByes;
+            this.total = GetTotal();
         }
 
         public Extras ToInternal(int matchId, ThemOrUs themOrUs)

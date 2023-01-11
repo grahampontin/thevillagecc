@@ -147,7 +147,8 @@ public class CommandHandler : IHttpHandler
                                     InPlayData = match.GetLiveScorecard(),
                                     FinalScorecard = GetExternalScorecard(match),
                                     MatchReport = new MatchReportV1(matchReportAndConditions.Conditions,
-                                        matchReportAndConditions.Report, matchReportAndConditions.ReportImage)
+                                        matchReportAndConditions.Report, matchReportAndConditions.ReportImage),
+                                    Result = ResultV1.FromInternal(match)
                                 };
 
                                 string json = javaScriptSerializer.Serialize(external);
@@ -344,12 +345,46 @@ public class CommandHandler : IHttpHandler
     }
 }
 
+public class ResultV1
+{
+    public string WinningTeam { get; set; }
+    public string LosingTeam { get; set; }
+    public string Margin { get; set; }
+    public decimal TheirOversFaced { get; set; }
+    public int TheirWickets { get; set; }
+    public int TheirScore { get; set; }
+    public decimal OurOversFaced { get; set; }
+    public int OurWickets { get; set; }
+    public int OurScore { get; set; }
+    public bool IsTied { get; set; }
+    public bool IsDrawn { get; set; }
+    
+    public static ResultV1 FromInternal(Match match)
+    {
+        return new ResultV1()
+        {
+            WinningTeam = match.Winner != null ? match.Winner.Name : null,
+            LosingTeam = match.Loser != null ? match.Loser.Name : null,
+            Margin = match.ResultMargin,
+            IsTied = match.ResultTied,
+            IsDrawn = match.ResultDrawn,
+            OurScore = match.GetTeamScore(Team.OurTeam),
+            OurWickets = match.GetTeamWicketsDown(Team.OurTeam),
+            OurOversFaced = match.GetOurBowlingStats().BowlingStatsData.Sum(b=>b.Overs),
+            TheirScore = match.GetTeamScore(match.Opposition),
+            TheirWickets = match.GetTeamWicketsDown(match.Opposition),
+            TheirOversFaced = match.GetThierBowlingStats().BowlingStatsData.Sum(b=>b.Overs),
+        };
+    }
+}
+
 public class LiveScorecardV1
 {
     public LiveScorecard InPlayData { get; set; }
     public MatchScorecardV1 FinalScorecard { get; set; }
     public MatchReportV1 MatchReport { get; set; }
     public MatchV1 MatchData { get; set; }
+    public ResultV1 Result { get; set; }
 }
 
 public class MatchReportV1

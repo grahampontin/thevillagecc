@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>The Village Cricket Club Online | Live Scores</title>
-    <CC:Styles runat=server ID=styles />
+    <CC:Styles runat=server ID=styles></CC:Styles>
     <style>
         table td {
             text-align: left !important;
@@ -137,13 +137,18 @@
 <body>
 <div class="container">
 <!-- Head -->
-<CC:Header ID="Header1" runat=server />
+<CC:Header ID="Header1" runat=server></CC:Header>
 <!-- End Head -->
 <main class="container">
-<H1 class="mb-0">Village vs <span class="opposition"></span> <small class="hide-if-not-in-play">live!</small></H1>
-<div class="fst-italic mb-1"><small><span id="toss-winner"></span> won the toss and elected to <span id="bat-or-bowl"></span>.</small></div>
+
+<H1 class="mb-0 hide-if-completed">Village vs <span class="opposition"></span> <small>live!</small></H1>
+<H1 class="mb-0 show-if-completed show-only-if-match-not-tied"><span class="winning-team"></span> beat <span class="losing-team"></span> <span id="margin-of-victory"></span></H1>
+<H1 class="mb-0 show-if-completed show-only-if-match-tied">Village tied with <span class="opposition"></span></H1>
+<div class="fst-italic mb-1">
+    <small><span id="toss-winner"></span> won the toss and elected to <span id="bat-or-bowl"></span>.</small>
+</div>
 <div class="float-start">
-    
+
     The Village CC
     <span id="ourScoreSummary">
         <strong>
@@ -164,16 +169,12 @@
         <strong>Yet to bat</strong>
     </span>
     <br/>
-    <div><small>Match Format: <span id="match-format"></span></small></div>
+    <div>
+        <small>Match Format: <span id="match-format"></span></small>
+    </div>
     <span id="scoreSummary">
         <small><span class="teamCurrentlyBatting"></span> <span class="leadOrTrail"></span> <span class="teamCorrentlyBowling"></span> by <span id="leadTrailByRuns"></span> runs with <span id="wicketsRemaining"></span> wickets remaining</small>
     </span>
-    <span id="resultSummary">
-        <small>
-            <span id="resultSummaryText"></span>
-        </small>
-    </span>
-
 </div>
 <div class="float-end d-none d-sm-block">
     <small>
@@ -397,21 +398,38 @@
     </small>
 </div>
 </div>
-<div id="match-report" class="completed-only">
-    <div id="match-report-conditions"></div>
-    <div id="match-report-text"></div>
+<div id="match-report" class="show-if-completed">
+    <div class="d-flex mt-3">
+        <div>
+            <span class="material-icons-outlined bi d-inline mx-auto mb-1"
+                  style="text-align: center; font-size: 24px">
+                wb_sunny
+            </span>
+        </div>
+        <div id="match-report-conditions" class="ms-1"></div>
+    </div>
+    <div class="d-flex mt-1  mb-3">
+        <div>
+            <span class="material-icons-outlined bi d-inline mx-auto mb-1"
+                  style="text-align: center; font-size: 24px">
+                article
+            </span>
+        </div>
+        <div id="match-report-text" class="ms-1"></div>
+    </div>
+
 </div>
 <div id="live-analysis">
     <nav class="d-none d-md-block">
         <div class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
-            <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#OurCommentary" type="button" role="tab" aria-controls="nav-home" aria-selected="true">VCC Commentary</button>
-            <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#TheirCommentary" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Oppo Commentary</button>
-            <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#Analysis" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Analysis</button>
-            <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#Scorecard" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Scorecard</button>
-            <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#Players" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Players</button>
+            <button class="nav-link active" id="nav-our-commentary-tab" data-bs-toggle="tab" data-bs-target="#OurCommentary" type="button" role="tab" aria-controls="nav-home" aria-selected="true">VCC Commentary</button>
+            <button class="nav-link" id="nav-their-commentary-tab" data-bs-toggle="tab" data-bs-target="#TheirCommentary" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Oppo Commentary</button>
+            <button class="nav-link" id="nav-analysis-tab" data-bs-toggle="tab" data-bs-target="#Analysis" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Analysis</button>
+            <button class="nav-link" id="nav-scorecard-tab" data-bs-toggle="tab" data-bs-target="#Scorecard" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Scorecard</button>
+            <button class="nav-link" id="nav-players-tab" data-bs-toggle="tab" data-bs-target="#Players" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Players</button>
         </div>
     </nav>
-    
+
     <div class="tab-content d-none d-md-block border-bottom pb-1 mb-1">
         <div role="tabpanel" class="tab-pane active" id="OurCommentary">
             <div id="overDetails">
@@ -435,43 +453,50 @@
             </nav>
         </div>
         <div role="tabpanel" class="tab-pane" id="Scorecard">
-            <div id="inPlayScorecardContainer">
-                <strong>Village CC Batting (Match Currently In-Play)</strong>
+            <div id="inPlayScorecardContainer" class="hide-if-not-in-play">
+                <strong>Village CC Batting <span class="hide-if-not-in-play">(Match Currently In-Play)</span></strong>
                 <table class="table table-striped" style="margin-top: 20px" id="inPlayScorecard">
-                    
+
                 </table>
-    
-                <strong><span class="opposition"></span> Bowling (Match Currently In-Play)</strong>
+
+                <strong><span class="opposition"></span> Bowling <span class="hide-if-not-in-play">(Match Currently In-Play)</span></strong>
                 <table class="table table-striped" style="margin-top: 20px" id="inPlayBowlingScorecard">
                 </table>
-    
-                <small>Full scoreacard details for both innings will appear once the match is completed and reports submitted.</small>
-    
-    
+
+                <small class="hide-if-not-in-play">Full scoreacard details for both innings will appear once the match is completed and reports submitted.</small>
+
+
             </div>
-            <div id="matchCompletedScoreCards">
-                <%--Todo--%>
+            <div id="matchCompletedScoreCards" class="show-if-completed">
+                <h5 class="mb-0">Village CC Batting</h5>
+                <table class="table mb-4 ms-2" id="final-scorecard-our-batting"></table>
+                <h5 class="mb-0"><span class="opposition"></span> Bowling</h5>
+                <table class="table mb-5 ms-2" id="final-scorecard-their-bowling"></table>
+                <h5 class="mb-0"><span class="opposition"></span> Batting</h5>
+                <table class="table mb-4 ms-2" id="final-scorecard-their-batting"></table>
+                <h5 class="mb-0">Village CC Bowling</h5>
+                <table class="table mb-4 ms-2" id="final-scorecard-our-bowling"></table>
             </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="Players">
-            <div class="mb-1" >
+            <div class="mb-1">
                 <div class="d-flex justify-content-center" id="player-icons"></div>
                 <div id="player-analysis-chart" class="mb-1"></div>
                 <nav>
-                    <div id="chart-types"  class="nav nav-pills nav-justified" role="tablist">
+                    <div id="chart-types" class="nav nav-pills nav-justified" role="tablist">
                         <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" chartType="wagon" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Wagon Wheel</button>
                         <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" chartType="zones" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Scoring Zones</button>
                         <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" chartType="worm" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Worm</button>
                     </div>
                 </nav>
             </div>
-    
+
         </div>
     </div>
-    
-    
+
+
     <div class="accordion d-md-none mb-3" id="mobile-accordian">
-        <div class="accordion-item">
+        <div class="accordion-item" id="accordian-our-commentary">
             <h2 class="accordion-header" id="headingOne">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                     Commentary
@@ -482,7 +507,7 @@
                 </div>
             </div>
         </div>
-        <div class="accordion-item">
+        <div class="accordion-item" id="accordian-their-commentary">
             <h2 class="accordion-header" id="headingTwo">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                     Opposition Commentary
@@ -490,11 +515,11 @@
             </h2>
             <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#mobile-accordian">
                 <div class="accordion-body" id="accordian-oppo-commentary">
-    
+
                 </div>
             </div>
         </div>
-        <div class="accordion-item">
+        <div class="accordion-item" id="accordian-analysis">
             <h2 class="accordion-header" id="headingThree">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                     Analysis
@@ -521,9 +546,9 @@
                     </nav>
                 </div>
             </div>
-    
+
         </div>
-        <div class="accordion-item">
+        <div class="accordion-item" id="accordian-scorecards">
             <h2 class="accordion-header" id="headingFour">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
                     Scorecards
@@ -531,18 +556,30 @@
             </h2>
             <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#mobile-accordian">
                 <div class="accordion-body" id="accordian-scorecards">
-                    <strong>Village CC Batting (Match Currently In-Play)</strong>
-                    <table id="mobile-view-in-play-batting-scorecard" class="table table-striped"></table>
-                    
-                     <strong><span class="opposition"></span> Bowling (Match Currently In-Play)</strong>
-                                    
-                    <table class="table table-striped" style="margin-top: 20px" id="mobile-view-in-play-bowling-scorecard">
-                    </table>
-    
+                    <div class="hide-if-not-in-play">
+                        <strong>Village CC Batting (Match Currently In-Play)</strong>
+                        <table id="mobile-view-in-play-batting-scorecard" class="table table-striped"></table>
+
+                        <strong><span class="opposition"></span> Bowling (Match Currently In-Play)</strong>
+
+                        <table class="table table-striped" style="margin-top: 20px" id="mobile-view-in-play-bowling-scorecard">
+                        </table>
+                    </div>
+                    <div class="show-if-completed">
+                        <h5>Village CC Batting</h5>
+                        <table class="table mb-4" id="final-scorecard-our-batting-mobile"></table>
+                        <h5><span class="opposition"></span> Bowling</h5>
+                        <table class="table mb-4" id="final-scorecard-their-bowling-mobile"></table>
+                        <h5><span class="opposition"></span> Batting</h5>
+                        <table class="table mb-4" id="final-scorecard-their-batting-mobile"></table>
+                        <h5>Village CC Bowling</h5>
+                        <table class="table mb-4" id="final-scorecard-our-bowling-mobile"></table>
+                    </div>
+
                 </div>
             </div>
         </div>
-        <div class="accordion-item">
+        <div class="accordion-item" id="accordian-players">
             <h2 class="accordion-header" id="headingFive">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
                     Players
@@ -551,23 +588,29 @@
             <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#mobile-accordian">
                 <div class="accordion-body" id="accordian-player-analysis">
                     <select class="form-select" id="mobile-player-analysis-select">
-                      
+
                     </select>
                     <div id="player-analysis-chart-mobile" class="mb-1"></div>
                     <nav>
-                        <div id="player-chart-types-mobile"  class="nav nav-pills nav-justified" role="tablist">
-                            <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" chartType="wagon" type="button" role="tab" aria-controls="nav-home" aria-selected="true"><i class="fa-solid fa-dharmachakra"></i></button>
-                            <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" chartType="zones" type="button" role="tab" aria-controls="nav-profile" aria-selected="false"><i class="fa-solid fa-record-vinyl"></i></button>
-                            <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" chartType="worm" type="button" role="tab" aria-controls="nav-contact" aria-selected="false"><i class="fa-solid fa-chart-line"></i></button>
+                        <div id="player-chart-types-mobile" class="nav nav-pills nav-justified" role="tablist">
+                            <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" chartType="wagon" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+                                <i class="fa-solid fa-dharmachakra"></i>
+                            </button>
+                            <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" chartType="zones" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
+                                <i class="fa-solid fa-record-vinyl"></i>
+                            </button>
+                            <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" chartType="worm" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </button>
                         </div>
                     </nav>
                 </div>
             </div>
         </div>
-    
-    
+
+
     </div>
-    
+
 </div>
 
 

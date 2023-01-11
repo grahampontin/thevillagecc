@@ -15,11 +15,18 @@ namespace api.model
     {
         public List<BattingEntryV1> entries;
         public ExtrasV1 extras;
+        public int score;
+        public int wickets;
+
+        private readonly List<ModesOfDismissal> notOutThings = new List<ModesOfDismissal>()
+            { ModesOfDismissal.RetiredHurt, ModesOfDismissal.NotOut, ModesOfDismissal.DidNotBat };
 
         public BattingCardV1(BattingCard internalModel, Extras extras)
         {
             this.entries = internalModel.ScorecardData.Select(d => new BattingEntryV1(d)).ToList();
             this.extras = new ExtrasV1(extras);
+            this.score = entries.Sum(e => e.runs) + this.extras.total;
+            this.wickets = internalModel.ScorecardData.Count(e => !notOutThings.Contains(e.Dismissal));
         }
 
 
