@@ -141,13 +141,19 @@
 <!-- End Head -->
 <main class="container">
 
-<H1 class="mb-0 hide-if-completed">Village vs <span class="opposition"></span> <small>live!</small></H1>
+<H1 class="mb-0 hide-if-completed">Village vs <span class="opposition"></span> <small class="hide-if-not-in-play">live!</small></H1>
 <H1 class="mb-0 show-if-completed show-only-if-match-not-tied"><span class="winning-team"></span> beat <span class="losing-team"></span> <span id="margin-of-victory"></span></H1>
 <H1 class="mb-0 show-if-completed show-only-if-match-tied">Village tied with <span class="opposition"></span></H1>
-<div class="fst-italic mb-1">
+<div class="fst-italic mb-1 hide-if-abandoned-or-no-result">
     <small><span id="toss-winner"></span> won the toss and elected to <span id="bat-or-bowl"></span>.</small>
 </div>
-<div class="float-start">
+<div class="fst-italic mb-1 show-if-abandoned">
+    <small>Match abandoned</small>
+</div>
+<div class="fst-italic mb-1 show-if-no-result">
+    <small>Result not yet recorded</small>
+</div>
+<div class="float-start hide-if-abandoned-or-no-result">
 
     The Village CC
     <span id="ourScoreSummary">
@@ -177,7 +183,7 @@
     </span>
 </div>
 <div class="float-end d-none d-sm-block">
-    <small>
+    <small class=" hide-if-abandoned-or-no-result">
         Village RR: <span id="teamRunRate"></span><br/>
         <span class="opposition"></span> RR: <span id="oppositionRunRate"></span><br/>
         <span class="hide-if-not-in-play">Overs remaining: <span id="oversRemaining"></span><br/></span>
@@ -425,7 +431,7 @@
             <button class="nav-link active" id="nav-our-commentary-tab" data-bs-toggle="tab" data-bs-target="#OurCommentary" type="button" role="tab" aria-controls="nav-home" aria-selected="true">VCC Commentary</button>
             <button class="nav-link" id="nav-their-commentary-tab" data-bs-toggle="tab" data-bs-target="#TheirCommentary" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Oppo Commentary</button>
             <button class="nav-link" id="nav-analysis-tab" data-bs-toggle="tab" data-bs-target="#Analysis" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Analysis</button>
-            <button class="nav-link" id="nav-scorecard-tab" data-bs-toggle="tab" data-bs-target="#Scorecard" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Scorecard</button>
+            <button class="nav-link hide-if-abandoned-or-no-result" id="nav-scorecard-tab" data-bs-toggle="tab" data-bs-target="#Scorecard" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Scorecard</button>
             <button class="nav-link" id="nav-players-tab" data-bs-toggle="tab" data-bs-target="#Players" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Players</button>
         </div>
     </nav>
@@ -548,7 +554,7 @@
             </div>
 
         </div>
-        <div class="accordion-item" id="accordian-scorecards">
+        <div class="accordion-item hide-if-abandoned-or-no-result" id="accordian-scorecards">
             <h2 class="accordion-header" id="headingFour">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
                     Scorecards

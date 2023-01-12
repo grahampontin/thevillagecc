@@ -358,6 +358,7 @@ public class ResultV1
     public int OurScore { get; set; }
     public bool IsTied { get; set; }
     public bool IsDrawn { get; set; }
+    public bool IsAbandoned { get; set; }
     
     public static ResultV1 FromInternal(Match match)
     {
@@ -374,6 +375,7 @@ public class ResultV1
             TheirScore = match.GetTeamScore(match.Opposition),
             TheirWickets = match.GetTeamWicketsDown(match.Opposition),
             TheirOversFaced = match.GetThierBowlingStats().BowlingStatsData.Sum(b=>b.Overs),
+            IsAbandoned = match.Abandoned
         };
     }
 }

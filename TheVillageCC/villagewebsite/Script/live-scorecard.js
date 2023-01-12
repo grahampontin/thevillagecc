@@ -498,7 +498,7 @@ function renderMatchData(liveScorecard) {
 
     let isInPlay = matchData.TheirInningsStatus === "InProgress" || matchData.OurInningsStatus === "InProgress";
     let matchIsCompleted = (matchData.TheirInningsStatus === "Completed" && matchData.OurInningsStatus === "Completed") || (liveScorecard.FinalScorecard.ourInnings != null && liveScorecard.FinalScorecard.ourInnings.batting.entries.length > 0);
-
+    
 
     if (!isInPlay) {
         $(".hide-if-not-in-play").hide();
@@ -508,7 +508,24 @@ function renderMatchData(liveScorecard) {
         $(".hide-if-completed").hide();
         $(".show-if-completed").show();
         renderMatchReport(liveScorecard.MatchReport);
+    } else {
+        $(".show-if-completed").hide();
     }
+    
+    $(".show-if-abandoned").hide();
+    $(".show-if-no-result").hide();
+    
+    if (liveScorecard.Result.IsAbandoned){
+        $(".show-if-abandoned").show();
+        $(".hide-if-abandoned-or-no-result").hide();
+    }
+    var noResult = !isInPlay && liveScorecard.Result.Margin === "result not yet in";
+    if (noResult && !liveScorecard.Result.IsAbandoned){
+        $(".show-if-no-result").show();
+        $(".hide-if-abandoned-or-no-result").hide();
+    }
+    
+    
 
     $(".opposition").text(matchData.Opposition);
     $("#oversRemaining").text(matchData.OversRemaining);
