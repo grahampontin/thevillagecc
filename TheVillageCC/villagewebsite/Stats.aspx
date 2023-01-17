@@ -11,189 +11,164 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>The Village Cricket Club Online | Stats</title>
-    <CC:Styles runat=server ID=styles /> 
+    <CC:Styles runat=server ID=styles></CC:Styles>
+
+    <script src="Resources/jQuery/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    <script src="Script/stats.js"></script>
+    <script type="text/javascript">
        
-    
-   <script type="text/javascript">
-       var baseURL = 'stats/StatsGrid.Ajax.aspx?Tab=';
-
-
-       function getFilter() {
-           var filterText = '&fromDate=' + $("#fromDate input").val().replace(' ', '%20').replace(' ', '%20');
-           filterText += '&toDate=' + $("#toDate input").val().replace(' ', '%20').replace(' ', '%20');
-           if ($('#friendlyCB').prop('checked')) {
-               filterText += '&Friendly=1';
-           }
-           if ($('#tourCB').prop('checked')) {
-               filterText += '&Tour=1';
-           }
-           if ($('#declarationCB').prop('checked')) {
-               filterText += '&Declaration=1';
-           }
-           if ($('#leagueCB').prop('checked')) {
-               filterText += '&League=1';
-           }
-           if ($('#twenty20CB').prop('checked')) {
-               filterText += '&Twenty20=1';
-           }
-           filterText += '&Venue=' + replaceAll($("#VenuesDropDown option:selected").text(),' ', '%20');
-
-           return filterText;
-       }
-
-       function replaceAll(str, find, replace) {
-           return str.replace(new RegExp(find, 'g'), replace);
-       }
-
-       function sortTable() {
-           applyTableSorter($("#TeamsGridView"), 0, 0);
-           applyTableSorter($("#VenuesGridView") ,0, 0);
-           applyTableSorter($("#CaptainsGridView"), 0, 0);
-           applyTableSorter($("#KeepersGridView"), 0, 0);
-           applyTableSorter($("#MatchesGridView"), 0, 0);
-           applyTableSorter($("#playersGV"), 5, 1);
-       }
-
-       function applyTableSorter(table, sortColumn, sortOrder) {
-           table.tablesorter({
-               sortList: [[sortColumn, sortOrder]],
-               theme: 'bootstrap',
-               widthFixed: true,
-               headerTemplate: '{content} {icon}',
-               widgets: ["uitheme", "zebra"],
-           });
-       } 
-
-       $(function () {
-            $('#fromDate').datetimepicker({
-                defaultDate: new Date(new Date().getUTCFullYear(), 3, 1),
-                format: 'DD MMMM YYYY'
-            });
-            $('#toDate').datetimepicker({
-                defaultDate: new Date(new Date().getUTCFullYear()+1, 3, 1),
-                format: 'DD MMMM YYYY'
-            });
-            $('#tabs').tab();
-            //load content for first tab and initialize
-            loadTab($('#Batting'));
-
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                var pattern = /#.+/gi //use regex to get anchor(==selector)
-                var contentID = e.target.toString().match(pattern)[0]; //get anchor         
-                loadTab($(contentID));
-            });
-            $('#filterButton').click(function () {
-                var activeTab = $('.tab-pane.active');
-                loadTab(activeTab);
-
-            });
-        });
-
-       function loadTab(tab) {
-           $('#filterButton').button('loading');
-           $('.tab-pane').each(function(index, value) {
-               $(this).html('');
-           });
-           tab.html('<div class="table-bordered" style="padding: 50px;"><div class="progress" ><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"><span class="sr-only">Loading</span></div></div></div>');
-           //load content for selected tab
-           tab.load(baseURL + tab.prop('id').replace('#','') + getFilter(), function () {
-               $('#tabs').tab(); //reinitialize tabs
-               sortTable();
-               $('#filterButton').button('reset');
-
-           });
-
-       }
-        
     </script>
- 
+
 </head>
 <body>
-    <div id="pageContainer">
-        <!-- Head -->
-        <CC:Header ID="Header1" runat=server />
-        <!-- End Head -->
-        <div class=clearer></div>
-        <div id="mainContent">
-            <form runat=server id=StatsForm class="form-horizontal">
-            <H1>Club Statistics<small> for the cricket geek in all of us</small></H1>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Filter Statistics
-                </div>
-                 <div class="panel-body">
-                    <div class="form-group">
-                        <label class="col-xs-3 control-label">Match type:</label>
-                        <div class="col-xs-6">
-                            <div class="input-group">
-                                <label class="checkbox-inline"><input type="checkbox" id="leagueCB" checked="checked"/>League</label>
-                                <label class="checkbox-inline"><input type="checkbox" id="friendlyCB" checked="checked"/>Friendly</label>
-                                <label class="checkbox-inline"><input type="checkbox" id="tourCB" checked="checked"/>Tour</label>
-                                <label class="checkbox-inline"><input type="checkbox" id="declarationCB" checked="checked"/>Declaration</label>
-                                <label class="checkbox-inline"><input type="checkbox" id="twenty20CB" checked="checked"/>Twenty20</label>
+<div class="container">
+    <!-- Head -->
+    <CC:Header ID="Header1" runat=server></CC:Header>
+    <!-- End Head -->
+    <main class="container">
+        <form runat=server id=StatsForm class="form-horizontal">
+            <H1>Club Statistics</H1>
+            <div class="accordian">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Filter Statistics
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                        <div class="accordion-body">
+
+                            <div class="d-flex flex-wrap">
+                                <div class="form-group  flex-grow-1 me-2 mt-2">
+                                    <div class='input-group'>
+                                        <span class="input-group-text">Start date:</span>
+                                        <input type='date' class="form-control" id='fromDate' value="2000-01-01"/>
+                                    </div>
+                                </div>
+                                <div class="form-group flex-grow-1 me-2 mt-2">
+                                    <div class='input-group'>
+                                        <span class="input-group-text">End date:</span>
+                                        <input type='date' class="form-control" id='toDate' value="2100-01-01"/>
+                                    </div>
+                                </div>
+                                <div class="form-group flex-grow-1 me-2 mt-2">
+                                    <div class="input-group">
+                                        <span class="input-group-text">At:</span>
+                                        <asp:DropDownList ID="VenuesDropDown" runat="server" class="form-select"></asp:DropDownList>
+                                    </div>
+                                </div>
                             </div>
-                         </div>
-                    </div>
-                    <div class="form-group">
-                         <label class="col-xs-3 control-label">Start date:</label>
-                         <div class="col-xs-5">
-                             <div class='input-group date datepicker' id='fromDate'>
-                                <input type='text' class="form-control" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
+                            <div class="d-flex flex-fill me-2">
+                                <div class="input-group mt-2">
+                                    <div class="form-check form-switch form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="leagueCB" checked="checked" matchType="League"/>
+                                        <label class="form-check-label" for="leagueCB">League</label>
+                                    </div>
+                                    <div class="form-check form-switch form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="friendlyCB" checked="checked" matchType="Friendly"/>
+                                        <label class="form-check-label" for="friendlyCB">Friendly</label>
+                                    </div>
+                                    <div class="form-check form-switch form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="tourCB" checked="checked" matchType="Tour"/>
+                                        <label class="form-check-label" for="tourCB">Tour</label>
+                                    </div>
+                                    <div class="form-check form-switch form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="declarationCB" checked="checked" matchType="Declaration"/>
+                                        <label class="form-check-label" for="declarationCB">Declaration</label>
+                                    </div>
+                                    <div class="form-check form-switch form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="twenty20CB" checked="checked" matchType="T20"/>
+                                        <label class="form-check-label" for="twenty20CB">Twenty20</label>
+                                    </div>
+                                </div>
+                                <div class="mt-2 d-flex justify-content-end flex-column">
+                                    <button id="filterButton" type="button" data-loading-text="Crunching the numbers..." class="btn btn-primary" autocomplete="off">
+                                        <span class="text-nowrap">Apply filter</span>
+                                    </button>
+                                    <button id="loadingButton" class="btn btn-primary" type="button" style="display: none" disabled>
+                                        <span class="text-nowrap">
+                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                            Loading...
+                                        </span>
+                                    </button>
+                                </div>
+
                             </div>
+
+
                         </div>
                     </div>
-                     <div class="form-group">
-                         <label class="col-xs-3 control-label">End date:</label> 
-                         <div class="col-xs-5">
-                            <div class='input-group date datepicker' id='toDate'>
-                                <input type='text' class="form-control" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>    
-                         </div>
-                             
-                     </div>                 
-                     <div class="form-group">
-                         <label class="col-xs-3 control-label">At:</label> 
-                         <div class="col-xs-5">
-                            <asp:DropDownList ID="VenuesDropDown" runat="server" class="form-control"></asp:DropDownList>    
-                         </div>
-                     </div>                 
-                     <div class="Centered">
-                        <button id="filterButton"  type="button" data-loading-text="Crunching the numbers..." class="btn btn-primary" autocomplete="off">Apply filter</button>                         
-                     </div>
                 </div>
             </div>
-                    <ul id="tabs" class="nav nav-tabs">
-		                <li class="active"><a href="#Batting" role="tab" data-toggle="tab">Batsmen</a></li>
-		                <li><a href="#Bowling" role="tab" data-toggle="tab">Bowling</a></li>
-		                <li><a href="#Teams" role="tab" data-toggle="tab">Teams</a></li>
-		                <li><a href="#Venues" role="tab" data-toggle="tab">Venues</a></li>
-		                <li><a href="#Captains" role="tab" data-toggle="tab">Captains</a></li>
-		                <li><a href="#Keepers" role="tab" data-toggle="tab">Keepers</a></li>
-		                <li><a href="#Matches" role="tab" data-toggle="tab">Matches</a></li>
-		            </ul>
-                    
-                    <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="Batting"></div>
-                        <div role="tabpanel" class="tab-pane" id="Bowling"></div>
-                        <div role="tabpanel" class="tab-pane" id="Teams"></div>
-                        <div role="tabpanel" class="tab-pane" id="Venues"></div>
-                        <div role="tabpanel" class="tab-pane" id="Captains"></div>
-                        <div role="tabpanel" class="tab-pane" id="Keepers"></div>
-                        <div role="tabpanel" class="tab-pane" id="Matches"></div>
+            <div id="tabFlexContainer">
+                <ul id="tabs" class="nav nav-pills nav-fill p-2 mt-2 bg-light" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#Batting" type="button" role="tab" data-toggle="tab">Batting</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Bowling" type="button" role="tab" data-toggle="tab">Bowling</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Teams" type="button" role="tab" data-toggle="tab">Teams</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Venues" type="button" role="tab" data-toggle="tab">Venues</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Captains" type="button" role="tab" data-toggle="tab">Captains</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Keepers" type="button" role="tab" data-toggle="tab">Keepers</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Matches" type="button" role="tab" data-toggle="tab">Matches</button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="Batting">
+                        <div id="battingGrid" class="ag-theme-balham stats-grid"></div>
                     </div>
+                    <div role="tabpanel" class="tab-pane" id="Bowling">
+                        <div id="bowlingGrid" class="ag-theme-balham stats-grid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="Teams">
+                        <div id="teamsGrid" class="ag-theme-balham stats-grid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="Venues">
+                        <div id="venuesGrid" class="ag-theme-balham stats-grid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="Captains">
+                        <div id="captainsGrid" class="ag-theme-balham stats-grid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="Keepers">
+                        <div id="keepersGrid" class="ag-theme-balham stats-grid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="Matches">
+                        <div id="matchesGrid" class="ag-theme-balham stats-grid"></div>
+                    </div>
+                </div>
+            </div>
 
-            </form>
+
+        </form>
+        <div id="errorModal" class="modal" tabindex="-1">
+            <div class="modal-dialog modal-fullscreen-md-down">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Error!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- Footer -->
-        <CC:Footer ID="Footer1" runat="server" />
-        <!-- ENd Footer -->
-    </div>
+    </main>
+</div>
+<!-- Footer -->
+<CC:Footer ID="Footer1" runat="server"/>
+<!-- ENd Footer -->
 </body>
 </html>
-

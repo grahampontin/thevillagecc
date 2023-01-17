@@ -30,6 +30,14 @@ namespace api.model
         {
 
         }
+
+        public static MatchScorecardV1 GetExternalScorecard(Match match)
+        {
+            return new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(),
+                new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(),
+                new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Them),
+                new Extras(match.ID, ThemOrUs.Us), match);
+        }
     }
 
     public class MatchConditionsV1

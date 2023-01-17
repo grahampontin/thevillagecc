@@ -134,7 +134,7 @@
                             <asp:Literal runat="server" ID="matchReportOne_Text"></asp:Literal>
                         </p>
                         <p>
-                            <a class="btn btn-default" href='/MatchReport.aspx?MatchID=<asp:Literal runat="server" ID="matchReportOne_Id"></asp:Literal>' role="button">Read more &raquo;</a>
+                            <a class="btn btn-default" href='/LiveScorecard.aspx?matchId=<asp:Literal runat="server" ID="matchReportOne_Id"></asp:Literal>' role="button">Read more &raquo;</a>
                         </p>
 
                     </div>
@@ -157,7 +157,7 @@
                             <asp:Literal runat="server" ID="matchReportTwo_Text"></asp:Literal>
                         </p>
                         <p>
-                            <a class="btn btn-default" href='/MatchReport.aspx?MatchID=<asp:Literal runat="server" ID="matchReportTwo_Id"></asp:Literal>' role="button">Read more &raquo;</a>
+                            <a class="btn btn-default" href='/LiveScorecard.aspx?matchId=<asp:Literal runat="server" ID="matchReportTwo_Id"></asp:Literal>' role="button">Read more &raquo;</a>
                         </p>
                     </div>
                     <div class="col-md-5 order-md-1">
@@ -179,7 +179,7 @@
                             <asp:Literal runat="server" ID="matchReportThree_Text"></asp:Literal>
                         </p>
                         <p>
-                            <a class="btn btn-default" href='/MatchReport.aspx?MatchID=<asp:Literal runat="server" ID="matchReportThree_Id"></asp:Literal>' role="button">Read more &raquo;</a>
+                            <a class="btn btn-default" href='/LiveScorecard.aspx?matchId=<asp:Literal runat="server" ID="matchReportThree_Id"></asp:Literal>' role="button">Read more &raquo;</a>
                         </p>
                     </div>
                     <div class="col-md-5">

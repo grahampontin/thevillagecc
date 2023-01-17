@@ -1,0 +1,43 @@
+﻿using System.Collections.Generic;
+using CricketClubMiddle.Stats;
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+// ReSharper disable ArrangeObjectCreationWhenTypeEvident
+
+namespace api.model
+{
+    public class KeeperStatsRowData
+    {
+        public static readonly List<StatsColumnDefinitionV1> ColumnDefinitions = new List<StatsColumnDefinitionV1>()
+        {
+            new StatsColumnDefinitionV1("Name", "playerName"),
+            new StatsColumnDefinitionV1("Matches", "matches"),
+            new StatsColumnDefinitionV1("Catches", "catches"),
+            new StatsColumnDefinitionV1("Stumpings", "stumpings"),
+            new StatsColumnDefinitionV1("Byes per Match", "byes"),
+            new StatsColumnDefinitionV1("Bat Ave with Gloves", "aveWithGloves"),
+            new StatsColumnDefinitionV1("Bat Ave without Gloves", "aveWithoutGloves"),
+       
+        };
+    
+    
+    
+        public string playerName { get; private set; }
+        public int matches { get; private set; }
+        public decimal catches { get; private set; }
+        public decimal stumpings { get; private set; }
+        public decimal byes { get; private set; }
+        public decimal aveWithGloves { get; private set; }
+        public decimal aveWithoutGloves { get; private set; }
+    
+        public KeeperStatsRowData(KeeperStats keeperStats)
+        {
+            playerName = keeperStats.Player.FormalName;
+            matches = keeperStats.GetGames();
+            catches = keeperStats.GetCatchesPerMatch();
+            stumpings = keeperStats.GetStumpingsPerMatch();
+            byes = keeperStats.GetAverageByesPerMatch();
+            aveWithGloves = keeperStats.GetBattingAverageAsKeeper();
+            aveWithoutGloves = keeperStats.GetBattingAverageNotAsKeeper(); 
+        }
+    }
+}

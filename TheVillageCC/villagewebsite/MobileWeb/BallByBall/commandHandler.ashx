@@ -29,18 +29,25 @@ public class CommandHandler : IHttpHandler
             switch (genericBallByBallCommand.command)
             {
                 case "listMatches":
-                    {
-                        var matchDescriptors = Match.GetInProgressGames().Union(Match.GetFixtures().Where(m=>m.MatchDate < DateTime.Today.AddDays(14) && !m.GetCurrentBallByBallState().IsMatchComplete())).Select(m => new BallByBallMatchDescriptor(m)).Distinct(BallByBallMatchDescriptor.MatchIdComparer).ToList();
-                        context.Response.Write(javaScriptSerializer.Serialize(matchDescriptors));
-                        return;
-                    }
+                {
+                    var matchDescriptors = Match.GetInProgressGames()
+                        .Union(Match.GetFixtures().Where(m =>
+                            m.MatchDate < DateTime.Today.AddDays(14) &&
+                            !m.GetCurrentBallByBallState().IsMatchComplete()))
+                        .Select(m => new BallByBallMatchDescriptor(m))
+                        .Distinct(BallByBallMatchDescriptor.MatchIdComparer).ToList();
+                    context.Response.Write(javaScriptSerializer.Serialize(matchDescriptors));
+                    return;
+                }
                 case "matchesBySeason":
-                    {
-                        var season = (int)genericBallByBallCommand.payload;
-                        var matchDescriptors = Match.GetAll(new DateTime(season, 1,1), new DateTime(season,12,31), null, null).OrderBy(m=>m.MatchDate).Select(MatchV1.FromInternal).ToList();
-                        context.Response.Write(javaScriptSerializer.Serialize(matchDescriptors));
-                        return;
-                    }
+                {
+                    var season = (int)genericBallByBallCommand.payload;
+                    var matchDescriptors =
+                        Match.GetAll(new DateTime(season, 1, 1), new DateTime(season, 12, 31), null, null)
+                            .OrderBy(m => m.MatchDate).Select(MatchV1.FromInternal).ToList();
+                    context.Response.Write(javaScriptSerializer.Serialize(matchDescriptors));
+                    return;
+                }
                 case "listPlayers":
                 {
                     var includeInactive = false;
@@ -57,30 +64,30 @@ public class CommandHandler : IHttpHandler
                     return;
                 }
                 case "listTeams":
-                    {
-                        var teams = Team.GetAll().Where(t => !t.IsUs)
-                            .Select(TeamV1.FromInternal).OrderBy(t => t.Name).ToList();
-                        context.Response.Write(javaScriptSerializer.Serialize(teams));
-                        return;
-                    }
+                {
+                    var teams = Team.GetAll().Where(t => !t.IsUs)
+                        .Select(TeamV1.FromInternal).OrderBy(t => t.Name).ToList();
+                    context.Response.Write(javaScriptSerializer.Serialize(teams));
+                    return;
+                }
                 case "listVenues":
-                    {
-                        var venues = Venue.GetAll()
-                            .Select(VenueV1.FromInternal).OrderBy(t => t.Name).ToList();
-                        context.Response.Write(javaScriptSerializer.Serialize(venues));
-                        return;
-                    }
+                {
+                    var venues = Venue.GetAll()
+                        .Select(VenueV1.FromInternal).OrderBy(t => t.Name).ToList();
+                    context.Response.Write(javaScriptSerializer.Serialize(venues));
+                    return;
+                }
                 case "updateTeam":
                     CreateOrUpdateStaticDataItem<TeamV1>(context, genericBallByBallCommand, t =>
                     {
-                        var team = new Team(t.Id) {Name = t.Name};
+                        var team = new Team(t.Id) { Name = t.Name };
                         team.Save();
                     });
                     return;
                 case "updateVenue":
                     CreateOrUpdateStaticDataItem<VenueV1>(context, genericBallByBallCommand, v =>
                     {
-                        var venue = new Venue(v.Id) {Name = v.Name, GoogleMapsLocationURL = v.MapUrl};
+                        var venue = new Venue(v.Id) { Name = v.Name, GoogleMapsLocationURL = v.MapUrl };
                         venue.Save();
                     });
                     return;
@@ -99,181 +106,213 @@ public class CommandHandler : IHttpHandler
                     });
                     return;
                 case "updatePlayer":
-                    CreateOrUpdateStaticDataItem<PlayerV1>(context, genericBallByBallCommand, p => UpdatePlayer(new Player(p.playerId), p));
+                    CreateOrUpdateStaticDataItem<PlayerV1>(context, genericBallByBallCommand,
+                        p => UpdatePlayer(new Player(p.playerId), p));
                     return;
                 case "createTeam":
-                    CreateOrUpdateStaticDataItem<TeamV1>(context, genericBallByBallCommand, t => Team.CreateNewTeam(t.Name));
+                    CreateOrUpdateStaticDataItem<TeamV1>(context, genericBallByBallCommand,
+                        t => Team.CreateNewTeam(t.Name));
                     return;
                 case "createVenue":
-                    CreateOrUpdateStaticDataItem<VenueV1>(context, genericBallByBallCommand, v => Venue.CreateNewVenue(v.Name, v.MapUrl));
+                    CreateOrUpdateStaticDataItem<VenueV1>(context, genericBallByBallCommand,
+                        v => Venue.CreateNewVenue(v.Name, v.MapUrl));
                     return;
                 case "createMatch":
-                    CreateOrUpdateStaticDataItem<MatchV1>(context, genericBallByBallCommand, v => Match.CreateNewMatch(new Team(v.Opposition.Id), DateTime.Parse(v.Date), new Venue(v.Venue.Id), ParseMatchType(v), HomeOrAway(v)));
+                    CreateOrUpdateStaticDataItem<MatchV1>(context, genericBallByBallCommand,
+                        v => Match.CreateNewMatch(new Team(v.Opposition.Id), DateTime.Parse(v.Date),
+                            new Venue(v.Venue.Id), ParseMatchType(v), HomeOrAway(v)));
                     return;
                 case "createPlayer":
-                    CreateOrUpdateStaticDataItem<PlayerV1>(context, genericBallByBallCommand, p => UpdatePlayer(Player.CreateNewPlayer(p.firstName + " " + p.surname), p));
+                    CreateOrUpdateStaticDataItem<PlayerV1>(context, genericBallByBallCommand,
+                        p => UpdatePlayer(Player.CreateNewPlayer(p.firstName + " " + p.surname), p));
+                    return;
+                case "loadStats":
+                    var query = javaScriptSerializer.Deserialize<StatsQueryV1>(
+                        javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                    var statsData = StatsProvider.Query(query);
+                    context.Response.Write(javaScriptSerializer.Serialize(statsData));
                     return;
                 default:
+                {
+                    var match = new Match(genericBallByBallCommand.matchId);
+                    switch (genericBallByBallCommand.command)
                     {
-                        var match = new Match(genericBallByBallCommand.matchId);
-                        switch (genericBallByBallCommand.command)
-                        {
-                            case "startMatch":
-                                if (match.GetIsBallByBallInProgress())
-                                {
-                                    throw new InvalidOperationException("Coverage for match vs " + match.Opposition.Name + " has already been started");
-                                }
-                                match.StartBallByBallCoverage(GetMatchConditions(genericBallByBallCommand.payload));
-                                ReturnCurrentMatchState(context, match);
-                                break;
-                            case "matchState":
-                                ReturnCurrentMatchState(context, match);
-                                break;
-                            case "resetMatch":
-                                match.ResetBallByBallData();
-                                context.Response.ContentType = "text/plain";
-                                context.Response.StatusCode = 204;
-                                break;
-                            case "submitOver":
-                                var stateFromClient = javaScriptSerializer.Deserialize<MatchState>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
-                                match.UpdateCurrentBallByBallState(stateFromClient);
-                                ReturnCurrentMatchState(context, match);
-                                break;
-                            case "liveScorecard":
-                                var matchReportAndConditions = match.GetMatchReport();
-                                var external = new LiveScorecardV1
-                                {
-                                    MatchData = MatchV1.FromInternal(match),
-                                    InPlayData = match.GetLiveScorecard(),
-                                    FinalScorecard = GetExternalScorecard(match),
-                                    MatchReport = new MatchReportV1(matchReportAndConditions.Conditions,
-                                        matchReportAndConditions.Report, matchReportAndConditions.ReportImage),
-                                    Result = ResultV1.FromInternal(match)
-                                };
+                        case "startMatch":
+                            if (match.GetIsBallByBallInProgress())
+                            {
+                                throw new InvalidOperationException("Coverage for match vs " + match.Opposition.Name +
+                                                                    " has already been started");
+                            }
 
-                                string json = javaScriptSerializer.Serialize(external);
-                                context.Response.ContentType = "text/json";
-                                context.Response.StatusCode = 200;
-                                context.Response.Write(json);
-                                break;
-                            case "updateOppositionScore":
-                                var incoming = javaScriptSerializer.Deserialize<OppositionInningsDetails>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
-                                match.UpdateOppositionScore(incoming);
-                                ReturnCurrentMatchState(context, match);
-                                break;
-                            case "endInnings":
-                                var inningsEndDetails = javaScriptSerializer.Deserialize<InningsEndDetails>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
-                                match.EndInnings(inningsEndDetails);
-                                context.Response.ContentType = "text/json";
-                                context.Response.StatusCode = 200;
-                                ReturnCurrentMatchState(context, match);
+                            match.StartBallByBallCoverage(GetMatchConditions(genericBallByBallCommand.payload));
+                            ReturnCurrentMatchState(context, match);
+                            break;
+                        case "matchState":
+                            ReturnCurrentMatchState(context, match);
+                            break;
+                        case "resetMatch":
+                            match.ResetBallByBallData();
+                            context.Response.ContentType = "text/plain";
+                            context.Response.StatusCode = 204;
+                            break;
+                        case "submitOver":
+                            var stateFromClient =
+                                javaScriptSerializer.Deserialize<MatchState>(
+                                    javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                            match.UpdateCurrentBallByBallState(stateFromClient);
+                            ReturnCurrentMatchState(context, match);
+                            break;
+                        case "liveScorecard":
+                            var matchReportAndConditions = match.GetMatchReport();
+                            var external = new LiveScorecardV1
+                            {
+                                MatchData = MatchV1.FromInternal(match),
+                                InPlayData = match.GetLiveScorecard(),
+                                FinalScorecard = MatchScorecardV1.GetExternalScorecard(match),
+                                MatchReport = new MatchReportV1(matchReportAndConditions.Conditions,
+                                    matchReportAndConditions.Report, matchReportAndConditions.ReportImage),
+                                Result = ResultV1.FromInternal(match)
+                            };
 
-                                break;
-                            case "deleteLastOver":
-                                match.DeleteLastBallByBallOver();
-                                ReturnCurrentMatchState(context, match);
-                                break;
-                            case "getScorecard":
-                                var scorecard = GetExternalScorecard(match);
-                                context.Response.ContentType = "text/json";
-                                context.Response.StatusCode = 200;
-                                context.Response.Write(javaScriptSerializer.Serialize(scorecard));
-                                break;
-                            case "saveScorecard":
-                                var unsavedScorecard = javaScriptSerializer.Deserialize<MatchScorecardV1>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
-                                if (unsavedScorecard.ourInnings.batting.entries.Any())
-                                {
-                                    var internalBattingCard = unsavedScorecard.ourInnings.batting.ToInternalBattingCard(match, ThemOrUs.Us);
-                                    internalBattingCard.Save(BattingOrBowling.Batting);
-                                }
+                            string json = javaScriptSerializer.Serialize(external);
+                            context.Response.ContentType = "text/json";
+                            context.Response.StatusCode = 200;
+                            context.Response.Write(json);
+                            break;
+                        case "updateOppositionScore":
+                            var incoming =
+                                javaScriptSerializer.Deserialize<OppositionInningsDetails>(
+                                    javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                            match.UpdateOppositionScore(incoming);
+                            ReturnCurrentMatchState(context, match);
+                            break;
+                        case "endInnings":
+                            var inningsEndDetails =
+                                javaScriptSerializer.Deserialize<InningsEndDetails>(
+                                    javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                            match.EndInnings(inningsEndDetails);
+                            context.Response.ContentType = "text/json";
+                            context.Response.StatusCode = 200;
+                            ReturnCurrentMatchState(context, match);
 
-                                if (unsavedScorecard.theirInnings.batting.entries.Any())
-                                {
-                                    var internalOppoBattingCard = unsavedScorecard.theirInnings.batting.ToInternalBattingCard(match, ThemOrUs.Them);
-                                    internalOppoBattingCard.Save(BattingOrBowling.Bowling);
-                                }
-                                var internalExtras = unsavedScorecard.ourInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Them);
-                                internalExtras.Save();
+                            break;
+                        case "deleteLastOver":
+                            match.DeleteLastBallByBallOver();
+                            ReturnCurrentMatchState(context, match);
+                            break;
+                        case "getScorecard":
+                            var scorecard = MatchScorecardV1.GetExternalScorecard(match);
+                            context.Response.ContentType = "text/json";
+                            context.Response.StatusCode = 200;
+                            context.Response.Write(javaScriptSerializer.Serialize(scorecard));
+                            break;
+                        case "saveScorecard":
+                            var unsavedScorecard =
+                                javaScriptSerializer.Deserialize<MatchScorecardV1>(
+                                    javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                            if (unsavedScorecard.ourInnings.batting.entries.Any())
+                            {
+                                var internalBattingCard =
+                                    unsavedScorecard.ourInnings.batting.ToInternalBattingCard(match, ThemOrUs.Us);
+                                internalBattingCard.Save(BattingOrBowling.Batting);
+                            }
 
-                                var internalOppoExtras = unsavedScorecard.theirInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Us);
-                                internalOppoExtras.Save();
+                            if (unsavedScorecard.theirInnings.batting.entries.Any())
+                            {
+                                var internalOppoBattingCard =
+                                    unsavedScorecard.theirInnings.batting.ToInternalBattingCard(match, ThemOrUs.Them);
+                                internalOppoBattingCard.Save(BattingOrBowling.Bowling);
+                            }
 
-                                match.OurInningsLength = unsavedScorecard.ourInnings.inningsLength;
-                                match.TheirInningsLength = unsavedScorecard.theirInnings.inningsLength;
-                                match.Abandoned = unsavedScorecard.matchConditions.abandoned;
-                                match.WasDeclaration = unsavedScorecard.matchConditions.declaration;
-                                match.Overs = unsavedScorecard.matchConditions.overs;
-                                match.Captain = new Player(unsavedScorecard.matchConditions.captainId);
-                                match.WicketKeeper = new Player(unsavedScorecard.matchConditions.wicketKeeperId);
-                                match.WonToss = unsavedScorecard.matchConditions.weWonTheToss;
-                                match.TossWinnerBatted = unsavedScorecard.matchConditions.tossWinnerBatted;
-                                match.Save();
+                            var internalExtras =
+                                unsavedScorecard.ourInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Them);
+                            internalExtras.Save();
 
-                                if (unsavedScorecard.ourInnings.bowling.entries.Any())
-                                {
-                                    var theirBowlingStats = unsavedScorecard.ourInnings.bowling.ToInternal(match, ThemOrUs.Them);
-                                    theirBowlingStats.Save();
-                                }
+                            var internalOppoExtras =
+                                unsavedScorecard.theirInnings.batting.ToInternalExtras(match.ID, ThemOrUs.Us);
+                            internalOppoExtras.Save();
 
-                                if (unsavedScorecard.theirInnings.bowling.entries.Any())
-                                {
-                                    var ourBowlingStats = unsavedScorecard.theirInnings.bowling.ToInternal(match, ThemOrUs.Us);
-                                    ourBowlingStats.Save();
-                                }
+                            match.OurInningsLength = unsavedScorecard.ourInnings.inningsLength;
+                            match.TheirInningsLength = unsavedScorecard.theirInnings.inningsLength;
+                            match.Abandoned = unsavedScorecard.matchConditions.abandoned;
+                            match.WasDeclaration = unsavedScorecard.matchConditions.declaration;
+                            match.Overs = unsavedScorecard.matchConditions.overs;
+                            match.Captain = new Player(unsavedScorecard.matchConditions.captainId);
+                            match.WicketKeeper = new Player(unsavedScorecard.matchConditions.wicketKeeperId);
+                            match.WonToss = unsavedScorecard.matchConditions.weWonTheToss;
+                            match.TossWinnerBatted = unsavedScorecard.matchConditions.tossWinnerBatted;
+                            match.Save();
 
-                                if (unsavedScorecard.ourInnings.fow.entries.Any())
-                                {
-                                    var ourFowData = unsavedScorecard.ourInnings.fow.ToInternal(match, ThemOrUs.Us);
-                                    ourFowData.Save();
-                                }
+                            if (unsavedScorecard.ourInnings.bowling.entries.Any())
+                            {
+                                var theirBowlingStats =
+                                    unsavedScorecard.ourInnings.bowling.ToInternal(match, ThemOrUs.Them);
+                                theirBowlingStats.Save();
+                            }
 
-                                var savedScorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), match);
-                                context.Response.ContentType = "text/json";
-                                context.Response.StatusCode = 200;
-                                context.Response.Write(javaScriptSerializer.Serialize(savedScorecard));
-                                break;
-                            case "saveMatchReport":
-                                var report = javaScriptSerializer.Deserialize<MatchReportV1>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
-                                match.CreateOrUpdateMatchReport(report.Conditions, report.Report, report.Base64EncodedImage);
-                                var updatedReport = match.GetMatchReport();
-                                var updatedMatchReport = new MatchReportV1(updatedReport.Conditions, updatedReport.Report, updatedReport.ReportImage);
-                                context.Response.ContentType = "text/json";
-                                context.Response.StatusCode = 200;
-                                context.Response.Write(javaScriptSerializer.Serialize(updatedMatchReport));
-                                break;
-                            case "getMatchReport":
-                                var savedReport = match.GetMatchReport();
-                                var matchReport = new MatchReportV1(savedReport.Conditions, savedReport.Report, savedReport.ReportImage);
-                                context.Response.ContentType = "text/json";
-                                context.Response.StatusCode = 200;
-                                context.Response.Write(javaScriptSerializer.Serialize(matchReport));
-                                break;
-                            default:
-                                context.Response.ContentType = "text/plain";
-                                context.Response.Write("Command: " + genericBallByBallCommand.command + " is not supported");
-                                context.Response.StatusCode = 400;
-                                break;
-                        }
+                            if (unsavedScorecard.theirInnings.bowling.entries.Any())
+                            {
+                                var ourBowlingStats =
+                                    unsavedScorecard.theirInnings.bowling.ToInternal(match, ThemOrUs.Us);
+                                ourBowlingStats.Save();
+                            }
 
-                        break;
+                            if (unsavedScorecard.ourInnings.fow.entries.Any())
+                            {
+                                var ourFowData = unsavedScorecard.ourInnings.fow.ToInternal(match, ThemOrUs.Us);
+                                ourFowData.Save();
+                            }
+
+                            var savedScorecard = new MatchScorecardV1(match.GetOurBattingScoreCard(),
+                                match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us),
+                                match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(),
+                                new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Them),
+                                new Extras(match.ID, ThemOrUs.Us), match);
+                            context.Response.ContentType = "text/json";
+                            context.Response.StatusCode = 200;
+                            context.Response.Write(javaScriptSerializer.Serialize(savedScorecard));
+                            break;
+                        case "saveMatchReport":
+                            var report =
+                                javaScriptSerializer.Deserialize<MatchReportV1>(
+                                    javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                            match.CreateOrUpdateMatchReport(report.Conditions, report.Report,
+                                report.Base64EncodedImage);
+                            var updatedReport = match.GetMatchReport();
+                            var updatedMatchReport = new MatchReportV1(updatedReport.Conditions, updatedReport.Report,
+                                updatedReport.ReportImage);
+                            context.Response.ContentType = "text/json";
+                            context.Response.StatusCode = 200;
+                            context.Response.Write(javaScriptSerializer.Serialize(updatedMatchReport));
+                            break;
+                        case "getMatchReport":
+                            var savedReport = match.GetMatchReport();
+                            var matchReport = new MatchReportV1(savedReport.Conditions, savedReport.Report,
+                                savedReport.ReportImage);
+                            context.Response.ContentType = "text/json";
+                            context.Response.StatusCode = 200;
+                            context.Response.Write(javaScriptSerializer.Serialize(matchReport));
+                            break;
+                        default:
+                            context.Response.ContentType = "text/plain";
+                            context.Response.Write("Command: " + genericBallByBallCommand.command +
+                                                   " is not supported");
+                            context.Response.StatusCode = 400;
+                            break;
                     }
+
+                    break;
+                }
             }
         }
-        catch(InvalidOperationException ex)
+        catch (InvalidOperationException ex)
         {
             ReportInvalidInput(context, ex.Message);
-        } catch(Exception ex)
+        }
+        catch (Exception ex)
         {
             ReportError(context, ex, 500);
         }
-
-
-
-    }
-
-    private static MatchScorecardV1 GetExternalScorecard(Match match)
-    {
-        return new MatchScorecardV1(match.GetOurBattingScoreCard(), match.GetThierBowlingStats(), new FoWStats(match.ID, ThemOrUs.Us), match.GetTheirBattingScoreCard(), match.GetOurBowlingStats(), new FoWStats(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Them), new Extras(match.ID, ThemOrUs.Us), match);
     }
 
     private static void UpdatePlayer(Player newPlayer, PlayerV1 p)
@@ -293,15 +332,16 @@ public class CommandHandler : IHttpHandler
 
     private static HomeOrAway HomeOrAway(MatchV1 v)
     {
-        return v.IsHome?CricketClubDomain.HomeOrAway.Home : CricketClubDomain.HomeOrAway.Away;
+        return v.IsHome ? CricketClubDomain.HomeOrAway.Home : CricketClubDomain.HomeOrAway.Away;
     }
 
     private static MatchType ParseMatchType(MatchV1 v)
     {
-        return (MatchType) Enum.Parse(typeof(MatchType),v.Type, true);
+        return (MatchType)Enum.Parse(typeof(MatchType), v.Type, true);
     }
 
-    private void CreateOrUpdateStaticDataItem<T>(HttpContext context, GenericBallByBallCommand genericBallByBallCommand, Action<T> createOrUpdateAction)
+    private void CreateOrUpdateStaticDataItem<T>(HttpContext context, GenericBallByBallCommand genericBallByBallCommand,
+        Action<T> createOrUpdateAction)
     {
         var staticDataItem =
             javaScriptSerializer.Deserialize<T>(javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
@@ -345,67 +385,11 @@ public class CommandHandler : IHttpHandler
     }
 }
 
-public class ResultV1
-{
-    public string WinningTeam { get; set; }
-    public string LosingTeam { get; set; }
-    public string Margin { get; set; }
-    public decimal TheirOversFaced { get; set; }
-    public int TheirWickets { get; set; }
-    public int TheirScore { get; set; }
-    public decimal OurOversFaced { get; set; }
-    public int OurWickets { get; set; }
-    public int OurScore { get; set; }
-    public bool IsTied { get; set; }
-    public bool IsDrawn { get; set; }
-    public bool IsAbandoned { get; set; }
-    
-    public static ResultV1 FromInternal(Match match)
-    {
-        return new ResultV1()
-        {
-            WinningTeam = match.Winner != null ? match.Winner.Name : null,
-            LosingTeam = match.Loser != null ? match.Loser.Name : null,
-            Margin = match.ResultMargin,
-            IsTied = match.ResultTied,
-            IsDrawn = match.ResultDrawn,
-            OurScore = match.GetTeamScore(Team.OurTeam),
-            OurWickets = match.GetTeamWicketsDown(Team.OurTeam),
-            OurOversFaced = match.GetOurBowlingStats().BowlingStatsData.Sum(b=>b.Overs),
-            TheirScore = match.GetTeamScore(match.Opposition),
-            TheirWickets = match.GetTeamWicketsDown(match.Opposition),
-            TheirOversFaced = match.GetThierBowlingStats().BowlingStatsData.Sum(b=>b.Overs),
-            IsAbandoned = match.Abandoned
-        };
-    }
-}
 
-public class LiveScorecardV1
-{
-    public LiveScorecard InPlayData { get; set; }
-    public MatchScorecardV1 FinalScorecard { get; set; }
-    public MatchReportV1 MatchReport { get; set; }
-    public MatchV1 MatchData { get; set; }
-    public ResultV1 Result { get; set; }
-}
 
-public class MatchReportV1
-{
-    public MatchReportV1()
-    {
-    }
 
-    public string Conditions { get; set; }
-    public string Report { get; set; }
-    public string Base64EncodedImage { get; set; }
 
-    public MatchReportV1(string conditions, string report, string base64EncodedImage)
-    {
-        Conditions = conditions;
-        Report = report;
-        Base64EncodedImage = base64EncodedImage;
-    }
-}
+
 
 
 
