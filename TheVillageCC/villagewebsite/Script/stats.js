@@ -43,11 +43,17 @@ $(window).resize(function () {
 const gridOptions = {
     defaultColDef: {
         resizable: false,
-        sortable: true
+        sortable: true,
+        flex: 1,
+        filter: "agNumberColumnFilter"
     },
     columnDefs: null,
     rowData: null,
     suppressColumnVirtualisation: true,
+    components: {
+        // 'countryCellRenderer' is mapped to class CountryCellRenderer
+        LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+    },
 };
 
 function renderStatsTable(data) {
@@ -80,20 +86,26 @@ function renderStatsTable(data) {
     gridOptions.api.setRowData(data.gridOptions.rowData);
     data.gridOptions.columnDefs[0].pinned = "left";
     data.gridOptions.columnDefs[0].sort = "asc";
+    data.gridOptions.columnDefs[0].filter = "agTextColumnFilter";
     gridOptions.api.setColumnDefs(data.gridOptions.columnDefs);
-    const allColumnIds = [];
-    gridOptions.columnApi.getColumns().forEach((column) => {
-        allColumnIds.push(column.getId());
-    });
+    
 
-    gridOptions.columnApi.autoSizeColumns(allColumnIds, false);
+    
     resizeGrids();
 }
+
 
 function resizeGrids() {
     $(".stats-grid").each(function (i) {
         $(this).height(window.innerHeight - $(this).position().top - $("#pageFooter").height() - 20);
-    })
+    });
+    if (window.innerWidth < 990){
+        const allColumnIds = [];
+        gridOptions.columnApi.getColumns().forEach((column) => {
+            allColumnIds.push(column.getId());
+        });
+        gridOptions.columnApi.autoSizeColumns(allColumnIds, false);
+    }
 }
 
 function showError(text) {
@@ -112,7 +124,7 @@ $(function () {
     })
     
     var currentYear = new Date().getFullYear();
-    $("#fromDate").val(currentYear-10 + "-01-01");
+    $("#fromDate").val(currentYear-30 + "-01-01");
     $("#toDate").val(currentYear + "-12-31");
 
     loadStats("batting", renderStatsTable);

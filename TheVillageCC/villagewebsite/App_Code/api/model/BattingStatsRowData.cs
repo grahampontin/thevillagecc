@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using CricketClubDomain;
 using CricketClubMiddle;
+// ReSharper disable ArrangeObjectCreationWhenTypeEvident
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 namespace api.model
 {
@@ -9,7 +11,7 @@ namespace api.model
     {
         public static List<StatsColumnDefinitionV1> ColumnDefinitions = new List<StatsColumnDefinitionV1>()
         {
-            new StatsColumnDefinitionV1("Name", "name"),
+            new StatsColumnDefinitionV1("Name", "name", "LinkToPlayerStatsRenderer"),
             new StatsColumnDefinitionV1("Bats", "batsAt"),
             new StatsColumnDefinitionV1("Mat", "matches"),
             new StatsColumnDefinitionV1("Innings", "innings"),
@@ -27,6 +29,7 @@ namespace api.model
         };
 
 
+        public int id { get; private set; }
         public string name { get; private set; }
         public int batsAt { get; private set; }
         public int matches { get; private set; }
@@ -46,6 +49,7 @@ namespace api.model
         public BattingStatsRowData(Player player, DateTime startDate, DateTime endDate, List<MatchType> MatchTypes,
             Venue venue)
         {
+            id = player.ID;
             name = player.Name;
             batsAt = player.GetBattingPosition(startDate, endDate, MatchTypes, venue);
             matches = player.GetMatchesPlayed(startDate, endDate, MatchTypes, venue);

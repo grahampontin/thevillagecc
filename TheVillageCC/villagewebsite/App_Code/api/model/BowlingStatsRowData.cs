@@ -9,7 +9,7 @@ namespace api.model
     {
         public static List<StatsColumnDefinitionV1> ColumnDefinitions = new List<StatsColumnDefinitionV1>()
         {
-            new StatsColumnDefinitionV1("Name", "name"),
+            new StatsColumnDefinitionV1("Name", "name", "LinkToPlayerStatsRenderer"),
             new StatsColumnDefinitionV1("Ave", "average"),
             new StatsColumnDefinitionV1("Wkt", "wickets"),
             new StatsColumnDefinitionV1("Eco", "economy"),
@@ -20,7 +20,7 @@ namespace api.model
             new StatsColumnDefinitionV1("BBM", "bbm"),
             
         };
-    
+        public int id { get; private set; }
         public string name {get; private set; }
         public decimal average {get; private set; }
         public int wickets {get; private set; }
@@ -34,6 +34,7 @@ namespace api.model
         public BowlingStatsRowData(Player player, DateTime startDate, DateTime endDate, List<MatchType> MatchTypes,
             Venue venue)
         {
+            id = player.ID;
             name = player.Name;
             average = player.GetBowlingAverage(startDate, endDate, MatchTypes, venue);
             wickets = player.GetWicketsTaken(startDate, endDate, MatchTypes, venue);

@@ -9,7 +9,7 @@ namespace api.model
     {
         public static readonly List<StatsColumnDefinitionV1> ColumnDefinitions = new List<StatsColumnDefinitionV1>()
         {
-            new StatsColumnDefinitionV1("Name", "playerName"),
+            new StatsColumnDefinitionV1("Name", "playerName", "LinkToPlayerStatsRenderer"),
             new StatsColumnDefinitionV1("Matches", "matches"),
             new StatsColumnDefinitionV1("Catches", "catches"),
             new StatsColumnDefinitionV1("Stumpings", "stumpings"),
@@ -20,7 +20,7 @@ namespace api.model
         };
     
     
-    
+        public int id { get; private set; }
         public string playerName { get; private set; }
         public int matches { get; private set; }
         public decimal catches { get; private set; }
@@ -31,6 +31,7 @@ namespace api.model
     
         public KeeperStatsRowData(KeeperStats keeperStats)
         {
+            id = keeperStats.Player.ID;
             playerName = keeperStats.Player.FormalName;
             matches = keeperStats.GetGames();
             catches = keeperStats.GetCatchesPerMatch();
