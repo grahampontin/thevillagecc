@@ -46,8 +46,6 @@ public partial class PlayerDetail : System.Web.UI.Page
         BowlingStats.DataSource = Enum.GetNames(typeof(MatchType));
         BowlingStats.DataBind();
 
-        VenuesList.DataSource = Venue.GetAll();
-        VenuesList.DataBind();
 
         
         
