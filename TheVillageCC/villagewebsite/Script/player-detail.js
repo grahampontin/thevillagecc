@@ -16,8 +16,26 @@
 
 function playerDetailLoaded(data) {
     //do stuff
-    
+    new agGrid.Grid($("#careerBattingStatsGrid")[0], gridOptions);
+    gridOptions.api.setRowData(data.battingStats.gridOptions.rowData);
 }
+
+
+const gridOptions = {
+    defaultColDef: {
+        resizable: false,
+        sortable: true,
+        flex: 1,
+        filter: "agNumberColumnFilter"
+    },
+    columnDefs: null,
+    rowData: null,
+    suppressColumnVirtualisation: true,
+    components: {
+        // 'countryCellRenderer' is mapped to class CountryCellRenderer
+        LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+    },
+};
 
 function showError(text) {
     $("#errorModal .modal-body p").text(text);

@@ -23,8 +23,10 @@
     <script src="Script/jqplot/plugins/jqplot.enhancedLegendRenderer.min.js" type="text/javascript"></script>
     <script src="Script/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js" type="text/javascript"></script>
     <script src="Script/jqplot/plugins/jqplot.pieRenderer.min.js" type="text/javascript"></script>
-    
+
     <script src="Script/purl.js"></script>
+    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    <script src="Script/agGrid/linkToPlayerStatsRenderer.js"></script>
     <script src="Script/player-detail.js" type="text/javascript"></script>
 
 
