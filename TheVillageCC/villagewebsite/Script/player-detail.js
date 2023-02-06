@@ -1,7 +1,7 @@
 ﻿$(function () {
     var postData = {
         'command': "getPlayerDetail",
-        "matchId": $.url().param('playerId')
+        "matchId": $.url().param('playerid')
     }
 
     $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
