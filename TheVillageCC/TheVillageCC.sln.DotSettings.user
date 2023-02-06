@@ -1,6 +1,35 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\Bin\CricketClubMiddle.dll" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200228-110154" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200302-123400" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200302-133316" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200324-225014" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200325-211612" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200723-202334" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200728-220442" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200816-092822" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200817-100901" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200819-164401" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200825-180811" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200825-183459" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200825-185107" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200825-190326" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20200825-190857" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210412-110542" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210412-150119" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210426-124543" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210426-134308" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210426-212010" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210427-102407" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210429-125632" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210502-210518" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210504-203619" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210504-213654" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210516-203355" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20210718-171732" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\.nuget\packages\cricketclubmiddle\1.0.0-ci-20230205-212312" Loaded="True" /&gt;&#xD;
+  &lt;PhysicalFolder Path="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\packages\CricketClubMiddle.1.0.0-CI-20230205-212312" Loaded="True" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:Boolean x:Key="/Default/Housekeeping/Bookmarks/NumberedBookmarks/=Bookmark2/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/Housekeeping/Bookmarks/NumberedBookmarks/=Bookmark2/Coords/@EntryValue">(Doc Ln 21 Col 6)</s:String>

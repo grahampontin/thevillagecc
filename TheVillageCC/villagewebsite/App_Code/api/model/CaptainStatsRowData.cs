@@ -33,7 +33,7 @@ namespace api.model
     
         public CaptainStatsRowData(CaptainStats captainStats)
         {
-            id = captainStats.Player.ID;
+            id = captainStats.Player.Id;
             playerName = captainStats.Player.FormalName;
             matches = captainStats.GetGamesInCharge().ToString();
             wins = captainStats.GetWins().ToString();

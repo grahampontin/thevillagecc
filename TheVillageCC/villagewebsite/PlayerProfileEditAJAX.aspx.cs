@@ -16,7 +16,7 @@ public partial class PlayerProfileEditAJAX : System.Web.UI.Page
         if (Request["Action"] == "save")
         {
             p.FullName = Request["Name"];
-            p.DOB = DateTime.Parse(Request["DOB"]);
+            p.Dob = DateTime.Parse(Request["DOB"]);
             p.Education = Request["Education"];
             p.Bio = Request["bio"];
             p.BattingStyle = Request["BattingStyle"];

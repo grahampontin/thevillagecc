@@ -57,8 +57,8 @@ namespace api.model
         public MatchConditionsV1(Match match)
         {
             abandoned = match.Abandoned;
-            captainId = match.Captain.ID;
-            wicketKeeperId = match.WicketKeeper.ID;
+            captainId = match.Captain.Id;
+            wicketKeeperId = match.WicketKeeper.Id;
             overs = match.Overs;
             declaration = match.WasDeclaration;
             weWonTheToss = match.TossWinner.IsUs;
@@ -116,14 +116,14 @@ namespace api.model
             outgoingPlayer = new FoWPlayerV1()
             {
                 battingAt = foWStatsLine.OutgoingBatsmanPosition,
-                id = foWStatsLine.OutgoingBatsman.ID,
+                id = foWStatsLine.OutgoingBatsman.Id,
                 name = foWStatsLine.OutgoingBatsman.Name,
                 score = foWStatsLine.OutgoingBatsmanScore
             };
             notOutPlayer = new FoWPlayerV1()
             {
                 battingAt = foWStatsLine.NotOutBatsmanPosition,
-                id = foWStatsLine.NotOutBatsman.ID,
+                id = foWStatsLine.NotOutBatsman.Id,
                 name = foWStatsLine.NotOutBatsman.Name,
                 score = foWStatsLine.NotOutBatsmanScore
             };

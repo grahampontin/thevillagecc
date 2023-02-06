@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using CricketClubDAL;
 using CricketClubDomain;
 using CricketClubMiddle;
 using CricketClubMiddle.Stats;
@@ -29,7 +30,22 @@ namespace api.model
                     rows = inScopeBatsmen.Select(p => new BattingStatsRowData(p, query.from, query.to,
                             matchTypes, venue)).Cast<object>()
                         .ToList();
-                    columns = BattingStatsRowData.ColumnDefinitions;
+                    columns = BattingStatsRowData.WithColumns(
+                        BattingStatsRowData.PlayerName,
+                        BattingStatsRowData.BattingPosition,
+                        BattingStatsRowData.MatchesPlayed,
+                        BattingStatsRowData.Innings,
+                        BattingStatsRowData.NotOuts,
+                        BattingStatsRowData.RunsScored,
+                        BattingStatsRowData.HighScore,
+                        BattingStatsRowData.BattingAverage,
+                        BattingStatsRowData.HundredsScored,
+                        BattingStatsRowData.FiftiesScored,
+                        BattingStatsRowData.FoursHit,
+                        BattingStatsRowData.SixesHit,
+                        BattingStatsRowData.CatchesTaken,
+                        BattingStatsRowData.Stumpings,
+                        BattingStatsRowData.RunOuts);
                     break;
                 case "bowling":
                     var inScopeBowlers = Player.GetAll().Where(a =>
@@ -104,5 +120,78 @@ namespace api.model
                     throw new Exception("Don't know how to parse " + s);
             }
         }
+
+        public static PlayerDetailV1 QueryPlayer(int playerId)
+        {
+            var player = new Player(playerId);
+            return new PlayerDetailV1()
+            {
+                player = PlayerV1.FromInternal(player),
+                battingStats = BattingStatsFrom(player)
+            };
+        }
+
+        private static StatsDataV1 BattingStatsFrom(Player player)
+        {
+            return new StatsDataV1()
+            {
+                statsType = "player batting",
+                gridOptions = new AGGridOptions()
+                {
+                    columnDefs = BattingStatsRowData.WithColumns(
+                        BattingStatsRowData.MatchType,
+                        BattingStatsRowData.BattingPosition,
+                        BattingStatsRowData.MatchesPlayed,
+                        BattingStatsRowData.Innings,
+                        BattingStatsRowData.NotOuts,
+                        BattingStatsRowData.RunsScored,
+                        BattingStatsRowData.HighScore,
+                        BattingStatsRowData.BattingAverage,
+                        BattingStatsRowData.HundredsScored,
+                        BattingStatsRowData.FiftiesScored,
+                        BattingStatsRowData.FoursHit,
+                        BattingStatsRowData.SixesHit,
+                        BattingStatsRowData.CatchesTaken,
+                        BattingStatsRowData.Stumpings,
+                        BattingStatsRowData.RunOuts),
+                    rowData = BuildRows(player, b => Format((MatchType)b.MatchTypeID),
+                        new[] { "League", "Tour", "Friendly", "T20" })
+                }
+            };
+        }
+
+        private static string Format(MatchType matchType)
+        {
+            switch (matchType)
+            {
+                case MatchType.NELCL:
+                case MatchType.NELCL_Cup:
+                    return "League";
+                case MatchType.Tour:
+                    return "Tour";
+                case MatchType.Friendly:
+                case MatchType.Declaration:
+                    return "Friendly";
+                case MatchType.Twenty20:
+                    return "T20";
+                default:
+                    throw new ArgumentOutOfRangeException("matchType", matchType, null);
+            }
+        }
+
+        private static List<object> BuildRows(Player player, Func<IStatsEntryData, string> keyAccessor, IEnumerable<string> partitions)
+        {
+            return partitions.Select(p =>
+            {
+                return new BattingStatsRowData(player, s => keyAccessor(s) == p, p);
+            }).Cast<object>().ToList();
+        }
+    }
+
+    public class PlayerDetailV1
+    {
+        public PlayerV1 player;
+        public StatsDataV1 battingStats;
+        public StatsDataV1 bowlingStats;
     }
 }

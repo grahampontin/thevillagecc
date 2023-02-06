@@ -35,13 +35,13 @@ namespace api.model
 
         public BattingEntryV1(BattingCardLine battingCardLine)
         {
-            playerId = battingCardLine.Batsman.ID;
+            playerId = battingCardLine.Batsman.Id;
             playerName = battingCardLine.Batsman.Name;
             runs = battingCardLine.Score;
             modeOfDismissal = battingCardLine.Dismissal.ToString();
-            bowlerId = battingCardLine.Bowler.ID;
+            bowlerId = battingCardLine.Bowler.Id;
             bowlerName = battingCardLine.Bowler.Name;
-            fielderId = battingCardLine.Fielder.ID;
+            fielderId = battingCardLine.Fielder.Id;
             fielderName = battingCardLine.Fielder.Name;
             fours = battingCardLine.Fours;
             sixes = battingCardLine.Sixes;

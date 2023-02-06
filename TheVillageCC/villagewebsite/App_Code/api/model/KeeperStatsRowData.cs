@@ -31,7 +31,7 @@ namespace api.model
     
         public KeeperStatsRowData(KeeperStats keeperStats)
         {
-            id = keeperStats.Player.ID;
+            id = keeperStats.Player.Id;
             playerName = keeperStats.Player.FormalName;
             matches = keeperStats.GetGames();
             catches = keeperStats.GetCatchesPerMatch();

@@ -57,7 +57,7 @@ public class CommandHandler : IHttpHandler
                         includeInactive = true;
                     }
 
-                    var players = Player.GetAll().Where(p => (p.IsActive || includeInactive) && p.ID > 0)
+                    var players = Player.GetAll().Where(p => (p.IsActive || includeInactive) && p.Id > 0)
                         .OrderByDescending(p => p.NumberOfMatchesPlayedThisSeason).ThenBy(p => p.FormalName)
                         .Select(PlayerV1.FromInternal).ToList();
                     context.Response.Write(javaScriptSerializer.Serialize(players));
@@ -131,6 +131,11 @@ public class CommandHandler : IHttpHandler
                         javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
                     var statsData = StatsProvider.Query(query);
                     context.Response.Write(javaScriptSerializer.Serialize(statsData));
+                    return;
+                case "getPlayerDetail":
+                    var playerId = genericBallByBallCommand.matchId;  //Hack
+                    var playerDetailV1 = StatsProvider.QueryPlayer(playerId);
+                    context.Response.Write(javaScriptSerializer.Serialize(playerDetailV1));
                     return;
                 default:
                 {

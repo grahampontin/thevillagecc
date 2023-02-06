@@ -25,7 +25,7 @@ public partial class UserControls_BattingScorecard : System.Web.UI.UserControl
         {
 
             match = new Match(Card.MatchId);
-            if (Card.ScorecardData.Count >0 && Card.ScorecardData[0].Batsman.ID > 0)
+            if (Card.ScorecardData.Count >0 && Card.ScorecardData[0].Batsman.Id > 0)
             {
                 Overs.Text = match.OurInningsLength.ToString();
                 who=ThemOrUs.Us;
@@ -77,11 +77,11 @@ public partial class UserControls_BattingScorecard : System.Web.UI.UserControl
         {
             ((HtmlTableRow)e.Item.FindControl("TableRow")).Attributes["class"] += "scOddRow";
         }
-        if (test.Batsman.ID == match.WicketKeeper.ID)
+        if (test.Batsman.Id == match.WicketKeeper.Id)
         {
             ((Literal)e.Item.FindControl("CaptainWK")).Text += "&#134".ToString();
         }
-        if (test.Batsman.ID == match.Captain.ID)
+        if (test.Batsman.Id == match.Captain.Id)
         {
             ((Literal)e.Item.FindControl("CaptainWK")).Text += "*";
         }

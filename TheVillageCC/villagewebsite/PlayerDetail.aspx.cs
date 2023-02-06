@@ -39,18 +39,8 @@ public partial class PlayerDetail : System.Web.UI.Page
         }
         PlayerImage.ImageUrl = imgSrc;
 
-        BattingStats.DataSource = Enum.GetNames(typeof(MatchType));
-        BattingStats.DataBind();
-
-
-        BowlingStats.DataSource = Enum.GetNames(typeof(MatchType));
-        BowlingStats.DataBind();
-
-
-        
-        
-
     }
+    
     protected void BattingStats_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowType == DataControlRowType.DataRow)
@@ -84,10 +74,10 @@ public partial class PlayerDetail : System.Web.UI.Page
             Runs.Text = p.GetRunsScored(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
             HS.Text = p.GetHighScore(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
             Ducks.Text = p.GetDucks(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();             
-            Tons.Text = p.Get100sScored(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
-            Fifties.Text = p.Get50sScored(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
-            Fours.Text = p.Get4s(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
-            Sixes.Text = p.Get6s(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Tons.Text = p.Get100SScored(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Fifties.Text = p.Get50SScored(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Fours.Text = p.Get4S(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
+            Sixes.Text = p.Get6S(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
             Catches.Text = p.GetCatchesTaken(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();
             Stumpings.Text = p.GetStumpings(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString(); ;
             Runouts.Text = p.GetRunOuts(new DateTime(2000, 1, 1), new DateTime(2112, 1, 1), Match, null).ToString();

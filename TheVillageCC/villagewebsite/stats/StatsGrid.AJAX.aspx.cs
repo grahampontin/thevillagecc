@@ -208,17 +208,17 @@ public partial class Stats_StatsGrid : System.Web.UI.Page
             Player CurrentPlayer = (Player)e.Row.DataItem;
 
             Matches.Text = CurrentPlayer.GetMatchesPlayed(startDate, endDate, MatchTypes, venue).ToString();
-            name.Text = "<a href=PlayerDetail.aspx?playerid=" + CurrentPlayer.ID + ">" + CurrentPlayer.Name + "</a>";
+            name.Text = "<a href=PlayerDetail.aspx?playerid=" + CurrentPlayer.Id + ">" + CurrentPlayer.Name + "</a>";
             if (Request["Tab"] == "Batting")
             {
                 BatsAt.Text = CurrentPlayer.GetBattingPosition(startDate, endDate, MatchTypes, venue).ToString();
                 Average.Text = CurrentPlayer.GetBattingAverage(startDate, endDate, MatchTypes, venue).ToString();
                 Innings.Text = CurrentPlayer.GetInnings(startDate, endDate, MatchTypes, venue).ToString();
                 NotOuts.Text = CurrentPlayer.GetNotOuts(startDate, endDate, MatchTypes, venue).ToString();
-                Hundreds.Text = CurrentPlayer.Get100sScored(startDate, endDate, MatchTypes, venue).ToString();
-                Fifties.Text = CurrentPlayer.Get50sScored(startDate, endDate, MatchTypes, venue).ToString();
-                Fours.Text = CurrentPlayer.Get4s(startDate, endDate, MatchTypes, venue).ToString();
-                Sixes.Text = CurrentPlayer.Get6s(startDate, endDate, MatchTypes, venue).ToString();
+                Hundreds.Text = CurrentPlayer.Get100SScored(startDate, endDate, MatchTypes, venue).ToString();
+                Fifties.Text = CurrentPlayer.Get50SScored(startDate, endDate, MatchTypes, venue).ToString();
+                Fours.Text = CurrentPlayer.Get4S(startDate, endDate, MatchTypes, venue).ToString();
+                Sixes.Text = CurrentPlayer.Get6S(startDate, endDate, MatchTypes, venue).ToString();
                 Catches.Text = CurrentPlayer.GetCatchesTaken(startDate, endDate, MatchTypes, venue).ToString();
                 Stumpings.Text = CurrentPlayer.GetStumpings(startDate, endDate, MatchTypes, venue).ToString();
                 RunOuts.Text = CurrentPlayer.GetRunOuts(startDate, endDate, MatchTypes, venue).ToString();

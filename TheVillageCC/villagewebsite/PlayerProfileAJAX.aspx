@@ -18,7 +18,7 @@
                     <span>Full Name: </span><%=p.FullName %>
                 </div>
                 <div class=playerProfileStat>
-                    <span>Born: </span><%=p.DOB %>
+                    <span>Born: </span><%=p.Dob %>
                 </div>
                 <div class=playerProfileStat>
                     <span>Current Age: </span>

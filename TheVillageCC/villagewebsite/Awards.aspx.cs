@@ -18,7 +18,7 @@ public partial class Stats : System.Web.UI.Page
     {
         Header1.PageID = "Awards";
 
-        var players = Player.GetAll().Where(a=>a.ID >0);
+        var players = Player.GetAll().Where(a=>a.Id >0);
         
         var mostRuns = players.Max(a => a.GetRunsScored());
         var leadingScorer = players.Where(a => a.GetRunsScored() == mostRuns).FirstOrDefault();

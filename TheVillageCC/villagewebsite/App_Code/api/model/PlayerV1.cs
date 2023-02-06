@@ -22,7 +22,7 @@ public class PlayerV1
     {
         return new PlayerV1()
         {
-            playerId = player.ID,
+            playerId = player.Id,
             name = player.FormalName,
             matches = player.NumberOfMatchesPlayedThisSeason,
             shortName = player.Name,

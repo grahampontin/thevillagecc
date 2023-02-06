@@ -34,7 +34,7 @@ namespace api.model
         public BowlingStatsRowData(Player player, DateTime startDate, DateTime endDate, List<MatchType> MatchTypes,
             Venue venue)
         {
-            id = player.ID;
+            id = player.Id;
             name = player.Name;
             average = player.GetBowlingAverage(startDate, endDate, MatchTypes, venue);
             wickets = player.GetWicketsTaken(startDate, endDate, MatchTypes, venue);

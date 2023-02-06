@@ -24,7 +24,7 @@ public partial class Players : System.Web.UI.Page
 
         Header1.PageID = "Players";
 
-        IEnumerable<Player> Players = Player.GetAll().Where(a => a.IsActive).Where(a=>a.Debut > new DateTime(2002,1,1)).Where(a=>a.ID>0);
+        IEnumerable<Player> Players = Player.GetAll().Where(a => a.IsActive).Where(a=>a.Debut > new DateTime(2002,1,1)).Where(a=>a.Id>0);
         string OrderBy = Request["OrderBy"];
         switch (OrderBy)
         {

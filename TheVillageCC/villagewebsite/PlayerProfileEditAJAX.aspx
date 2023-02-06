@@ -23,7 +23,7 @@
                     <span>Full Name: </span><input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" value="<%=p.FullName %>" />
                 </div>
                 <div class=playerProfileStat>
-                    <span>Born: </span><input type="text" name="dob" id="dob" class="datepicker text ui-widget-content ui-corner-all" value="<%=p.DOB %>" />
+                    <span>Born: </span><input type="text" name="dob" id="dob" class="datepicker text ui-widget-content ui-corner-all" value="<%=p.Dob %>" />
                 </div>
                
                 <div class=playerProfileStat>

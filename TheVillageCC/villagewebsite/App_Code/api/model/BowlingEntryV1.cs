@@ -30,7 +30,7 @@ namespace api.model
             wickets = bowlingStatsLine.Wickets;
             overs = bowlingStatsLine.Overs;
             playerName = bowlingStatsLine.BowlerName;
-            playerId = bowlingStatsLine.Bowler.ID;
+            playerId = bowlingStatsLine.Bowler.Id;
         }
 
         public BowlingStatsLine ToInternal(Match match)
