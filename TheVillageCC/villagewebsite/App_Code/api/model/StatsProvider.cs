@@ -54,7 +54,16 @@ namespace api.model
                     rows = inScopeBowlers.Select(p => new BowlingStatsRowData(p, query.from, query.to,
                             matchTypes, venue)).Cast<object>()
                         .ToList();
-                    columns = BowlingStatsRowData.ColumnDefinitions;
+                    columns = BowlingStatsRowData.WithColumns(
+                        BowlingStatsRowData.PlayerName,
+                        BowlingStatsRowData.BowlingAverage,
+                        BowlingStatsRowData.WicketsTaken,
+                        BowlingStatsRowData.Economy,
+                        BowlingStatsRowData.Fivefers,
+                        BowlingStatsRowData.StrikeRate,
+                        BowlingStatsRowData.OversBowled,
+                        BowlingStatsRowData.RunsConceded,
+                        BowlingStatsRowData.BestBowlingFigures);
                     break;
                 case "teams":
                     var inScopeTeams = Team.GetAll().Select(a => a.GetStats(query.from, query.to, matchTypes, venue))
@@ -127,8 +136,35 @@ namespace api.model
             return new PlayerDetailV1()
             {
                 player = PlayerV1.FromInternal(player),
-                battingStats = BattingStatsFrom(player)
+                battingStats = BattingStatsFrom(player),
+                bowlingStats = BowlingStatsFrom(player)
             };
+        }
+
+        private static StatsDataV1 BowlingStatsFrom(Player player)
+        {
+            return new StatsDataV1()
+            {
+                statsType = "player bowling",
+                gridOptions = new AGGridOptions()
+                {
+                    columnDefs = BowlingStatsRowData.WithColumns(
+                        BowlingStatsRowData.MatchType,
+                        BowlingStatsRowData.MatchesPlayed,
+                        BowlingStatsRowData.BowlingAverage,
+                        BowlingStatsRowData.WicketsTaken,
+                        BowlingStatsRowData.Economy,
+                        BowlingStatsRowData.Fivefers,
+                        BowlingStatsRowData.StrikeRate,
+                        BowlingStatsRowData.OversBowled,
+                        BowlingStatsRowData.RunsConceded,
+                        BowlingStatsRowData.BestBowlingFigures),
+                    rowData = BuildBowlingRows(player, b => Format((MatchType)b.MatchTypeID),
+                        new[] { "League", "Tour", "Friendly", "T20" }),
+                    footerRow = new BowlingStatsRowData(player, s => true, "Total")
+                }
+            };
+
         }
 
         private static StatsDataV1 BattingStatsFrom(Player player)
@@ -140,8 +176,8 @@ namespace api.model
                 {
                     columnDefs = BattingStatsRowData.WithColumns(
                         BattingStatsRowData.MatchType,
-                        BattingStatsRowData.BattingPosition,
                         BattingStatsRowData.MatchesPlayed,
+                        BattingStatsRowData.BattingPosition,
                         BattingStatsRowData.Innings,
                         BattingStatsRowData.NotOuts,
                         BattingStatsRowData.RunsScored,
@@ -154,8 +190,9 @@ namespace api.model
                         BattingStatsRowData.CatchesTaken,
                         BattingStatsRowData.Stumpings,
                         BattingStatsRowData.RunOuts),
-                    rowData = BuildRows(player, b => Format((MatchType)b.MatchTypeID),
-                        new[] { "League", "Tour", "Friendly", "T20" })
+                    rowData = BuildBattingRows(player, b => Format((MatchType)b.MatchTypeID),
+                        new[] { "League", "Tour", "Friendly", "T20" }),
+                    footerRow = new BattingStatsRowData(player, s => true, "Total")
                 }
             };
         }
@@ -179,12 +216,13 @@ namespace api.model
             }
         }
 
-        private static List<object> BuildRows(Player player, Func<IStatsEntryData, string> keyAccessor, IEnumerable<string> partitions)
+        private static List<object> BuildBattingRows(Player player, Func<IStatsEntryData, string> keyAccessor, IEnumerable<string> partitions)
         {
-            return partitions.Select(p =>
-            {
-                return new BattingStatsRowData(player, s => keyAccessor(s) == p, p);
-            }).Cast<object>().ToList();
+            return partitions.Select(p => new BattingStatsRowData(player, s => keyAccessor(s) == p, p)).Cast<object>().ToList();
+        }
+        private static List<object> BuildBowlingRows(Player player, Func<IStatsEntryData, string> keyAccessor, IEnumerable<string> partitions)
+        {
+            return partitions.Select(p => new BowlingStatsRowData(player, s => keyAccessor(s) == p, p)).Cast<object>().ToList();
         }
     }
 

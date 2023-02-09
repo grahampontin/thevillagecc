@@ -12,5 +12,7 @@ namespace api.model
     {
         public List<StatsColumnDefinitionV1> columnDefs { get; set; }
         public List<object> rowData { get; set; }
+        
+        public object footerRow { get; set; }
     }
 }

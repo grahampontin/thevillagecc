@@ -14,6 +14,8 @@
     <title>The Village Cricket Club Online | Squad | <%= PlayerName %></title>
     <CC:Styles runat="server" ID="styles"></CC:Styles>
 
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+    
     <script src="Resources/jQuery/jquery-3.6.0.min.js"></script>
     <script src="Script/jqplot/jquery.jqplot.min.js" type="text/javascript"></script>
     <script src="Script/jqplot/plugins/jqplot.barRenderer.min.js" type="text/javascript"></script>
@@ -27,10 +29,12 @@
     <script src="Script/purl.js"></script>
     <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <script src="Script/agGrid/linkToPlayerStatsRenderer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="Script/player-detail.js" type="text/javascript"></script>
 
 
     <link href="/CSS/jqplot/jquery.jqplot.min.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="/CSS/ag-grid-custom.css" rel="stylesheet" type="text/css" media="screen"/>
 
 
     <script language="javascript">
@@ -158,11 +162,14 @@
                                     <div class="">
                                         Batting and Fielding
                                     </div>
-                                    <div id="careerBattingStatsGrid" class="ag-theme-balham player-detail-grid"></div>
+                                    <div id="careerBattingStatsGrid" class="ag-theme-material player-detail-grid mb-3"></div>
+                                    <div>
+                                      <canvas id="careerBattingChart"></canvas>
+                                    </div>
                                     <div class="">
                                         Bowling
                                     </div>
-                                    <div id="careerBowlingStatsGrid" class="ag-theme-balham player-detail-grid"></div>
+                                    <div id="careerBowlingStatsGrid" class="ag-theme-material player-detail-grid"></div>
                                 </div>
                             </div>
                         </div>
