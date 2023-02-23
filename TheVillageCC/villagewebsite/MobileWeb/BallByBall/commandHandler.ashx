@@ -137,6 +137,10 @@ public class CommandHandler : IHttpHandler
                     var playerDetailV1 = StatsProvider.QueryPlayer(playerId);
                     context.Response.Write(javaScriptSerializer.Serialize(playerDetailV1));
                     return;
+                case "loadChart":
+                    var chartRequest = javaScriptSerializer.Deserialize<ChartRequestV1>(
+                        javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
+                    var chartData = StatsProvider.BuildChartData(chartRequest.playerId, chartRequest.chartType);
                 default:
                 {
                     var match = new Match(genericBallByBallCommand.matchId);
@@ -388,6 +392,12 @@ public class CommandHandler : IHttpHandler
     {
         get { return false; }
     }
+}
+
+public class ChartRequestV1
+{
+    public int playerId { get; set; }
+    public string chartType { get; set; }
 }
 
 

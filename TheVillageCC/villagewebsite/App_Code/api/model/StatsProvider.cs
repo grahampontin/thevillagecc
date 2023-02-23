@@ -224,6 +224,11 @@ namespace api.model
         {
             return partitions.Select(p => new BowlingStatsRowData(player, s => keyAccessor(s) == p, p)).Cast<object>().ToList();
         }
+
+        public static ChartJsConfig BuildChartData(int playerId, string chartType)
+        {
+            
+        }
     }
 
     public class PlayerDetailV1
