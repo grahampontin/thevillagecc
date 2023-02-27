@@ -11,10 +11,10 @@
     <title>Access Denied</title>
 </head>
 <body>
-    <form id="form1" runat="server">
+<form id="form1" runat="server">
     <div>
         You are not authorised to view this page. Please consult the webmaster.
     </div>
-    </form>
+</form>
 </body>
 </html>

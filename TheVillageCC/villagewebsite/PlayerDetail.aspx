@@ -36,70 +36,19 @@
     <link href="/CSS/jqplot/jquery.jqplot.min.css" rel="stylesheet" type="text/css" media="screen"/>
     <link href="/CSS/ag-grid-custom.css" rel="stylesheet" type="text/css" media="screen"/>
     <link href="/CSS/chart-js-custom.css" rel="stylesheet" type="text/css" media="screen"/>
-
-
-    <script language="javascript">
-       
-        $(function () {
-            // $('#fromDate').datetimepicker({
-            //     defaultDate: new Date(new Date().getUTCFullYear(), 3, 1),
-            //     format: 'DD MMMM YYYY'
-            // });
-            // $('#toDate').datetimepicker({
-            //     defaultDate: new Date(new Date().getUTCFullYear()+1, 3, 1),
-            //     format: 'DD MMMM YYYY'
-            // });
-
-            $(".StatsTable tr:last").addClass('Bold');
-            $("#FilterButton").button();
-            $("#battingChartSelect").change(onBattingSelectChange);
-            $("#bowlingChartSelect").change(onBowlingSelectChange);
-        });
-
-        function LoadBattingGraph(playerId, chartName) 
-        {
-            $('#battingChart').html('');
-            $('#battingChartLoading').show();
-            $.post('/ChartRendererAJAX.aspx', { 'chartName': chartName, 'playerid' : playerId }, function(data) {
-                $('#battingChart').html(data);
-                $('#battingChartLoading').hide();
-            });
-        }
-        
-        function LoadBowlingGraph(playerId, chartName) 
-        {
-            $('#bowlingChart').html('');
-            $('#bowlingChartLoading').show();
-            $.post('/ChartRendererAJAX.aspx', { 'chartName': chartName, 'playerid' : playerId }, function(data) {
-                $('#bowlingChart').html(data);
-                $('#bowlingChartLoading').hide();
-            });
-        }
-
-        function onBattingSelectChange(){
-            var selected = $("#battingChartSelect option:selected");    
-            if(selected.val() != 0){
-                LoadBattingGraph(<%= p.Id %>, selected.val());
-            }
-        }
-        function onBowlingSelectChange(){
-            var selected = $("#bowlingChartSelect option:selected");    
-            if(selected.val() != 0){
-                LoadBowlingGraph(<%= p.Id %>, selected.val());
-            }
-        }
-
-    </script>
 </head>
 <body>
-<div class="container">
+<div class="">
     <!-- Head -->
     <CC:Header ID="Header1" runat="server"></CC:Header>
     <!-- End Head -->
+    <div class="d-lg-none" style="height: 10em; background-color: #0a53be">
+
+    </div>
     <main class="container">
         <form id="form1" runat="server" class="form-horizontal">
             <div class="d-flex">
-                <div style="width: 230px">
+                <div class="d-none d-lg-block me-4" style="width: 230px">
                     <%-- left gutter    --%>
                     <div class="card" style="width: 230px;">
                         <div class="m-1">
@@ -110,7 +59,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex-fill ms-4">
+                <div class="flex-fill">
                     <nav class="d-none d-md-block">
                         <div class="nav nav-pills nav-justified" id="pills-tab" role="tablist">
                             <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Overview</button>
@@ -161,6 +110,7 @@
                                         Career Stats
                                     </h5>
                                     <div class="">
+                                        <hr/>
                                         Batting and Fielding
                                     </div>
                                     <div id="careerBattingStatsGrid" class="ag-theme-material player-detail-grid mb-3"></div>
@@ -180,24 +130,27 @@
                                         </div>
                                         <canvas id="careerBattingChart"></canvas>
                                     </div>
-                                    <div class="">
+                                    <div class="mt-3">
+                                    <hr/>
                                         Bowling
                                     </div>
-                                    <div id="careerBowlingStatsGrid" class="ag-theme-material player-detail-grid"></div>
-                                    <div class="btn-group dropend" id="bowlingChartSelector">
-                                        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                            ....
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a class="dropdown-item bowling-chart-link" chart-id="wicketsBySeason">Wickets by Season</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item bowling-chart-link" chart-id="averageBySeason">Average by Season</a>
-                                            </li>
-                                        </ul>
+                                    <div id="careerBowlingStatsGrid" class="ag-theme-material player-detail-grid mb-3"></div>
+                                    <div class="stats-chart">
+                                        <div class="btn-group dropend" id="bowlingChartSelector">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                ....
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item bowling-chart-link" chart-id="wicketsBySeason">Wickets by Season</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item bowling-chart-link" chart-id="averageBySeason">Average by Season</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <canvas id="careerBowlingChart"></canvas>
                                     </div>
-                                    <canvas id="careerBowlingChart"></canvas>
                                 </div>
                             </div>
                         </div>

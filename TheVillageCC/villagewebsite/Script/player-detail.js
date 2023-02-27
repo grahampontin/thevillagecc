@@ -74,29 +74,34 @@ function loadChart(chartType, target, playerId, chartLoadedCallback, chartCreate
 
 function playerDetailLoaded(data) {
     //do stuff
-    new agGrid.Grid($("#careerBattingStatsGrid")[0], gridOptions);
-    gridOptions.api.setRowData(data.battingStats.gridOptions.rowData);
-    gridOptions.api.setPinnedBottomRowData([data.battingStats.gridOptions.footerRow]);
-    gridOptions.api.setColumnDefs(data.battingStats.gridOptions.columnDefs);
+    new agGrid.Grid($("#careerBattingStatsGrid")[0], battingGridOptions);
+    battingGridOptions.api.setRowData(data.battingStats.gridOptions.rowData);
+    battingGridOptions.api.setPinnedBottomRowData([data.battingStats.gridOptions.footerRow]);
+    battingGridOptions.api.setColumnDefs(data.battingStats.gridOptions.columnDefs);
 
-    new agGrid.Grid($("#careerBowlingStatsGrid")[0], gridOptions);
-    gridOptions.api.setRowData(data.bowlingStats.gridOptions.rowData);
-    gridOptions.api.setPinnedBottomRowData([data.bowlingStats.gridOptions.footerRow]);
-    gridOptions.api.setColumnDefs(data.bowlingStats.gridOptions.columnDefs);
+    new agGrid.Grid($("#careerBowlingStatsGrid")[0], bowlingGridOptions);
+    bowlingGridOptions.api.setRowData(data.bowlingStats.gridOptions.rowData);
+    bowlingGridOptions.api.setPinnedBottomRowData([data.bowlingStats.gridOptions.footerRow]);
+    bowlingGridOptions.api.setColumnDefs(data.bowlingStats.gridOptions.columnDefs);
 
     resizeGrids();
 }
 
-function resizeGrids() {
-    $("#careerBattingStatsGrid").height((gridOptions.api.getDisplayedRowCount() + 2) * 50);
-    $("#careerBowlingStatsGrid").height((gridOptions.api.getDisplayedRowCount() + 2) * 50);
-    if (window.innerWidth < 990) {
-        const allColumnIds = [];
-        gridOptions.columnApi.getColumns().forEach((column) => {
-            allColumnIds.push(column.getId());
-        });
+function resizeForOptions(options) {
+    const allColumnIds = [];
+    options.columnApi.getColumns().forEach((column) => {
+        allColumnIds.push(column.getId());
+    });
 
-        gridOptions.columnApi.autoSizeColumns(allColumnIds, false);
+    options.columnApi.autoSizeColumns(allColumnIds, false);
+}
+
+function resizeGrids() {
+    $("#careerBattingStatsGrid").height((battingGridOptions.api.getDisplayedRowCount() + 2) * 50);
+    $("#careerBowlingStatsGrid").height((bowlingGridOptions.api.getDisplayedRowCount() + 2) * 50);
+    if (window.innerWidth < 990) {
+        resizeForOptions(battingGridOptions);
+        resizeForOptions(bowlingGridOptions);
     }
 }
 
@@ -104,26 +109,26 @@ $(window).resize(function () {
     resizeGrids();
 });
 
-const gridOptions = {
-    defaultColDef: {
-        resizable: false,
-        sortable: true,
-        flex: 1,
-        filter: false
-    },
-    columnDefs: null,
-    rowData: null,
-    suppressColumnVirtualisation: true,
-    components: {
-        // 'countryCellRenderer' is mapped to class CountryCellRenderer
-        LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-    },
-    getRowStyle: (params) => {
-        if (params.node.rowPinned) {
-            return {'font-weight': 'bold'};
+function makeDefaultGridOptions() {
+    return {
+        defaultColDef: {
+            resizable: false,
+            sortable: true,
+            flex: 1,
+            filter: false
+        },
+        columnDefs: null,
+        rowData: null,
+        suppressColumnVirtualisation: true,
+        components: {
+            // 'countryCellRenderer' is mapped to class CountryCellRenderer
+            LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
         }
-    }
-};
+    };
+}
+
+const battingGridOptions = makeDefaultGridOptions();
+const bowlingGridOptions = makeDefaultGridOptions();
 
 function showError(text) {
     $("#errorModal .modal-body p").text(text);
