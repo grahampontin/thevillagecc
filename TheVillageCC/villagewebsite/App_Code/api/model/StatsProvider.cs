@@ -12,7 +12,6 @@ namespace api.model
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-
     public class StatsProvider
     {
         public static StatsDataV1 Query(StatsQueryV1 query)
@@ -72,7 +71,8 @@ namespace api.model
                     columns = TeamStatsRowData.ColumnDefinitions;
                     break;
                 case "venues":
-                    var inScopeVenues = Venue.GetAll().Select(a => a.GetStats(query.from, query.to, matchTypes)).Where(a => a.GetMatchesPlayed() > 0).ToList();
+                    var inScopeVenues = Venue.GetAll().Select(a => a.GetStats(query.from, query.to, matchTypes))
+                        .Where(a => a.GetMatchesPlayed() > 0).ToList();
                     rows = inScopeVenues.Select(t => new VenueStatsRowData(t)).Cast<object>().ToList();
                     columns = VenueStatsRowData.ColumnDefinitions;
                     break;
@@ -91,7 +91,6 @@ namespace api.model
                     rows = matchStatsList.Select(t => new MatchStatsRowData(t)).Cast<object>().ToList();
                     columns = MatchStatsRowData.ColumnDefinitions;
                     break;
-                
             }
 
             return new StatsDataV1()
@@ -164,7 +163,6 @@ namespace api.model
                     footerRow = new BowlingStatsRowData(player, s => true, "Total")
                 }
             };
-
         }
 
         private static StatsDataV1 BattingStatsFrom(Player player)
@@ -216,18 +214,37 @@ namespace api.model
             }
         }
 
-        private static List<object> BuildBattingRows(Player player, Func<IStatsEntryData, string> keyAccessor, IEnumerable<string> partitions)
+        private static List<object> BuildBattingRows(Player player, Func<IStatsEntryData, string> keyAccessor,
+            IEnumerable<string> partitions)
         {
-            return partitions.Select(p => new BattingStatsRowData(player, s => keyAccessor(s) == p, p)).Cast<object>().ToList();
+            return partitions.Select(p => new BattingStatsRowData(player, s => keyAccessor(s) == p, p)).Cast<object>()
+                .ToList();
         }
-        private static List<object> BuildBowlingRows(Player player, Func<IStatsEntryData, string> keyAccessor, IEnumerable<string> partitions)
+
+        private static List<object> BuildBowlingRows(Player player, Func<IStatsEntryData, string> keyAccessor,
+            IEnumerable<string> partitions)
         {
-            return partitions.Select(p => new BowlingStatsRowData(player, s => keyAccessor(s) == p, p)).Cast<object>().ToList();
+            return partitions.Select(p => new BowlingStatsRowData(player, s => keyAccessor(s) == p, p)).Cast<object>()
+                .ToList();
         }
 
         public static ChartJsConfig BuildChartData(int playerId, string chartType)
         {
-            
+            switch (chartType)
+            {
+                //Batting
+                case "battingTimeline":
+                    return ChartBuilder.BuildBattingTimelineChart(playerId);
+                case "modesOfDismissal":
+                    return ChartBuilder.BuildModeOfDismissalChart(playerId);
+                //Bowling
+                case "wicketsBySeason":
+                    return ChartBuilder.BuildWicketsBySeasonChart(playerId);
+                case "averageBySeason":
+                    return ChartBuilder.BuildAverageBySeasonChart(playerId);
+                default:
+                    throw new Exception("Chart " + chartType + " not supported");
+            }
         }
     }
 

@@ -1,7 +1,33 @@
-﻿$(function () {
+﻿var playerId;
+var battingChart;
+var bowlingChart;
+
+function loadBattingChart(chartType) {
+    loadChart(chartType, "careerBattingChart", playerId, function (data) {
+        $("#battingChartSelector > button").text(data.options.plugins.title.text);
+        if (battingChart !== undefined) {
+            battingChart.destroy();
+        }
+    }, function (chart) {
+        battingChart = chart;
+    });
+}
+function loadBowlingChart(chartType) {
+    loadChart(chartType, "careerBowlingChart", playerId, function (data) {
+        $("#bowlingChartSelector > button").text(data.options.plugins.title.text);
+        if (bowlingChart !== undefined) {
+            bowlingChart.destroy();
+        }
+    }, function (chart) {
+        bowlingChart = chart;
+    });
+}
+
+$(function () {
+    playerId =  $.url().param('playerid')
     var postData = {
         'command': "getPlayerDetail",
-        "matchId": $.url().param('playerid')
+        "matchId": playerId
     }
 
     $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
@@ -11,29 +37,40 @@
         .fail(function (data) {
             showError(data.responseText);
         });
-
-    const ctx = document.getElementById("careerBattingChart");
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
+    loadBattingChart("battingTimeline");
+    loadBowlingChart("wicketsBySeason");
+    
+    $(".batting-chart-link").click(function (){
+        loadBattingChart($(this).attr("chart-id")); 
+    });
+    $(".bowling-chart-link").click(function (){
+        loadBowlingChart($(this).attr("chart-id")); 
     });
 
 });
+
+function loadChart(chartType, target, playerId, chartLoadedCallback, chartCreatedCallback) {
+    var postData = {
+        'command': "loadChart",
+        'payload' : {
+            playerId : playerId,
+            chartType : chartType
+        }
+    }
+    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+        //success
+        var chartContainer = $("#"+target);
+        chartContainer.removeClass("mx-auto");
+        const ctx = document.getElementById(target);
+        chartLoadedCallback(data);
+        var chart = new Chart(ctx, data);
+        chartContainer.addClass("mx-auto");
+        chartCreatedCallback(chart);
+    }, 'json')
+        .fail(function (data) {
+            showError(data.responseText);
+        });
+}
 
 function playerDetailLoaded(data) {
     //do stuff

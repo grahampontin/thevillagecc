@@ -14,8 +14,8 @@
     <title>The Village Cricket Club Online | Squad | <%= PlayerName %></title>
     <CC:Styles runat="server" ID="styles"></CC:Styles>
 
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
-    
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"/>
+
     <script src="Resources/jQuery/jquery-3.6.0.min.js"></script>
     <script src="Script/jqplot/jquery.jqplot.min.js" type="text/javascript"></script>
     <script src="Script/jqplot/plugins/jqplot.barRenderer.min.js" type="text/javascript"></script>
@@ -35,6 +35,7 @@
 
     <link href="/CSS/jqplot/jquery.jqplot.min.css" rel="stylesheet" type="text/css" media="screen"/>
     <link href="/CSS/ag-grid-custom.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="/CSS/chart-js-custom.css" rel="stylesheet" type="text/css" media="screen"/>
 
 
     <script language="javascript">
@@ -163,13 +164,40 @@
                                         Batting and Fielding
                                     </div>
                                     <div id="careerBattingStatsGrid" class="ag-theme-material player-detail-grid mb-3"></div>
-                                    <div>
-                                      <canvas id="careerBattingChart"></canvas>
+                                    <div class="stats-chart">
+                                        <div class="btn-group dropend" id="battingChartSelector">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                ....
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item batting-chart-link" chart-id="battingTimeline">Batting Timeline</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item batting-chart-link" chart-id="modesOfDismissal">Modes of Dismissal</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <canvas id="careerBattingChart"></canvas>
                                     </div>
                                     <div class="">
                                         Bowling
                                     </div>
                                     <div id="careerBowlingStatsGrid" class="ag-theme-material player-detail-grid"></div>
+                                    <div class="btn-group dropend" id="bowlingChartSelector">
+                                        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            ....
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item bowling-chart-link" chart-id="wicketsBySeason">Wickets by Season</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item bowling-chart-link" chart-id="averageBySeason">Average by Season</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <canvas id="careerBowlingChart"></canvas>
                                 </div>
                             </div>
                         </div>

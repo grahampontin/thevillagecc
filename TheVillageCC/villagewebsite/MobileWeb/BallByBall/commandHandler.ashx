@@ -141,6 +141,9 @@ public class CommandHandler : IHttpHandler
                     var chartRequest = javaScriptSerializer.Deserialize<ChartRequestV1>(
                         javaScriptSerializer.Serialize(genericBallByBallCommand.payload));
                     var chartData = StatsProvider.BuildChartData(chartRequest.playerId, chartRequest.chartType);
+                    context.Response.Write(javaScriptSerializer.Serialize(chartData));
+                    return;
+                                        
                 default:
                 {
                     var match = new Match(genericBallByBallCommand.matchId);
