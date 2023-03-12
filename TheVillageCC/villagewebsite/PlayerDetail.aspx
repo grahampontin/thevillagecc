@@ -42,31 +42,66 @@
     <!-- Head -->
     <CC:Header ID="Header1" runat="server"></CC:Header>
     <!-- End Head -->
-    <div class="d-lg-none" style="height: 10em; background-color: #0a53be">
-
+    <div class="d-lg-none" style="background-image: url('Images/newCarousel/slide1.jpg'); background-position: 50%; background-size: cover; background-repeat: no-repeat;">
+        <div>
+            <div class="d-flex justify-content-between align-items-center" style=" backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px)">
+                <div style="color: white" class="ps-2">
+                    <h5><%= p.FirstName %> <%= p.Surname %></h5>
+                    <div>Top Order Batsman</div>
+                    <div>Seasons 2003 - 2022</div>
+                </div>
+                <div class="justify-content-flex-end">
+                    <img src="Images/player_profiles/1.png"/>
+                </div>
+            </div>
+        </div>
     </div>
+    <nav class="d-block d-lg-none">
+        <div class="nav nav-pills nav-justified underline-nav" id="pills-tab" role="tablist">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Overview</button>
+            <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Stats</button>
+            <button class="nav-link" id="matches-tab" data-bs-toggle="tab" data-bs-target="#matches" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Matches</button>
+        </div>
+    </nav>
+
     <main class="container">
         <form id="form1" runat="server" class="form-horizontal">
             <div class="d-flex">
-                <div class="d-none d-lg-block me-4" style="width: 230px">
+                <div class="d-none d-lg-block me-4 mt-3" style="width: 230px">
                     <%-- left gutter    --%>
-                    <div class="card" style="width: 230px;">
-                        <div class="m-1">
-                            <asp:Image ID="PlayerImage" Width="220" runat="server"></asp:Image>
-                        </div>
-                        <div class="card-body">
+                    <div class="card" style="width: 230px; background-image: url('Images/newCarousel/slide1.jpg'); background-position: 50%; background-size: cover; background-repeat: no-repeat;">
+
+                        <div class="card-body pb-0 pe-0" style="backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px)">
                             <h5 class="card-title"><%= p.Name %></h5>
+                            <h6 >Top Order Batsman</h6>
+                            <div class="ms-auto" style="text-align: end" >
+                                <img src="Images/player_profiles/1.png"/>
+                            </div>
+                        </div>
+                        <div class="bg-primary p-1 ps-3" style="border-bottom-left-radius: var(--bs-card-border-radius); border-bottom-right-radius: var(--bs-card-border-radius)">
+                            <h5 class="text-white">Seasons 2003 - 2022</h5>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+
+                        <div class="card-body">
+                            <h5 class="card-title">Other Players</h5>
+                            
                         </div>
                     </div>
                 </div>
                 <div class="flex-fill">
-                    <nav class="d-none d-md-block">
-                        <div class="nav nav-pills nav-justified" id="pills-tab" role="tablist">
-                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Overview</button>
-                            <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Stats</button>
-                            <button class="nav-link" id="matches-tab" data-bs-toggle="tab" data-bs-target="#matches" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Matches</button>
+                    <div class="card mt-3 d-none d-lg-block">
+                        <div class="card-body pt-0 pb-0">
+                            <nav class="">
+                                <div class="nav nav-pills nav-justified underline-nav-2 " id="pills-tab" role="tablist">
+                                    <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Overview</button>
+                                    <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Stats</button>
+                                    <button class="nav-link" id="matches-tab" data-bs-toggle="tab" data-bs-target="#matches" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Matches</button>
+                                </div>
+                            </nav>
                         </div>
-                    </nav>
+                    </div>
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="overview">
                             <div class="card mt-3">
@@ -76,7 +111,7 @@
                                             <strong>Full Name: </strong><br/><span class="text-nowrap"><%= p.FullName %></span>
                                         </div>
                                         <div class="col">
-                                            <strong>Born: </strong><br/><%= p.Dob %>
+                                            <strong>Born: </strong><br/><%= p.Dob.ToString("dd MMM yyyy") %>
                                         </div>
                                         <div class="col">
                                             <strong>Current Age: </strong>
@@ -97,10 +132,6 @@
                                             <strong>Caps: </strong><br/><%= p.Caps %>
                                         </div>
                                     </div>
-                                    <div class="">
-                                        <%= p.Bio %>
-                                    </div>
-
                                 </div>
                             </div>
                             <div class="card mt-3">
@@ -131,7 +162,7 @@
                                         <canvas id="careerBattingChart"></canvas>
                                     </div>
                                     <div class="mt-3">
-                                    <hr/>
+                                        <hr/>
                                         Bowling
                                     </div>
                                     <div id="careerBowlingStatsGrid" class="ag-theme-material player-detail-grid mb-3"></div>
@@ -181,9 +212,9 @@
             </div>
         </div>
     </main>
-    <!-- Footer -->
-    <CC:Footer ID="Footer1" runat="server"/>
-    <!-- ENd Footer -->
-</div>
+
+</div><!-- Footer -->
+<CC:Footer ID="Footer1" runat="server"/>
+<!-- ENd Footer -->
 </body>
 </html>

@@ -1,7 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="Head.ascx.cs" Inherits="UserControls_Head" %>
 
 
-<header class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: #2e8b57">
+<header class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: var(--bs-primary)">
     <div class="container-fluid">
         <a class="navbar-brand" href="#" style="padding: 0">
             <div style="    

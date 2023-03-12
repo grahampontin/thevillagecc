@@ -1,6 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="Styles.ascx.cs" Inherits="UserControls_Styles" %>
     <!-- Bootstrap core CSS -->
-       <link href="./Resources/bootstrap-5.0.2-dist/css/bootstrap.min.css" rel="stylesheet">
+       <link href="../CSS/bootstrap-custom.min.css" rel="stylesheet">
+       <%-- <link href="../Resources/bootstrap-5.0.2-dist/css/bootstrap.min.css" rel="stylesheet"> --%>
    
        <!-- https://material.io/resources/icons/?style=baseline -->
        <link href="https://fonts.googleapis.com/css2?family=Material+Icons"

@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="Footer.ascx.cs" Inherits="UserControls_Footer" %>
-<nav class="navbar bottom navbar-light bg-light container" id="pageFooter">
+<nav class="navbar bottom navbar-light bg-light" id="pageFooter">
     <div class="container-fluid">
     <p class="float-end">
             <a href="#">Back to top</a>
@@ -16,4 +16,4 @@
     </div>
     
 </nav>
-<script src="./Resources/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"></script>
+<script src="../Resources/bootstrap-5.3.0-alpha1-dist/js/bootstrap.bundle.js"></script>

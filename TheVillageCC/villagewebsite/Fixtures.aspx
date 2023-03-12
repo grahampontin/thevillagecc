@@ -23,7 +23,7 @@
                 var h = d[g]('body')[0];h.appendChild(s); }})();
     </script>
 
-<div class="container">
+<div class="">
     <!-- Head -->
     <CC:Header ID="Header1" runat=server />
     <!-- End Head -->

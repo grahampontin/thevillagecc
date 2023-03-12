@@ -25,3 +25,30 @@
 .show-only-if-match-not-tied {
 }
 
+.underline-nav {
+    background-color: var(--bs-primary);
+}
+
+.underline-nav > .nav-link {
+    color: white;
+    border-radius: 0;
+}
+
+.underline-nav > .active {
+    border-bottom: solid 5px white;
+    background-color: var(--bs-primary) !important;
+}
+
+.underline-nav-2 > .nav-link {
+    background-color: white;
+    color: var(--bs-primary) !important;
+    border-radius: 0;
+}
+
+.underline-nav-2 > .active {
+    border-bottom: solid 5px var(--bs-primary);
+    background-color: white !important;
+}
+
+
+

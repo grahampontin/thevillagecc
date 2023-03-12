@@ -19,12 +19,12 @@ function loadStats(category, successCallback) {
         }
 
     };
-    
+
     $('#filterButton').hide();
     $('#loadingButton').show();
     $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
         //success
-        successCallback(data); 
+        successCallback(data);
         $('#filterButton').show();
         $('#loadingButton').hide();
     }, 'json')
@@ -88,9 +88,8 @@ function renderStatsTable(data) {
     data.gridOptions.columnDefs[0].sort = "asc";
     data.gridOptions.columnDefs[0].filter = "agTextColumnFilter";
     gridOptions.api.setColumnDefs(data.gridOptions.columnDefs);
-    
 
-    
+
     resizeGrids();
 }
 
@@ -99,7 +98,7 @@ function resizeGrids() {
     $(".stats-grid").each(function (i) {
         $(this).height(window.innerHeight - $(this).position().top - $("#pageFooter").height() - 20);
     });
-    if (window.innerWidth < 990){
+    if (window.innerWidth < 990 && gridOptions.columnApi != undefined) {
         const allColumnIds = [];
         gridOptions.columnApi.getColumns().forEach((column) => {
             allColumnIds.push(column.getId());
@@ -122,9 +121,9 @@ $(function () {
     filterPanel.addEventListener('shown.bs.collapse', function () {
         resizeGrids();
     })
-    
+
     var currentYear = new Date().getFullYear();
-    $("#fromDate").val(currentYear-30 + "-01-01");
+    $("#fromDate").val(currentYear - 30 + "-01-01");
     $("#toDate").val(currentYear + "-12-31");
 
     loadStats("batting", renderStatsTable);
@@ -136,18 +135,18 @@ $(function () {
         loadStats(statsType, renderStatsTable);
     });
 
-    $('button[data-bs-toggle="tab"]').each(function (){
+    $('button[data-bs-toggle="tab"]').each(function () {
         this.addEventListener('shown.bs.tab', function (event) {
-            if ($($(event.target).attr("data-bs-target")).children(".stats-grid").children().length === 0){
+            if ($($(event.target).attr("data-bs-target")).children(".stats-grid").children().length === 0) {
                 var statsType = $(".nav-link.active").text().toLowerCase();
                 loadStats(statsType, renderStatsTable);
             } else {
                 resizeGrids();
             }
-        });    
+        });
     })
-    
-    
+
+
 });
 
 function reloadTab(tab) {

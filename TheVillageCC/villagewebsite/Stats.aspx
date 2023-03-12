@@ -23,21 +23,22 @@
 
 </head>
 <body>
-<div class="container">
+<div class="">
     <!-- Head -->
     <CC:Header ID="Header1" runat=server></CC:Header>
     <!-- End Head -->
     <main class="container">
         <form runat=server id=StatsForm class="form-horizontal">
             <H1>Club Statistics</H1>
-            <div class="accordian">
+
+            <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                             Filter Statistics
                         </button>
                     </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
 
                             <div class="d-flex flex-wrap">
@@ -99,33 +100,22 @@
 
 
                         </div>
+
                     </div>
                 </div>
+
+
             </div>
             <div id="tabFlexContainer">
-                <ul id="tabs" class="nav nav-pills nav-fill p-2 mt-2 bg-light" role="tablist">
-                    <li class="nav-item">
-                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#Batting" type="button" role="tab" data-toggle="tab">Batting</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Bowling" type="button" role="tab" data-toggle="tab">Bowling</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Teams" type="button" role="tab" data-toggle="tab">Teams</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Venues" type="button" role="tab" data-toggle="tab">Venues</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Captains" type="button" role="tab" data-toggle="tab">Captains</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Keepers" type="button" role="tab" data-toggle="tab">Keepers</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Matches" type="button" role="tab" data-toggle="tab">Matches</button>
-                    </li>
-                </ul>
+                <nav id="tabs" class="nav  nav-pills nav-justified  p-2 mt-2 underline-nav-2" role="tablist">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#Batting" type="button" role="tab" data-toggle="tab">Batting</button>
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Bowling" type="button" role="tab" data-toggle="tab">Bowling</button>
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Teams" type="button" role="tab" data-toggle="tab">Teams</button>
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Venues" type="button" role="tab" data-toggle="tab">Venues</button>
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Captains" type="button" role="tab" data-toggle="tab">Captains</button>
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Keepers" type="button" role="tab" data-toggle="tab">Keepers</button>
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Matches" type="button" role="tab" data-toggle="tab">Matches</button>
+                </nav>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="Batting">
                         <div id="battingGrid" class="ag-theme-balham stats-grid"></div>

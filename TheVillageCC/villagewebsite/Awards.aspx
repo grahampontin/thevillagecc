@@ -16,39 +16,51 @@
 
 </head>
 <body>
-<div class="container">
+<div class="">
 <!-- Head -->
 <CC:Header ID="Header1" runat=server></CC:Header>
 <!-- End Head -->
 <main class="container">
 <h5 class="pt-2">Club Stats</h5>
-<div class="d-flex flex-wrap">
-    <div class="mx-auto" style="white-space: nowrap">
-        Formed: <strong>Feb 2004</strong>
-    </div>
-    <div class="mx-auto" style="white-space: nowrap">
-        Home Ground: <strong>Parliament Hill</strong>
-    </div>
-    <div class="mx-auto" style="white-space: nowrap">
-        Capacity: <strong>250,000 (standing); 5 (seated)</strong>
-    </div>
-</div>
-<hr/>
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex flex-wrap">
+            <div class="mx-auto" style="white-space: nowrap">
+                Formed: <strong>Feb 2004</strong>
+            </div>
+            <div class="mx-auto" style="white-space: nowrap">
+                Home Ground: <strong>Parliament Hill</strong>
+            </div>
+            <div class="mx-auto" style="white-space: nowrap">
+                Capacity: <strong>250,000 (standing); 5 (seated)</strong>
+            </div>
+        </div>
 
-<h5>History</h5>
-<div>
-    <p>
-        The Village Cricket Club is a small club based loosely around its roots in North East London. We were formed in 2004 by a bunch of singularly talentless but enthusiastic cricketers who decided that they wanted to continue their summer pastime beyond the end of their university days.
-    </p>
-    <p>
-        One bizarre meeting in Stamford Hill's Birdcage later, the Village CC was formed and enrolled in the North East London Cricket League which sustained it for its first few seasons.
-    </p>
-    <p>
-        Since then, much has changed, the club has grown and left the league behind, perferring to follow its instincts in the world of friendly London cricket.
-    </p>
-    <p>
-        We play most of our matches in central London but we also make yearly trips to Cambridge, Oxford and the West Country. We are always on the lookout for new members of any ability - enthusiasm for the game is our only selection criteria. You can contact us via the "Join" link up above, or a few of us hang out in the "chat" section when work isn't keeping us too busy.
-    </p>
+    </div>
+
+</div>
+<div class="card mt-3">
+    
+    <div class="card-body">
+        <div class="card-title">
+            <h5>History</h5>
+        </div>
+        
+        <div>
+            <p>
+                The Village Cricket Club is a small club based loosely around its roots in North East London. We were formed in 2004 by a bunch of singularly talentless but enthusiastic cricketers who decided that they wanted to continue their summer pastime beyond the end of their university days.
+            </p>
+            <p>
+                One bizarre meeting in Stamford Hill's Birdcage later, the Village CC was formed and enrolled in the North East London Cricket League which sustained it for its first few seasons.
+            </p>
+            <p>
+                Since then, much has changed, the club has grown and left the league behind, perferring to follow its instincts in the world of friendly London cricket.
+            </p>
+            <p>
+                We play most of our matches in central London but we also make yearly trips to Cambridge, Oxford and the West Country. We are always on the lookout for new members of any ability - enthusiasm for the game is our only selection criteria. You can contact us via the "Join" link up above, or a few of us hang out in the "chat" section when work isn't keeping us too busy.
+            </p>
+        </div>
+    </div>
 </div>
 <hr/>
 

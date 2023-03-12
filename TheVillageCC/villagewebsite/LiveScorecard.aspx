@@ -135,7 +135,7 @@
     <script src="MobileWeb/script/ballbyball.ball.js"></script>
 </head>
 <body>
-<div class="container">
+<div class="">
 <!-- Head -->
 <CC:Header ID="Header1" runat=server></CC:Header>
 <!-- End Head -->

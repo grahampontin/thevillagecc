@@ -25,16 +25,7 @@ public partial class PlayerDetail : System.Web.UI.Page
         //Everything looks good
 
         PlayerName = CurrentPlayer.FirstName + " " + CurrentPlayer.Surname;
-        string imgSrc = "/players/pictures/";
-        if (File.Exists(Server.MapPath(imgSrc + CurrentPlayer.Name.Replace(" ", "_").Replace(",", "").Replace("\"", "") + ".jpg")))
-        {
-            imgSrc = imgSrc + CurrentPlayer.Name.Replace(" ", "_") + ".jpg";
-        }
-        else
-        {
-            imgSrc = imgSrc + "noimage.jpg";
-        }
-        PlayerImage.ImageUrl = imgSrc;
+        
 
     }
 }

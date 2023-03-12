@@ -91,3 +91,9 @@
     margin-top: 7rem;
   }
 }
+
+body {
+  background-color: #f8f8f8 !important;
+  max-width: 1320px;
+  margin: auto;
+}

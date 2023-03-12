@@ -14,7 +14,7 @@
 
 </head>
 <body>
-<div class="container">
+<div class="">
     <!-- Head -->
     <CC:Header ID="Header1" runat=server />
     <!-- End Head -->
