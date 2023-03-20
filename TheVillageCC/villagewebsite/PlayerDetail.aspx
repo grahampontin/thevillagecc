@@ -46,9 +46,9 @@
         <div>
             <div class="d-flex justify-content-between align-items-center" style=" backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px)">
                 <div style="color: white" class="ps-2">
-                    <h5><%= p.FirstName %> <%= p.Surname %></h5>
-                    <div>Top Order Batsman</div>
-                    <div>Seasons 2003 - 2022</div>
+                    <h5 class="player-name"></h5>
+                    <div class="playing-role"></div>
+                    <div>Seasons <span class="debut-season"></span> - <span class="latest-season"></span></div>
                 </div>
                 <div class="justify-content-flex-end">
                     <img src="Images/player_profiles/1.png"/>
@@ -72,14 +72,14 @@
                     <div class="card" style="width: 230px; background-image: url('Images/newCarousel/slide1.jpg'); background-position: 50%; background-size: cover; background-repeat: no-repeat;">
 
                         <div class="card-body pb-0 pe-0" style="backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px)">
-                            <h5 class="card-title"><%= p.Name %></h5>
-                            <h6 >Top Order Batsman</h6>
+                            <h5 class="card-title player-name"></h5>
+                            <h6 class="batting-role"></h6>
                             <div class="ms-auto" style="text-align: end" >
                                 <img src="Images/player_profiles/1.png"/>
                             </div>
                         </div>
                         <div class="bg-primary p-1 ps-3" style="border-bottom-left-radius: var(--bs-card-border-radius); border-bottom-right-radius: var(--bs-card-border-radius)">
-                            <h5 class="text-white">Seasons 2003 - 2022</h5>
+                            <h5 class="text-white">Seasons <span class="debut-season"></span> - <span class="latest-season"></span></h5>
                         </div>
                     </div>
                     <div class="card mt-3">
@@ -108,34 +108,21 @@
                                 <div class="card-body">
                                     <div class="row row-cols-md-2 row-cols-lg-3">
                                         <div class="col">
-                                            <strong>Full Name: </strong><br/><span class="text-nowrap"><%= p.FullName %></span>
+                                            <strong>Batting Style: </strong><span class="player-batting-style"></span>
                                         </div>
                                         <div class="col">
-                                            <strong>Born: </strong><br/><%= p.Dob.ToString("dd MMM yyyy") %>
+                                            <strong>Bowling Style: </strong><span class="player-bowling-style"></span>
                                         </div>
                                         <div class="col">
-                                            <strong>Current Age: </strong>
+                                            <strong>Debut: </strong><span class="player-debut"></span>
                                         </div>
                                         <div class="col">
-                                            <strong>Playing Role: </strong><br/><%= p.PlayingRole %>
-                                        </div>
-                                        <div class="col">
-                                            <strong>Batting Style: </strong><br/><%= p.BattingStyle %>
-                                        </div>
-                                        <div class="col">
-                                            <strong>Bowling Style: </strong><br/><%= p.BowlingStyle %>
-                                        </div>
-                                        <div class="col">
-                                            <strong>Debut: </strong><br/><%= p.Debut.ToString("dd MMM yyyy") %>
-                                        </div>
-                                        <div class="col">
-                                            <strong>Caps: </strong><br/><%= p.Caps %>
+                                            <strong>Caps: </strong><span class="player-caps"></span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card mt-3">
-
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         Career Stats

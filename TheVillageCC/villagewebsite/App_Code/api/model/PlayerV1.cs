@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CricketClubMiddle;
 
 public class PlayerV1
@@ -14,8 +15,11 @@ public class PlayerV1
     public string firstName;
     public string surname;
     public string middleInitials;
+    public string debut;
     public PlayerV1 clubConnection;
     public bool isRightHandBat;
+    public string lastMatchDate;
+    public string playingRole;
 
 
     public static PlayerV1 FromInternal(Player player)
@@ -24,7 +28,7 @@ public class PlayerV1
         {
             playerId = player.Id,
             name = player.FormalName,
-            matches = player.NumberOfMatchesPlayedThisSeason,
+            matches = player.GetMatchesPlayed(),
             shortName = player.Name,
             nickname = player.Nickname,
             battingStyle = player.BattingStyle,
@@ -34,8 +38,37 @@ public class PlayerV1
             surname = player.Surname,
             middleInitials = player.MiddleInitials,
             clubConnection = player.RingerOf==null?null:FromInternal(player.RingerOf),
-            isRightHandBat = player.IsRightHandBat
+            isRightHandBat = player.IsRightHandBat,
+            debut = player.Debut.ToString("o"),
+            lastMatchDate = player.GetBattingStatsByMatch().Select(d=>d.Key.MatchDate).Max().ToString("o"),
+            playingRole = DeterminePlayingRole(player)
         };
 
+    }
+
+    private static string DeterminePlayingRole(Player player)
+    {
+        if (player.GetBattingPosition() <= 3)
+        {
+            return "Top Order Batter";
+        }
+        var averageOversPerMatch = player.GetOversBowled() / player.GetMatchesPlayed();
+
+        if (player.GetBattingPosition() <= 7)
+        {
+            if (averageOversPerMatch > 2)
+            {
+                return averageOversPerMatch < 5 ? "Batting All-rounder" : "Bowling All-rounder";
+            }
+
+            return "Middle-order Batter";
+        }
+
+        if (player.GetBattingPosition() > 7)
+        {
+            return averageOversPerMatch > 3 ? "Bowler" : "Specialist Fielder";
+        }
+
+        return "It's unclear";
     }
 }

@@ -72,7 +72,22 @@ function loadChart(chartType, target, playerId, chartLoadedCallback, chartCreate
         });
 }
 
+function updatePlayerDetails(player) {
+    $(".player-name").text(player.firstName + " " + player.surname);
+    $(".player-caps").text(player.matches);
+    $(".player-batting-style").text(player.isRightHandBat ? "RHB" : "LHB");
+    $(".player-bowling-style").text(player.bowlingStyle);
+    $(".debut-season").text(new Date(player.debut).getFullYear());
+    $(".latest-season").text(new Date(player.lastMatchDate).getFullYear());
+    $(".playing-role").text(player.playingRole);
+    $(".player-debut").text(new Date(player.debut).toDateString());
+}
+
 function playerDetailLoaded(data) {
+    
+
+    updatePlayerDetails(data.player);
+    
     //do stuff
     new agGrid.Grid($("#careerBattingStatsGrid")[0], battingGridOptions);
     battingGridOptions.api.setRowData(data.battingStats.gridOptions.rowData);
