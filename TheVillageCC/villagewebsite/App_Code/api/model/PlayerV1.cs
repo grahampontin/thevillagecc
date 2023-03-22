@@ -40,7 +40,9 @@ public class PlayerV1
             clubConnection = player.RingerOf==null?null:FromInternal(player.RingerOf),
             isRightHandBat = player.IsRightHandBat,
             debut = player.Debut.ToString("o"),
-            lastMatchDate = player.GetBattingStatsByMatch().Select(d=>d.Key.MatchDate).Max().ToString("o"),
+            lastMatchDate = player.GetBattingStatsByMatch()
+                .Select(d=>d.Key.MatchDate)
+                .OrderByDescending(d=>d).FirstOrDefault().ToString("o"),
             playingRole = DeterminePlayingRole(player)
         };
 
@@ -48,6 +50,10 @@ public class PlayerV1
 
     private static string DeterminePlayingRole(Player player)
     {
+        if (player.GetMatchesPlayed() == 0)
+        {
+            return "It's unclear";
+        }
         if (player.GetBattingPosition() <= 3)
         {
             return "Top Order Batter";

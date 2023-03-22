@@ -4,15 +4,17 @@
     <projectFile>villagewebsite</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.vs/TheVillageCC/config/applicationhost.config" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/TheVillageCC/config/applicationhost.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/packages.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/web.config" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/web.config" afterDir="false" />
+    <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="player detail UI mappings">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/PlayerV1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/PlayerV1.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cf9fb7a7d386402696bb58c8c0e1691617a748/d5/8347ee11/Enumerable.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -75,7 +77,23 @@
       <workItem from="1678782644380" duration="503000" />
       <workItem from="1679085764269" duration="1544000" />
       <workItem from="1679148631624" duration="2826000" />
+      <workItem from="1679245784031" duration="6114000" />
     </task>
+    <task id="LOCAL-00001" summary="new bootstrap version">
+      <created>1679246162845</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1679246162845</updated>
+    </task>
+    <task id="LOCAL-00002" summary="player detail UI mappings">
+      <created>1679337012137</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1679337012137</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -96,5 +114,53 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="new bootstrap version" />
+    <MESSAGE value="player detail UI mappings" />
+    <option name="LAST_COMMIT_MESSAGE" value="player detail UI mappings" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx</url>
+          <line>321</line>
+          <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" initialLine="321" containingFunctionPresentation="method 'ProcessRequest'">
+            <startOffsets>
+              <option value="18007" />
+            </startOffsets>
+            <endOffsets>
+              <option value="18047" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx</url>
+          <line>325</line>
+          <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" initialLine="325" containingFunctionPresentation="method 'ProcessRequest'">
+            <startOffsets>
+              <option value="18109" />
+            </startOffsets>
+            <endOffsets>
+              <option value="18139" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx</url>
+          <line>59</line>
+          <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" initialLine="59" containingFunctionPresentation="method 'ProcessRequest'">
+            <startOffsets>
+              <option value="2519" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2778" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
