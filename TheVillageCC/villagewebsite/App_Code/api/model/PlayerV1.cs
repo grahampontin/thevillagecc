@@ -32,7 +32,7 @@ public class PlayerV1
             shortName = player.Name,
             nickname = player.Nickname,
             battingStyle = player.BattingStyle,
-            bowlingStyle = player.BowlingStyle,
+            bowlingStyle = CanonicalBowlingStyle(player.BowlingStyle),
             isActive = player.IsActive,
             firstName = player.FirstName,
             surname = player.Surname,
@@ -46,6 +46,18 @@ public class PlayerV1
             playingRole = DeterminePlayingRole(player)
         };
 
+    }
+
+    private static string CanonicalBowlingStyle(string storedStyle)
+    {
+        var maybeStyle = BowlingStyles.Abbreviations.SingleOrDefault(a =>
+            String.Equals(a, storedStyle, StringComparison.InvariantCultureIgnoreCase));
+        if (maybeStyle != null)
+        {
+            return maybeStyle;
+        }
+
+        return "RM";
     }
 
     private static string DeterminePlayingRole(Player player)

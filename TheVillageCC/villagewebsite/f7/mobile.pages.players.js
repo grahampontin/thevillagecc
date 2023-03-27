@@ -24,6 +24,7 @@ $$(document).on('page:init', '.page[data-name="players"]', function (e) {
         playerBeingEdited.middleInitials = $("#player-middle-initials-input").val();
         playerBeingEdited.isRightHandBat = $('input[name="player-left-right-hand-radio"]:checked').val();
         playerBeingEdited.clubConnection = { playerId: $("#club-connection-select").find('option:selected').attr("playerId") };
+        playerBeingEdited.bowlingStyle = $("#bowling-style-select").find('option:selected').val();
         playerBeingEdited.isActive = $("#player-is-active-checkbox").prop("checked") == true;
         var postData;
         if (playerBeingEdited.playerId != undefined) {
@@ -108,6 +109,9 @@ function listPlayersToEdit() {
                     $("input[name=player-left-right-hand-radio][value=" + playerBeingEdited.isRightHandBat + "]").prop('checked', true);
                     if (playerBeingEdited.clubConnection != undefined) {
                         app.smartSelect.get("#club-connection-smart-select").setValue(playerBeingEdited.clubConnection.playerId);
+                    } 
+                    if (playerBeingEdited.bowlingStyle != undefined) {
+                        app.smartSelect.get("#bowling-style-smart-select").setValue(playerBeingEdited.bowlingStyle);
                     }
                     $("#player-is-active-checkbox").prop('checked', playerBeingEdited.isActive);
                     editPlayerPopup.open();
