@@ -51,7 +51,7 @@
                     <div>Seasons <span class="debut-season"></span> - <span class="latest-season"></span></div>
                 </div>
                 <div class="justify-content-flex-end">
-                    <img src="Images/player_profiles/1.png"/>
+                    <img class="player-image" src="Images/player_profiles/0.png"/>
                 </div>
             </div>
         </div>
@@ -74,8 +74,8 @@
                         <div class="card-body pb-0 pe-0" style="backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px)">
                             <h5 class="card-title player-name"></h5>
                             <h6 class="batting-role"></h6>
-                            <div class="ms-auto" style="text-align: end" >
-                                <img src="Images/player_profiles/1.png"/>
+                            <div class="ms-auto" style="text-align: end">
+                                <img class="player-image" src="Images/player_profiles/0.png"/>
                             </div>
                         </div>
                         <div class="bg-primary p-1 ps-3" style="border-bottom-left-radius: var(--bs-card-border-radius); border-bottom-right-radius: var(--bs-card-border-radius)">
@@ -86,7 +86,7 @@
 
                         <div class="card-body">
                             <h5 class="card-title">Other Players</h5>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -108,16 +108,16 @@
                                 <div class="card-body">
                                     <div class="row row-cols-md-2 row-cols-lg-3">
                                         <div class="col">
-                                            <strong>Batting Style: </strong><span class="player-batting-style"></span>
+                                            <div class="text-nowrap"><strong>Batting Style: </strong><span class="player-batting-style"></span></div>
                                         </div>
                                         <div class="col">
-                                            <strong>Bowling Style: </strong><span class="player-bowling-style"></span>
+                                            <div class="text-nowrap"><strong>Bowling Style: </strong><span class="player-bowling-style"></span></div>
                                         </div>
                                         <div class="col">
-                                            <strong>Debut: </strong><span class="player-debut"></span>
+                                            <div class="text-nowrap"><strong>Debut: </strong><span class="player-debut"></span></div>
                                         </div>
                                         <div class="col">
-                                            <strong>Caps: </strong><span class="player-caps"></span>
+                                           <div class="text-nowrap"><strong>Caps: </strong><span class="player-caps"></span></div>
                                         </div>
                                     </div>
                                 </div>

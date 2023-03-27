@@ -4,26 +4,88 @@
     <projectFile>villagewebsite</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="player detail UI mappings">
+    <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/villagewebsite/Images/player_profiles/0.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/PlayerV1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/PlayerV1.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/StatsProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/StatsProvider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/PlayerDetail.aspx" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/PlayerDetail.aspx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/Script/player-detail.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Script/player-detail.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cf9fb7a7d386402696bb58c8c0e1691617a748/d5/8347ee11/Enumerable.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/012d697e568a41d59a2ca8a5d27c66063a00/87/b424b989/Options.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/012d697e568a41d59a2ca8a5d27c66063a00/ac/d6247055/Chart.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/09/101dbfc0/TeamStats.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/23/096d39be/BattingCard.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/55/671a3587/BattingCardLine.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/7e/cb4f644e/LiveBattingCardEntry.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/8e/4fe22d8d/LiveBattingCard.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/92/e39d9297/BatsmanInningsDetails.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/9b/85bfc560/Venue.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/a3/265fc56e/CaptainStats.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/b4/88eac8ed/LiveScorecard.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/c6/2571a6f7/Match.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/d5/acb6c9d1/Player.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/d5/d97eb2c8/BallByBallMatch.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/ed/b39efcf0/Team.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/038010c94a4340caa3411c8172fb43431ee00/f4/7444bd0c/Match.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/28b7712719954f10990325fa8a4e2f7f8c00/82/50773081/ExtensionMethods.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/90ee3cbb9dbb439fb2a3106cefde0581564d90/8f/5bc57eef/Decimal.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9191934116aa4deb9ba5f6021358b2548a00/c2/83f3bdb2/Wicket.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a0e029a7ccc741c7900faa6b098bbf801e800/68/84a9d0ea/Player.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/bbc40c1337944c96a2c74e081527c53510c00/79/1717f470/Dao.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/daf1e714b3a647b28018e463cdf8c5d810c00/1d/5feb763e/Dao.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Awards.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Awards.aspx.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/CSS/bootstrap-custom.min.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Committee.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Default.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Default.aspx.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Fixtures.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Fixtures.aspx.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/LiveScorecard.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerDetail.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerDetail.aspx.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerImageUploaderAJAX.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerImageUploaderAJAX.aspx.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerProfileAJAX.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerProfileAJAX.aspx.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerProfileEditAJAX.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerProfileEditAJAX.aspx.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-3.3.6-dist/css/bootstrap.min.css.map" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Results.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Stats.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Template.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Tours.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Tours.aspx.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/f7/js/framework7.bundle.min.js.map" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/f7/js/framework7.min.js.map" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/stats/StatsGrid.AJAX.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/stats/StatsGrid.AJAX.aspx.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="NamedScopeManager">
+    <order>
+      <scope name="SASS" />
+    </order>
+  </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2MzuHDJNoiDiNkuQsaJydmWpGFk" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -100,6 +162,7 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -146,19 +209,6 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx</url>
-          <line>59</line>
-          <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" initialLine="59" containingFunctionPresentation="method 'ProcessRequest'">
-            <startOffsets>
-              <option value="2519" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2778" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

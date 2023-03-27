@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Runtime.Remoting;
 using CricketClubDAL;
 using CricketClubDomain;
 using CricketClubMiddle;
@@ -129,15 +133,43 @@ namespace api.model
             }
         }
 
-        public static PlayerDetailV1 QueryPlayer(int playerId)
+        public static PlayerDetailV1 QueryPlayer(int playerId, Func<String, String> pathMapper)
         {
             var player = new Player(playerId);
             return new PlayerDetailV1()
             {
                 player = PlayerV1.FromInternal(player),
                 battingStats = BattingStatsFrom(player),
-                bowlingStats = BowlingStatsFrom(player)
+                bowlingStats = BowlingStatsFrom(player),
+                playerImage = LoadPlayerImage(player, pathMapper)
             };
+        }
+
+        private static string LoadPlayerImage(Player player, Func<string, string> pathMapper)
+        {
+            var filePath = MakeFileName(player.Id, pathMapper);
+            var image = Image.FromFile(File.Exists(filePath) ? filePath : MakeFileName(0, pathMapper));
+
+            return ImageToBase64(image, ImageFormat.Png);
+        }
+
+        private static string MakeFileName(int playerId, Func<string, string> pathMapper)
+        {
+            return pathMapper("/images/player_profiles/"+playerId + ".png");
+        }
+
+        public static string ImageToBase64(Image image, 
+            ImageFormat format)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                // Convert Image to byte[]
+                image.Save(ms, format);
+                byte[] imageBytes = ms.ToArray();
+
+                // Convert byte[] to Base64 String
+                return Convert.ToBase64String(imageBytes);
+            }
         }
 
         private static StatsDataV1 BowlingStatsFrom(Player player)
@@ -200,7 +232,6 @@ namespace api.model
             switch (matchType)
             {
                 case MatchType.NELCL:
-                case MatchType.NELCL_Cup:
                     return "League";
                 case MatchType.Tour:
                     return "Tour";
@@ -250,7 +281,8 @@ namespace api.model
 
     public class PlayerDetailV1
     {
-        public PlayerV1 player;
+        public PlayerV1 player;    
+        public string playerImage;
         public StatsDataV1 battingStats;
         public StatsDataV1 bowlingStats;
     }

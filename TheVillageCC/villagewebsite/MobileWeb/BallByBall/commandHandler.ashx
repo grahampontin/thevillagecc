@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Web;
 using System.Web.Script.Serialization;
 using api.model;
@@ -134,7 +135,7 @@ public class CommandHandler : IHttpHandler
                     return;
                 case "getPlayerDetail":
                     var playerId = genericBallByBallCommand.matchId;  //Hack
-                    var playerDetailV1 = StatsProvider.QueryPlayer(playerId);
+                    var playerDetailV1 = StatsProvider.QueryPlayer(playerId, (s) => context.Server.MapPath(s));
                     context.Response.Write(javaScriptSerializer.Serialize(playerDetailV1));
                     return;
                 case "loadChart":

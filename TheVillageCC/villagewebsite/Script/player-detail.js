@@ -72,7 +72,7 @@ function loadChart(chartType, target, playerId, chartLoadedCallback, chartCreate
         });
 }
 
-function updatePlayerDetails(player) {
+function updatePlayerDetails(player, image) {
     $(".player-name").text(player.firstName + " " + player.surname);
     $(".player-caps").text(player.matches);
     $(".player-batting-style").text(player.isRightHandBat ? "RHB" : "LHB");
@@ -81,12 +81,13 @@ function updatePlayerDetails(player) {
     $(".latest-season").text(new Date(player.lastMatchDate).getFullYear());
     $(".playing-role").text(player.playingRole);
     $(".player-debut").text(new Date(player.debut).toDateString());
+    $(".player-image").attr('src', "data:image/png ;base64, " + image);
 }
 
 function playerDetailLoaded(data) {
     
 
-    updatePlayerDetails(data.player);
+    updatePlayerDetails(data.player, data.playerImage);
     
     //do stuff
     new agGrid.Grid($("#careerBattingStatsGrid")[0], battingGridOptions);
