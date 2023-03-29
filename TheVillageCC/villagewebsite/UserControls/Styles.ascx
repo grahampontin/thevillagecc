@@ -4,28 +4,28 @@
        <%-- <link href="../Resources/bootstrap-5.0.2-dist/css/bootstrap.min.css" rel="stylesheet"> --%>
    
        <!-- https://material.io/resources/icons/?style=baseline -->
-       <link href="https://fonts.googleapis.com/css2?family=Material+Icons"
+       <link href="../CSS/google_fonts/material_icons.css"
              rel="stylesheet">
    
        <!-- https://material.io/resources/icons/?style=outline -->
-       <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"
+       <link href="../CSS/google_fonts/material_icons_outlined.css"
              rel="stylesheet">
    
        <!-- https://material.io/resources/icons/?style=round -->
-       <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Round"
+       <link href="../CSS/google_fonts/material_icons_round.css.css"
              rel="stylesheet">
    
        <!-- https://material.io/resources/icons/?style=sharp -->
-       <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Sharp"
+       <link href="../CSS/google_fonts/material_icons_sharp.css"
              rel="stylesheet">
    
        <!-- https://material.io/resources/icons/?style=twotone -->
-       <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Two+Tone"
+       <link href="../CSS/google_fonts/material_icons_two_tone.css.css"
              rel="stylesheet">
    
        <link rel="preconnect" href="https://fonts.googleapis.com">
        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-       <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600&display=swap" rel="stylesheet">
+       <link href="../CSS/google_fonts/source_sans_pro.css" rel="stylesheet">
    
        <link href="/fonts/fontawesome/css/all.css" rel="stylesheet">
    

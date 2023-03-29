@@ -27,9 +27,9 @@
     <script src="Script/jqplot/plugins/jqplot.pieRenderer.min.js" type="text/javascript"></script>
 
     <script src="Script/purl.js"></script>
-    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    <script src="Resources/ag-grid/ag-grid-community.min.js"></script>
     <script src="Script/agGrid/linkToPlayerStatsRenderer.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="Resources/chart-js/chart.js"></script>
     <script src="Script/player-detail.js" type="text/javascript"></script>
 
 
