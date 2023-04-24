@@ -27,7 +27,7 @@
                 <div class="d-flex flex-wrap">
                     <div class="flex-fill">
                         <div class="text-center">
-                            <img src="Images/player_profiles/171.png" alt=""/>
+                            <img src="Images/player_profiles/200.png" alt=""/>
                         </div>
                         <div class="fw-bold mx-auto text-center">Captain</div>
                         <div class="fst-italic mx-auto text-center">Toby de Mellow</div>
@@ -41,14 +41,14 @@
                     </div>
                     <div class="flex-fill">
                         <div class="text-center">
-                            <img src="Images/player_profiles/204.png" alt=""/>
+                            <img src="Images/player_profiles/88.png" alt=""/>
                         </div>
                         <div class="fw-bold mx-auto text-center">Treasurer & Fixtures</div>
                         <div class="fst-italic mx-auto text-center">Eddie Francis</div>
                     </div>
                     <div class="flex-fill">
                         <div class="text-center">
-                            <img src="Images/player_profiles/204.png" alt=""/>
+                            <img src="Images/player_profiles/265.png" alt=""/>
                         </div>
                         <div class="fw-bold mx-auto text-center">Social Sec</div>
                         <div class="fst-italic mx-auto text-center">Avi Rao</div>

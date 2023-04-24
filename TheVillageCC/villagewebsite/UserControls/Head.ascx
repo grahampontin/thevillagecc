@@ -3,7 +3,7 @@
 
 <header class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: var(--bs-primary)">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="padding: 0">
+        <a class="navbar-brand" href="/" style="padding: 0">
             <div style="    
                         padding: 0px;
                         border-radius: 25%;
