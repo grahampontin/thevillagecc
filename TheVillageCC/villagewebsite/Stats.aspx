@@ -14,7 +14,7 @@
     <CC:Styles runat=server ID=styles></CC:Styles>
 
     <script src="Resources/jQuery/jquery-3.6.0.min.js"></script>
-    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    <script src="Resources/ag-grid/ag-grid-community.min.js"></script>
     <script src="Script/agGrid/linkToPlayerStatsRenderer.js"></script>
     <script src="Script/stats.js"></script>
     <script type="text/javascript">

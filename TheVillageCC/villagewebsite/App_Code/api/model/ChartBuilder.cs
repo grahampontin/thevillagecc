@@ -141,7 +141,14 @@ namespace api.model
                 labels.Add(pairsByYear.Key.ToString());
                 var wicketsTaken = pairsByYear.Sum(v=>v.Value.Wickets);
                 var runConceeded = pairsByYear.Sum(v => v.Value.Runs);
-                wicketCount.data.Add(runConceeded / wicketsTaken);
+                if (wicketsTaken == 0)
+                {
+                    wicketCount.data.Add(0);                    
+                }
+                else
+                {
+                    wicketCount.data.Add(runConceeded / wicketsTaken);
+                }
             }
             return BuildChartJsConfig("bar", labels, "Average by Season", wicketCount);
         }

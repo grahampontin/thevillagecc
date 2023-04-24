@@ -155,10 +155,10 @@ namespace api.model
 
         private static string MakeFileName(int playerId, Func<string, string> pathMapper)
         {
-            return pathMapper("/images/player_profiles/"+playerId + ".png");
+            return pathMapper("/images/player_profiles/" + playerId + ".png");
         }
 
-        public static string ImageToBase64(Image image, 
+        public static string ImageToBase64(Image image,
             ImageFormat format)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -277,13 +277,248 @@ namespace api.model
                     throw new Exception("Chart " + chartType + " not supported");
             }
         }
+
+        public static IEnumerable<StatsDataV1> GetPlayerStatsBreakDown(int playerId, string statsType)
+        {
+            var player = new Player(playerId);
+            switch (statsType.ToUpper())
+            {
+                case "BATTING":
+                    return GetPlayerBattingStatsBreakDown(player);
+                case "BOWLING":
+                    return GetPlayerBowlingStatsBreakDown(player);
+                default:
+                    throw new ArgumentOutOfRangeException("Must supply Batting or Bowling, not " + statsType);
+            }
+        }
+
+        private static IEnumerable<StatsDataV1> GetPlayerBattingStatsBreakDown(Player player)
+        {
+            var dataByMatch = player.GetBattingStatsByMatch().ToList();
+
+            yield return PlayerBattingDataWithPivot("Vs Opposition", k => k.Key.Opposition.Name, dataByMatch, player,
+                new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBattingDataWithPivot("At Position", k => k.Value.BattingAt, dataByMatch, player);
+            yield return PlayerBattingDataWithPivot("By Year", k => k.Key.MatchDate.Year, dataByMatch, player,
+                new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBattingDataWithPivot("Under Captain", k => k.Key.Captain.Name, dataByMatch, player,
+                new StatsColumnDefinitionV1("", "tableKey", "LinkToPlayerStatsRenderer"));
+            yield return PlayerBattingDataWithPivot("Batting 1st", k => k.Key.OppositionBattedFirst ? "2nd" : "1st",
+                dataByMatch,
+                player, new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBattingDataWithPivot("Toss", k => k.Key.WonToss ? "Won" : "Lost", dataByMatch, player,
+                new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBattingDataWithPivot("As Captain",
+                k => k.Key.Captain.Id == player.Id ? "Captain" : "Not Captain",
+                dataByMatch, player, new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBattingDataWithPivot("As Keeper",
+                k => k.Key.WicketKeeper.Id == player.Id ? "Keeper" : "Not Keeper",
+                dataByMatch, player, new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBattingDataWithPivot("Match Result",
+                k => k.Key.Winner != null && k.Key.Winner.ID == Team.OurTeam.ID ? "Won" :
+                    k.Key.ResultDrawn ? "Drawn" : "Lost",
+                dataByMatch, player, new StatsColumnDefinitionV1("", "tableKey"));
+        }
+
+        private static IEnumerable<StatsDataV1> GetPlayerBowlingStatsBreakDown(Player player)
+        {
+            List<KeyValuePair<Match, BowlingStatsEntryData>> dataByMatch = player.GetBowlingStatsByMatch().ToList();
+
+            yield return PlayerBowlingDataWithPivot("Vs Opposition", k => k.Key.Opposition.Name, dataByMatch, player,
+                new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBowlingDataWithPivot("By Year", k => k.Key.MatchDate.Year, dataByMatch, player,
+                new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBowlingDataWithPivot("Under Captain", k => k.Key.Captain.Name, dataByMatch, player,
+                new StatsColumnDefinitionV1("", "tableKey", "LinkToPlayerStatsRenderer"));
+            yield return PlayerBowlingDataWithPivot("Bowling 1st", k => k.Key.OppositionBattedFirst ? "1st" : "2nd",
+                dataByMatch,
+                player, new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBowlingDataWithPivot("Toss", k => k.Key.WonToss ? "Won" : "Lost", dataByMatch, player,
+                new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBowlingDataWithPivot("As Captain",
+                k => k.Key.Captain.Id == player.Id ? "Captain" : "Not Captain",
+                dataByMatch, player, new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBowlingDataWithPivot("Match Result",
+                k => k.Key.Winner != null && k.Key.Winner.ID == Team.OurTeam.ID ? "Won" :
+                    k.Key.ResultDrawn ? "Drawn" : "Lost",
+                dataByMatch, player, new StatsColumnDefinitionV1("", "tableKey"));
+        }
+
+        private static StatsDataV1 PlayerBattingDataWithPivot<T>(string gridName,
+            Func<KeyValuePair<Match, BattingCardLineData>, T> groupFunction,
+            List<KeyValuePair<Match, BattingCardLineData>> dataByMatch, Player player,
+            params StatsColumnDefinitionV1[] additionalKeyColumn)
+        {
+            return PlayerStatsBreakDown(gridName, () =>
+            {
+                var rows = new List<BattingStatsRowData>();
+                foreach (var group in dataByMatch.GroupBy(groupFunction).OrderBy(g => g.Key))
+                {
+                    var matchIdsVsThisOpposition = group.Select(g => g.Key.ID).ToHashSet();
+                    rows.Add(new BattingStatsRowData(player, e => matchIdsVsThisOpposition.Contains(e.MatchID),
+                        group.Key.ToString()));
+                }
+
+                return rows;
+            }, BattingStatsRowData.WithColumns(
+                BattingStatsRowData.BattingPosition,
+                BattingStatsRowData.MatchesPlayed,
+                BattingStatsRowData.Innings,
+                BattingStatsRowData.NotOuts,
+                BattingStatsRowData.RunsScored,
+                BattingStatsRowData.HighScore,
+                BattingStatsRowData.BattingAverage,
+                BattingStatsRowData.HundredsScored,
+                BattingStatsRowData.FiftiesScored,
+                BattingStatsRowData.FoursHit,
+                BattingStatsRowData.SixesHit,
+                BattingStatsRowData.CatchesTaken,
+                BattingStatsRowData.Stumpings,
+                BattingStatsRowData.RunOuts), additionalKeyColumn);
+        }
+
+        private static StatsDataV1 PlayerBowlingDataWithPivot<T>(string gridName,
+            Func<KeyValuePair<Match, BowlingStatsEntryData>, T> groupFunction,
+            List<KeyValuePair<Match, BowlingStatsEntryData>> dataByMatch, Player player,
+            params StatsColumnDefinitionV1[] additionalKeyColumn)
+        {
+            return PlayerStatsBreakDown(gridName, () =>
+            {
+                var rows = new List<BowlingStatsRowData>();
+                foreach (var group in dataByMatch.GroupBy(groupFunction).OrderBy(g => g.Key))
+                {
+                    var matchIdsVsThisOpposition = group.Select(g => g.Key.ID).ToHashSet();
+                    rows.Add(new BowlingStatsRowData(player, e => matchIdsVsThisOpposition.Contains(e.MatchID),
+                        group.Key.ToString()));
+                }
+
+                return rows;
+            }, BowlingStatsRowData.WithColumns(BowlingStatsRowData.BowlingAverage,
+                BowlingStatsRowData.WicketsTaken,
+                BowlingStatsRowData.Economy,
+                BowlingStatsRowData.Fivefers,
+                BowlingStatsRowData.StrikeRate,
+                BowlingStatsRowData.OversBowled,
+                BowlingStatsRowData.RunsConceded,
+                BowlingStatsRowData.BestBowlingFigures), additionalKeyColumn);
+        }
+
+        private static StatsDataV1 PlayerStatsBreakDown<T>(string gridName, Func<List<T>> rowSupplier,
+            List<StatsColumnDefinitionV1> defaultColumns, params StatsColumnDefinitionV1[] extraCols)
+        {
+            //vs Team
+            var statsColumnDefinitionV1s = defaultColumns;
+            statsColumnDefinitionV1s.InsertRange(0, extraCols);
+
+            var data1 = new StatsDataV1()
+            {
+                statsType = gridName,
+                gridOptions = new AGGridOptions()
+                {
+                    columnDefs = statsColumnDefinitionV1s,
+                    rowData = new List<object>()
+                }
+            };
+            data1.gridOptions.rowData.AddRange(((Func<IEnumerable<object>>)rowSupplier)());
+
+            return data1;
+        }
+
+        private static StatsDataV1 GetMatchStatsForPlayer(int playerId)
+        {
+            var player = new Player(playerId);
+            var bowlingStatsByMatch = player.GetBowlingStatsByMatch().ToArray();
+            var battingStatsByMatch = player.GetBattingStatsByMatch().ToArray();
+            var allMatches = bowlingStatsByMatch.Select(k => k.Key)
+                .Union(battingStatsByMatch.Select(k => k.Key), new IsTheSameFreakingMatch()).OrderBy(m => m.MatchDate);
+
+            var bowlingStatsByMatchID = bowlingStatsByMatch.ToDictionary(k => k.Key.ID, k => k.Value);
+            var battingStatsByMatchID = battingStatsByMatch.ToDictionary(k => k.Key.ID, k => k.Value);
+
+            return new StatsDataV1()
+            {
+                statsType = "Matches",
+                gridOptions = new AGGridOptions()
+                {
+                    rowData = allMatches.Select(m => new PlayerMatchStatsV1(MatchV1.FromInternal(m),
+                        new BattingStatsRowData(player, s => s.MatchID == m.ID, ""),
+                        new BowlingStatsRowData(player, s => s.MatchID == m.ID, ""))).Cast<object>().ToList(),
+                    columnDefs = PlayerMatchStatsV1.ColumnDefs
+                }
+            };
+        }
+
+        public static StatsDataV1 QueryPlayerMatches(int playerId)
+        {
+            return GetMatchStatsForPlayer(playerId);
+        }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "ArrangeObjectCreationWhenTypeEvident")]
+    public class PlayerMatchStatsV1
+    {
+        public int id { get; private set; }
+        public string matchDate { get; private set; }
+        public string opposition { get; private set; }
+        public int runs { get; private set; }
+        public int batsAt { get; private set; }
+        public string bowlingFigures { get; private set; }
+        public string venue { get; private set; }
+        public string format { get; private set; }
+
+        
+        public PlayerMatchStatsV1(MatchV1 match, BattingStatsRowData battingStatsRowData, BowlingStatsRowData bowlingStatsRowData)
+        {
+            id = match.Id;
+            matchDate = match.Date;
+            opposition = match.IsHome
+                ? "The Village vs " + match.Opposition.Name
+                : match.Opposition.Name + " vs The Village";
+            batsAt = battingStatsRowData.batsAt;
+            runs = battingStatsRowData.runs;
+            bowlingFigures = bowlingStatsRowData.overs == 0 ? "-/-" : bowlingStatsRowData.wickets + "/" + bowlingStatsRowData.runs;
+            venue = match.Venue.Name;
+            format = match.Type;
+        }
+
+        public static List<StatsColumnDefinitionV1> ColumnDefs
+        {
+            get
+            {
+                return new List<StatsColumnDefinitionV1>()
+                {
+                    new StatsColumnDefinitionV1("Match", "opposition", "LinkToMatchReportRenderer"),
+                    new StatsColumnDefinitionV1("Bat", "runs"),
+                    new StatsColumnDefinitionV1("Bowl", "bowlingFigures"),
+                    new StatsColumnDefinitionV1("Date", "matchDate"),
+                    new StatsColumnDefinitionV1("At", "venue"),
+                    new StatsColumnDefinitionV1("Format", "format"),
+                };
+            }
+        }
     }
 
     public class PlayerDetailV1
     {
-        public PlayerV1 player;    
+        public PlayerV1 player;
         public string playerImage;
         public StatsDataV1 battingStats;
         public StatsDataV1 bowlingStats;
+    }
+
+    public class IsTheSameFreakingMatch : EqualityComparer<Match>
+    {
+        public override bool Equals(Match x, Match y)
+        {
+            return y != null && x != null && x.ID == y.ID;
+        }
+
+        public override int GetHashCode(Match obj)
+        {
+            return obj.ID.GetHashCode();
+        }
     }
 }

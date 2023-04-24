@@ -134,7 +134,7 @@ public class CommandHandler : IHttpHandler
                     context.Response.Write(javaScriptSerializer.Serialize(statsData));
                     return;
                 case "getPlayerDetail":
-                    var playerId = genericBallByBallCommand.matchId;  //Hack
+                    var playerId = genericBallByBallCommand.matchId; //Hack
                     var playerDetailV1 = StatsProvider.QueryPlayer(playerId, (s) => context.Server.MapPath(s));
                     context.Response.Write(javaScriptSerializer.Serialize(playerDetailV1));
                     return;
@@ -144,7 +144,18 @@ public class CommandHandler : IHttpHandler
                     var chartData = StatsProvider.BuildChartData(chartRequest.playerId, chartRequest.chartType);
                     context.Response.Write(javaScriptSerializer.Serialize(chartData));
                     return;
-                                        
+                case "loadPlayerStats":
+                    var playerId2 = genericBallByBallCommand.matchId; //Hack
+                    var statsType = genericBallByBallCommand.payload.ToString();
+                    var dataCollection = StatsProvider.GetPlayerStatsBreakDown(playerId2, statsType);
+                    context.Response.Write(javaScriptSerializer.Serialize(dataCollection));
+                    return;
+                case "loadPlayerMatches":
+                    var playerId3 = genericBallByBallCommand.matchId; //Hack
+                    var data = StatsProvider.QueryPlayerMatches(playerId3);
+                    context.Response.Write(javaScriptSerializer.Serialize(data));
+                    return;
+                
                 default:
                 {
                     var match = new Match(genericBallByBallCommand.matchId);

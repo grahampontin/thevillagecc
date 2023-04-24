@@ -69,13 +69,13 @@ font-weight: bolder; font-size: 25px">
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="\Players.aspx" class="nav-link  text-white">
+                    <a href="\Committee.aspx" class="nav-link  text-white">
                         <span class="material-icons-outlined bi d-inline d-lg-none mx-auto mb-1"
                               style="text-align: center; font-size: 24px">
                             groups
                         </span>
                         <div class="d-inline">
-                            Players
+                            Committee
                         </div>
                     </a>
                 </li>

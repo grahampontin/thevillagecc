@@ -23,7 +23,122 @@ function loadBowlingChart(chartType) {
     });
 }
 
+function loadPlayerDetailStats(statsType, loadedCallack, preloadCallback) {
+    var postData = {
+        'command': "loadPlayerStats",
+        "matchId": playerId,
+        "payload": statsType
+    }
+
+    preloadCallback();
+    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+        //success
+        loadedCallack(data, statsType);
+    }, 'json')
+        .fail(function (data) {
+            showError(data.responseText);
+        });
+}
+
+function renderPlayerStatsTables(data, type) {
+    hidePreloader();
+    $("#statsDetailSelector > button").text(type);
+   let container = $("#statsDetailGridsPlaceHolder");
+   container.empty();
+    $.each(data, function (index, statsData){
+       var title = $("<div></div>");
+       title.text(statsData.statsType);
+       title.addClass("stats-grid-divider");
+       container.append(title);
+       var gridContainer = $("<div></div>");
+       gridContainer.addClass("ag-theme-material");
+       gridContainer.addClass("player-stats-grid");
+       container.append(gridContainer);
+       let gridOptions = renderAgGrid(gridContainer, statsData.gridOptions);
+       if (window.innerWidth < 990){
+           resizeForOptions(gridOptions);
+       }
+   })
+}
+
+function renderAgGrid(containingDiv, gridOptions) {
+    var theseGridOptions = makeDefaultGridOptions();
+    new agGrid.Grid(containingDiv[0], theseGridOptions);
+    gridOptions.columnDefs[0].pinned = "left";
+    theseGridOptions.api.setRowData(gridOptions.rowData);
+    theseGridOptions.api.setColumnDefs(gridOptions.columnDefs);
+    let rows = gridOptions.rowData.length + 1; //rows + room for header
+    if (rows > 10) {
+        rows = 10;
+    }
+    containingDiv.height(rows * 55);
+    return theseGridOptions;
+}
+
+
+function showPreloader(container) {
+    container.empty();
+    var preloadingContainer = $("<div></div>");
+    preloadingContainer.addClass("preloader");
+    preloadingContainer.html("<div class=\"text-center\">\n" +
+        "  <div class=\"spinner-border\" role=\"status\">\n" +
+        "    <span class=\"visually-hidden\">Loading...</span>\n" +
+        "  </div>\n" +
+        "</div>");
+    container.append(preloadingContainer);
+}
+
+function hidePreloader() {
+    $(".preloader").remove();
+}
+
+function loadPlayerMatchDetails(loadedCallback, preloadCallback) {
+    var postData = {
+        'command': "loadPlayerMatches",
+        "matchId": playerId
+    }
+
+    preloadCallback();
+    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+        //success
+        hidePreloader();
+        loadedCallback(data);
+    }, 'json')
+        .fail(function (data) {
+            showError(data.responseText);
+        });
+    
+}
+
+function renderAllMatchesTable(data) {
+    let gridOptions = renderAgGrid($("#statsAllMatchesGridContainer"), data.gridOptions);
+    if (window.innerWidth < 990){
+        resizeForOptions(gridOptions);
+    }
+}
+
 $(function () {
+    $('button[data-bs-toggle="tab"]').each(function () {
+        this.addEventListener('shown.bs.tab', function (event) {
+            if (event.target.id === "stats-tab") {
+                let gridsPlaceHolder = $("#statsDetailGridsPlaceHolder");
+                if (gridsPlaceHolder.children(".player-stats-grid").children().length === 0) {
+                    loadPlayerDetailStats("Batting", renderPlayerStatsTables, () => showPreloader(gridsPlaceHolder));
+                } else {
+                    resizeGrids();
+                }
+            } else if (event.target.id === "matches-tab") {
+                let matchesGridContainer = $("#statsAllMatchesGridContainer");
+                if (matchesGridContainer.children().length === 0) {
+                    loadPlayerMatchDetails(renderAllMatchesTable, () => showPreloader(matchesGridContainer));
+                } else {
+                    resizeGrids();
+                }
+            }
+        });
+    })
+    
+    
     playerId =  $.url().param('playerid')
     var postData = {
         'command': "getPlayerDetail",
@@ -46,6 +161,12 @@ $(function () {
     $(".bowling-chart-link").click(function (){
         loadBowlingChart($(this).attr("chart-id")); 
     });
+    
+    $(".stats-detail-link").click(function (){
+        let statsType = $(this).attr("stats-type");
+        loadPlayerDetailStats(statsType, renderPlayerStatsTables, ()=>showPreloader($("#statsDetailGridsPlaceHolder"))); 
+    });
+    
 
 });
 
@@ -136,9 +257,11 @@ function makeDefaultGridOptions() {
         columnDefs: null,
         rowData: null,
         suppressColumnVirtualisation: true,
+        suppressHorizontalScroll: true,
         components: {
             // 'countryCellRenderer' is mapped to class CountryCellRenderer
             LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+            LinkToMatchReportRenderer: LinkToMatchReportRenderer,
         }
     };
 }

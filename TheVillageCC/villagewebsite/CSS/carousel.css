@@ -97,3 +97,14 @@ body {
   max-width: 1320px;
   margin: auto;
 }
+
+.stats-grid-divider {
+  background-color: #f8f8f8;
+  padding: 0.5em;
+  font-weight: 500;
+  margin-top: 1em;
+}
+
+#statsDetailGridsPlaceHolder::-webkit-scrollbar{
+  display: none;
+}
