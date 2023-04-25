@@ -12,7 +12,7 @@
              rel="stylesheet">
    
        <!-- https://material.io/resources/icons/?style=round -->
-       <link href="../CSS/google_fonts/material_icons_round.css.css"
+       <link href="../CSS/google_fonts/material_icons_round.css"
              rel="stylesheet">
    
        <!-- https://material.io/resources/icons/?style=sharp -->
@@ -20,7 +20,7 @@
              rel="stylesheet">
    
        <!-- https://material.io/resources/icons/?style=twotone -->
-       <link href="../CSS/google_fonts/material_icons_two_tone.css.css"
+       <link href="../CSS/google_fonts/material_icons_two_tone.css"
              rel="stylesheet">
    
        <link rel="preconnect" href="https://fonts.googleapis.com">
