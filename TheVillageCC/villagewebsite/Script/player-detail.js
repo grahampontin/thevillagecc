@@ -234,6 +234,7 @@ function makeDefaultGridOptions() {
         defaultColDef: {
             resizable: false,
             sortable: true,
+            suppressMovable: true,
             flex: 1,
             filter: false
         },

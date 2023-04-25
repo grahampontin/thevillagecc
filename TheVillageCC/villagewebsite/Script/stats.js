@@ -42,8 +42,9 @@ $(window).resize(function () {
 
 const gridOptions = {
     defaultColDef: {
-        resizable: false,
+        resizable: true,
         sortable: true,
+        suppressMovable: true,
         flex: 1,
         filter: "agNumberColumnFilter"
     },
