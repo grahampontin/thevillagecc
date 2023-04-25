@@ -14,7 +14,6 @@
     <CC:Styles runat=server ID=styles />
 </head>
 <body>
-<div class="container">
     <!-- Head -->
     <CC:Header runat=server />
     <!-- End Head -->
@@ -197,6 +196,5 @@
             </div>
         </form>
     </main>
-</div>
 </body>
 </html>
