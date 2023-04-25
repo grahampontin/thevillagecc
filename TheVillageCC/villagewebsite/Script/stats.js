@@ -56,9 +56,9 @@ const gridOptions = {
     },
 };
 
-function renderStatsTable(data) {
+function getGridContainerForStatsType(statsType) {
     var grid;
-    switch (data.statsType) {
+    switch (statsType) {
         case "batting":
             grid = $("#battingGrid");
             break;
@@ -81,6 +81,12 @@ function renderStatsTable(data) {
             grid = $("#matchesGrid");
             break;
     }
+    return grid;
+}
+
+function renderStatsTable(data) {
+    var grid = getGridContainerForStatsType(data.statsType);
+    hidePreloader()
     grid.html('');
     new agGrid.Grid(grid[0], gridOptions);
     gridOptions.api.setRowData(data.gridOptions.rowData);
@@ -125,13 +131,14 @@ $(function () {
     var currentYear = new Date().getFullYear();
     $("#fromDate").val(currentYear - 30 + "-01-01");
     $("#toDate").val(currentYear + "-12-31");
-
+    showPreloader(getGridContainerForStatsType("batting"))
     loadStats("batting", renderStatsTable);
     resizeGrids();
     $("#filterButton").click(function () {
         var statsType = $(".nav-link.active").text().toLowerCase();
         //clear grids
         $(".stats-grid").empty();
+        showPreloader(getGridContainerForStatsType(statsType));
         loadStats(statsType, renderStatsTable);
     });
 
@@ -139,6 +146,7 @@ $(function () {
         this.addEventListener('shown.bs.tab', function (event) {
             if ($($(event.target).attr("data-bs-target")).children(".stats-grid").children().length === 0) {
                 var statsType = $(".nav-link.active").text().toLowerCase();
+                showPreloader(getGridContainerForStatsType(statsType));
                 loadStats(statsType, renderStatsTable);
             } else {
                 resizeGrids();

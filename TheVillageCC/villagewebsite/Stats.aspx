@@ -16,11 +16,8 @@
     <script src="Resources/jQuery/jquery-3.6.0.min.js"></script>
     <script src="Resources/ag-grid/ag-grid-community.min.js"></script>
     <script src="Script/agGrid/linkToPlayerStatsRenderer.js"></script>
+    <script src="Script/utilities.js"></script>
     <script src="Script/stats.js"></script>
-    <script type="text/javascript">
-       
-    </script>
-
 </head>
 <body>
 <div class="">

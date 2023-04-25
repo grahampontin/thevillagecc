@@ -17,20 +17,12 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"/>
 
     <script src="Resources/jQuery/jquery-3.6.0.min.js"></script>
-    <script src="Script/jqplot/jquery.jqplot.min.js" type="text/javascript"></script>
-    <script src="Script/jqplot/plugins/jqplot.barRenderer.min.js" type="text/javascript"></script>
-    <script src="Script/jqplot/plugins/jqplot.categoryAxisRenderer.min.js" type="text/javascript"></script>
-    <script src="Script/jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js" type="text/javascript"></script>
-    <script src="Script/jqplot/plugins/jqplot.canvasTextRenderer.min.js" type="text/javascript"></script>
-    <script src="Script/jqplot/plugins/jqplot.enhancedLegendRenderer.min.js" type="text/javascript"></script>
-    <script src="Script/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js" type="text/javascript"></script>
-    <script src="Script/jqplot/plugins/jqplot.pieRenderer.min.js" type="text/javascript"></script>
-
     <script src="Script/purl.js"></script>
     <script src="Resources/ag-grid/ag-grid-community.min.js"></script>
     <script src="Script/agGrid/linkToPlayerStatsRenderer.js"></script>
     <script src="Script/agGrid/linkToMatchReportRenderer.js"></script>
     <script src="Resources/chart-js/chart.js"></script>
+    <script src="Script/utilities.js" type="text/javascript"></script>
     <script src="Script/player-detail.js" type="text/javascript"></script>
 
 
