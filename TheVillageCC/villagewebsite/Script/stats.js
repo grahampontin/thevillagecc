@@ -96,7 +96,7 @@ function renderStatsTable(data) {
 
 function resizeGrids() {
     $(".stats-grid").each(function (i) {
-        $(this).height(window.innerHeight - $(this).position().top - $("#pageFooter").height() - 20);
+        $(this).height(window.innerHeight - $("#pageFooter").height() - $("#tabs").height() - $("header").height() - 40);
     });
     if (window.innerWidth < 990 && gridOptions.columnApi != undefined) {
         const allColumnIds = [];
