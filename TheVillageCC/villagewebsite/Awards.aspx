@@ -113,6 +113,21 @@
             <tr>
                 <td>2018</td><td>Richard Cressey</td>
             </tr>
+            <tr>
+                <td>2019</td><td>Richard Cressey</td>
+            </tr>
+            <tr>
+                <td>2020</td><td>Oliver Morgans</td>
+            </tr>
+            <tr>
+                <td>2021</td><td>Oliver Morgans</td>
+            </tr>
+            <tr>
+                <td>2022</td><td>Oliver Morgans</td>
+            </tr>
+            <tr>
+                <td>2023</td><td>Toby de Mellow</td>
+            </tr>
         </table>
     </div>
     <div class="flex-grow-1 mb-2">
@@ -163,6 +178,21 @@
             <tr>
                 <td>2018</td><td>James de Mellow</td>
             </tr>
+            <tr>
+                <td>2019</td><td>James de Mellow</td>
+            </tr>
+            <tr>
+                <td>2020</td><td>Toby de Mellow</td>
+            </tr>
+            <tr>
+                <td>2021</td><td>Toby de Mellow</td>
+            </tr>
+            <tr>
+                <td>2022</td><td>Toby de Mellow</td>
+            </tr>
+            <tr>
+                <td>2023</td><td>Prashant Misra</td>
+            </tr>
         </table>
     </div>
     <div class="flex-grow-1 ms-2 mb-2">
@@ -209,6 +239,21 @@
             </tr>
             <tr>
                 <td>2017</td><td>Nick Price-Thompson</td>
+            </tr>
+            <tr>
+                <td>2018</td><td>Nick Price-Thompson</td>
+            </tr>
+            <tr>
+                <td>2019</td><td>Eddie Francis</td>
+            </tr>
+            <tr>
+                <td>2020</td><td></td>
+            </tr>
+            <tr>
+                <td>2021</td><td>Chris Pitcher</td>
+            </tr>
+            <tr>
+                <td>2022</td><td>Prashant Misra</td>
             </tr>
         </table>
     </div>
@@ -420,6 +465,51 @@
         <td>Nick Price-Thompson<br/>(23 wkts @ 14)</td>
         <td>James de Mellow</td>
         <td>James de Mellow</td>
+    </tr>
+    <tr>
+        <th class="text-center">2018</th>
+        <td>Nick Price-Thompson</td>
+        <td>Toby de Mellow</td>
+        <td>Toby de Mellow<br/>(567 runs @ 141.75)</td>
+        <td>Nick Price-Thompson<br/>(22 wkts @ 18)</td>
+        <td>Toby de Mellow</td>
+        <td>Eddie Francis</td>
+    </tr>
+    <tr>
+        <th class="text-center">2019</th>
+        <td>Eddie Francis</td>
+        <td>James de Mellow</td>
+        <td>James de Mellow<br/>(462 runs @ 35.54)</td>
+        <td>Eddie Francis<br/>(27 wkts @ 12)</td>
+        <td>Chris Pitcher</td>
+        <td>James de Mellow</td>
+    </tr>
+    <tr>
+        <th class="text-center">2020</th>
+        <td>C. Ovid</td>
+        <td>C. Ovid</td>
+        <td>Oliver Morgans<br/>(242 runs @ 24.2)</td>
+        <td>Eddie Francis<br/>(13 wkts @ 14)</td>
+        <td>C. Ovid</td>
+        <td>C. Ovid</td>
+    </tr>
+    <tr>
+        <th class="text-center">2021</th>
+        <td>Chris Picher</td>
+        <td>Toby de Mellow</td>
+        <td>Oliver Morgans<br/>(571 runs @ 33.59)</td>
+        <td>Chris Pitcher<br/>(22 wkts @ 18)</td>
+        <td>Graham Pontin</td>
+        <td>Chris Pitcher</td>
+    </tr>
+    <tr>
+        <th class="text-center">2022</th>
+        <td>Prashant Misra</td>
+        <td>Prashant Misra</td>
+        <td>Prashant Misra<br/>(449 runs @ 34.54)</td>
+        <td>Eklavya Gupte<br/>(23 wkts @ 17)</td>
+        <td>Toby de Mellow</td>
+        <td>Prashant Misra</td>
     </tr>
 </table>
 
