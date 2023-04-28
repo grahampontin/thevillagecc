@@ -139,5 +139,9 @@ namespace api.model
             Fielder = fielderName;
             ModeOfDismissal = modeOfDismissal;
         }
+
+        public WicketV1()
+        {
+        }
     }
 }
