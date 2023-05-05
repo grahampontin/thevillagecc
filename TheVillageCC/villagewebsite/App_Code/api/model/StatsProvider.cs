@@ -268,6 +268,8 @@ namespace api.model
                     return ChartBuilder.BuildBattingTimelineChart(playerId);
                 case "modesOfDismissal":
                     return ChartBuilder.BuildModeOfDismissalChart(playerId);
+                case "scoringZones":
+                    return ChartBuilder.BuildScoringZonesChart(playerId);
                 //Bowling
                 case "wicketsBySeason":
                     return ChartBuilder.BuildWicketsBySeasonChart(playerId);

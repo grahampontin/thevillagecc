@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CricketClubDAL;
 using CricketClubDomain;
 using CricketClubMiddle;
+using CricketClubMiddle.Stats;
 using jqPlot;
 
 namespace api.model
@@ -48,8 +50,8 @@ namespace api.model
             }
 
             return BuildChartJsConfig("line", labels, "Batting Timeline", scoresData, averageData);
-        } 
-        
+        }
+
         public static ChartJsConfig BuildModeOfDismissalChart(int playerId)
         {
             var player = new Player(playerId);
@@ -63,14 +65,14 @@ namespace api.model
                 }
                 else
                 {
-                    dismissalCounts[stats.ModeOfDismissal] ++;
+                    dismissalCounts[stats.ModeOfDismissal]++;
                 }
             }
 
             List<string> labels = new List<string>();
 
             var dataSet = new ChartJsDataSet();
-            
+
             foreach (var modeOfDismissal in dismissalCounts.Keys)
             {
                 var modesOfDismissal = (ModesOfDismissal)modeOfDismissal;
@@ -84,6 +86,7 @@ namespace api.model
             modeOfDismissalChart.options.plugins.legend.position = "right";
             return modeOfDismissalChart;
         }
+
 
         private static ChartJsConfig BuildChartJsConfig(string type, List<string> labels, string title,
             params ChartJsDataSet[] dataSets)
@@ -112,6 +115,7 @@ namespace api.model
                             position = "top"
                         }
                     }
+                    
                 }
             };
         }
@@ -125,11 +129,12 @@ namespace api.model
             foreach (var pairsByYear in player.GetBowlingStatsByMatch().GroupBy(p => p.Key.MatchDate.Year))
             {
                 labels.Add(pairsByYear.Key.ToString());
-                wicketCount.data.Add(pairsByYear.Sum(v=>v.Value.Wickets));
+                wicketCount.data.Add(pairsByYear.Sum(v => v.Value.Wickets));
             }
+
             return BuildChartJsConfig("bar", labels, "Wickets by Season", wicketCount);
         }
-        
+
         public static ChartJsConfig BuildAverageBySeasonChart(int playerId)
         {
             var player = new Player(playerId);
@@ -139,18 +144,59 @@ namespace api.model
             foreach (var pairsByYear in player.GetBowlingStatsByMatch().GroupBy(p => p.Key.MatchDate.Year))
             {
                 labels.Add(pairsByYear.Key.ToString());
-                var wicketsTaken = pairsByYear.Sum(v=>v.Value.Wickets);
+                var wicketsTaken = pairsByYear.Sum(v => v.Value.Wickets);
                 var runConceeded = pairsByYear.Sum(v => v.Value.Runs);
                 if (wicketsTaken == 0)
                 {
-                    wicketCount.data.Add(0);                    
+                    wicketCount.data.Add(0);
                 }
                 else
                 {
                     wicketCount.data.Add(runConceeded / wicketsTaken);
                 }
             }
+
             return BuildChartJsConfig("bar", labels, "Average by Season", wicketCount);
+        }
+
+        public static ChartJsConfig BuildScoringZonesChart(int playerId)
+        {
+            var player = new Player(playerId);
+            var ballsForBatsman = BallByBallStats.GetAllBalls().Where(b => b.Batsman == playerId).ToList();
+            List<string> labels = player.IsRightHandBat
+                ? ScoringArea.GetAll().Select(s => s.nameForRightHandBat).ToList()
+                : ScoringArea.GetAll().Select(s => s.nameForLeftHandBat).ToList();
+            var ballsByScoringArea = ballsForBatsman.Where(b => b.Angle.HasValue)
+                .GroupBy(b => ScoringArea.For(b.Angle.Value)).ToDictionary(g=>g.Key, g=>g.Sum(b=>b.Amount));
+            List<object> data = new List<object>();
+            foreach (var scoringArea in ScoringArea.GetAll())
+            {
+                data.Add(ballsByScoringArea.GetValueOrInitializeDefault(scoringArea, 0));
+            }
+
+            // decimal backstopAverage = ((decimal)data.First() + (decimal)data.Last()) / 2m;
+            //decimal deadStraightAverage = (data[6] + data[7]) / 2m;
+            
+            labels.Insert(6, "");
+            data.Insert(6, null);
+            
+            labels.Insert(0, "");
+            data.Insert(0, null);
+
+
+            var chartJsDataSet = new ChartJsDataSet()
+            {
+                data = data,
+                spanGaps = true
+            };
+            
+            var chartJsConfig = BuildChartJsConfig("radar", labels, "Scoring Areas ("+ballsForBatsman.Count()+" Balls)", chartJsDataSet);
+            chartJsConfig.options.scales = new ChartJsScales()
+            {
+                r = new ChartJsScale() { min = 0 }
+
+            };
+            return chartJsConfig;
         }
     }
 }

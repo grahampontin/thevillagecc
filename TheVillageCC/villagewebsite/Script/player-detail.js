@@ -101,6 +101,7 @@ function renderAllMatchesTable(data) {
 }
 
 $(function () {
+    Chart.overrides.line.spanGaps = true;
     $('button[data-bs-toggle="tab"]').each(function () {
         this.addEventListener('shown.bs.tab', function (event) {
             if (event.target.id === "stats-tab") {

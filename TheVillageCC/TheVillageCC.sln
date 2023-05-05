@@ -28,6 +28,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\.gitignore = ..\.gitignore
 		..\deploy.yml = ..\deploy.yml
+		villagewebsite\Bin\CricketClubAccounts.dll.refresh = villagewebsite\Bin\CricketClubAccounts.dll.refresh
+		villagewebsite\Bin\CricketClubDAL.dll.refresh = villagewebsite\Bin\CricketClubDAL.dll.refresh
+		villagewebsite\Bin\CricketClubDomain.dll.refresh = villagewebsite\Bin\CricketClubDomain.dll.refresh
+		villagewebsite\Bin\CricketClubMiddle.dll.refresh = villagewebsite\Bin\CricketClubMiddle.dll.refresh
 	EndProjectSection
 EndProject
 Global
