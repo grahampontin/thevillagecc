@@ -275,6 +275,8 @@ namespace api.model
                     return ChartBuilder.BuildWicketsBySeasonChart(playerId);
                 case "averageBySeason":
                     return ChartBuilder.BuildAverageBySeasonChart(playerId);
+                case "bowlingDismissalsByType":
+                    return ChartBuilder.BuildBowlingDismissalTypesPieChart(playerId);
                 default:
                     throw new Exception("Chart " + chartType + " not supported");
             }

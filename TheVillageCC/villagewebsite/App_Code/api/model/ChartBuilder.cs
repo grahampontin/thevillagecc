@@ -198,5 +198,28 @@ namespace api.model
             };
             return chartJsConfig;
         }
+
+        public static ChartJsConfig BuildBowlingDismissalTypesPieChart(int playerId)
+        {
+            var player = new Player(playerId);
+            var wicketsByDismissalType = Match.GetResults()
+                .SelectMany(m => m.GetTheirBattingScoreCard().ScorecardData)
+                .Where(l => l.Bowler.Id == playerId)
+                .GroupBy(l => l.Dismissal)
+                .ToDictionary(g=>g.Key, g=>g.Count());
+
+            
+            var pieChart = BuildChartJsConfig("pie",
+                wicketsByDismissalType.Keys.Select(k => k.ToString()).ToList(), "Dismissal Types", new ChartJsDataSet()
+                {
+                    data = wicketsByDismissalType.Values.Cast<object>().ToList(),
+                    
+                });
+            pieChart.options.plugins.legend.display = true;
+            pieChart.options.plugins.legend.position = "right";
+
+            return pieChart;
+
+        }
     }
 }

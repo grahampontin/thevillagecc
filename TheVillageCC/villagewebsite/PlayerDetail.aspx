@@ -169,6 +169,9 @@
                                             <li>
                                                 <a class="dropdown-item bowling-chart-link" chart-id="averageBySeason">Average by Season</a>
                                             </li>
+                                            <li>
+                                                <a class="dropdown-item bowling-chart-link" chart-id="bowlingDismissalsByType">Dismissal Types</a>
+                                            </li>
                                         </ul>
                                     </div>
                                     <canvas id="careerBowlingChart"></canvas>

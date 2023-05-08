@@ -81,9 +81,13 @@ function renderFinalBowlingScoreCard(bowling, table) {
     table.append(body);
 }
 
-function renderOurCommentary(matchData) {
+function renderOurCommentary(matchData, matchIsCompleted) {
     if (matchData.CompletedOvers !== null && matchData.CompletedOvers.length > 0) {
-        $.each(matchData.CompletedOvers.reverse(), function (index, over) {
+        let overs = matchData.CompletedOvers.sort((a,b)=> a.Over.OverNumber - b.Over.OverNumber);
+        if (matchIsCompleted) {
+            overs.reverse();
+        }
+        $.each(overs, function (index, over) {
             var overContainer = $("<div></div>");
             overContainer.addClass("over-commentary");
 
@@ -102,7 +106,9 @@ function renderOurCommentary(matchData) {
 
 
             var actualBallNumber = 1;
-            $.each(over.Over.Balls.sort((a, b) => a.BallNaumber - b.BallNumber), function (ballIndex, ballObj) {
+            let balls = over.Over.Balls.sort((a, b) => a.BallNaumber - b.BallNumber);
+           
+            $.each(balls, function (ballIndex, ballObj) {
                 var ball = new Ball(ballObj.Amount,
                     ballObj.Thing,
                     ballObj.Batsman,
@@ -117,7 +123,7 @@ function renderOurCommentary(matchData) {
                 var ballNumber = $("<div></div>");
                 ballNumber.addClass("col-sm-1");
 
-                ballNumber.html("<strong>" + index + "." + actualBallNumber + "</strong>");
+                ballNumber.html("<strong>" + over.Over.OverNumber + "." + actualBallNumber + "</strong>");
 
                 var ballDescription = $("<div></div>");
                 ballDescription.addClass("col-sm-11");
@@ -139,7 +145,11 @@ function renderOurCommentary(matchData) {
 
                     overBody.prepend(wicketRow);
                 }
-                overBody.prepend(row);
+                if (matchIsCompleted) {
+                    overBody.append(row);
+                } else {
+                    overBody.prepend(row);
+                }
                 if (!needsToBeReBowled(ball)) {
                     actualBallNumber++;
                 }
@@ -169,9 +179,14 @@ function renderOurCommentary(matchData) {
             commentary.html(matchData.OurInningsCommentary);
             body.prepend(commentary);
             endOfInningsContainer.append(body);
-            $("#overDetails").prepend(endOfInningsContainer.clone());
-            $("#accordian-over-details").prepend(endOfInningsContainer.clone());
-
+            if (matchIsCompleted) {
+                $("#overDetails").append(endOfInningsContainer.clone());
+                $("#accordian-over-details").append(endOfInningsContainer.clone());
+            } else {
+                $("#overDetails").prepend(endOfInningsContainer.clone());
+                $("#accordian-over-details").prepend(endOfInningsContainer.clone());
+            }
+            
         }
     } else {
         $("#nav-our-commentary-tab").hide();
@@ -607,7 +622,7 @@ function renderMatchData(liveScorecard) {
     }
 
     rednerLiveBattingAndBowlingData(matchData, matchIsCompleted);
-    renderOurCommentary(matchData);
+    renderOurCommentary(matchData, matchIsCompleted);
     renderTheirCommentary(matchData);
     rednerTeamAndPlayerAnalysis(matchData);
     renderLiveScoreCards(matchIsCompleted, matchData);
