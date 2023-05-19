@@ -155,7 +155,7 @@ public class CommandHandler : IHttpHandler
                     var data = StatsProvider.QueryPlayerMatches(playerId3);
                     context.Response.Write(javaScriptSerializer.Serialize(data));
                     return;
-                
+
                 default:
                 {
                     var match = new Match(genericBallByBallCommand.matchId);
@@ -223,6 +223,27 @@ public class CommandHandler : IHttpHandler
                         case "deleteLastOver":
                             match.DeleteLastBallByBallOver();
                             ReturnCurrentMatchState(context, match);
+                            break;
+                        case "forceEndMatch":
+                            var nextInnings = EndInnings(match, match.GetCurrentBallByBallState().GetInningsStatus().OurInningsStatus ==
+                                                                InningsStatus.InProgress
+                                ? "Batting"
+                                : "Bowling");
+                            match = new Match(genericBallByBallCommand.matchId);
+                            switch (nextInnings)
+                            {
+                                case NextInnings.Batting:
+                                    EndInnings(match, "Batting");
+                                    break;
+                                case NextInnings.Bowling:
+                                    EndInnings(match, "Bowling");
+                                    break;
+                                case NextInnings.GameOver:
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+                            context.Response.StatusCode = 204;
                             break;
                         case "getScorecard":
                             var scorecard = MatchScorecardV1.GetExternalScorecard(match);
@@ -337,6 +358,16 @@ public class CommandHandler : IHttpHandler
         {
             ReportError(context, ex, 500);
         }
+    }
+
+    private static NextInnings EndInnings(Match match, string inningsType)
+    {
+        return match.EndInnings(new InningsEndDetails()
+        {
+            Commentary = "",
+            InningsType = inningsType,
+            WasDeclared = false
+        });
     }
 
     private static void UpdatePlayer(Player newPlayer, PlayerV1 p)
