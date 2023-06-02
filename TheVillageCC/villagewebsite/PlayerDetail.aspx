@@ -148,6 +148,9 @@
                                             <li>
                                                 <a class="dropdown-item batting-chart-link" chart-id="scoringZones">Scoring Areas</a>
                                             </li>
+                                            <li>
+                                                <a class="dropdown-item batting-chart-link" chart-id="strikeRates">Strike Rates</a>
+                                            </li>
                                         </ul>
                                     </div>
                                     <canvas id="careerBattingChart"></canvas>

@@ -162,7 +162,7 @@ namespace api.model
         public static ChartJsConfig BuildScoringZonesChart(int playerId)
         {
             var player = new Player(playerId);
-            var ballsForBatsman = BallByBallStats.GetAllBalls().Where(b => b.Batsman == playerId).ToList();
+            var ballsForBatsman = GetBallsForBatsman(playerId);
             List<string> labels = player.IsRightHandBat
                 ? ScoringArea.GetAll().Select(s => s.nameForRightHandBat).ToList()
                 : ScoringArea.GetAll().Select(s => s.nameForLeftHandBat).ToList();
@@ -173,9 +173,6 @@ namespace api.model
             {
                 data.Add(ballsByScoringArea.GetValueOrInitializeDefault(scoringArea, 0));
             }
-
-            // decimal backstopAverage = ((decimal)data.First() + (decimal)data.Last()) / 2m;
-            //decimal deadStraightAverage = (data[6] + data[7]) / 2m;
             
             labels.Insert(6, "");
             data.Insert(6, null);
@@ -197,6 +194,84 @@ namespace api.model
 
             };
             return chartJsConfig;
+        }
+        
+        public static ChartJsConfig BuildStrikeRateChart(int playerId)
+        {
+            var ballsForBatsman = GetBallsForBatsman(playerId);
+
+            var data = new List<object>();
+            var labels = new List<string>();
+
+            var ballsByMatch = ballsForBatsman.GroupBy(b => b.MatchId).ToList();
+
+            for (int ballNumber = 1; ballNumber < ballsForBatsman.Count; ballNumber+=10)
+            {
+            
+                var ballsForThisSection = ballsByMatch.SelectMany(g => g.Where(b => !b.IsFieldingExtra() && !b.IsWide).OrderBy(b => b.BallNumber + (b.OverNumber * 6)).Skip(ballNumber - 1)
+                    .Take(10)).ToArray();
+
+                if (ballsForThisSection.Length > 0)
+                {
+                    labels.Add(ballNumber + "-"+ (ballNumber+9) + " ("+ballsForThisSection.Length+" balls)");
+                    var score = ballsForThisSection.Sum(b => b.Amount);
+                
+                    var count = (decimal)score / ballsForThisSection.Length;
+                    data.Add(count*100);    
+                }
+                
+            }
+            var chartJsDataSet = new ChartJsDataSet()
+            {
+                data = data
+            };
+            
+            var chartJsConfig = BuildChartJsConfig("bar", labels, "Strike Rates ("+ballsForBatsman.Count()+" Balls)", chartJsDataSet);
+            return chartJsConfig;
+        }
+        public static ChartJsConfig BuildSoreVelocityChart(int playerId)
+        {
+            var ballsForBatsman = GetBallsForBatsman(playerId);
+
+            var data = new List<object>();
+            var labels = new List<string>();
+
+            var ballsByMatch = ballsForBatsman.GroupBy(b => b.MatchId).ToList();
+
+            var player = new Player(playerId);
+            int scoreBuckets = player.GetHighScore() / 10;
+
+            for (int i = 1; i < scoreBuckets-1; i++)
+            {
+                var scoreToAttain = i * 10;
+                List<int> ballsAttainScore = new List<int>();
+                foreach (var match in ballsByMatch)
+                {
+                    var attainedScore = 0;
+                    
+                    var ballsInOrder = match.OrderBy(b => b.OverNumber * 6 + b.BallNumber);
+                    while (attainedScore < scoreToAttain)
+                    {
+                        
+                    }
+
+                }
+            }
+            
+            
+            var chartJsDataSet = new ChartJsDataSet()
+            {
+                data = data
+            };
+            
+            var chartJsConfig = BuildChartJsConfig("bar", labels, "Strike Rates ("+ballsForBatsman.Count()+" Balls)", chartJsDataSet);
+            return chartJsConfig;
+        }
+
+        private static List<Ball> GetBallsForBatsman(int playerId)
+        {
+            var ballsForBatsman = BallByBallStats.GetAllBalls().Where(b => b.Batsman == playerId).ToList();
+            return ballsForBatsman;
         }
 
         public static ChartJsConfig BuildBowlingDismissalTypesPieChart(int playerId)

@@ -35,10 +35,10 @@ namespace api.model
                 IsDrawn = match.ResultDrawn,
                 OurScore = match.GetTeamScore(Team.OurTeam),
                 OurWickets = match.GetTeamWicketsDown(Team.OurTeam),
-                OurOversFaced = match.GetOurBowlingStats().BowlingStatsData.Sum(b => b.Overs),
+                OurOversFaced = match.GetThierBowlingStats().BowlingStatsData.Sum(b => b.Overs),
                 TheirScore = match.GetTeamScore(match.Opposition),
                 TheirWickets = match.GetTeamWicketsDown(match.Opposition),
-                TheirOversFaced = match.GetThierBowlingStats().BowlingStatsData.Sum(b => b.Overs),
+                TheirOversFaced = match.GetOurBowlingStats().BowlingStatsData.Sum(b => b.Overs),
                 IsAbandoned = match.Abandoned
             };
         }
