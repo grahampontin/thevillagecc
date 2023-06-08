@@ -304,6 +304,8 @@ namespace api.model
 
             yield return PlayerBattingDataWithPivot("Vs Opposition", k => k.Key.Opposition.Name, dataByMatch, player,
                 new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBattingDataWithPivot("At Venue", k => k.Key.Venue.Name, dataByMatch, player,
+                new StatsColumnDefinitionV1("", "tableKey"));
             yield return PlayerBattingDataWithPivot("At Position", k => k.Value.BattingAt, dataByMatch, player);
             yield return PlayerBattingDataWithPivot("By Year", k => k.Key.MatchDate.Year, dataByMatch, player,
                 new StatsColumnDefinitionV1("", "tableKey"));
