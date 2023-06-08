@@ -334,6 +334,8 @@ namespace api.model
 
             yield return PlayerBowlingDataWithPivot("Vs Opposition", k => k.Key.Opposition.Name, dataByMatch, player,
                 new StatsColumnDefinitionV1("", "tableKey"));
+            yield return PlayerBowlingDataWithPivot("At Venue", k => k.Key.Venue.Name, dataByMatch, player,
+                new StatsColumnDefinitionV1("", "tableKey"));
             yield return PlayerBowlingDataWithPivot("By Year", k => k.Key.MatchDate.Year, dataByMatch, player,
                 new StatsColumnDefinitionV1("", "tableKey"));
             yield return PlayerBowlingDataWithPivot("Under Captain", k => k.Key.Captain.Name, dataByMatch, player,
