@@ -54,6 +54,7 @@ const gridOptions = {
     components: {
         // 'countryCellRenderer' is mapped to class CountryCellRenderer
         LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+        ParameterizedLinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
     },
 };
 
@@ -80,6 +81,9 @@ function getGridContainerForStatsType(statsType) {
             break;
         case "matches":
             grid = $("#matchesGrid");
+            break;
+        case "innings":
+            grid = $("#inningsGrid");
             break;
     }
     return grid;

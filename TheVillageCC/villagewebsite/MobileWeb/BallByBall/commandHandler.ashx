@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IdentityModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting;
@@ -164,7 +165,7 @@ public class CommandHandler : IHttpHandler
                         case "startMatch":
                             if (match.GetIsBallByBallInProgress())
                             {
-                                throw new InvalidOperationException("Coverage for match vs " + match.Opposition.Name +
+                                throw new BadRequestException("Coverage for match vs " + match.Opposition.Name +
                                                                     " has already been started");
                             }
 
@@ -350,7 +351,7 @@ public class CommandHandler : IHttpHandler
                 }
             }
         }
-        catch (InvalidOperationException ex)
+        catch (BadRequestException ex)
         {
             ReportInvalidInput(context, ex.Message);
         }

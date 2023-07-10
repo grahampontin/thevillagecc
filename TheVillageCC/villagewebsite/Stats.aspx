@@ -16,6 +16,7 @@
     <script src="Resources/jQuery/jquery-3.6.0.min.js"></script>
     <script src="Resources/ag-grid/ag-grid-community.min.js"></script>
     <script src="Script/agGrid/linkToPlayerStatsRenderer.js"></script>
+    <script src="Script/agGrid/parameterizedLinkToMatchReportRenderer.js"></script>
     <script src="Script/utilities.js"></script>
     <script src="Script/stats.js"></script>
 </head>
@@ -112,6 +113,7 @@
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Captains" type="button" role="tab" data-toggle="tab">Captains</button>
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Keepers" type="button" role="tab" data-toggle="tab">Keepers</button>
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Matches" type="button" role="tab" data-toggle="tab">Matches</button>
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Innings" type="button" role="tab" data-toggle="tab">Innings</button>
                 </nav>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="Batting">
@@ -134,6 +136,9 @@
                     </div>
                     <div role="tabpanel" class="tab-pane" id="Matches">
                         <div id="matchesGrid" class="ag-theme-balham stats-grid"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="Innings">
+                        <div id="inningsGrid" class="ag-theme-balham stats-grid"></div>
                     </div>
                 </div>
             </div>
