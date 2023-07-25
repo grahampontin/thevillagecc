@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Players</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.js"></script>
+    <script src="Resources/jQuery/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div
+        class="chart-container"
+></div>
+</body>
+
+<script>
+    var postData = {'command': "familyTree"};
+
+    function renderTree(data) {
+        var chart;
+        
+            chart = new d3.OrgChart()
+                .container('.chart-container')
+                .data(data)
+                .nodeHeight((d) => 70)
+                
+                .childrenMargin((d) => 50)
+                .compactMarginBetween((d) => 35)
+                .compactMarginPair((d) => 30)
+                //.neightbourMargin((a, b) => 20)
+                .buttonContent(({ node, state }) => {
+                    return `<div style="border-radius:3px;padding:3px;font-size:10px;margin:auto auto;background-color:lightgray"> <span style="font-size:9px">${
+                        node.children
+                            ? `<i class="fas fa-chevron-up"></i>`
+                            : `<i class="fas fa-chevron-down"></i>`
+                    }</span> ${node.data._directSubordinates}  </div>`;
+                })
+                .nodeContent(function (d, i, arr, state) {
+                    const colors = ['#278B8D', '#404040', '#0C5C73', '#33C6CB'];
+                    const color = colors[d.depth % colors.length];
+                    return `
+            <div style="background-color:${color}; position:absolute;margin-top:-1px; margin-left:-1px;width:${d.width}px;height:${d.height}px;border-radius:50px">
+               <img src=" ${
+                        d.data.imageUrl
+                    }" style="position:absolute;margin-top:5px;margin-left:${5}px;border-radius:100px;width:60px;height:60px;" />
+               <div style="position:absolute;top:-15px;width:${
+                        d.width
+                    }px;text-align:center;color:#fafafa;">
+                     <div style="margin:0 auto;background-color:${color};display:inline-block;padding:8px;padding-bottom:0px;border-radius:5px"> ${d.data._totalSubordinates}</div>
+              </div>
+
+              <div style="color:#fafafa;font-size:16px;font-weight:bold;margin-left:70px;margin-top:15px"> ${d.data.name} </div>
+              <div style="color:#fafafa;margin-left:70px;margin-top:5px">Caps: ${
+                        d.data.caps
+                    } (${d.data.responsibleCaps}) </div>
+              
+               <!--
+               <div style="padding:20px; padding-top:35px;text-align:center">
+                  
+                   
+               </div> 
+              
+               <div style="display:flex;justify-content:space-between;padding-left:15px;padding-right:15px;">
+                 <div > Manages:  ${d.data._directSubordinates} 👤</div>  
+                 <div > Oversees: ${d.data._totalSubordinates} 👤</div>    
+               </div>
+               -->
+           </div>
+  `;
+                })
+                .render();
+            chart.expandAll();
+    }
+
+    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+        //success
+        renderTree(data);
+    }, 'json');
+    
+</script>
+
+</html>
