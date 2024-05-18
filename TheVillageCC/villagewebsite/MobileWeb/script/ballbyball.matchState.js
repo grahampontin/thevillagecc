@@ -174,8 +174,8 @@ function evalPartnership() {
     var partnership = this.Partnership;
     partnership.CurrentScore = partnership.Runs + this.Over.totalScore();
     partnership.CurrentBalls = partnership.Balls + this.Over.balls.length;
-    partnership.CurrentFours = partnership.Balls + this.Over.totalFours();
-    partnership.CurrentSixes = partnership.Balls + this.Over.totalSixes();
+    partnership.CurrentFours = partnership.Fours + this.Over.totalFours();
+    partnership.CurrentSixes = partnership.Sixes + this.Over.totalSixes();
 }
 
 function evalStatsFor(batsman1) {

@@ -60,7 +60,7 @@ public class CommandHandler : IHttpHandler
                     }
 
                     var players = Player.GetAll().Where(p => (p.IsActive || includeInactive) && p.Id > 0)
-                        .OrderByDescending(p => p.NumberOfMatchesPlayedThisSeason).ThenBy(p => p.FormalName)
+                        .OrderByDescending(p => p.NumberOfMatchesPlayedThisSeason).ThenBy(p=>!p.IsActive).ThenBy(p => p.Surname)
                         .Select(PlayerV1.FromInternal).ToList();
                     context.Response.Write(javaScriptSerializer.Serialize(players));
                     return;
