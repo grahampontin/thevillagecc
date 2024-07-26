@@ -9,7 +9,7 @@
 });
 
 function addMatchRowWithCommand(o, selector, command) {
-    $(selector).append('<li><a class="item-link item-content ' + command+'" matchId="' + o.matchId + '"><div class="item-inner"><div class="item-title">' + o.opponent + ' (' + o.overs + ' ovs)</div><div class="item-after"><span class="badge bg-color-green">' + o.batOrBowl + '</span></div></div></a></li>');
+    $(selector).append('<li><a class="item-link item-content ' + command+'" matchId="' + o.matchId + '"><div class="item-inner"><div class="item-title">' + o.opponent + ' (' + o.overs + ' ovs)</div><div class="item-after"><span class="badge">' + o.batOrBowl + '</span></div></div></a></li>');
 }
 
 function executCommandOn(command, message) {

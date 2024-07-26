@@ -250,19 +250,16 @@ function refreshBatsmenView() {
     //coercing strings and ints here
 // ReSharper disable once CoercedEqualsUsing
     if (matchState.OnStrikeBatsmanId == batsman1.PlayerId) {
-        $("#batsman-one-name").addClass("button-fill");
-        $("#batsman-one-name").removeClass("button-outline");
-        $("#batsman-one-name").removeClass("opacity-40");
-        $("#batsman-two-name").removeClass("button-fill");
-        $("#batsman-two-name").addClass("button-outline");
-        $("#batsman-two-name").addClass("opacity-40");
+        $("#batsman-one-icon").show();
+        $("#batsman-two-icon").hide();
+        $("#batsman-one-name").css("padding-left", "5px");
+        $("#batsman-two-name").css("padding-left",  "29px");
+
     } else {
-        $("#batsman-two-name").addClass("button-fill");
-        $("#batsman-two-name").removeClass("button-outline");
-        $("#batsman-two-name").removeClass("opacity-40");
-        $("#batsman-one-name").removeClass("button-fill");
-        $("#batsman-one-name").addClass("button-outline");
-        $("#batsman-one-name").addClass("opacity-40");
+        $("#batsman-two-icon").show();
+        $("#batsman-one-icon").hide();
+        $("#batsman-one-name").css("padding-left", "29px");
+        $("#batsman-two-name").css("padding-left", "5px");
     }
     $("#batsman-one-runs").text(batsman1.Score);
     $("#batsman-one-balls").text(batsman1.CurrentBallsFaced);

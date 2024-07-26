@@ -8,11 +8,12 @@
     </div>
     <div class="page-content">
         <div class="no-gap" style="display: flex; height: 100%">
-            <div class="col" style="max-width: 30em; flex: 1; background-color: white">
-                <div class="block-strong" style="padding-bottom: 1px; border-bottom: solid 1px lightgrey; padding-top: 5px">
-                    <div class="row team-row">
+            <div style="max-width: 30em; flex: 1; background-color: white; display: flex; flex-direction: column">
+                <div class="block-strong"
+                     style="padding-bottom: 1px; border-bottom: solid 1px lightgrey; padding-top: 5px">
+                    <div class="team-row">
                         <div class="circle" style="background-color: lightgrey">
-                            <div class="circle-inner"><img src="/img/vcc_cricle_small.png" width="38" /></div>
+                            <div class="circle-inner"><img src="/img/vcc_cricle_small.png" width="38"/></div>
                         </div>
                         <div class="team-name">The Village CC</div>
                         <div class="team-score">
@@ -22,9 +23,11 @@
                             (<span id="village-team-ovs">0</span>ovs)
                         </div>
                     </div>
-                    <div class="row team-row">
+                    <div class="team-row">
                         <div class="circle bg-color-blue">
-                            <div class="circle-inner" style="color: white; font-weight: bold; font-size: 1em" id="opposition-team-abbreviation">PCC</div>
+                            <div class="circle-inner" style="color: white; font-weight: bold; font-size: 1em"
+                                 id="opposition-team-abbreviation">PCC
+                            </div>
                         </div>
                         <div class="team-name" id="opposition-team-name">Pacific</div>
                         <div class="team-score">
@@ -34,63 +37,165 @@
                         </div>
                     </div>
                 </div>
-                <div class="block-strong table-container">
-                    <div class="row table-row-header">
-                        <div class="col-50" style="padding-left: 10px">Batters</div>
-                        <div class="col-10">R</div>
-                        <div class="col-10">B</div>
-                        <div class="col-10">4s</div>
-                        <div class="col-10">6s</div>
-                        <div class="col-10">SR</div>
-                    </div>
-                    <div class="row table-row">
-                        <div class="col-50"><button class="col button button-outline button-round text-align-left" id="batsman-one-name">[missing] </button></div>
-                        <div class="col-10 button-height" id="batsman-one-runs">0</div>
-                        <div class="col-10 button-height" id="batsman-one-balls">0</div>
-                        <div class="col-10 button-height" id="batsman-one-fours">0</div>
-                        <div class="col-10 button-height" id="batsman-one-sixes">0</div>
-                        <div class="col-10 button-height" id="batsman-one-strike-rate">0</div>
-                    </div>
-                    <div class="row table-row">
-                        <div class="col-50"><button class="col button button-fill button-round text-align-left" id="batsman-two-name">[missing]</button></div>
-                        <div class="col-10 button-height" id="batsman-two-runs">0</div>
-                        <div class="col-10 button-height" id="batsman-two-balls">0</div>
-                        <div class="col-10 button-height" id="batsman-two-fours">0</div>
-                        <div class="col-10 button-height" id="batsman-two-sixes">0</div>
-                        <div class="col-10 button-height" id="batsman-two-strike-rate">0</div>
-                    </div>
-                    <div class="row table-row">
-                        <div class="col-50"><button class="col button button-outline button-round text-align-left border-color-white text-color-black">Partnership</button></div>
-                        <div class="col-10 button-height" id="partnership-runs">0</div>
-                        <div class="col-10 button-height" id="partnership-balls">0</div>
-                        <div class="col-10 button-height" id="partnership-fours">0</div>
-                        <div class="col-10 button-height" id="partnership-sixes">0</div>
-                        <div class="col-10 button-height"></div>
-                    </div>
-                    <div class="row table-row-header">
-                        <div class="col-50" style="padding-left: 10px">Bowler</div>
-                        <div class="col-10">O</div>
-                        <div class="col-10">M</div>
-                        <div class="col-10">R</div>
-                        <div class="col-10">W</div>
-                        <div class="col-10"></div>
-                    </div>
-                    <div class="row table-row">
-                        <div class="col-50">
-                            <button id="change-bowler-button" class="col button button-outline button-round text-align-left border-color-white text-color-black">
-                                <span id="bowler-name">A Dude</span>
-                                <div class="float-right"><i class="icon material-icons">edit</i></div>
-                            </button>
-                        </div>
-                        <div class="col-10 button-height" id="bowler-overs">0</div>
-                        <div class="col-10 button-height" id="bowler-maidens">0</div>
-                        <div class="col-10 button-height" id="bowler-runs">0</div>
-                        <div class="col-10 button-height" id="bowler-wickets">0</div>
-                        <div class="col-10 button-height"></div>
-                    </div>
+                <div class="data-table">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Batters</th>
+                            <th>R</th>
+                            <th>B</th>
+                            <th>4s</th>
+                            <th>6s</th>
+                            <th>SR</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="label-cell">
+                                <div style="display: flex; align-items: center">
+                                    <i class="cricket-bat-icon icon" id="batsman-one-icon"></i>
+                                    <div class=""  style="flex: 1"
+                                         id="batsman-one-name">[missing]
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span id="batsman-one-runs">0</span>
+                            </td>
+                            <td>
+                                <span id="batsman-one-balls">0</span>
+                            </td>
+                            <td>
+                                <span id="batsman-one-fours">0</span>
+                            </td>
+                            <td>
+                                <span id="batsman-one-sixes">0</span>
+                            </td>
+                            <td>
+                                <span id="batsman-one-strike-rate">0</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">
+                                <div style="display: flex; align-items: center">
+                                    <i class="cricket-bat-icon icon" id="batsman-two-icon"></i>
+                                    <div class="" style="flex: 1"
+                                         id="batsman-two-name">[missing]
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span id="batsman-two-runs">0</span>
+                            </td>
+                            <td>
+                                <span id="batsman-two-balls">0</span>
+                            </td>
+                            <td>
+                                <span id="batsman-two-fours">0</span>
+                            </td>
+                            <td>
+                                <span id="batsman-two-sixes">0</span>
+                            </td>
+                            <td>
+                                <span id="batsman-two-strike-rate">0</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">
+                                <div style="display: flex; align-items: center">
+                                    <i class="icon material-icons"  style="opacity: 50%;">group</i>
+                                    <div class="" style="padding-left: 5px; font-weight: lighter;">
+                                        Partnership
+                                    </div>    
+                                </div>
+                                
+                            </td>
+                            <td>
+                                <span id="partnership-runs" style="font-weight: lighter;">0</span>
+                            </td>
+                            <td>
+                                <span id="partnership-balls" style="font-weight: lighter;">0</span>
+                            </td>
+                            <td>
+                                <span id="partnership-fours" style="font-weight: lighter;">0</span>
+                            </td>
+                            <td>
+                                <span id="partnership-sixes" style="font-weight: lighter;">0</span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                        </tr>
+                        </tbody>
+
+
+                        <thead>
+                        <tr>
+                            <th class="label-cell">Bowler</th>
+                            <th>O</th>
+                            <th>M</th>
+                            <th>R</th>
+                            <th>W</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="label-cell">
+                                <div style="display: flex">
+                                    <i class="cricket-ball-icon icon" id="active-bowler-icon"></i>
+                                    <div class="" style="padding-left: 5px"
+                                         id="bowler-name">[missing]
+                                    </div>
+                                    
+                                </div>
+                            </td>
+                            <td>
+                                <span id="bowler-overs">0</span>
+                            </td>
+                            <td>
+                                <span id="bowler-maidens">0</span>
+                            </td>
+                            <td>
+                                <span id="bowler-runs">0</span>
+                            </td>
+                            <td>
+                                <span id="bowler-wickets">0</span>
+                            </td>
+                            <td>
+                                <i id="change-bowler-button" class="icon material-icons">edit</i>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!--                    <div class="grid grid-cols-6 table-row-header">-->
+                    <!--                        <div class="col-50" style="padding-left: 10px">Bowler</div>-->
+                    <!--                        <div class="col-10">O</div>-->
+                    <!--                        <div class="col-10">M</div>-->
+                    <!--                        <div class="col-10">R</div>-->
+                    <!--                        <div class="col-10">W</div>-->
+                    <!--                        <div class="col-10"></div>-->
+                    <!--                    </div>-->
+                    <!--                    <div class="grid grid-cols-6 table-row">-->
+                    <!--                        <div class="col-50">-->
+                    <!--                            <button id="change-bowler-button"-->
+                    <!--                                    class="col button button-outline button-round text-align-left border-color-white text-color-black">-->
+                    <!--                                <span id="bowler-name">A Dude</span>-->
+                    <!--                                <div class="float-right"><i class="icon material-icons">edit</i></div>-->
+                    <!--                            </button>-->
+                    <!--                        </div>-->
+                    <!--                        <div class="col-10 button-height" id="bowler-overs">0</div>-->
+                    <!--                        <div class="col-10 button-height" id="bowler-maidens">0</div>-->
+                    <!--                        <div class="col-10 button-height" id="bowler-runs">0</div>-->
+                    <!--                        <div class="col-10 button-height" id="bowler-wickets">0</div>-->
+                    <!--                        <div class="col-10 button-height"></div>-->
+                    <!--                    </div>-->
 
                 </div>
-                <div class="block-strong" style="border-bottom: solid 1px lightgrey; padding: 5px; text-align: center; overflow: scroll" id="current-over-balls">
+                <div class="block-strong"
+                     style="border-bottom: solid 1px lightgrey; padding: 5px; text-align: center; overflow: scroll"
+                     id="current-over-balls">
                     <div class="circle circle-small ball dot">
                         <div class="circle-inner">.</div>
                     </div>
@@ -104,34 +209,45 @@
                         <div class="circle-inner">W</div>
                     </div>
                 </div>
-                <div class="block-strong" style="padding-bottom: 1px; border-bottom: solid 1px lightgrey; padding: 5px">
-                    <div class="row" style="margin-top: 5px">
+                <div class="block-strong" style="
+                                            padding-bottom: 1px; 
+                                            border-bottom: solid 1px lightgrey; 
+                                            padding: 5px;
+                                            margin-top: auto">
+                    <div class="grid grid-cols-5 grid-gap" style="margin-top: 5px">
                         <div class="col-20">
-                            <div class="button button-outline circle-responsive circle-button color-darkgray runs-button" value="0">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray runs-button"
+                                 value="0">
                                 <div class="circle-inner"><i class="icon material-icons">brightness_1</i></div>
                             </div>
                         </div>
                         <div class="col-20">
-                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button hide-five-plus" value="1">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button hide-five-plus"
+                                 value="1">
                                 <div class="circle-inner">1</div>
                             </div>
-                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font show-five-plus runs-button" value="5">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font show-five-plus runs-button"
+                                 value="5">
                                 <div class="circle-inner">5</div>
                             </div>
                         </div>
                         <div class="col-20">
-                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button hide-five-plus" value="2">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button hide-five-plus"
+                                 value="2">
                                 <div class="circle-inner">2</div>
                             </div>
-                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font show-five-plus runs-button" value="7">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font show-five-plus runs-button"
+                                 value="7">
                                 <div class="circle-inner">7</div>
                             </div>
                         </div>
                         <div class="col-20">
-                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button hide-five-plus" value="3">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button hide-five-plus"
+                                 value="3">
                                 <div class="circle-inner">3</div>
                             </div>
-                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font show-five-plus runs-button" value="8">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font show-five-plus runs-button"
+                                 value="8">
                                 <div class="circle-inner">8</div>
                             </div>
                         </div>
@@ -143,22 +259,26 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 5px">
+                    <div class="grid grid-cols-5 grid-gap" style="margin-top: 5px">
                         <div class="col-20">
-                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button" value="4">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button"
+                                 value="4">
                                 <div class="circle-inner">4</div>
                             </div>
                         </div>
                         <div class="col-20">
-                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button" value="6">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font runs-button"
+                                 value="6">
                                 <div class="circle-inner">6</div>
                             </div>
                         </div>
                         <div class="col-20">
-                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font hide-five-plus" id="runs-five-plus-button">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font hide-five-plus"
+                                 id="runs-five-plus-button">
                                 <div class="circle-inner">5+</div>
                             </div>
-                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font show-five-plus" id="normal-runs-button">
+                            <div class="button button-outline circle-responsive circle-button color-darkgray circle-large-font show-five-plus"
+                                 id="normal-runs-button">
                                 <div class="circle-inner"><i class="icon material-icons">replay</i></div>
                             </div>
                         </div>
@@ -175,29 +295,34 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 5px">
+                    <div class="grid grid-cols-5 grid-gap" style="margin-top: 5px">
                         <div class="col-20">
-                            <div class="button button-fill circle-responsive circle-button color-darkgray extras-button" value="wd">
+                            <div class="button button-fill circle-responsive circle-button color-darkgray extras-button"
+                                 value="wd">
                                 <div class="circle-inner">Wide</div>
                             </div>
                         </div>
                         <div class="col-20">
-                            <div class="button button-fill circle-responsive circle-button color-darkgray extras-button" value="nb">
+                            <div class="button button-fill circle-responsive circle-button color-darkgray extras-button"
+                                 value="nb">
                                 <div class="circle-inner"><span>No Ball</span></div>
                             </div>
                         </div>
                         <div class="col-20">
-                            <div class="button button-fill circle-responsive circle-button color-darkgray extras-button" value="b">
+                            <div class="button button-fill circle-responsive circle-button color-darkgray extras-button"
+                                 value="b">
                                 <div class="circle-inner">Bye</div>
                             </div>
                         </div>
                         <div class="col-20">
-                            <div class="button button-fill circle-responsive circle-button color-darkgray extras-button" value="lb">
+                            <div class="button button-fill circle-responsive circle-button color-darkgray extras-button"
+                                 value="lb">
                                 <div class="circle-inner"><span>Leg Bye</span></div>
                             </div>
                         </div>
                         <div class="col-20">
-                            <div class="button circle-responsive circle-button button-fill color-red" id="wicket-button">
+                            <div class="button circle-responsive circle-button button-fill color-red"
+                                 id="wicket-button">
                                 <div class="circle-inner">
                                     OUT!
                                 </div>
@@ -208,7 +333,8 @@
             </div>
 
 
-            <div class="display-if-over-30em" style="flex: 1; border-left: solid 1px lightgray;  border-right: solid 1px lightgray;">
+            <div class="display-if-over-30em"
+                 style="flex: 1; border-left: solid 1px lightgray;  border-right: solid 1px lightgray;">
                 <div class="tabs">
                     <!-- First tab, should have "tab" class and unique id attribute -->
                     <!-- First tab is active by default - additional "tab-active" class -->
@@ -228,68 +354,78 @@
                             Live Scorecard
                         </div>
                         <div class="data-table" style="background-color: white">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="label-cell col-40"></th>
-                                <th class="numeric-cell">R</th>
-                                <th class="numeric-cell">B</th>
-                                <th class="numeric-cell medium-only">4s</th>
-                                <th class="numeric-cell medium-only">6s</th>
-                            </tr>
-                        </thead>
-                        <tbody id="home-batting-scorecard">
-                        <tr class="batsman-row">
-                            <td class="label-cell">Chris Magnifique<br><span class="scorecard-subtitle">not out</span></td>
-                            <td class="numeric-cell">2</td>
-                            <td class="numeric-cell">0</td>
-                            <td class="numeric-cell medium-only">0</td>
-                            <td class="numeric-cell medium-only">0</td>
-                        </tr>
-                        <tr class="batsman-row">
-                            <td class="label-cell">P Misra<br><span class="scorecard-subtitle">not out</span></td><td class="numeric-cell">1</td>
-                            <td class="numeric-cell">0</td>
-                            <td class="numeric-cell medium-only">0</td>
-                            <td class="numeric-cell medium-only">0</td>
-                        </tr>
-                        <tr class="batsman-row">
-                            <td class="label-cell">E Gupte<br><span class="scorecard-subtitle">lbw bowler</span></td>
-                            <td class="numeric-cell">10</td>
-                            <td class="numeric-cell">0</td>
-                            <td class="numeric-cell medium-only">1</td>
-                            <td class="numeric-cell medium-only">1</td>
-                        </tr>
-                            <tr>
-                                <td class="label-cell" style="text-align: right">Extras<br><span class="scorecard-subtitle" id="home-batting-scorecard-extras-detail">nb <span class="no-balls">0</span>,w <span class="wides">0</span>,b <span class="byes">0</span>,lb <span class="leg-byes">0</span></span></td>
-                                <td class="numeric-cell" id="home-batting-scorecard-extras-total">0</td>
-                                <td class="" style="padding-left: 0"></td>
-                                <td class="numeric-cell medium-only"></td>
-                                <td class="numeric-cell medium-only"></td>
-                            </tr>
-                            <tr>
-                                <td class="label-cell" style="text-align: right">Penalty</td>
-                                <td class="numeric-cell" id="home-batting-scorecard-penalty-total">0</td>
-                                <td class="" style="padding-left: 0"></td>
-                                <td class="numeric-cell medium-only"></td>
-                                <td class="numeric-cell medium-only"></td>
-                            </tr>
-                            <tr>
-                                <td class="label-cell" style="text-align: right">Total<br><span class="scorecard-subtitle" id="home-batting-scorecard-wickets-text">for 1 wickets</span></td>
-                                <td class="numeric-cell" id="home-batting-scorecard-total">13</td>
-                                <td class="" style="padding-left: 0"></td>
-                                <td class="numeric-cell medium-only"></td>
-                                <td class="numeric-cell medium-only"></td>
-                            </tr>
-                            <tr>
-                                <td class="label-cell" style="text-align: right">Overs</td>
-                                <td class="numeric-cell" id="home-batting-scorecard-overs">0</td>
-                                <td class="" style="padding-left: 0"></td>
-                                <td class="numeric-cell medium-only"></td>
-                                <td class="numeric-cell medium-only"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th class="label-cell col-40"></th>
+                                    <th class="numeric-cell">R</th>
+                                    <th class="numeric-cell">B</th>
+                                    <th class="numeric-cell medium-only">4s</th>
+                                    <th class="numeric-cell medium-only">6s</th>
+                                </tr>
+                                </thead>
+                                <tbody id="home-batting-scorecard">
+                                <tr class="batsman-row">
+                                    <td class="label-cell">Chris Magnifique<br><span
+                                            class="scorecard-subtitle">not out</span></td>
+                                    <td class="numeric-cell">2</td>
+                                    <td class="numeric-cell">0</td>
+                                    <td class="numeric-cell medium-only">0</td>
+                                    <td class="numeric-cell medium-only">0</td>
+                                </tr>
+                                <tr class="batsman-row">
+                                    <td class="label-cell">P Misra<br><span class="scorecard-subtitle">not out</span>
+                                    </td>
+                                    <td class="numeric-cell">1</td>
+                                    <td class="numeric-cell">0</td>
+                                    <td class="numeric-cell medium-only">0</td>
+                                    <td class="numeric-cell medium-only">0</td>
+                                </tr>
+                                <tr class="batsman-row">
+                                    <td class="label-cell">E Gupte<br><span class="scorecard-subtitle">lbw bowler</span>
+                                    </td>
+                                    <td class="numeric-cell">10</td>
+                                    <td class="numeric-cell">0</td>
+                                    <td class="numeric-cell medium-only">1</td>
+                                    <td class="numeric-cell medium-only">1</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell" style="text-align: right">Extras<br><span
+                                            class="scorecard-subtitle"
+                                            id="home-batting-scorecard-extras-detail">nb <span class="no-balls">0</span>,w <span
+                                            class="wides">0</span>,b <span class="byes">0</span>,lb <span
+                                            class="leg-byes">0</span></span></td>
+                                    <td class="numeric-cell" id="home-batting-scorecard-extras-total">0</td>
+                                    <td class="" style="padding-left: 0"></td>
+                                    <td class="numeric-cell medium-only"></td>
+                                    <td class="numeric-cell medium-only"></td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell" style="text-align: right">Penalty</td>
+                                    <td class="numeric-cell" id="home-batting-scorecard-penalty-total">0</td>
+                                    <td class="" style="padding-left: 0"></td>
+                                    <td class="numeric-cell medium-only"></td>
+                                    <td class="numeric-cell medium-only"></td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell" style="text-align: right">Total<br><span
+                                            class="scorecard-subtitle" id="home-batting-scorecard-wickets-text">for 1 wickets</span>
+                                    </td>
+                                    <td class="numeric-cell" id="home-batting-scorecard-total">13</td>
+                                    <td class="" style="padding-left: 0"></td>
+                                    <td class="numeric-cell medium-only"></td>
+                                    <td class="numeric-cell medium-only"></td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell" style="text-align: right">Overs</td>
+                                    <td class="numeric-cell" id="home-batting-scorecard-overs">0</td>
+                                    <td class="" style="padding-left: 0"></td>
+                                    <td class="numeric-cell medium-only"></td>
+                                    <td class="numeric-cell medium-only"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
                     </div>
                     <!-- Third tab, should have "tab" class and unique id attribute -->
@@ -298,40 +434,53 @@
                     </div>
                 </div>
             </div>
-        <div class="display-if-over-30em toolbar tabbar" style="width: 3em; display: block; height: 100%">
-            <div class="toolbar-inner" style="flex-direction: column">
-                <a class="tab-link tab-link-active" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 1 1 auto;" href="#current-over-tab"><i class="material-icons">sports_cricket</i><span class="tabbar-label" style="margin-top: 0.5em;">Current Over</span></a>
-                <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 1 1 auto;" href="#scorecard-tab"><i class="material-icons">table_chart</i><span class="tabbar-label" style="margin-top: 0.5em;">Scorecard</span></a>
-                <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 1 1 auto;" href="#wagon-wheel-tab"><i class="material-icons">radar</i><span class="tabbar-label" style="margin-top: 0.5em;">Wagonwheel</span></a>
+            <div class="display-if-over-30em toolbar tabbar" style="width: 3em; display: block; height: 100%">
+                <div class="toolbar-inner" style="flex-direction: column">
+                    <a class="tab-link tab-link-active"
+                       style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 1 1 auto;"
+                       href="#current-over-tab"><i class="material-icons">sports_cricket</i><span class="tabbar-label"
+                                                                                                  style="margin-top: 0.5em;">Current Over</span></a>
+                    <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 1 1 auto;"
+                       href="#scorecard-tab"><i class="material-icons">table_chart</i><span class="tabbar-label"
+                                                                                            style="margin-top: 0.5em;">Scorecard</span></a>
+                    <a class="tab-link" style="writing-mode: vertical-rl; text-orientation: mixed;  flex: 1 1 auto;"
+                       href="#wagon-wheel-tab"><i class="material-icons">radar</i><span class="tabbar-label"
+                                                                                        style="margin-top: 0.5em;">Wagonwheel</span></a>
+                </div>
             </div>
-        </div>
         </div>
 
 
-    <div class="sheet-modal sheet-modal-top" id="wagon-wheel-sheet">
-        <div class="toolbar toolbar-bottom">
-            <div class="toolbar-inner">
-                <div class="left"></div>
-                <div class="right"><a class="link sheet-close" href="#">Done</a></div>
+        <div class="sheet-modal sheet-modal-top" id="wagon-wheel-sheet">
+            <div class="toolbar toolbar-bottom">
+                <div class="toolbar-inner">
+                    <div class="left"></div>
+                    <div class="right"><a class="link sheet-close" href="#">Done</a></div>
+                </div>
             </div>
-        </div>
-        <div class="sheet-modal-inner">
-            <div class="row" id="wagon-wheel-header-row" style="padding: 10px 5px; margin-bottom: 5px; background-color: var(--f7-toolbar-bg-color, var(--f7-bars-bg-color, var(--f7-theme-color)));">
-                <div class="col-10" style="padding-top: 7px;">13.4</div>
-                <div>
-                    <div class="button button-outline circle-small circle-responsive circle-button color-darkgray" style="height: 40px; width: 40px;">
-                        <div id="ww-short-ball-score-description" class="circle-inner"></div>
+            <div class="sheet-modal-inner">
+                <div id="wagon-wheel-header-row"
+                     style="padding: 10px 5px; 
+                     margin-bottom: 5px; 
+                     display: flex;
+                     background-color: var(--f7-toolbar-bg-color, var(--f7-bars-bg-color, var(--f7-theme-color)));
+">
+                    <div style="padding-top: 7px;  margin-right: 1em">13.4</div>
+                    <div>
+                        <div class="button button-outline circle-small circle-responsive circle-button color-darkgray"
+                             style="height: 40px; width: 40px;">
+                            <div id="ww-short-ball-score-description" class="circle-inner"></div>
+                        </div>
+                    </div>
+                    <div style="margin-left: 1em ">
+                        <span id="ww-bowler-name"></span> to <span id="ww-batsman-name"></span>
+                        <br/>
+                        <span id="ww-long-ball-score-description"></span> to <span id="ww-scoring-area"></span>
                     </div>
                 </div>
-                <div class="col-80" style="padding-left: 15px">
-                    <span id="ww-bowler-name"></span> to <span id="ww-batsman-name"></span>
-                    <br/>
-                    <span id="ww-long-ball-score-description"></span> to <span id="ww-scoring-area"></span>
-                </div>
+                <canvas id="wagon-wheel-canvas" style="margin-bottom: 40px; width: 100%">
+                </canvas>
             </div>
-            <canvas id="wagon-wheel-canvas" style="margin-bottom: 40px; width: 100%">
-            </canvas>
         </div>
-    </div>
     </div>
 </div>

@@ -19,9 +19,9 @@ function listMatches() {
                 $.each(data,
                     function(i, o) {
                         if (o.batOrBowl === "") {
-                            $('#upcoming-matches ul').append('<li><a class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.dateString+')</div><div class="item-after"><span class="badge bg-color-green">New</span></div></div></a></li>');
+                            $('#upcoming-matches ul').append('<li><a class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.dateString+')</div><div class="item-after"><span class="badge">New</span></div></div></a></li>');
                         } else {
-                            $('#in-progress-matches ul').append('<li><a class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.overs+' ovs)</div><div class="item-after"><span class="badge bg-color-green">'+o.batOrBowl+'</span></div></div></a></li>');
+                            $('#in-progress-matches ul').append('<li><a class="item-link item-content new-match" matchId="'+o.matchId+'"><div class="item-inner"><div class="item-title">'+o.opponent+' ('+o.overs+' ovs)</div><div class="item-after"><span class="badge">'+o.batOrBowl+'</span></div></div></a></li>');
                         }
                         
                     });

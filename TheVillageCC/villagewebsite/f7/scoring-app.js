@@ -2,14 +2,15 @@
 
 var app = new Framework7({
     // App root element
-    root: '#app',
+    el: '#app',
     // App Name
     name: 'VCC Online',
-    // App id
-    id: 'com.villagecc.mobile',
     // Enable swipe panel
     panel: {
         swipe: 'left',
+    },
+    colors: {
+        primary: '#17801e'
     },
     // Add default routes
     routes: [
@@ -125,9 +126,6 @@ var app = new Framework7({
     }
     // ... other parameters
 });
-
-app.utils.colorThemeCSSProperties("#17801e");
-
 
 var mainView = app.views.create('.view-main');
 //First page setup
