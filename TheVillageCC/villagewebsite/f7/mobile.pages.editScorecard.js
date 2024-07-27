@@ -9,6 +9,15 @@ var requiresSave = false;
 var fowToast;
 //TODO: intercept navigation + refresh
 
+function canSaveBatsmanEntry() {
+    if (!$("#batsman-name-input").val().trim() &&
+        $("#batter-select").val() <= 0) {
+        $("#save-batsman-entry-button").hide();
+    } else {
+        $("#save-batsman-entry-button").show();
+    }
+}
+
 $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
     if (e.detail.position != "next") {
         return;
@@ -105,6 +114,7 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
         on: {
             opened: function() {
                 console.log('Popup opened');
+                canSaveBatsmanEntry();
             }
         }
     });      
@@ -228,6 +238,11 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
 
         requiresSave = true;
     });
+    
+    $("#batsman-name-input").change(canSaveBatsmanEntry)
+    $("#batter-select").change(canSaveBatsmanEntry)
+    
+    
 
     $("#save-fow-button").click(function() {
         activeFoWEntry.overs = $("#fow-overs-input").val();

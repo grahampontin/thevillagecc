@@ -7,51 +7,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="delete unused files - fix CI break">
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/css/framework7-bundle-rtl.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/css/framework7-bundle.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/css/framework7-rtl.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/icons/cricket-ball-solid.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/icons/cricket-bat-solid.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/js/framework7-bundle.esm.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/js/framework7-bundle.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/js/framework7-bundle.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/js/framework7-bundle.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/js/framework7-bundle.min.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/js/framework7-lite-bundle.esm.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/js/framework7-lite.esm.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/js/framework7.esm.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/test.html" afterDir="false" />
+    <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="Upgrade to F7 v8 and fix scoring. Still need to do scorecards">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/css/framework7-icons.css" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/css/framework7-icons.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/css/framework7.bundle.css" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/css/framework7-bundle.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/css/framework7.bundle.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/css/framework7.bundle.rtl.css" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/css/framework7-bundle-rtl.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/css/framework7.bundle.rtl.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/css/framework7.css" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/css/framework7.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/css/framework7.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/css/framework7.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/css/framework7.rtl.css" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/css/framework7-rtl.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/css/framework7.rtl.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/fonts/Framework7Icons-Regular.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/fonts/Framework7Icons-Regular.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/fonts/Framework7Icons-Regular.woff" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/fonts/Framework7Icons-Regular.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/fonts/Framework7Icons-Regular.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/fonts/Framework7Icons-Regular.woff2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/editScorecard.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/editScorecard.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/villagewebsite/f7/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/js/framework7.bundle.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/js/framework7.bundle.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/js/framework7.bundle.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/js/framework7.bundle.min.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/js/framework7.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/js/framework7.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/js/framework7.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/js/framework7.min.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.chooseMatch.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.chooseMatch.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.debug.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.debug.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.scoring.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.scoring.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/newOver.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/newOver.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.editScorecard.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.editScorecard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/villagewebsite/f7/scoring-app.css" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/scoring-app.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/scoring-app.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/scoring-app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/scoring.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/scoring.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,8 +60,17 @@
     <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerDetail.aspx.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-3.3.6-dist/css/bootstrap.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-3.3.6-dist/css/bootstrap.min.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap-grid.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap-grid.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap-reboot.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap-utilities.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap-utilities.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap.min.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap.rtl.min.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap-grid.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap-reboot.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.3.0-alpha1-dist/js/bootstrap.min.js.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Results.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Stats.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
@@ -200,7 +170,7 @@
       <workItem from="1706984081855" duration="114000" />
       <workItem from="1706984487955" duration="1120000" />
       <workItem from="1715947835588" duration="12760000" />
-      <workItem from="1721911048811" duration="12496000" />
+      <workItem from="1721911048811" duration="19753000" />
     </task>
     <task id="LOCAL-00001" summary="new bootstrap version">
       <created>1679246162845</created>
@@ -373,7 +343,15 @@
       <option name="project" value="LOCAL" />
       <updated>1716129097646</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Upgrade to F7 v8 and fix scoring. Still need to do scorecards">
+      <option name="closed" value="true" />
+      <created>1722023722169</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1722023722169</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -418,7 +396,8 @@
     <MESSAGE value="bug fix fours and sixes in partnership" />
     <MESSAGE value="fic compile error" />
     <MESSAGE value="delete unused files - fix CI break" />
-    <option name="LAST_COMMIT_MESSAGE" value="delete unused files - fix CI break" />
+    <MESSAGE value="Upgrade to F7 v8 and fix scoring. Still need to do scorecards" />
+    <option name="LAST_COMMIT_MESSAGE" value="Upgrade to F7 v8 and fix scoring. Still need to do scorecards" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
