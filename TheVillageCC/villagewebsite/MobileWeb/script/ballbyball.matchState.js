@@ -194,19 +194,65 @@ function evalPartnership() {
 
 function updateBatterStatsInLiveScorecard(batsman1) {
     let players = this.LiveScorecard.LiveBattingCard.Players;
+    let found = false;
+    let maxIndex = 0;
+    let lastBall = this.Over.balls[this.Over.balls.length - 1];
+    
+    
     $.each(players, (index, player)=>{
         if (player.BatsmanInningsDetails.PlayerId === batsman1.PlayerId){
             player.BatsmanInningsDetails.Score = batsman1.Score;
             player.BatsmanInningsDetails.Balls = batsman1.CurrentBallsFaced;
             player.BatsmanInningsDetails.Fours = batsman1.CurrentFours;
             player.BatsmanInningsDetails.Sixes = batsman1.CurrentSixes;
-            if (batsman1.CurrentBallsFaced == 0) {
+            if (batsman1.CurrentBallsFaced === 0) {
                 player.BatsmanInningsDetails.StrikeRate = 0;
             } else {
                 player.BatsmanInningsDetails.StrikeRate = batsman1.CurrentStrikeRate;
-            }        
+            }
+            
+            found = true;
         }
+        if (lastBall !== undefined && lastBall.wicket !== undefined && lastBall.wicket != null) {
+            if (lastBall.wicket.player === player.BatsmanInningsDetails.PlayerId) {
+                player.Wicket = {
+                    PlayerId: lastBall.wicket.player,
+                    PlayerName: lastBall.wicket.playerName,
+                    ModeOfDismissal: lastBall.wicket.modeOfDismissal,
+                    Description: lastBall.wicket.description,
+                    Fielder : lastBall.wicket.fielder,
+                    Bowler: lastBall.wicket.bowler,
+                    IsBowled: lastBall.wicket.modeOfDismissal === "b",
+                    IsCaught: lastBall.wicket.modeOfDismissal === "ct",
+                    IsLbw: lastBall.wicket.modeOfDismissal === "lbw",
+                    IsRunOut: lastBall.wicket.modeOfDismissal === "ro",
+                    IsStumped: lastBall.wicket.modeOfDismissal === "st",
+                    IsHitWicket: lastBall.wicket.modeOfDismissal === "hw",
+                    IsRetired: lastBall.wicket.modeOfDismissal === "rt",
+                    IsRetiredHurt: lastBall.wicket.modeOfDismissal === "rth",
+                    IsCaughtAndBowled: lastBall.wicket.modeOfDismissal === "c&b"
+                    
+                }
+            }
+        }
+
+        maxIndex = index;
     });
+    if (!found) {
+        let newPlayer = {
+            BatsmanInningsDetails: {
+                PlayerId: batsman1.PlayerId,
+                Name: batsman1.PlayerName,
+                Score: batsman1.Score,
+                Balls: batsman1.CurrentBallsFaced,
+                Fours: batsman1.CurrentFours,
+                Sixes: batsman1.CurrentSixes,
+                StrikeRate: batsman1.CurrentStrikeRate
+            },
+            Wicket: null
+        };
+        players[maxIndex+1] = newPlayer;
+    }
 }
 
 function updateScorecardData() {

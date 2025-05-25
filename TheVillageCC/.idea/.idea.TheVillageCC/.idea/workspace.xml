@@ -7,23 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="Update About text from Boshy Boshy">
-      <change afterPath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/MatchStateV1.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/Script/vcc.batting-scorecard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/projectSettingsUpdater.xml" afterDir="false" />
+    <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="#AB34 - add scoreacard to scoring app">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TheVillageCC.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/TheVillageCC.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/BattingEntryV1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/BattingEntryV1.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/LiveScorecard.aspx" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/LiveScorecard.aspx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/villagewebsite/MobileWeb/script/ballbyball.matchState.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/MobileWeb/script/ballbyball.matchState.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/MobileWeb/script/ballbyball.over.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/MobileWeb/script/ballbyball.over.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/Script/live-scorecard.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Script/live-scorecard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/Script/utilities.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Script/utilities.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.scoring.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.scoring.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/scoring.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/scoring.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -216,7 +202,7 @@
       <workItem from="1745053067319" duration="576000" />
       <workItem from="1746363738747" duration="2751000" />
       <workItem from="1747068008704" duration="16352000" />
-      <workItem from="1748160707962" duration="1983000" />
+      <workItem from="1748160707962" duration="5080000" />
     </task>
     <task id="LOCAL-00001" summary="new bootstrap version">
       <created>1679246162845</created>
@@ -413,7 +399,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745053826157</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="#AB34 - add scoreacard to scoring app">
+      <option name="closed" value="true" />
+      <created>1748162780355</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1748162780355</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -435,7 +429,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="player detail UI mappings" />
     <MESSAGE value="Bowling style rationalization" />
     <MESSAGE value="remove dependencies on internet connection" />
     <MESSAGE value="Player details complete" />
@@ -460,7 +453,8 @@
     <MESSAGE value="Upgrade to F7 v8 and fix scoring. Still need to do scorecards" />
     <MESSAGE value="stop being able to add a scorecard entry without a batsman" />
     <MESSAGE value="Update About text from Boshy Boshy" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update About text from Boshy Boshy" />
+    <MESSAGE value="#AB34 - add scoreacard to scoring app" />
+    <option name="LAST_COMMIT_MESSAGE" value="#AB34 - add scoreacard to scoring app" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
