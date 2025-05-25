@@ -7,17 +7,31 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="Upgrade to F7 v8 and fix scoring. Still need to do scorecards">
+    <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="Update About text from Boshy Boshy">
+      <change afterPath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/MatchStateV1.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/villagewebsite/Script/vcc.batting-scorecard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/projectSettingsUpdater.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/editScorecard.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/editScorecard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TheVillageCC.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/TheVillageCC.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/BattingEntryV1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/BattingEntryV1.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/LiveScorecard.aspx" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/LiveScorecard.aspx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/MobileWeb/script/ballbyball.matchState.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/MobileWeb/script/ballbyball.matchState.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/MobileWeb/script/ballbyball.over.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/MobileWeb/script/ballbyball.over.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/Script/live-scorecard.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Script/live-scorecard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/Script/utilities.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Script/utilities.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/villagewebsite/f7/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.editScorecard.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.editScorecard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/scoring-app.css" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/scoring-app.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.scoring.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.scoring.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/scoring.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/scoring.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DpaMonitoringSettings">
+    <option name="firstShow" value="false" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -44,23 +58,53 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/2a/758dcd07/BallByBallMatch.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/52/86745d48/LiveBattingCardEntry.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/ae/68b0546b/LiveBattingCard.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/b3/755e9180/BatsmanInningsDetails.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/ca/42e0647a/BattingCardLine.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/e0/6569ffda/LiveScorecard.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/47c35a4ea3824725aed2b934dce82b441f000/9a/bf83e796/Match.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/47c35a4ea3824725aed2b934dce82b441f000/c2/c68d62d3/Partnership.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7f3c2668e0f74a5ba11a5b4e77aa969a1c800/79/fa711fff/BallByBallMatch.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/21/e5fed5aa/Ball.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/53/94606c3f/Over.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/7b/94f6bc43/PlayerState.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/ab/b54eaf36/MatchState.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/ae/59a9117d/PartnershipStub.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/d1/24ad7eb2/BowlerInningsDetails.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/d1/2cccdfb0/Wicket.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ad71f29ef1c141fe991d10b1a1a1c9698c00/20/a4c22afc/PartnershipStub.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/villagewebsite/Awards.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c0c221501f3a41f8ac0af9d6a9dc9ff335fd90/38/3bb6b09e/MatchState.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/PrecompiledWeb/localhost_56404/Resources/bootstrap-5.0.2-dist/css/bootstrap-grid.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/PrecompiledWeb/localhost_56404/Resources/bootstrap-5.0.2-dist/css/bootstrap-grid.min.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/PrecompiledWeb/localhost_56404/Resources/bootstrap-5.0.2-dist/css/bootstrap-grid.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/PrecompiledWeb/localhost_56404/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap-grid.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/PrecompiledWeb/localhost_56404/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap-grid.min.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/PrecompiledWeb/localhost_56404/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap-grid.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/content/Content/bootstrap-grid.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/content/Content/bootstrap-grid.min.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/content/Content/bootstrap-grid.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/content/Content/bootstrap-grid.rtl.min.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/contentFiles/any/any/wwwroot/css/bootstrap-grid.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/contentFiles/any/any/wwwroot/css/bootstrap-grid.min.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/contentFiles/any/any/wwwroot/css/bootstrap-grid.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Awards.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Awards.aspx.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/CSS/bootstrap-custom.min.css.map" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/villagewebsite/Committee.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/villagewebsite/Default.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Committee.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Default.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Default.aspx.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/villagewebsite/Fixtures.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Fixtures.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Fixtures.aspx.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/villagewebsite/LiveScorecard.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/LiveScorecard.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/LiveScorecard.aspx.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerDetail.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerDetail.aspx.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-3.3.6-dist/css/bootstrap.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-3.3.6-dist/css/bootstrap.min.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap-grid.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap-grid.min.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap-grid.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap-reboot.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap-utilities.css.map" root0="FORCE_HIGHLIGHTING" />
@@ -69,10 +113,13 @@
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap.min.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.0.2-dist/css/bootstrap.rtl.min.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap-grid.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap-grid.min.css.map" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap-grid.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap-reboot.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.3.0-alpha1-dist/css/bootstrap.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-5.3.0-alpha1-dist/js/bootstrap.min.js.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Results.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Secure/Register.aspx.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Stats.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Stats.aspx.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Template.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
@@ -101,32 +148,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.villagewebsite - IIS Express.executor": "Run",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "js.introduce.parameter.generate.optional": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "RiderNuGetOptionsPageId",
-    "vue.rearranger.settings.migration": "true"
-  },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\graha\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\graha\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\graha\\AppData\\Local\\Symbols\\src"
-    ]
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.villagewebsite - IIS Express.executor&quot;: &quot;Run&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;js.introduce.parameter.generate.optional&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="villagewebsite - IIS Express" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -170,7 +211,12 @@
       <workItem from="1706984081855" duration="114000" />
       <workItem from="1706984487955" duration="1120000" />
       <workItem from="1715947835588" duration="12760000" />
-      <workItem from="1721911048811" duration="19753000" />
+      <workItem from="1721911048811" duration="21989000" />
+      <workItem from="1743527493749" duration="503000" />
+      <workItem from="1745053067319" duration="576000" />
+      <workItem from="1746363738747" duration="2751000" />
+      <workItem from="1747068008704" duration="16352000" />
+      <workItem from="1748160707962" duration="1983000" />
     </task>
     <task id="LOCAL-00001" summary="new bootstrap version">
       <created>1679246162845</created>
@@ -351,7 +397,23 @@
       <option name="project" value="LOCAL" />
       <updated>1722023722169</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="stop being able to add a scorecard entry without a batsman">
+      <option name="closed" value="true" />
+      <created>1722113354574</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1722113354574</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Update About text from Boshy Boshy">
+      <option name="closed" value="true" />
+      <created>1745053826157</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1745053826157</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -373,7 +435,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="new bootstrap version" />
     <MESSAGE value="player detail UI mappings" />
     <MESSAGE value="Bowling style rationalization" />
     <MESSAGE value="remove dependencies on internet connection" />
@@ -397,38 +458,44 @@
     <MESSAGE value="fic compile error" />
     <MESSAGE value="delete unused files - fix CI break" />
     <MESSAGE value="Upgrade to F7 v8 and fix scoring. Still need to do scorecards" />
-    <option name="LAST_COMMIT_MESSAGE" value="Upgrade to F7 v8 and fix scoring. Still need to do scorecards" />
+    <MESSAGE value="stop being able to add a scorecard entry without a batsman" />
+    <MESSAGE value="Update About text from Boshy Boshy" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update About text from Boshy Boshy" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx</url>
-          <line>356</line>
-          <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" containingFunctionPresentation="method 'ProcessRequest'">
+          <line>346</line>
+          <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" containingFunctionPresentation="Method 'ProcessRequest'">
             <startOffsets>
-              <option value="20095" />
+              <option value="19431" />
             </startOffsets>
             <endOffsets>
-              <option value="20129" />
+              <option value="19432" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx</url>
-          <line>360</line>
-          <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" containingFunctionPresentation="method 'ProcessRequest'">
+          <line>350</line>
+          <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" containingFunctionPresentation="Method 'ProcessRequest'">
             <startOffsets>
-              <option value="20191" />
+              <option value="19533" />
             </startOffsets>
             <endOffsets>
-              <option value="20221" />
+              <option value="19534" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

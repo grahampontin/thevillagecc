@@ -8,6 +8,13 @@
     this.totalScore = totalScore;
     this.totalFours = totalFours;
     this.totalSixes = totalSixes;
+    this.totalByes = totalByes;
+    this.totalLegByes = totalLegByes;
+    this.totalPenalties = totalPenalties;
+    this.totalWides = totalWides;
+    this.totalNoBalls = totalNoBalls;
+    this.totalExtras = totalExtras; 
+    this.scoreForExtraType = scoreForExtraType;
     this.wickets = wickets;
     this.toHtml = toHtml;
     this.ballNumber = ballNumber;
@@ -120,6 +127,47 @@ function totalSixes() {
     }
     return score;
 }
+
+function scoreForExtraType(thing) {
+    var scoreForThisThing = parseInt(0);
+    if (this.balls === null  || this.balls === undefined || this.balls.length === 0) {
+        return scoreForThisThing;
+    }
+    for (i = 0; i < this.balls.length; i++) {
+        var ball = this.balls[i];
+        if (ball.thing === thing) {
+            scoreForThisThing += parseInt(ball.amount);
+        }
+    }
+    return scoreForThisThing;
+}
+
+function totalByes() {
+    return this.scoreForExtraType("b");
+}
+
+function totalLegByes() {
+    return this.scoreForExtraType("lb");
+}
+
+function totalPenalties() {
+    return this.scoreForExtraType("p");
+}
+
+function totalWides() {
+    return this.scoreForExtraType("wd");
+}
+function totalNoBalls() {
+    return this.scoreForExtraType("nb");
+}
+
+function totalExtras() {
+    return this.totalWides() + this.totalNoBalls() + this.totalByes() + this.totalLegByes() + this.totalPenalties();
+}
+
+
+
+
 
 function wickets() {
     var wkts = parseInt(0);

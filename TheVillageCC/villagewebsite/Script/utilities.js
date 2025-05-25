@@ -14,3 +14,9 @@ function showPreloader(container) {
 function hidePreloader() {
     $(".preloader").remove();
 }
+
+
+function showOnlyOnLargerScreens(dismissalPart1) {
+    dismissalPart1.addClass("d-none");
+    dismissalPart1.addClass("d-md-table-cell");
+}

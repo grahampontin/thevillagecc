@@ -1,4 +1,4 @@
-﻿function MatchState(Players, LastCompletedOver, Over, Score, RunRate, Bowlers, MatchId, PreviousBowler, PreviousBowlerButOne, Partnership, OnStrikeBatsmanId, OppositionScore, OppositionWickets, BowlerDetails, OppositionName, OppositionShortName) {
+﻿function MatchState(Players, LastCompletedOver, Over, Score, RunRate, Bowlers, MatchId, PreviousBowler, PreviousBowlerButOne, Partnership, OnStrikeBatsmanId, OppositionScore, OppositionWickets, BowlerDetails, OppositionName, OppositionShortName, LiveScorecard) {
     //Fields
     this.Players = Players;
     this.Over = Over;
@@ -21,6 +21,16 @@
     this.BowlerDetails = BowlerDetails;
     this.OppositionName = OppositionName;
     this.OppositionShortName = OppositionShortName;
+    this.LiveScorecard = LiveScorecard;
+    
+    this.OriginalExtras = {
+        Byes: LiveScorecard.LiveBattingCard.Extras.Byes,
+        LegByes: LiveScorecard.LiveBattingCard.Extras.LegByes,
+        Wides: LiveScorecard.LiveBattingCard.Extras.Wides,
+        NoBalls: LiveScorecard.LiveBattingCard.Extras.NoBalls,
+        Penalty: LiveScorecard.LiveBattingCard.Extras.Penalty,
+    }
+    
 
 
     //Methods
@@ -52,6 +62,10 @@
     this.getBallsBowledBy = getBallsBowledBy;
     this.getRunsConceededInCurrentOver = getRunsConceededInCurrentOver;
     this.getWicketsTakenInCurrentOver = getWicketsTakenInCurrentOver;
+    this.updateBatterStatsInLiveScorecard = updateBatterStatsInLiveScorecard;
+    this.updateScorecardData = updateScorecardData;
+    this.updateExtrasAndScoreInLiveScorecard = updateExtrasAndScoreInLiveScorecard;
+    
 }
 
 function addBall(ball) {
@@ -178,6 +192,44 @@ function evalPartnership() {
     partnership.CurrentSixes = partnership.Sixes + this.Over.totalSixes();
 }
 
+function updateBatterStatsInLiveScorecard(batsman1) {
+    let players = this.LiveScorecard.LiveBattingCard.Players;
+    $.each(players, (index, player)=>{
+        if (player.BatsmanInningsDetails.PlayerId === batsman1.PlayerId){
+            player.BatsmanInningsDetails.Score = batsman1.Score;
+            player.BatsmanInningsDetails.Balls = batsman1.CurrentBallsFaced;
+            player.BatsmanInningsDetails.Fours = batsman1.CurrentFours;
+            player.BatsmanInningsDetails.Sixes = batsman1.CurrentSixes;
+            if (batsman1.CurrentBallsFaced == 0) {
+                player.BatsmanInningsDetails.StrikeRate = 0;
+            } else {
+                player.BatsmanInningsDetails.StrikeRate = batsman1.CurrentStrikeRate;
+            }        
+        }
+    });
+}
+
+function updateScorecardData() {
+    this.updateBatterStatsInLiveScorecard(this.getBattingPlayers()[0]);
+    this.updateBatterStatsInLiveScorecard(this.getBattingPlayers()[1]);
+    this.updateExtrasAndScoreInLiveScorecard();
+
+}
+
+function updateExtrasAndScoreInLiveScorecard() {
+    this.LiveScorecard.Score = this.Over.totalScore() * 1 + matchState.Score * 1;
+    let extras = this.LiveScorecard.LiveBattingCard.Extras;
+    extras.Byes = this.Over.totalByes() + this.OriginalExtras.Byes;
+    extras.LegByes = this.Over.totalLegByes() + this.OriginalExtras.LegByes;
+    extras.Wides = this.Over.totalWides() + this.OriginalExtras.Wides;
+    extras.Penalty = this.Over.totalPenalties() + this.OriginalExtras.Penalty;
+    extras.NoBalls = this.Over.totalNoBalls() + this.OriginalExtras.NoBalls;
+    extras.Total = extras.Byes + extras.LegByes + extras.Wides + extras.Penalty + extras.NoBalls;
+
+    extras.DetailString = extras.Byes + "b, " + extras.LegByes + "lb, " + extras.Wides + "wd, " + extras.NoBalls + "nb, " + extras.Penalty + "p";
+}
+
+
 function evalStatsFor(batsman1) {
     if (batsman1 == undefined) {
         return;
@@ -222,7 +274,7 @@ function addBowler(name) {
 }
 
 function matchStateFromData(data) {
-    return new MatchState(data.Players, data.LastCompletedOver, new Over(), data.Score, data.RunRate, data.Bowlers, data.MatchId, data.PreviousBowler, data.PreviousBowlerButOne, data.Partnership, data.OnStrikeBatsmanId, data.OppositionScore, data.OppositionWickets, data.BowlerDetails, data.OppositionName, data.OppositionShortName);
+    return new MatchState(data.Players, data.LastCompletedOver, new Over(), data.Score, data.RunRate, data.Bowlers, data.MatchId, data.PreviousBowler, data.PreviousBowlerButOne, data.Partnership, data.OnStrikeBatsmanId, data.OppositionScore, data.OppositionWickets, data.BowlerDetails, data.OppositionName, data.OppositionShortName, data.LiveScorecard.InPlayData);
 }
 
 function setPlayerBattingAtPosition(playerId, position) {

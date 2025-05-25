@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using CricketClubDomain;
 using CricketClubMiddle;
 using CricketClubMiddle.Stats;
+// ReSharper disable UnusedMember.Global
 
 namespace api.model
 {
@@ -85,7 +86,12 @@ namespace api.model
         public string Bowler { get; set; }
 
         public string Fielder { get; set; }
-
+        
+        public int Player { get; set; }
+        public string PlayerName { get; set; }
+        
+        public string Description { get; set; }
+    
         public ModesOfDismissal ModeOfDismissal { get; set; }
 
         public bool IsRunOut

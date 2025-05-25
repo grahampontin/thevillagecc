@@ -190,18 +190,8 @@ public class CommandHandler : IHttpHandler
                             ReturnCurrentMatchState(context, match);
                             break;
                         case "liveScorecard":
-                            var matchReportAndConditions = match.GetMatchReport();
-                            var external = new LiveScorecardV1
-                            {
-                                MatchData = MatchV1.FromInternal(match),
-                                InPlayData = match.GetLiveScorecard(),
-                                FinalScorecard = MatchScorecardV1.GetExternalScorecard(match),
-                                MatchReport = new MatchReportV1(matchReportAndConditions.Conditions,
-                                    matchReportAndConditions.Report, matchReportAndConditions.ReportImage),
-                                Result = ResultV1.FromInternal(match)
-                            };
 
-                            string json = javaScriptSerializer.Serialize(external);
+                            string json = javaScriptSerializer.Serialize(FromLiveScorecard(match));
                             context.Response.ContentType = "text/json";
                             context.Response.StatusCode = 200;
                             context.Response.Write(json);
@@ -363,6 +353,21 @@ public class CommandHandler : IHttpHandler
         }
     }
 
+    private static LiveScorecardV1 FromLiveScorecard(Match match)
+    {
+        var matchReportAndConditions = match.GetMatchReport();
+        var external = new LiveScorecardV1
+        {
+            MatchData = MatchV1.FromInternal(match),
+            InPlayData = match.GetLiveScorecard(),
+            FinalScorecard = MatchScorecardV1.GetExternalScorecard(match),
+            MatchReport = new MatchReportV1(matchReportAndConditions.Conditions,
+                matchReportAndConditions.Report, matchReportAndConditions.ReportImage),
+            Result = ResultV1.FromInternal(match)
+        };
+        return external;
+    }
+
     private List<FamilyTreeNode> CreateFamilyTree()
     {
         var familyTreeNodes = Player.GetAll().Select(p => new FamilyTreeNode()
@@ -430,7 +435,10 @@ public class CommandHandler : IHttpHandler
     private void ReturnCurrentMatchState(HttpContext context, Match match)
     {
         BallByBallMatch ballByBallMatch = match.GetCurrentBallByBallState();
-        string json = javaScriptSerializer.Serialize(ballByBallMatch.GetMatchState());
+        MatchState matchState = ballByBallMatch.GetMatchState();
+        var matchStateV1 = MatchStateMapper.MapToMatchStateV1(matchState);
+        matchStateV1.LiveScorecard = FromLiveScorecard(match);
+        string json = javaScriptSerializer.Serialize(matchStateV1);
         context.Response.ContentType = "text/json";
         context.Response.StatusCode = 200;
         context.Response.Write(json);

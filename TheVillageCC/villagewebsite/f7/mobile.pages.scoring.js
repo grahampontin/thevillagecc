@@ -190,12 +190,23 @@ function updateWagonWheelUiText() {
     $("#ww-long-ball-score-description").text(matchState.getLastBall().toBallString());
 }
 
+
+
+
+function refreshScorecard() {
+    let tableForScorecard = $('#live-batting-scorecard');
+    tableForScorecard.empty();
+    matchState.updateScorecardData();
+    renderLiveBattingScoreCard(matchState.LiveScorecard, tableForScorecard);
+}
+
 function refreshUi() {
     refreshBatsmenView();
     refreshBowlerView();
     refreshCurrentOverView();
     refreshTeamScores();
     refreshCurrentOverBallsView();
+    refreshScorecard();
 }
 
 function refreshCurrentOverBallsView() {
