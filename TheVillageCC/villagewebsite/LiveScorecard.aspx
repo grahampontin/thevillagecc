@@ -126,6 +126,7 @@
     <script src="Resources/jQuery/jquery-3.6.0.min.js"></script>
     <script src="Script/purl.js"></script>
     <script src="Script/wagonwheel-functions.js"></script>
+    <script src="Script/utilities.js"></script>
     <script src="Script/vcc.batting-scorecard.js"></script>
     <script src="Script/live-scorecard.js"></script>
     <script src="Script/raphael-min.js"></script>
