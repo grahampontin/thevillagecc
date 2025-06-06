@@ -19,14 +19,13 @@
     </div>
 
 
-
     <div class="page-content">
         <div class="list" id="venues">
             <ul>
             </ul>
         </div>
     </div>
-    
+
     <div class="popup edit-venue-popup">
         <div class="page" id="edit-venue-page">
             <div class="navbar">
@@ -47,22 +46,31 @@
                 </div>
             </div>
             <div class="page-content">
-                <div class="list inline-labels">
+                <div class="block-title">Venue Details</div>
+                <div class="list list-strong list-dividers inset">
                     <ul>
-                        <li class="item-content item-input" id="name-element">
+                        <li class="item-content item-input">
+                            <div class="item-media">
+                                <i class="material-icons">stadium</i>
+                            </div>
                             <div class="item-inner">
                                 <div class="item-title item-label">Name</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" placeholder="What do we call this idyllic setting?" id="venue-name-input">
+                                    <input type="text" placeholder="What do we call this idyllic setting?"
+                                           id="venue-name-input">
                                     <span class="input-clear-button"></span>
                                 </div>
                             </div>
                         </li>
-                        <li class="item-content item-input" id="map-url-element">
+                        <li class="item-content item-input">
+                            <div class="item-media">
+                                <i class="material-icons">description</i>
+                            </div>
                             <div class="item-inner">
-                                <div class="item-title item-label">Location</div>
+                                <div class="item-title item-label">Description</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" placeholder="A Google Maps URL please" id="venue-location-input">
+                                    <textarea id="venue-description-textarea"
+                                              placeholder="What's it like, this magical place?"></textarea>
                                     <span class="input-clear-button"></span>
                                 </div>
                             </div>
@@ -70,8 +78,38 @@
                     </ul>
                 </div>
 
+                <div class="block-title">Location</div>
+                <div class="list list-strong list-dividers inset">
+                    <ul>
+                        <li class="item-content item-input">
+                            <div class="item-media">
+                                <i class="material-icons">link</i>
+                            </div>
+                            <div class="item-inner">
+                                <div class="item-title item-label">Google Maps URL</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="A Google Maps URL please" id="venue-location-input">
+                                    <span class="input-clear-button"></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input">
+                            <div class="item-media">
+                                <i class="material-icons">explore</i>
+                            </div>
+                            <div class="item-inner">
+                                <div class="item-title item-label">Latitude x Longitude</div>
+                                <div class="item-input-wrap">
+                                    <div class="display-flex">
+                                        <input type="text" placeholder="latitude" id="venue-latitude-input"> 
+                                        <input type="text" placeholder="longitude" id="venue-longitude-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-
         </div>
     </div>
 

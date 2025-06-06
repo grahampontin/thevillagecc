@@ -89,7 +89,13 @@ public class CommandHandler : IHttpHandler
                 case "updateVenue":
                     CreateOrUpdateStaticDataItem<VenueV1>(context, genericBallByBallCommand, v =>
                     {
-                        var venue = new Venue(v.Id) { Name = v.Name, GoogleMapsLocationURL = v.MapUrl };
+                        var venue = new Venue(v.Id)
+                        {
+                            Name = v.Name, 
+                            GoogleMapsLocationURL = v.MapUrl, 
+                            Description = v.Description, 
+                            Coordinates = new Tuple<decimal?, decimal?>(v.Latitude, v.Longitude)
+                        };
                         venue.Save();
                     });
                     return;
@@ -117,7 +123,7 @@ public class CommandHandler : IHttpHandler
                     return;
                 case "createVenue":
                     CreateOrUpdateStaticDataItem<VenueV1>(context, genericBallByBallCommand,
-                        v => Venue.CreateNewVenue(v.Name, v.MapUrl));
+                        v => Venue.CreateNewVenue(v.Name, v.MapUrl, v.Description, v.Latitude, v.Longitude));
                     return;
                 case "createMatch":
                     CreateOrUpdateStaticDataItem<MatchV1>(context, genericBallByBallCommand,

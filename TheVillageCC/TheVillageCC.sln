@@ -23,6 +23,9 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "villagewebsite", "villagewe
 		VWDPort = "56404"
 		SlnRelativePath = "villagewebsite\"
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{03DFE72C-429C-4220-BDD3-1F0CD3E2F8E6} = {03DFE72C-429C-4220-BDD3-1F0CD3E2F8E6}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{165AD236-2062-461D-8CE6-1C8B46D85E90}"
 	ProjectSection(SolutionItems) = preProject
@@ -34,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		villagewebsite\Bin\CricketClubMiddle.dll.refresh = villagewebsite\Bin\CricketClubMiddle.dll.refresh
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DLLHack", "DLLHack\DLLHack.csproj", "{03DFE72C-429C-4220-BDD3-1F0CD3E2F8E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +46,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03DFE72C-429C-4220-BDD3-1F0CD3E2F8E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03DFE72C-429C-4220-BDD3-1F0CD3E2F8E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

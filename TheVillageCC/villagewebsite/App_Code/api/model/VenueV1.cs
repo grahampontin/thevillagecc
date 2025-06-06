@@ -24,7 +24,19 @@ public class VenueV1
         {
             Id = venue.ID,
             Name = venue.Name,
-            MapUrl = venue.GoogleMapsLocationURL
+            MapUrl = venue.GoogleMapsLocationURL,
+            Description = venue.Description,
+            Latitude = venue.Coordinates.Item1,
+            Longitude = venue.Coordinates.Item2
         };
+
+
+
     }
+    
+
+
+    public string Description { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
 }

@@ -1,0 +1,11 @@
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\bin\Debug\DLLHack.dll
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\bin\Debug\DLLHack.pdb
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\bin\Debug\CricketClubAccounts.dll
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\bin\Debug\CricketClubDAL.dll
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\bin\Debug\CricketClubDomain.dll
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\bin\Debug\CricketClubMiddle.dll
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\obj\Debug\DLLHack.csproj.AssemblyReference.cache
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\obj\Debug\DLLHack.csproj.CoreCompileInputs.cache
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\obj\Debug\DLLHack.csproj.Up2Date
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\obj\Debug\DLLHack.dll
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\DLLHack\obj\Debug\DLLHack.pdb

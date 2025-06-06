@@ -21,6 +21,9 @@ $$(document).on('page:init', '.page[data-name="venues"]', function (e) {
         editVenuePopup.close();
         venueBeingEdited.Name = $("#venue-name-input").val();
         venueBeingEdited.MapUrl = $("#venue-location-input").val();
+        venueBeingEdited.Description = $("#venue-description-textarea").val();
+        venueBeingEdited.Latitude = $("#venue-latitude-input").val();
+        venueBeingEdited.Longitude = $("#venue-longitude-input").val();
         var postData;
         if (venueBeingEdited.Id != undefined) {
             postData = { 'command': "updateVenue", "payload": venueBeingEdited };
@@ -45,7 +48,10 @@ $$(document).on('page:init', '.page[data-name="venues"]', function (e) {
     $("#add-venue-button").click(() => {
         venueBeingEdited = {
             Name: "",
-            MapUrl : ""
+            MapUrl : "",
+            Description: "",
+            Latitude: "",
+            Longitude: ""
         };
         editVenuePopup.open();
         $("#venue-name-input").val("");
@@ -82,7 +88,10 @@ function listVenues() {
                     var venueId = $(this).attr("venueId");
                     venueBeingEdited = data.filter(t => t.Id == venueId)[0];
                     $("#venue-name-input").val(venueBeingEdited.Name);
+                    $("#venue-description-textarea").val(venueBeingEdited.Description);
                     $("#venue-location-input").val(venueBeingEdited.MapUrl);
+                    $("#venue-latitude-input").val(venueBeingEdited.Latitude);
+                    $("#venue-longitude-input").val(venueBeingEdited.Longitude);
                     editVenuePopup.open();
                 });
             },
