@@ -23,13 +23,25 @@
     this.OppositionShortName = OppositionShortName;
     this.LiveScorecard = LiveScorecard;
     
-    this.OriginalExtras = {
-        Byes: LiveScorecard.LiveBattingCard.Extras.Byes,
-        LegByes: LiveScorecard.LiveBattingCard.Extras.LegByes,
-        Wides: LiveScorecard.LiveBattingCard.Extras.Wides,
-        NoBalls: LiveScorecard.LiveBattingCard.Extras.NoBalls,
-        Penalty: LiveScorecard.LiveBattingCard.Extras.Penalty,
+    if (LiveScorecard.LiveBattingCard == undefined || LiveScorecard.LiveBattingCard.Extras == undefined) {
+        this.OriginalExtras = {
+            Byes: 0,
+            LegByes: 0,
+            Wides: 0,
+            NoBalls: 0,
+            Penalty: 0
+        }
+    } else {
+        this.OriginalExtras = {
+            Byes: LiveScorecard.LiveBattingCard.Extras.Byes,
+            LegByes: LiveScorecard.LiveBattingCard.Extras.LegByes,
+            Wides: LiveScorecard.LiveBattingCard.Extras.Wides,
+            NoBalls: LiveScorecard.LiveBattingCard.Extras.NoBalls,
+            Penalty: LiveScorecard.LiveBattingCard.Extras.Penalty,
+        }
+
     }
+    
     
 
 
