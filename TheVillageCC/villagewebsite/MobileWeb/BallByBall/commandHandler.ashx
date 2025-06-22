@@ -355,7 +355,7 @@ public class CommandHandler : IHttpHandler
         }
         catch (Exception ex)
         {
-            ReportError(context, ex, 400);
+            ReportError(context, ex, 200);
         }
     }
 
