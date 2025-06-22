@@ -31,10 +31,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\.gitignore = ..\.gitignore
 		..\deploy.yml = ..\deploy.yml
-		villagewebsite\Bin\CricketClubAccounts.dll.refresh = villagewebsite\Bin\CricketClubAccounts.dll.refresh
-		villagewebsite\Bin\CricketClubDAL.dll.refresh = villagewebsite\Bin\CricketClubDAL.dll.refresh
-		villagewebsite\Bin\CricketClubDomain.dll.refresh = villagewebsite\Bin\CricketClubDomain.dll.refresh
-		villagewebsite\Bin\CricketClubMiddle.dll.refresh = villagewebsite\Bin\CricketClubMiddle.dll.refresh
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DLLHack", "DLLHack\DLLHack.csproj", "{03DFE72C-429C-4220-BDD3-1F0CD3E2F8E6}"
@@ -42,12 +38,17 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{03DFE72C-429C-4220-BDD3-1F0CD3E2F8E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{03DFE72C-429C-4220-BDD3-1F0CD3E2F8E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03DFE72C-429C-4220-BDD3-1F0CD3E2F8E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03DFE72C-429C-4220-BDD3-1F0CD3E2F8E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
