@@ -27,6 +27,12 @@ function bindHomePageLinks() {
     }); 
     $('#players-link').click(function() {
         app.views.current.router.navigate("/players/");
+    }); 
+    $('#awards-link').click(function() {
+        app.views.current.router.navigate("/awards/");
     });
-};
+    $('#committee-link').click(function() {
+        app.views.current.router.navigate("/committee/");
+    });
+}
 

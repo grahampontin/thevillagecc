@@ -8,33 +8,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.vs/TheVillageCC/FileContentIndex/32500c22-6e4a-46b3-a070-b093dbdea455.vsidx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.vs/TheVillageCC/v17/DocumentLayout.backup.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.vs/TheVillageCC/v17/DocumentLayout.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DLLHack/Class1.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DLLHack/DLLHack.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DLLHack/Properties/AssemblyInfo.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DLLHack/obj/Debug/.NETFramework,Version=v4.8.AssemblyAttributes.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DLLHack/obj/Debug/DLLHack.csproj.AssemblyReference.cache" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DLLHack/obj/Debug/DLLHack.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DLLHack/obj/Debug/DLLHack.csproj.FileListAbsolute.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DLLHack/obj/Debug/DLLHack.csproj.Up2Date" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DLLHack/packages.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TheVillageCC.Web/Domain/AwardV1.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TheVillageCC.Web/Domain/CommitteePostV1.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TheVillageCC.Web/HttpHandlers/AwardsHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TheVillageCC.Web/HttpHandlers/CommitteeHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TheVillageCC.Web/HttpHandlers/EntityHttpHandlerBase.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TheVillageCC.Web/Utils.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/projectSettingsUpdater.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/TheVillageCC/FileContentIndex/53b40b15-d382-40c1-9576-f693f5eab494.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/TheVillageCC/FileContentIndex/read.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DLLHack/Class1.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DLLHack/DLLHack.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DLLHack/Properties/AssemblyInfo.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DLLHack/obj/Debug/.NETFramework,Version=v4.8.AssemblyAttributes.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DLLHack/obj/Debug/DLLHack.csproj.AssemblyReference.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DLLHack/obj/Debug/DLLHack.csproj.CoreCompileInputs.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DLLHack/obj/Debug/DLLHack.csproj.FileListAbsolute.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DLLHack/obj/Debug/DLLHack.csproj.Up2Date" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Global.asax" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DLLHack/packages.config" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TheVillageCC.sln" beforeDir="false" afterPath="$PROJECT_DIR$/TheVillageCC.sln" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TheVillageCC.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/TheVillageCC.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/VenueV1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/App_Code/api/model/VenueV1.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/Bin/CricketClubAccounts.dll.refresh" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Bin/CricketClubAccounts.dll.refresh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/Bin/CricketClubDAL.dll.refresh" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Bin/CricketClubDAL.dll.refresh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/Bin/CricketClubDomain.dll.refresh" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Bin/CricketClubDomain.dll.refresh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/Bin/CricketClubMiddle.dll.refresh" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Bin/CricketClubMiddle.dll.refresh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/Default.aspx.cs" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/Default.aspx.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.venues.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.venues.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/venues.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/venues.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.home.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/scoring-app.css" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/scoring-app.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/villagewebsite/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/packages.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/web.config" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/web.config" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,33 +64,20 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/grahampontin/thevillagecc.git&quot;,
-    &quot;accountId&quot;: &quot;0e1f91bb-4981-437e-be4c-3bc0f2ec0cbc&quot;
+    &quot;accountId&quot;: &quot;89b7bfe8-4b8b-438d-8bff-f9d84dc707fc&quot;
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/2a/758dcd07/BallByBallMatch.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/52/86745d48/LiveBattingCardEntry.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/71/eb5224ca/Venue.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/ae/68b0546b/LiveBattingCard.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/b3/755e9180/BatsmanInningsDetails.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/ca/42e0647a/BattingCardLine.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0c12c00a33ce414eb9dddc6c7376f1181ec00/e0/6569ffda/LiveScorecard.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/29c872a914fc4d0caedaf4d7f02188611ee00/63/f02f554f/Venue.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/47c35a4ea3824725aed2b934dce82b441f000/9a/bf83e796/Match.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/47c35a4ea3824725aed2b934dce82b441f000/c2/c68d62d3/Partnership.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7f3c2668e0f74a5ba11a5b4e77aa969a1c800/79/fa711fff/BallByBallMatch.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/21/e5fed5aa/Ball.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/53/94606c3f/Over.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/7b/94f6bc43/PlayerState.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/ab/b54eaf36/MatchState.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/ae/59a9117d/PartnershipStub.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/d1/24ad7eb2/BowlerInningsDetails.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a4e61455c0354cd4a9f04a126411670b8a00/d1/2cccdfb0/Wicket.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ad71f29ef1c141fe991d10b1a1a1c9698c00/20/a4c22afc/PartnershipStub.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/b6c0e1743d554b5c85d599ca62aece1a1ee00/42/63453c63/Venue.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/beb72e239b6c483690ce302d3adcc85611a00/3b/1376f309/Dao.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c0c221501f3a41f8ac0af9d6a9dc9ff335fd90/38/3bb6b09e/MatchState.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d7a42dc08cb1481aadcd028f4ce04d0c1ee00/bc/d763e04c/Venue.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/25c798a63b834472a45376c3790fc7e0526838/8a/a4283521/HttpException.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5050336b21b34656b179d9f5e422568b9200/02/842addf6/AwardData.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d46f11b9b5ab441fabab571c07dfd0b113000/44/a95d14d4/Row.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d46f11b9b5ab441fabab571c07dfd0b113000/55/b205d43c/Dao.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TheVillageCC.Web/Domain/AwardV1.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TheVillageCC.Web/Domain/CommitteePostV1.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TheVillageCC.Web/HttpHandlers/AwardsHandler.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TheVillageCC.Web/HttpHandlers/CommitteeHandler.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TheVillageCC.Web/HttpHandlers/EntityHttpHandlerBase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TheVillageCC.Web/Utils.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/content/Content/bootstrap-grid.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/content/Content/bootstrap-grid.min.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/content/Content/bootstrap-grid.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
@@ -99,11 +85,11 @@
     <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/contentFiles/any/any/wwwroot/css/bootstrap-grid.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/contentFiles/any/any/wwwroot/css/bootstrap-grid.min.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/packages/bootstrap.5.3.0-alpha1/contentFiles/any/any/wwwroot/css/bootstrap-grid.rtl.css.map" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/villagewebsite/Awards.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Awards.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Awards.aspx.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/CSS/bootstrap-custom.min.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Committee.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/villagewebsite/Default.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/Default.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Default.aspx.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Fixtures.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Fixtures.aspx.cs" root0="SKIP_HIGHLIGHTING" />
@@ -153,48 +139,51 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2MzuHDJNoiDiNkuQsaJydmWpGFk" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.villagewebsite - IIS Express.executor": "Debug",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "js.introduce.parameter.generate.optional": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\JetBrains Rider 2024.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.villagewebsite - IIS Express.executor&quot;: &quot;Run&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;js.introduce.parameter.generate.optional&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\JetBrains Rider 2024.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="villagewebsite - IIS Express" type="DotNetProject" factoryName=".NET Project">
-      <option name="EXE_PATH" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
+      <option name="EXE_PATH" value="$PROJECT_DIR$/../../../../../../Program Files (x86)/IIS Express/iisexpress.exe" />
+      <option name="PROGRAM_PARAMETERS" value="/config:$PROJECT_DIR$/.idea/config/applicationhost.config /site:villagewebsite /apppool:Clr4IntegratedAppPool" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../../../../../Program Files (x86)/IIS Express" />
       <option name="PASS_PARENT_ENVS" value="1" />
-      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="ENV_FILE_PATHS" value="" />
+      <option name="REDIRECT_INPUT_PATH" value="" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/villagewebsite" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
       <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
       <option name="PROJECT_KIND" value="Web" />
-      <option name="PROJECT_TFM" value="" />
-      <browser url="http://localhost:56404/localhost_56404" start="true" />
+      <option name="PROJECT_TFM" value=".NETFramework,Version=v4.7.2" />
+      <browser url="http://localhost:56404" start="true" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -228,7 +217,11 @@
       <workItem from="1746363738747" duration="2751000" />
       <workItem from="1747068008704" duration="16352000" />
       <workItem from="1748160707962" duration="16228000" />
-      <workItem from="1748886805630" duration="7593000" />
+      <workItem from="1748886805630" duration="8055000" />
+      <workItem from="1750491041976" duration="6957000" />
+      <workItem from="1767023295151" duration="4322000" />
+      <workItem from="1767379301464" duration="498000" />
+      <workItem from="1767379826628" duration="18954000" />
     </task>
     <task id="LOCAL-00001" summary="new bootstrap version">
       <created>1679246162845</created>
@@ -449,7 +442,47 @@
       <option name="project" value="LOCAL" />
       <updated>1748458094308</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="add latitude and longitude to venue capture">
+      <option name="closed" value="true" />
+      <created>1749220646447</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1749220646447</updated>
+    </task>
+    <task id="LOCAL-00032" summary="fix null extras">
+      <option name="closed" value="true" />
+      <created>1750493443914</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1750493443914</updated>
+    </task>
+    <task id="LOCAL-00033" summary="trying to fix build">
+      <option name="closed" value="true" />
+      <created>1750583357572</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1750583357572</updated>
+    </task>
+    <task id="LOCAL-00034" summary="errororr rrikfhks">
+      <option name="closed" value="true" />
+      <created>1750587144477</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1750587144477</updated>
+    </task>
+    <task id="LOCAL-00035" summary="aaaaaarrrrggghhhh">
+      <option name="closed" value="true" />
+      <created>1750587896765</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1750587896765</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -471,11 +504,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Player details complete" />
-    <MESSAGE value="update awards data" />
-    <MESSAGE value="fix stats grid size issue" />
-    <MESSAGE value="add pre-loader for stats" />
-    <MESSAGE value="suppress column removal" />
     <MESSAGE value="remove extra container" />
     <MESSAGE value="Bug Fix - Can't Update Wickets in Scorecard view" />
     <MESSAGE value="Scoring Areas Chart" />
@@ -496,81 +524,67 @@
     <MESSAGE value="#AB34 - add scoreacard to scoring app" />
     <MESSAGE value="#AB47 - handle wickets" />
     <MESSAGE value="fix live scorecard" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix live scorecard" />
+    <MESSAGE value="add latitude and longitude to venue capture" />
+    <MESSAGE value="fix null extras" />
+    <MESSAGE value="trying to fix build" />
+    <MESSAGE value="errororr rrikfhks" />
+    <MESSAGE value="aaaaaarrrrggghhhh" />
+    <option name="LAST_COMMIT_MESSAGE" value="aaaaaarrrrggghhhh" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx</url>
-          <line>352</line>
+          <line>357</line>
           <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" containingFunctionPresentation="Method 'ProcessRequest'">
             <startOffsets>
-              <option value="19733" />
+              <option value="19920" />
             </startOffsets>
             <endOffsets>
-              <option value="19734" />
+              <option value="19921" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx</url>
-          <line>356</line>
+          <line>363</line>
           <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" containingFunctionPresentation="Method 'ProcessRequest'">
             <startOffsets>
-              <option value="19835" />
+              <option value="20219" />
             </startOffsets>
             <endOffsets>
-              <option value="19836" />
+              <option value="20220" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx</url>
-          <line>433</line>
-          <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" containingFunctionPresentation="Method 'CreateOrUpdateStaticDataItem'">
-            <startOffsets>
-              <option value="22489" />
-            </startOffsets>
-            <endOffsets>
-              <option value="22624" />
-            </endOffsets>
-          </properties>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
           <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/villagewebsite/MobileWeb/BallByBall/commandHandler.ashx</url>
-          <line>98</line>
-          <properties documentPath="C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\villagewebsite\MobileWeb\BallByBall\commandHandler.ashx" containingFunctionPresentation="Lambda expression inside Method 'ProcessRequest'">
-            <startOffsets>
-              <option value="4495" />
-            </startOffsets>
-            <endOffsets>
-              <option value="4508" />
-            </endOffsets>
-          </properties>
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="4" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/beb72e239b6c483690ce302d3adcc85611a00/3b/1376f309/Dao.cs</url>
-          <line>224</line>
-          <properties documentPath="C:\Users\graha\AppData\Roaming\JetBrains\Rider2024.3\resharper-host\DecompilerCache\decompiler\beb72e239b6c483690ce302d3adcc85611a00\3b\1376f309\Dao.cs" containingFunctionPresentation="Method 'UpdateVenue'">
-            <startOffsets>
-              <option value="10767" />
-            </startOffsets>
-            <endOffsets>
-              <option value="10867" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
+        </breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
     <select />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
   </component>
 </project>

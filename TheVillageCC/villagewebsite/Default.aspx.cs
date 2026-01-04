@@ -22,7 +22,14 @@ public partial class _Default : System.Web.UI.Page
     {
         //Get latest match report.
         IList<Match> matches = Match.GetResults();
-        List<Tuple<Match, MatchReportAndConditions>> reports = matches.Select(a => Tuple.Create(a, a.GetMatchReport())).Where(a=>a.Item2 != MatchReportAndConditions.None && !string.IsNullOrEmpty(a.Item2.Report)).OrderBy(a => a.Item1.MatchDate).Reverse().Take(3).ToList();
+        List<Tuple<Match, MatchReportAndConditions>> reports = 
+            matches
+                .OrderBy(a => a.MatchDate)
+                .Reverse()
+                .Select(a => Tuple.Create(a, a.GetMatchReport()))
+                .Where(a=>a.Item2 != MatchReportAndConditions.None && !string.IsNullOrEmpty(a.Item2.Report))
+                .Take(3)
+                .ToList();
 
         RenderReport(reports[0], matchReportOne_Heading, matchReportOne_SubText, matchReportOne_Text, matchReportOne_Id, mathcReportOne_Image);
         RenderReport(reports[1], matchReportTwo_Heading, matchReportTwo_Subtext, matchReportTwo_Text, matchReportTwo_Id, mathcReportTwo_Image);

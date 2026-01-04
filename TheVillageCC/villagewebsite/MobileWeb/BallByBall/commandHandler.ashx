@@ -13,11 +13,16 @@ using CricketClubDAL;
 using CricketClubDomain;
 using CricketClubMiddle;
 using CricketClubMiddle.Stats;
+using log4net;
+using TheVillageCC.Web.Domain;
 
 public class CommandHandler : IHttpHandler
 {
+    private readonly Dao Database = new Dao();
     private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
-
+    
+    private static readonly ILog Log = LogManager.GetLogger(typeof(CommandHandler));
+    
     public void ProcessRequest(HttpContext context)
     {
         var stringReader = new StreamReader(context.Request.InputStream);
@@ -351,13 +356,19 @@ public class CommandHandler : IHttpHandler
         }
         catch (BadRequestException ex)
         {
+            var payload = genericBallByBallCommand.payload ?? "no payload";
+            Log.Error("Bad request error processing command " + genericBallByBallCommand.command + " : " + payload, ex);
             ReportInvalidInput(context, ex.Message);
         }
         catch (Exception ex)
         {
+            var payload = genericBallByBallCommand.payload ?? "no payload";
+            Log.Error("Error processing command " + genericBallByBallCommand.command + " : " + payload, ex);
             ReportError(context, ex, 200);
         }
     }
+
+    
 
     private static LiveScorecardV1 FromLiveScorecard(Match match)
     {
