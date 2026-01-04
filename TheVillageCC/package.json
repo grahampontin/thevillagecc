@@ -1,6 +1,6 @@
 {
   "dependencies": {
     "framework7": "^8.3.3",
-    "npm": "^10.8.0"
+    "npm": "^11.7.0"
   }
 }
