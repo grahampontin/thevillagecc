@@ -27,7 +27,15 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override List<CommitteePostV1> GetAllEntities(NameValueCollection requestQueryString)
         {
-            return Database.GetAllCommitteeData().Select(CommitteePostV1.ToExternal).ToList();
+            // Support both 'season' (used by AwardsHandler) and 'year' (used by some clients)
+            var season = requestQueryString["season"] ?? requestQueryString["year"];
+            var allEntities = Database.GetAllCommitteeData().Select(CommitteePostV1.ToExternal).ToList();
+            if (season != null && int.TryParse(season, out var seasonAsInt))
+            {
+                allEntities = allEntities.Where(a => a.Year == seasonAsInt).ToList();
+            }
+
+            return allEntities;
         }
 
         protected override CommitteePostV1 GetEntity(int id)

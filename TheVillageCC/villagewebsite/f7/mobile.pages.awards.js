@@ -105,7 +105,7 @@ function listAwardsToEdit() {
                         '   <div class="item-content">' +
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + o.Year + ' ' + o.Award + '</div>' +
-                        '           <div class="item-after"><span class="material-symbols-outlined md-18 edit-award" id="' + o.Id + '">edit</span></div>' +
+                        '           <div class="item-after"><span class="material-symbols-outlined md-18 edit-award" id="' + o.Id + '">edit</span> <span class="material-symbols-outlined md-18 ms-2 delete-award" id="del-' + o.Id + '" style="color:#d9534f">delete</span></div>' +
                         '       </div>' +
                         '   </div>' +
                         '</li>');
@@ -118,6 +118,19 @@ function listAwardsToEdit() {
                 $("#award-date-input").val(awardBeingEdited.Year);
                 $("#award-data-input").val(awardBeingEdited.Data);
                 editAwardPopup.open();
+            });
+
+            $(".delete-award").click(function () {
+                var idAttr = $(this).attr("Id");
+                var Id = idAttr && idAttr.startsWith('del-') ? idAttr.substring(4) : idAttr;
+                if (!confirm('Delete this award?')) return;
+                app.preloader.show();
+                $.ajax('/awards/' + Id, { method: 'DELETE' })
+                    .done(function () {
+                        app.preloader.hide();
+                        listAwardsToEdit();
+                    })
+                    .fail(restRequestFailed());
             });
         },
         "json")
