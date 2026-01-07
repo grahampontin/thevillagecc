@@ -36,7 +36,14 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override List<AwardV1> GetAllEntities(NameValueCollection requestQueryString)
         {
-            return Database.GetAllAwardsData().Select(AwardV1.FromInternal).ToList();
+            var season = requestQueryString["season"];
+            var allEntities = Database.GetAllAwardsData().Select(AwardV1.FromInternal).ToList();
+            if (season != null && int.TryParse(season, out var seasonAsInt))
+            {
+                allEntities = allEntities.Where(a => a.Year == seasonAsInt).ToList();
+            }
+
+            return allEntities;
         }
 
         protected override AwardV1 GetEntity(int id)

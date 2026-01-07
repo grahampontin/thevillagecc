@@ -3,6 +3,11 @@ $$(document).on('page:init', '.page[data-name="awards"]', function (e) {
     if (e.detail.position !== "next") {
         return;
     }
+    
+    getPlayers(function (data) {
+        addPlayersToSelect(data,"#player-select");
+    })
+    
     //Bind handlers here
     listAwardsToEdit();
     //once bound...
@@ -28,9 +33,12 @@ $$(document).on('page:init', '.page[data-name="awards"]', function (e) {
         awardBeingEdited.Data = $("#award-data-input").val();
         if (awardBeingEdited.Id !== undefined) {
             //update award
-            $.put("/awards/",
-                JSON.stringify(awardBeingEdited),
-                restRequestSucceeded(), "json")
+            $.ajax("/awards/", {
+                method: "PUT",
+                data: JSON.stringify(awardBeingEdited),
+                contentType: "application/json"
+            })
+                .done(restRequestSucceeded())
                 .fail(restRequestFailed())
 
         } else {
@@ -47,6 +55,10 @@ $$(document).on('page:init', '.page[data-name="awards"]', function (e) {
     $("#add-award-button").click(() => {
         awardBeingEdited = {};
         app.smartSelect.get("#player-smart-select").setValue("");
+        awardBeingEdited.Year = awardsSeason;
+        $("#award-date-input").val(awardsSeason);
+        app.smartSelect.get("#award-type-smart-select").setValue("");
+        $("#award-data-input").val("");
         editAwardPopup.open();
 
     });
@@ -70,12 +82,6 @@ $$(document).on('page:init', '.page[data-name="awards"]', function (e) {
 var awardBeingEdited;
 var awardsSeason = new Date().getFullYear();
 
-function restRequestFailed() {
-    return function (data) {
-        app.preloader.hide();
-        showToastCenter(data.responseText);
-    };
-}
 
 function restRequestSucceeded() {
     return function (data) {
@@ -87,7 +93,7 @@ function restRequestSucceeded() {
 function listAwardsToEdit() {
     $('#awards ul').empty();
     app.preloader.show();
-    $.get("/awards/",
+    $.get("/awards/?season=" + awardsSeason,
         function (data) {
             app.preloader.hide();
             //success
@@ -98,8 +104,8 @@ function listAwardsToEdit() {
                         '<li>' +
                         '   <div class="item-content">' +
                         '       <div class="item-inner">' +
-                        '           <div class="item-title">' + o.Award + ' (' + o.Year + ')</div>' +
-                        '           <div class="item-after"><i class="material-icons md-18 edit-award" id="' + o.Id + '">edit</i></div>' +
+                        '           <div class="item-title">' + o.Year + ' ' + o.Award + '</div>' +
+                        '           <div class="item-after"><span class="material-symbols-outlined md-18 edit-award" id="' + o.Id + '">edit</span></div>' +
                         '       </div>' +
                         '   </div>' +
                         '</li>');
