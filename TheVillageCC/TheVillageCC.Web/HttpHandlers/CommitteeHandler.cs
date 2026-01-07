@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using TheVillageCC.Web.Domain;
 
@@ -24,7 +25,7 @@ namespace TheVillageCC.Web.HttpHandlers
             return CommitteePostV1.ToExternal(Database.GetCommitteeData(createdId));
         }
 
-        protected override List<CommitteePostV1> GetAllEntities()
+        protected override List<CommitteePostV1> GetAllEntities(NameValueCollection requestQueryString)
         {
             return Database.GetAllCommitteeData().Select(CommitteePostV1.ToExternal).ToList();
         }

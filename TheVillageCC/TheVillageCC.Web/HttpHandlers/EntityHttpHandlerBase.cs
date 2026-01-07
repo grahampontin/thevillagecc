@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -107,12 +108,12 @@ namespace TheVillageCC.Web.HttpHandlers
         private void GetAll(HttpContext context)
         {
             context.Response.ContentType = "application/json";
-            context.Response.Write(javaScriptSerializer.Serialize(GetAllEntities()));
+            context.Response.Write(javaScriptSerializer.Serialize(GetAllEntities(context.Request.QueryString)));
             context.Response.StatusCode = 200;
             context.Response.End();        
         }
 
-        protected abstract List<T> GetAllEntities();
+        protected abstract List<T> GetAllEntities(NameValueCollection requestQueryString);
 
         private void GetSingle(int matchId, HttpContext context)
         {

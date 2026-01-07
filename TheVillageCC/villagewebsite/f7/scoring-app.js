@@ -92,6 +92,10 @@ var app = new Framework7({
             name: 'players',
             path: '/players/',
             url: 'players.html'
+        },{
+            name: 'awards',
+            path: '/awards/',
+            url: 'awards.html'
         },
         {
             name: 'editScorecard',

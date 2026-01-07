@@ -30,7 +30,7 @@
         BasicConfigurator.Configure(console);
         // optional: set root level
         var repo = LogManager.GetRepository();
-        ((log4net.Repository.Hierarchy.Hierarchy)repo).Root.Level = log4net.Core.Level.Debug;
+        ((log4net.Repository.Hierarchy.Hierarchy)repo).Root.Level = log4net.Core.Level.Info;
 
     }
     

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using CricketClubDomain;
 using TheVillageCC.Web.Domain;
@@ -33,7 +34,7 @@ namespace TheVillageCC.Web.HttpHandlers
             return AwardV1.FromInternal(Database.GetAwardData(createdId));
         }
 
-        protected override List<AwardV1> GetAllEntities()
+        protected override List<AwardV1> GetAllEntities(NameValueCollection requestQueryString)
         {
             return Database.GetAllAwardsData().Select(AwardV1.FromInternal).ToList();
         }

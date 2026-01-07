@@ -1,0 +1,109 @@
+﻿<div data-name="awards" class="page">
+
+    <!-- Top Navbar -->
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="navbar-bg"></div>
+            <div class="left">
+                <a href="#" class="link icon-only back-button">
+                    <i class="icon icon-back"></i>
+                </a>
+            </div>
+            <div class="title">Add / Edit Awards</div>
+            <div class="right">
+                <a class="link icon-only" id="add-award-button">
+                    <i class="icon material-icons" id="add-award-button-icon">add</i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="toolbar toolbar-bottom">
+        <div class="toolbar-inner">
+            <a href="#" class="link" id="awards-previous-season"><i class="material-icons">chevron_left</i></a>
+            <div>Season <span id="awards-current-season"></span></div>
+            <a href="#" class="link" id="awards-next-season"><i class="material-icons">chevron_right</i></a>
+        </div>
+    </div>
+
+
+
+    <div class="page-content">
+        <div class="list" id="awards">
+            <ul>
+            </ul>
+        </div>
+    </div>
+
+    <div class="popup edit-award-popup">
+        <div class="page" id="edit-award-page">
+            <div class="navbar">
+                <div class="navbar-bg"></div>
+                <div class="navbar-inner">
+                    <div class="left">
+                        <a class="link icon-only" id="edit-award-close-button">
+                            <i class="icon material-icons" id="edit-award-close-button-icon">close</i>
+                        </a>
+                    </div>
+                    <div class="title" id="edit-award-title">Edit Award</div>
+                    <div class="right">
+                        <a class="link icon-only" id="save-award-button">
+                            <i class="icon material-icons" id="save-award-button-icon">done</i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="list inline-labels">
+                    <ul>
+                        <li id="award-type-select-element">
+                            <a class="item-link smart-select smart-select-init" id="award-type-smart-select" data-open-in="popup" data-close-on-select="true">
+                                <select name="award-type" id="award-type-select">
+                                    <option value="PlayerOfTheYear">Player Of The Year</option>
+                                    <option value="FielderOfTheYear">Fielder Of The Year</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Award Type</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li id="player-select-element">
+                            <a class="item-link smart-select smart-select-init" id="player-smart-select" data-open-in="popup" data-close-on-select="true">
+                                <select name="player" id="player-select">
+                                    <option value="-1">Please select...</option>
+                                </select>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">Recipient</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="item-content item-input" id="award-date-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Season</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="Enter season" id="award-date-input" />
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content item-input" id="award-data-element">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Data</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" placeholder="Optional" id="award-data-input" />
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
