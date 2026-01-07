@@ -1,4 +1,4 @@
-﻿var ballNumber;
+﻿﻿var ballNumber;
 $$(document).on('page:init', '.page[data-name="endOver"]', function (e) {
     
     //Bind handlers here
@@ -67,9 +67,9 @@ function renderBallsList(elementSelector) {
             var ballEditAfter = $("<div></div>");
             ballEditAfter.addClass("item-after");
 
-            var ballEditIcon = $("<i></i>");
+            var ballEditIcon = $("<span></span>");
             ballEditIcon.addClass("icon");
-            ballEditIcon.addClass("material-icons");
+            ballEditIcon.addClass("material-symbols-outlined");
             ballEditIcon.addClass("ball-edit-link");
             ballEditIcon.attr("ball-number", i);
             ballEditIcon.text("edit");

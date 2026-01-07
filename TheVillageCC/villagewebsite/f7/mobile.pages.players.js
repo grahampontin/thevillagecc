@@ -1,4 +1,4 @@
-﻿var editPlayerPopup;
+﻿﻿var editPlayerPopup;
 $$(document).on('page:init', '.page[data-name="players"]', function (e) {
     if (e.detail.position != "next") {
         return;
@@ -88,7 +88,7 @@ function listPlayersToEdit() {
                             '   <div class="item-content">' +
                             '       <div class="item-inner">' +
                             '           <div class="item-title">'+displayName+'</div>' +
-                            '           <div class="item-after"><i class="material-icons md-18 edit-player" playerId="'+p.playerId+'">edit</i></div>' +
+                            '           <div class="item-after"><span class="material-symbols-outlined md-18 edit-player" playerId="'+p.playerId+'">edit</span></div>' +
                             '       </div>' +
                             '   </div>' +
                             '</li>');
@@ -123,6 +123,3 @@ function listPlayersToEdit() {
             showToastCenter(data.responseText);
         });
 };
-
-
-

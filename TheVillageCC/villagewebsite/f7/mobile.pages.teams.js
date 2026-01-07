@@ -1,4 +1,4 @@
-﻿var editTeamPopup;
+﻿﻿var editTeamPopup;
 $$(document).on('page:init', '.page[data-name="teams"]', function (e) {
     if (e.detail.position != "next") {
         return;
@@ -71,7 +71,7 @@ function listTeams() {
                             '   <div class="item-content">' +
                             '       <div class="item-inner">' +
                             '           <div class="item-title">'+o.Name+'</div>' +
-                            '           <div class="item-after"><i class="material-icons md-18 edit-team" teamId="'+o.Id+'">edit</i></div>' +
+                            '           <div class="item-after"><span class="material-symbols-outlined md-18 edit-team" teamId="'+o.Id+'">edit</span></div>' +
                             '       </div>' +
                             '   </div>' +
                             '</li>');
@@ -89,6 +89,3 @@ function listTeams() {
             showToastCenter(data.responseText);
         });
 };
-
-
-

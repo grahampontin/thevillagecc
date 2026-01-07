@@ -8,16 +8,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ff7639a2-f1b9-4ea7-94f9-3ca4b7f9346b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.util.refdata.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.util.smartselects.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TheVillageCC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TheVillageCC.Web/HttpHandlers/AwardsHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TheVillageCC.Web/HttpHandlers/AwardsHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TheVillageCC.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/TheVillageCC.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/awards.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/awards.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.awards.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.awards.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TheVillageCC.Web/obj/Debug/TheVillageCC.Web.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/TheVillageCC.Web/obj/Debug/TheVillageCC.Web.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/editBall.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/editBall.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/editScorecard.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/editScorecard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/endInnings.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/endInnings.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/endOver.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/endOver.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/matchConditions.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/matchConditions.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/matchReport.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/matchReport.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/matches.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/matches.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.editScorecard.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.editScorecard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/villagewebsite/web.config" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/web.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.endover.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.endover.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.matches.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.matches.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.players.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.players.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.teams.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.teams.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.venues.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/mobile.pages.venues.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/newOver.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/newOver.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/oppositionScoring.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/oppositionScoring.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/players.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/players.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/scorecards.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/scorecards.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/scoring-app.js" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/scoring-app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/scoring.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/scoring.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/selectTeam.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/selectTeam.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/teams.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/teams.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/venues.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/venues.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/villagewebsite/f7/wicket.html" beforeDir="false" afterPath="$PROJECT_DIR$/villagewebsite/f7/wicket.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,15 +67,6 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/25c798a63b834472a45376c3790fc7e0526838/8a/a4283521/HttpException.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5050336b21b34656b179d9f5e422568b9200/02/842addf6/AwardData.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/604211640fcb4f7ab5b426b96739aedf9200/19/6ffc659e/AwardData.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a3b25696657344e99f3fde4e486dce441f600/60/3a035058/Player.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/b98b536adb5c449182840a353e974ce01f400/f3/4a6cbfe3/Player.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d2651216c2ab440393166baf6799adba1ee00/a5/b1322dfa/Player.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d46f11b9b5ab441fabab571c07dfd0b113000/44/a95d14d4/Row.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d46f11b9b5ab441fabab571c07dfd0b113000/55/b205d43c/Dao.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ded530f37c5f4b8f8c20b1c13705b1e89200/fe/6ed248f6/BattingCardLineData.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TheVillageCC.Web/Domain/AwardV1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TheVillageCC.Web/Domain/CommitteePostV1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TheVillageCC.Web/HttpHandlers/AwardsHandler.cs" root0="FORCE_HIGHLIGHTING" />
@@ -85,7 +91,7 @@
     <setting file="file://$PROJECT_DIR$/villagewebsite/Fixtures.aspx.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/LiveScorecard.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/LiveScorecard.aspx.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerDetail.aspx" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerDetail.aspx" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/PlayerDetail.aspx.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-3.3.6-dist/css/bootstrap.css.map" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/villagewebsite/Resources/bootstrap-3.3.6-dist/css/bootstrap.min.css.map" root0="FORCE_HIGHLIGHTING" />
@@ -129,33 +135,36 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2MzuHDJNoiDiNkuQsaJydmWpGFk" />
+  <component name="ProjectLevelVcsManager">
+    <OptionsSetting value="false" id="Update" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.villagewebsite - IIS Express.executor": "Run",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "js.introduce.parameter.generate.optional": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\JetBrains Rider 2024.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.villagewebsite - IIS Express.executor&quot;: &quot;Run&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;js.introduce.parameter.generate.optional&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.copilot.settings.chat.ChatConfigurable&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\JetBrains Rider 2024.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="villagewebsite - IIS Express" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="$PROJECT_DIR$/../../../../../../Program Files (x86)/IIS Express/iisexpress.exe" />
@@ -214,6 +223,9 @@
       <workItem from="1767379301464" duration="498000" />
       <workItem from="1767379826628" duration="27085000" />
       <workItem from="1767773907405" duration="11452000" />
+      <workItem from="1767801393564" duration="2676000" />
+      <workItem from="1767806329040" duration="76000" />
+      <workItem from="1767806453021" duration="26000" />
     </task>
     <task id="LOCAL-00001" summary="new bootstrap version">
       <created>1679246162845</created>
@@ -571,14 +583,7 @@
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a3b25696657344e99f3fde4e486dce441f600/60/3a035058/Player.cs</url>
           <line>346</line>
-          <properties documentPath="C:\Users\graha\AppData\Roaming\JetBrains\Rider2025.3\resharper-host\DecompilerCache\decompiler\a3b25696657344e99f3fde4e486dce441f600\60\3a035058\Player.cs" containingFunctionPresentation="Property 'BattingStatsData'">
-            <startOffsets>
-              <option value="13233" />
-            </startOffsets>
-            <endOffsets>
-              <option value="13425" />
-            </endOffsets>
-          </properties>
+          <properties documentPath="C:\Users\graha\AppData\Roaming\JetBrains\Rider2025.3\resharper-host\DecompilerCache\decompiler\a3b25696657344e99f3fde4e486dce441f600\60\3a035058\Player.cs" containingFunctionPresentation="Property 'BattingStatsData'" />
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">

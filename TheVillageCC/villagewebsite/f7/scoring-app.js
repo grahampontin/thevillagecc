@@ -1,4 +1,4 @@
-﻿var $$ = Dom7;
+﻿﻿var $$ = Dom7;
 
 var app = new Framework7({
     // App root element
@@ -173,7 +173,7 @@ function showToastBottom(str) {
 }
 function showToastCenter(str) {
     var toastIcon = app.toast.create({
-        icon: '<i class="material-icons">error</i>',
+        icon: '<span class="material-symbols-outlined">error</span>',
         text: str,
         position: 'center',
         closeButton: true,
@@ -255,4 +255,3 @@ function sendBallByBallCommand(postData, successCallback = null) {
             showToastCenter(data.responseText);
         });
 }
-

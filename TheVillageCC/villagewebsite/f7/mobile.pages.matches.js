@@ -1,4 +1,4 @@
-﻿var editMatchPopup;
+﻿﻿var editMatchPopup;
 var editMatchCalendar;
 $$(document).on('page:init', '.page[data-name="matches"]', function (e) {
     if (e.detail.position != "next") {
@@ -99,7 +99,7 @@ function listMatchesToEdit() {
                             '   <div class="item-content">' +
                             '       <div class="item-inner">' +
                             '           <div class="item-title">'+o.Opposition.Name+' ('+o.Date+')</div>' +
-                            '           <div class="item-after"><i class="material-icons md-18 edit-match" matchId="'+o.Id+'">edit</i></div>' +
+                            '           <div class="item-after"><span class="material-symbols-outlined md-18 edit-match" matchId="'+o.Id+'">edit</span></div>' +
                             '       </div>' +
                             '   </div>' +
                             '</li>');

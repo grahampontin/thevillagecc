@@ -1,4 +1,4 @@
-﻿var editBatsmanPopup;
+﻿﻿var editBatsmanPopup;
 var editExtrasPopup;
 var editPenaltyPopup;
 var editOversPopup;
@@ -87,7 +87,7 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
                         scorecardData = data;
                         renderFullView(scorecardData);
                         var toastIcon = app.toast.create({
-                            icon: '<i class="material-icons">cloud_done</i>',
+                            icon: '<span class="material-symbols-outlined">cloud_done</span>',
                             text: "Scorecard Saved",
                             position: 'center',
                             closeButton: true,
