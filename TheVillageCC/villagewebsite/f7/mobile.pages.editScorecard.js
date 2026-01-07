@@ -1,4 +1,4 @@
-﻿﻿var editBatsmanPopup;
+﻿var editBatsmanPopup;
 var editExtrasPopup;
 var editPenaltyPopup;
 var editOversPopup;
@@ -859,8 +859,8 @@ function makePlayerOption(player) {
         } else {
             actionCell.attr("playerName", entry.playerName);
         }
-        var editIcon = $("<i>edit</i>");
-        editIcon.addClass("material-icons md-18");
+        var editIcon = $("<span>edit</span>");
+        editIcon.addClass("material-symbols-outlined md-18");
         actionCell.append(editIcon);
 
         row.append(actionCell);
@@ -898,8 +898,8 @@ function makePlayerOption(player) {
         } else {
             actionCell.attr("playerName", entry.playerName);
         }
-        var editIcon = $("<i>edit</i>");
-        editIcon.addClass("material-icons md-18");
+        var editIcon = $("<span>edit</span>");
+        editIcon.addClass("material-symbols-outlined md-18");
         actionCell.append(editIcon);
 
         row.append(actionCell);
@@ -926,8 +926,8 @@ function makePlayerOption(player) {
         actionCell.addClass("fow-scorecard-edit-item");
         actionCell.attr("isHome", isHome);
         actionCell.attr("wicket", entry.wicket);
-        var editIcon = $("<i>edit</i>");
-        editIcon.addClass("material-icons md-18");
+        var editIcon = $("<span>edit</span>");
+        editIcon.addClass("material-symbols-outlined md-18");
         actionCell.append(editIcon);
 
         row.append(actionCell);
@@ -1085,6 +1085,3 @@ function updateMatchConditions() {
     scorecardData.matchConditions.overs = $("#numberOfOvers").val();
     scorecardData.matchConditions.declaration = $("#matchFormatSelect").val() == "Declaration";
 }
-
-
-
