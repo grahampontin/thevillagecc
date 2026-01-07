@@ -1,4 +1,4 @@
-﻿﻿var $$ = Dom7;
+﻿var $$ = Dom7;
 
 var app = new Framework7({
     // App root element
@@ -96,6 +96,11 @@ var app = new Framework7({
             name: 'awards',
             path: '/awards/',
             url: 'awards.html'
+        },
+        {
+            name: 'committee',
+            path: '/committee/',
+            url: 'committee.html'
         },
         {
             name: 'editScorecard',
