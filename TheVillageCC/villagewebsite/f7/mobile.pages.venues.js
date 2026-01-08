@@ -24,25 +24,31 @@ $$(document).on('page:init', '.page[data-name="venues"]', function (e) {
         venueBeingEdited.Description = $("#venue-description-textarea").val();
         venueBeingEdited.Latitude = $("#venue-latitude-input").val();
         venueBeingEdited.Longitude = $("#venue-longitude-input").val();
-        var postData;
+        var url;
+        var method;
         if (venueBeingEdited.Id != undefined) {
-            postData = { 'command': "updateVenue", "payload": venueBeingEdited };
+            url = "/venues/";
+            method = "PUT";
         } else {
-            postData = { 'command': "createVenue", "payload": venueBeingEdited };
+            url = "/venues/";
+            method = "POST";
         }
         app.preloader.show();
-        $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                    JSON.stringify(postData),
-                    function(data) {
+        $.ajax({
+                    url: url,
+                    type: method,
+                    data: JSON.stringify(venueBeingEdited),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(data) {
                         app.preloader.hide();
                         listVenues();
                     },
-                    "json")
-                .fail(function(data) {
-                    app.preloader.hide();
-                    showToastCenter(data.responseText);
-                })
-            ;
+                    error: function(data) {
+                        app.preloader.hide();
+                        showToastCenter(data.responseText);
+                    }
+                });
     });
 
     $("#add-venue-button").click(() => {
@@ -66,9 +72,7 @@ var venueBeingEdited;
 function listVenues() {
     $('#venues ul').empty();
     app.preloader.show();
-    var postData = { 'command': "listVenues" };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify(postData),
+    $.get("/venues/",
             function(data) {
                 app.preloader.hide();
                 //success
@@ -79,7 +83,7 @@ function listVenues() {
                             '   <div class="item-content">' +
                             '       <div class="item-inner">' +
                             '           <div class="item-title">'+o.Name+'</div>' +
-                            '           <div class="item-after"><span class="material-symbols-outlined md-18 edit-venue" venueId="'+o.Id+'">edit</span></div>' +
+                            '           <div class="item-after"><span class="material-symbols-outlined md-18 edit-venue" venueId="'+o.Id+'">edit</span> <span class="material-symbols-outlined md-18 ms-2 delete-venue" venueId="'+o.Id+'" style="color:#d9534f">delete</span></div>' +
                             '       </div>' +
                             '   </div>' +
                             '</li>');
@@ -93,6 +97,22 @@ function listVenues() {
                     $("#venue-latitude-input").val(venueBeingEdited.Latitude);
                     $("#venue-longitude-input").val(venueBeingEdited.Longitude);
                     editVenuePopup.open();
+                });
+
+                $(".delete-venue").click(function() {
+                    var venueId = $(this).attr("venueId");
+                    var venue = data.filter(t => t.Id == venueId)[0];
+                    if (!confirm('Delete venue "' + venue.Name + '"?')) return;
+                    app.preloader.show();
+                    $.ajax('/venues/' + venueId, { method: 'DELETE' })
+                        .done(function() {
+                            app.preloader.hide();
+                            listVenues();
+                        })
+                        .fail(function(data) {
+                            app.preloader.hide();
+                            showToastCenter(data.responseText);
+                        });
                 });
             },
             "json")

@@ -133,8 +133,7 @@ function toDate(ddMMYYYY) {
 
 function populateTeamsAndVenues() {
     app.preloader.show();
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify({ 'command': "listVenues"}),
+    $.get("/venues/",
             function(venues) {
                 //success
                 //add venues to smart select

@@ -77,31 +77,11 @@ public class CommandHandler : IHttpHandler
                     context.Response.Write(javaScriptSerializer.Serialize(teams));
                     return;
                 }
-                case "listVenues":
-                {
-                    var venues = Venue.GetAll()
-                        .Select(VenueV1.FromInternal).OrderBy(t => t.Name).ToList();
-                    context.Response.Write(javaScriptSerializer.Serialize(venues));
-                    return;
-                }
                 case "updateTeam":
                     CreateOrUpdateStaticDataItem<TeamV1>(context, genericBallByBallCommand, t =>
                     {
                         var team = new Team(t.Id) { Name = t.Name };
                         team.Save();
-                    });
-                    return;
-                case "updateVenue":
-                    CreateOrUpdateStaticDataItem<VenueV1>(context, genericBallByBallCommand, v =>
-                    {
-                        var venue = new Venue(v.Id)
-                        {
-                            Name = v.Name, 
-                            GoogleMapsLocationURL = v.MapUrl, 
-                            Description = v.Description, 
-                            Coordinates = new Tuple<decimal?, decimal?>(v.Latitude, v.Longitude)
-                        };
-                        venue.Save();
                     });
                     return;
                 case "updateMatch":
@@ -125,10 +105,6 @@ public class CommandHandler : IHttpHandler
                 case "createTeam":
                     CreateOrUpdateStaticDataItem<TeamV1>(context, genericBallByBallCommand,
                         t => Team.CreateNewTeam(t.Name));
-                    return;
-                case "createVenue":
-                    CreateOrUpdateStaticDataItem<VenueV1>(context, genericBallByBallCommand,
-                        v => Venue.CreateNewVenue(v.Name, v.MapUrl, v.Description, v.Latitude, v.Longitude));
                     return;
                 case "createMatch":
                     CreateOrUpdateStaticDataItem<MatchV1>(context, genericBallByBallCommand,
