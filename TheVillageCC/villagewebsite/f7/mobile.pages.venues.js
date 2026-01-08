@@ -83,7 +83,7 @@ function listVenues() {
                             '   <div class="item-content">' +
                             '       <div class="item-inner">' +
                             '           <div class="item-title">'+o.Name+'</div>' +
-                            '           <div class="item-after"><span class="material-symbols-outlined md-18 edit-venue" venueId="'+o.Id+'">edit</span></div>' +
+                            '           <div class="item-after"><span class="material-symbols-outlined md-18 edit-venue" venueId="'+o.Id+'">edit</span> <span class="material-symbols-outlined md-18 ms-2 delete-venue" venueId="'+o.Id+'" style="color:#d9534f">delete</span></div>' +
                             '       </div>' +
                             '   </div>' +
                             '</li>');
@@ -97,6 +97,22 @@ function listVenues() {
                     $("#venue-latitude-input").val(venueBeingEdited.Latitude);
                     $("#venue-longitude-input").val(venueBeingEdited.Longitude);
                     editVenuePopup.open();
+                });
+
+                $(".delete-venue").click(function() {
+                    var venueId = $(this).attr("venueId");
+                    var venue = data.filter(t => t.Id == venueId)[0];
+                    if (!confirm('Delete venue "' + venue.Name + '"?')) return;
+                    app.preloader.show();
+                    $.ajax('/venues/' + venueId, { method: 'DELETE' })
+                        .done(function() {
+                            app.preloader.hide();
+                            listVenues();
+                        })
+                        .fail(function(data) {
+                            app.preloader.hide();
+                            showToastCenter(data.responseText);
+                        });
                 });
             },
             "json")
