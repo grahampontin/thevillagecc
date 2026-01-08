@@ -24,25 +24,31 @@ $$(document).on('page:init', '.page[data-name="venues"]', function (e) {
         venueBeingEdited.Description = $("#venue-description-textarea").val();
         venueBeingEdited.Latitude = $("#venue-latitude-input").val();
         venueBeingEdited.Longitude = $("#venue-longitude-input").val();
-        var postData;
+        var url;
+        var method;
         if (venueBeingEdited.Id != undefined) {
-            postData = { 'command': "updateVenue", "payload": venueBeingEdited };
+            url = "/venues/";
+            method = "PUT";
         } else {
-            postData = { 'command': "createVenue", "payload": venueBeingEdited };
+            url = "/venues/";
+            method = "POST";
         }
         app.preloader.show();
-        $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                    JSON.stringify(postData),
-                    function(data) {
+        $.ajax({
+                    url: url,
+                    type: method,
+                    data: JSON.stringify(venueBeingEdited),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(data) {
                         app.preloader.hide();
                         listVenues();
                     },
-                    "json")
-                .fail(function(data) {
-                    app.preloader.hide();
-                    showToastCenter(data.responseText);
-                })
-            ;
+                    error: function(data) {
+                        app.preloader.hide();
+                        showToastCenter(data.responseText);
+                    }
+                });
     });
 
     $("#add-venue-button").click(() => {
@@ -66,9 +72,7 @@ var venueBeingEdited;
 function listVenues() {
     $('#venues ul').empty();
     app.preloader.show();
-    var postData = { 'command': "listVenues" };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify(postData),
+    $.get("/venues/",
             function(data) {
                 app.preloader.hide();
                 //success
