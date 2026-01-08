@@ -19,7 +19,7 @@ public partial class Venue : System.Web.UI.Page
         }
         
         CricketClubMiddle.Venue currentVenue = new CricketClubMiddle.Venue(venueId);
-        if (currentVenue == null || string.IsNullOrEmpty(currentVenue.Name))
+        if (string.IsNullOrEmpty(currentVenue.Name))
         {
             throw new ApplicationException("Failed to collect venue object for venue id " + venueId.ToString());
         }

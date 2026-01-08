@@ -30,7 +30,8 @@ namespace TheVillageCC.Web.HttpHandlers
         protected override VenueV1 CreateEntity(VenueV1 entity)
         {
             Venue.CreateNewVenue(entity.Name, entity.MapUrl, entity.Description, entity.Latitude, entity.Longitude);
-            // Return the created entity by finding it in the list (CreateNewVenue doesn't return the ID)
+            // CreateNewVenue doesn't return the ID, so we find the created venue by name
+            // This assumes venue names are unique. If duplicate names exist, this will return the most recently created one.
             var venues = Venue.GetAll();
             var createdVenue = venues.OrderByDescending(v => v.ID).FirstOrDefault(v => v.Name == entity.Name);
             return createdVenue == null ? entity : VenueV1.FromInternal(createdVenue);
