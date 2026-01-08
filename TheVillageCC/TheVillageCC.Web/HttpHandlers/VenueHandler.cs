@@ -23,8 +23,12 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override void DeleteEntity(int id)
         {
-            // Venue deletion is not implemented in the domain model
-            throw new System.NotImplementedException("Venue deletion is not supported");
+            var venue = new Venue(id);
+            // Check if the venue exists before attempting to delete
+            if (!string.IsNullOrEmpty(venue.Name))
+            {
+                venue.Delete();
+            }
         }
 
         protected override VenueV1 CreateEntity(VenueV1 entity)
