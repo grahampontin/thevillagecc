@@ -3,29 +3,28 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Script.Serialization;
 using CricketClubDAL;
 using CricketClubDomain;
 
 namespace TheVillageCC.Web.HttpHandlers
 {
-    public abstract class EntityHttpHandlerBase<T> : IHttpHandler
+    public abstract class EntityHttpHandlerBase<T> : HttpHandlerBase
     {
-        protected readonly Dao Database;
+        protected readonly IDao Database;
         private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
-        public bool IsReusable => true;
 
         protected EntityHttpHandlerBase() : this(new Dao())
         {
         }
 
-        protected EntityHttpHandlerBase(Dao database)
+        protected EntityHttpHandlerBase(IDao database)
         {
             Database = database;
         }
 
-        public void ProcessRequest(HttpContext context)
+        // Testable entry point - receives an abstracted context suitable for unit tests
+        public override void ProcessRequest(IHandlerContext context)
         {
             switch (context.Request.HttpMethod)
             {
@@ -47,7 +46,7 @@ namespace TheVillageCC.Web.HttpHandlers
             }
         }
 
-        private void DoPut(HttpContext context)
+        private void DoPut(IHandlerContext context)
         {
             var tee = DeserializeRequestBody(context);
             var updatedEntity = UpdateEntity(tee);
@@ -59,7 +58,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected abstract T UpdateEntity(T entity);
 
-        private void DoDelete(HttpContext context)
+        private void DoDelete(IHandlerContext context)
         {
             ExtractSingleIdOr(context, idFound => DoDeleteSingle(idFound, context),
                 () =>
@@ -71,7 +70,7 @@ namespace TheVillageCC.Web.HttpHandlers
                 });
         }
 
-        private void DoDeleteSingle(int id, HttpContext context)
+        private void DoDeleteSingle(int id, IHandlerContext context)
         {
             DeleteEntity(id);
             context.Response.StatusCode = 204; // No Content
@@ -80,7 +79,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected abstract void DeleteEntity(int id);
 
-        private void DoPost(HttpContext context)
+        private void DoPost(IHandlerContext context)
         {
             var entity = CreateEntity(DeserializeRequestBody(context));
             context.Response.ContentType = "application/json";
@@ -88,19 +87,17 @@ namespace TheVillageCC.Web.HttpHandlers
             context.Response.StatusCode = 201; // Created
             context.Response.End();
         }
-        
-        
 
         protected abstract T CreateEntity(T deserializeRequestBody);
 
-        private void DoGet(HttpContext context)
+        private void DoGet(IHandlerContext context)
         {
-            ExtractSingleIdOr(context, 
-                idFound => GetSingle(idFound, context), 
+            ExtractSingleIdOr(context,
+                idFound => GetSingle(idFound, context),
                 () => GetAll(context));
         }
 
-        private void ExtractSingleIdOr(HttpContext context, Action<int> idFoundAction, Action orElse)
+        private void ExtractSingleIdOr(IHandlerContext context, Action<int> idFoundAction, Action orElse)
         {
             var matchCollection = Regex.Matches(context.Request.Url.ToString(), "/"+GetTypeName()+"/*([0-9]+)/*");
             if (matchCollection.Count == 1)
@@ -114,17 +111,17 @@ namespace TheVillageCC.Web.HttpHandlers
             }
         }
 
-        private void GetAll(HttpContext context)
+        private void GetAll(IHandlerContext context)
         {
             context.Response.ContentType = "application/json";
             context.Response.Write(javaScriptSerializer.Serialize(GetAllEntities(context.Request.QueryString)));
             context.Response.StatusCode = 200;
-            context.Response.End();        
+            context.Response.End();
         }
 
         protected abstract List<T> GetAllEntities(NameValueCollection requestQueryString);
 
-        private void GetSingle(int matchId, HttpContext context)
+        private void GetSingle(int matchId, IHandlerContext context)
         {
             context.Response.ContentType = "application/json";
             var entity = GetEntity(matchId);
@@ -139,7 +136,7 @@ namespace TheVillageCC.Web.HttpHandlers
             context.Response.End();
         }
 
-        private T DeserializeRequestBody(HttpContext context)
+        private T DeserializeRequestBody(IHandlerContext context)
         {
             var stringReader = new StreamReader(context.Request.InputStream);
             string body = stringReader.ReadToEnd();
@@ -147,7 +144,7 @@ namespace TheVillageCC.Web.HttpHandlers
         }
 
         protected abstract T GetEntity(int id);
-        
+
         public abstract string GetTypeName();
     }
 }

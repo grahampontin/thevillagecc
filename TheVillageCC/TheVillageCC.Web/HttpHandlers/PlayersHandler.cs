@@ -14,7 +14,7 @@ namespace TheVillageCC.Web.HttpHandlers
         {
         }
 
-        public PlayersHandler(Dao database) : base(database)
+        public PlayersHandler(IDao database) : base(database)
         {
         }
 
@@ -39,7 +39,7 @@ namespace TheVillageCC.Web.HttpHandlers
             var includeInactive = inactiveQueryParam != null && inactiveQueryParam.Length > 0 &&
                                   inactiveQueryParam[0] == "true";
 
-            return Player.GetAll(true).Where(p => (p.IsActive || includeInactive) && p.Id > 0)
+            return Player.GetAll(true, Database).Where(p => (p.IsActive || includeInactive) && p.Id > 0)
                 .OrderByDescending(p => p.NumberOfMatchesPlayedThisSeason)
                 .ThenBy(p => !p.IsActive)
                 .ThenBy(p => p.Surname)

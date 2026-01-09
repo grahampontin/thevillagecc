@@ -15,7 +15,7 @@ namespace TheVillageCC.Web.HttpHandlers
         {
         }
 
-        public AwardsHandler(Dao database) : base(database)
+        public AwardsHandler(IDao database) : base(database)
         {
         }
 

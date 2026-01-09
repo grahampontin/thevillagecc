@@ -13,7 +13,7 @@ namespace TheVillageCC.Web.HttpHandlers
         {
         }
 
-        public CommitteeHandler(Dao database) : base(database)
+        public CommitteeHandler(IDao database) : base(database)
         {
         }
 
