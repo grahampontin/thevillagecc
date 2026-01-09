@@ -31,6 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\.gitignore = ..\.gitignore
 		..\deploy.yml = ..\deploy.yml
+		..\SQLScripts\awards and committee.sql = ..\SQLScripts\awards and committee.sql
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheVillageCC.Web", "TheVillageCC.Web\TheVillageCC.Web.csproj", "{FC13DB50-975F-4844-BB44-BE5C10FAE275}"
@@ -89,5 +90,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DF67F6F8-6367-4EF1-9216-97E705A664E2}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal
