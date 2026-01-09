@@ -5,8 +5,6 @@ using System.IO;
 using System.Text;
 using System.Web;
 using System.Web.Script.Serialization;
-using CricketClubDAL;
-using CricketClubDomain;
 using TheVillageCC.Web.Domain;
 using TheVillageCC.Web.HttpHandlers;
 using Xunit;
