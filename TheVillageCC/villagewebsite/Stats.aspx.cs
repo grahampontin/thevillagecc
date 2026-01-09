@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CricketClubDAL;
 using CricketClubMiddle;
 
 public partial class Stats : System.Web.UI.Page
@@ -13,7 +14,7 @@ public partial class Stats : System.Web.UI.Page
         Header1.PageID = "Stats";
         if (!IsPostBack)
         {
-            VenuesDropDown.DataSource = Venue.GetAll().OrderBy(a => a.Name);
+            VenuesDropDown.DataSource = CricketClubMiddle.Venue.GetAll(new Dao()).OrderBy(a => a.Name);
             VenuesDropDown.DataBind();
         }
 
