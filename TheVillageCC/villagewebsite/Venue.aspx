@@ -44,10 +44,8 @@
                 </div>
                 
                 <% if (VenueLatitude.HasValue && VenueLongitude.HasValue) { 
-                    // Use custom map URL if provided, otherwise generate one from coordinates
-                    var mapUrl = !string.IsNullOrEmpty(VenueMapUrl) 
-                        ? VenueMapUrl 
-                        : string.Format("https://maps.google.com/maps?q={0},{1}&hl=en&z=15&output=embed", VenueLatitude.Value, VenueLongitude.Value);
+                    var mapUrl = GetMapUrl();
+                    if (!string.IsNullOrEmpty(mapUrl)) {
                 %>
                 <div class="col-md-6">
                     <h6>Map</h6>
@@ -55,7 +53,9 @@
                         <iframe src="<%= mapUrl %>" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
-                <% } %>
+                <% 
+                    }
+                } %>
             </div>
         </div>
     </div>
