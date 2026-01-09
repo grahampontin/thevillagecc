@@ -10,6 +10,14 @@ namespace TheVillageCC.Web.HttpHandlers
     // ReSharper disable once UnusedType.Global
     public class AwardsHandler : EntityHttpHandlerBase<AwardV1>
     {
+        public AwardsHandler() : base()
+        {
+        }
+
+        public AwardsHandler(Dao database) : base(database)
+        {
+        }
+
         protected override AwardV1 UpdateEntity(AwardV1 entity)
         {
             Database.UpdateAward(AwardV1.ToInternal(entity));

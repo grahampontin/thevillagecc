@@ -2,12 +2,21 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using CricketClubMiddle;
+using TheVillageCC.Web.Domain;
 
 namespace TheVillageCC.Web.HttpHandlers
 {
     // ReSharper disable once UnusedType.Global
     public class VenueHandler : EntityHttpHandlerBase<VenueV1>
     {
+        public VenueHandler() : base()
+        {
+        }
+
+        public VenueHandler(Dao database) : base(database)
+        {
+        }
+
         protected override VenueV1 UpdateEntity(VenueV1 entity)
         {
             var venue = new Venue(entity.Id)

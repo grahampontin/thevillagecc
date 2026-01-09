@@ -9,6 +9,14 @@ namespace TheVillageCC.Web.HttpHandlers
     // ReSharper disable once UnusedType.Global
     public class PlayersHandler : EntityHttpHandlerBase<PlayerV1>
     {
+        public PlayersHandler() : base()
+        {
+        }
+
+        public PlayersHandler(Dao database) : base(database)
+        {
+        }
+
         protected override PlayerV1 UpdateEntity(PlayerV1 entity)
         {
             throw new System.NotImplementedException();
