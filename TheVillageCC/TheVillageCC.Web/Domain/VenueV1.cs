@@ -1,6 +1,6 @@
 using CricketClubMiddle;
 
-namespace TheVillageCC.Web.HttpHandlers
+namespace TheVillageCC.Web.Domain
 {
     public class VenueV1
     {

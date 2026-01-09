@@ -38,7 +38,8 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             var response = new HttpResponse(responseWriter);
             var context = new HttpContext(request, response);
 
-            // Use reflection to set HttpMethod since it's read-only
+            // Use reflection to set HttpMethod since it's read-only and there's no public API
+            // This is a common pattern for testing ASP.NET HttpContext in .NET Framework
             typeof(HttpRequest).GetField("_httpMethod",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
                 ?.SetValue(request, httpMethod);
