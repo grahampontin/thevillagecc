@@ -7,7 +7,6 @@ using System.Web;
 using System.Web.Script.Serialization;
 using CricketClubDAL;
 using CricketClubDomain;
-using Moq;
 using TheVillageCC.Web.Domain;
 using TheVillageCC.Web.HttpHandlers;
 using Xunit;
