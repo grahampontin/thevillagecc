@@ -8,6 +8,14 @@ namespace TheVillageCC.Web.HttpHandlers
     // ReSharper disable once UnusedType.Global
     public class CommitteeHandler : EntityHttpHandlerBase<CommitteePostV1>
     {
+        public CommitteeHandler() : base()
+        {
+        }
+
+        public CommitteeHandler(Dao database) : base(database)
+        {
+        }
+
         protected override CommitteePostV1 UpdateEntity(CommitteePostV1 entity)
         {
             Database.UpdateCommittee(CommitteePostV1.ToInternal(entity));

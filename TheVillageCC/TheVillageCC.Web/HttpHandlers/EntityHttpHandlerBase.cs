@@ -12,9 +12,18 @@ namespace TheVillageCC.Web.HttpHandlers
 {
     public abstract class EntityHttpHandlerBase<T> : IHttpHandler
     {
-        protected readonly Dao Database = new Dao();
+        protected readonly Dao Database;
         private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
         public bool IsReusable => true;
+
+        protected EntityHttpHandlerBase() : this(new Dao())
+        {
+        }
+
+        protected EntityHttpHandlerBase(Dao database)
+        {
+            Database = database;
+        }
 
         public void ProcessRequest(HttpContext context)
         {

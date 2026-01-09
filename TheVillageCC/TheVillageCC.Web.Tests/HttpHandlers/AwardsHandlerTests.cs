@@ -5,6 +5,8 @@ using System.IO;
 using System.Text;
 using System.Web;
 using System.Web.Script.Serialization;
+using CricketClubDAL;
+using CricketClubDomain;
 using Moq;
 using TheVillageCC.Web.Domain;
 using TheVillageCC.Web.HttpHandlers;
@@ -15,106 +17,103 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
     public class AwardsHandlerTests
     {
         private readonly JavaScriptSerializer _serializer;
+        private readonly Mock<Dao> _mockDao;
+        private readonly AwardsHandler _handler;
 
         public AwardsHandlerTests()
         {
             _serializer = new JavaScriptSerializer();
+            _mockDao = new Mock<Dao>();
+            _handler = new AwardsHandler(_mockDao.Object);
         }
 
         [Fact]
-        public void ProcessRequest_GetAll_InvokesGetAllEntities()
+        public void ProcessRequest_GetAll_CallsDaoGetAllAwardsData()
         {
             // Arrange
-            var expectedAwards = new List<AwardV1>
-            {
-                new AwardV1 { Id = 1, Year = 2023, Award = "BestBowler", PlayerId = 1, Data = "Test" }
-            };
-            
-            var mockHandler = new Mock<AwardsHandler> { CallBase = true };
-            mockHandler.Setup(h => h.GetAllEntities(It.IsAny<NameValueCollection>()))
-                .Returns(expectedAwards);
+            var awardData = new AwardData { Id = 1, Year = 2023, Award = Award.BestBowler, PlayerId = 1, Data = "Test" };
+            _mockDao.Setup(d => d.GetAllAwardsData()).Returns(new List<AwardData> { awardData });
 
             var context = CreateHttpContext("GET", "http://test.com/awards");
 
             // Act
-            mockHandler.Object.ProcessRequest(context);
+            _handler.ProcessRequest(context);
 
             // Assert
-            mockHandler.Verify(h => h.GetAllEntities(It.IsAny<NameValueCollection>()), Times.Once);
+            _mockDao.Verify(d => d.GetAllAwardsData(), Times.Once);
         }
 
         [Fact]
-        public void ProcessRequest_GetSingle_InvokesGetEntity()
+        public void ProcessRequest_GetSingle_CallsDaoGetAwardDataWithCorrectId()
         {
             // Arrange
-            var expectedAward = new AwardV1 { Id = 123, Year = 2023, Award = "BestBowler", PlayerId = 1, Data = "Test" };
-            
-            var mockHandler = new Mock<AwardsHandler> { CallBase = true };
-            mockHandler.Setup(h => h.GetEntity(123))
-                .Returns(expectedAward);
+            var awardData = new AwardData { Id = 123, Year = 2023, Award = Award.BestBowler, PlayerId = 1, Data = "Test" };
+            _mockDao.Setup(d => d.GetAwardData(123)).Returns(awardData);
 
             var context = CreateHttpContext("GET", "http://test.com/awards/123");
 
             // Act
-            mockHandler.Object.ProcessRequest(context);
+            _handler.ProcessRequest(context);
 
             // Assert
-            mockHandler.Verify(h => h.GetEntity(123), Times.Once);
+            _mockDao.Verify(d => d.GetAwardData(123), Times.Once);
         }
 
         [Fact]
-        public void ProcessRequest_Post_InvokesCreateEntity()
+        public void ProcessRequest_Post_CallsDaoCreateNewAwardWithCorrectParameters()
         {
             // Arrange
             var newAward = new AwardV1 { Year = 2023, Award = "BestBowler", PlayerId = 1, Data = "Test" };
-            var createdAward = new AwardV1 { Id = 1, Year = 2023, Award = "BestBowler", PlayerId = 1, Data = "Test" };
+            var createdAwardData = new AwardData { Id = 1, Year = 2023, Award = Award.BestBowler, PlayerId = 1, Data = "Test" };
             
-            var mockHandler = new Mock<AwardsHandler> { CallBase = true };
-            mockHandler.Setup(h => h.CreateEntity(It.IsAny<AwardV1>()))
-                .Returns(createdAward);
+            _mockDao.Setup(d => d.CreateNewAward(Award.BestBowler, 2023, 1, "Test")).Returns(1);
+            _mockDao.Setup(d => d.GetAwardData(1)).Returns(createdAwardData);
 
             var context = CreateHttpContext("POST", "http://test.com/awards", _serializer.Serialize(newAward));
 
             // Act
-            mockHandler.Object.ProcessRequest(context);
+            _handler.ProcessRequest(context);
 
             // Assert
-            mockHandler.Verify(h => h.CreateEntity(It.IsAny<AwardV1>()), Times.Once);
+            _mockDao.Verify(d => d.CreateNewAward(Award.BestBowler, 2023, 1, "Test"), Times.Once);
+            _mockDao.Verify(d => d.GetAwardData(1), Times.Once);
         }
 
         [Fact]
-        public void ProcessRequest_Put_InvokesUpdateEntity()
+        public void ProcessRequest_Put_CallsDaoUpdateAwardWithCorrectEntity()
         {
             // Arrange
             var updateAward = new AwardV1 { Id = 1, Year = 2023, Award = "BestBowler", PlayerId = 1, Data = "Updated" };
             
-            var mockHandler = new Mock<AwardsHandler> { CallBase = true };
-            mockHandler.Setup(h => h.UpdateEntity(It.IsAny<AwardV1>()))
-                .Returns(updateAward);
+            _mockDao.Setup(d => d.UpdateAward(It.IsAny<AwardData>()));
 
             var context = CreateHttpContext("PUT", "http://test.com/awards", _serializer.Serialize(updateAward));
 
             // Act
-            mockHandler.Object.ProcessRequest(context);
+            _handler.ProcessRequest(context);
 
             // Assert
-            mockHandler.Verify(h => h.UpdateEntity(It.IsAny<AwardV1>()), Times.Once);
+            _mockDao.Verify(d => d.UpdateAward(It.Is<AwardData>(a => 
+                a.Id == 1 && 
+                a.Year == 2023 && 
+                a.Award == Award.BestBowler && 
+                a.PlayerId == 1 && 
+                a.Data == "Updated")), Times.Once);
         }
 
         [Fact]
-        public void ProcessRequest_Delete_InvokesDeleteEntity()
+        public void ProcessRequest_Delete_CallsDaoDeleteAwardWithCorrectId()
         {
             // Arrange
-            var mockHandler = new Mock<AwardsHandler> { CallBase = true };
-            mockHandler.Setup(h => h.DeleteEntity(123));
+            _mockDao.Setup(d => d.DeleteAward(123));
 
             var context = CreateHttpContext("DELETE", "http://test.com/awards/123");
 
             // Act
-            mockHandler.Object.ProcessRequest(context);
+            _handler.ProcessRequest(context);
 
             // Assert
-            mockHandler.Verify(h => h.DeleteEntity(123), Times.Once);
+            _mockDao.Verify(d => d.DeleteAward(123), Times.Once);
         }
 
         private HttpContext CreateHttpContext(string httpMethod, string url, string requestBody = null)

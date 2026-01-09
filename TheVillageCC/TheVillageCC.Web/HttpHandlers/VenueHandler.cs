@@ -9,6 +9,14 @@ namespace TheVillageCC.Web.HttpHandlers
     // ReSharper disable once UnusedType.Global
     public class VenueHandler : EntityHttpHandlerBase<VenueV1>
     {
+        public VenueHandler() : base()
+        {
+        }
+
+        public VenueHandler(Dao database) : base(database)
+        {
+        }
+
         protected override VenueV1 UpdateEntity(VenueV1 entity)
         {
             var venue = new Venue(entity.Id)
