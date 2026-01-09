@@ -59,9 +59,15 @@
                     <ul>
                         <li id="award-type-select-element">
                             <a class="item-link smart-select smart-select-init" id="award-type-smart-select" data-open-in="popup" data-close-on-select="true">
-                                <select name="award-type" id="award-type-select">
+                                <select name="award-type" id="award-type-select" aria-label="Award Type">
                                     <option value="PlayerOfTheYear">Player Of The Year</option>
+                                    <option value="BowlerOfTheYear">Bowler Of The Year</option>
+                                    <option value="BatsmanOfTheYear">Batsman Of The Year</option>
                                     <option value="FielderOfTheYear">Fielder Of The Year</option>
+                                    <option value="CorridorOfUncertainty">Corridor Of Uncertainty</option>
+                                    <option value="ClubmanOfTheYear">Clubman Of The Year</option>
+                                    <option value="MostImprovedPlayer">Most Improved Player</option>
+                                    <option value="CaptainsPlayerOfTheYear">Captain's Player Of The Year</option>
                                 </select>
                                 <div class="item-content">
                                     <div class="item-inner">
@@ -72,7 +78,7 @@
                         </li>
                         <li id="player-select-element">
                             <a class="item-link smart-select smart-select-init" id="player-smart-select" data-open-in="popup" data-close-on-select="true">
-                                <select name="player" id="player-select">
+                                <select name="player" id="player-select" aria-label="Recipient">
                                     <option value="-1">Please select...</option>
                                 </select>
                                 <div class="item-content">
@@ -86,7 +92,7 @@
                             <div class="item-inner">
                                 <div class="item-title item-label">Season</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" placeholder="Enter season" id="award-date-input" />
+                                    <input type="text" placeholder="Enter season" id="award-date-input" aria-label="Season" />
                                 </div>
                             </div>
                         </li>
@@ -94,7 +100,7 @@
                             <div class="item-inner">
                                 <div class="item-title item-label">Data</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" placeholder="Optional" id="award-data-input" />
+                                    <input type="text" placeholder="Optional" id="award-data-input" aria-label="Data" />
                                 </div>
                             </div>
                         </li>

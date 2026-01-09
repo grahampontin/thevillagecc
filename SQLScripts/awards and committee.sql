@@ -91,35 +91,32 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (18, 2022
 
 -- Main awards: only set Data when the page had bracketed info (we store inner text only)
 -- 2004
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (19, 2004, 'PlayersPlayerOfTheYear', 1, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (20, 2004, 'CaptainsPlayerOfTheYear', 4, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (21, 2004, 'BatsmanOfTheYear', 21, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (22, 2004, 'BowlerOfTheYear', 4, NULL);
 
 -- 2005
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (23, 2005, 'PlayersPlayerOfTheYear', 3, NULL);
 
 -- 2006
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (24, 2006, 'PlayersPlayerOfTheYear', 27, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (25, 2006, 'CaptainsPlayerOfTheYear', 2, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (26, 2006, 'BatsmanOfTheYear', 27, '388 runs @ 78');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (27, 2006, 'BowlerOfTheYear', 27, '16 wkts @ 8');
 
 -- 2007
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (28, 2007, 'PlayersPlayerOfTheYear', 43, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (29, 2007, 'CaptainsPlayerOfTheYear', 9, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (30, 2007, 'BatsmanOfTheYear', 3, '295 runs @ 74');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (31, 2007, 'BowlerOfTheYear', 21, '23 wkts @ 11');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (32, 2007, 'FielderOfTheYear', 46, NULL);
 
 -- 2008
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (33, 2008, 'PlayersPlayerOfTheYear', 65, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (34, 2008, 'BatsmanOfTheYear', 42, '204 runs @ 20.4');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (35, 2008, 'BowlerOfTheYear', 3, '23 wkts @ 12.8');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (36, 2008, 'FielderOfTheYear', 1, NULL);
 
 -- 2009
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (37, 2009, 'PlayersPlayerOfTheYear', 42, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (38, 2009, 'CaptainsPlayerOfTheYear', 45, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (39, 2009, 'BatsmanOfTheYear', 42, '479 runs @ 60');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (40, 2009, 'BowlerOfTheYear', 43, '34 wkts @ 11');
@@ -127,14 +124,14 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (41, 2009
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (42, 2009, 'MostImprovedPlayer', 62, NULL);
 
 -- 2010
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (43, 2010, 'PlayersPlayerOfTheYear', 2, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (44, 2010, 'CaptainsPlayerOfTheYear', 65, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (45, 2010, 'BatsmanOfTheYear', 2, '665 runs @ 44');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (46, 2010, 'BowlerOfTheYear', 43, '33 wkts @ 14');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (47, 2010, 'FielderOfTheYear', 47, NULL);
 
 -- 2011
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (48, 2011, 'PlayersPlayerOfTheYear', 97, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (49, 2011, 'CaptainsPlayerOfTheYear', 125, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (50, 2011, 'BatsmanOfTheYear', 97, '730 runs @ 91');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (51, 2011, 'BowlerOfTheYear', 65, '25 wkts @ 17');
@@ -142,7 +139,7 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (52, 2011
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (53, 2011, 'MostImprovedPlayer', 45, NULL);
 
 -- 2012
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (54, 2012, 'PlayersPlayerOfTheYear', 213, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (55, 2012, 'CaptainsPlayerOfTheYear', 97, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (56, 2012, 'BatsmanOfTheYear', 213, '696 runs @ 58');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (57, 2012, 'BowlerOfTheYear', 125, '29 wkts @ 14');
@@ -150,7 +147,7 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (58, 2012
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (59, 2012, 'MostImprovedPlayer', 35, NULL);
 
 -- 2013
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (60, 2013, 'PlayersPlayerOfTheYear', 125, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (61, 2013, 'CaptainsPlayerOfTheYear', 213, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (62, 2013, 'BatsmanOfTheYear', 97, '582 runs @ 66');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (63, 2013, 'BowlerOfTheYear', 65, '24 wkts @ 17');
@@ -158,7 +155,7 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (64, 2013
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (65, 2013, 'MostImprovedPlayer', 47, NULL);
 
 -- 2014
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (66, 2014, 'PlayersPlayerOfTheYear', 213, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (67, 2014, 'CaptainsPlayerOfTheYear', 171, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (68, 2014, 'BatsmanOfTheYear', 213, '464 runs @ 65');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (69, 2014, 'BowlerOfTheYear', 65, '19 wkts @ 15');
@@ -166,7 +163,7 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (70, 2014
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (71, 2014, 'MostImprovedPlayer', 163, NULL);
 
 -- 2015
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (72, 2015, 'PlayersPlayerOfTheYear', 213, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (73, 2015, 'CaptainsPlayerOfTheYear', 200, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (74, 2015, 'BatsmanOfTheYear', 213, '582 runs @ 48.5');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (75, 2015, 'BowlerOfTheYear', 65, '34 wkts @ 15');
@@ -174,7 +171,7 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (76, 2015
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (77, 2015, 'MostImprovedPlayer', 87, NULL);
 
 -- 2016
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (78, 2016, 'PlayersPlayerOfTheYear', 204, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (79, 2016, 'CaptainsPlayerOfTheYear', 2, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (80, 2016, 'BatsmanOfTheYear', 204, '492 runs @ 41');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (81, 2016, 'BowlerOfTheYear', 171, '31 wkts @ 7');
@@ -182,7 +179,7 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (82, 2016
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (83, 2016, 'MostImprovedPlayer', 204, NULL);
 
 -- 2017
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (84, 2017, 'PlayersPlayerOfTheYear', 171, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (85, 2017, 'CaptainsPlayerOfTheYear', 204, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (86, 2017, 'BatsmanOfTheYear', 221, '518 runs @ 86.33');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (87, 2017, 'BowlerOfTheYear', 171, '23 wkts @ 14');
@@ -190,7 +187,7 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (88, 2017
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (89, 2017, 'MostImprovedPlayer', 163, NULL);
 
 -- 2018
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (90, 2018, 'PlayersPlayerOfTheYear', 171, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (91, 2018, 'CaptainsPlayerOfTheYear', 200, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (92, 2018, 'BatsmanOfTheYear', 200, '567 runs @ 141.75');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (93, 2018, 'BowlerOfTheYear', 171, '22 wkts @ 18');
@@ -198,7 +195,7 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (94, 2018
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (95, 2018, 'MostImprovedPlayer', 88, NULL);
 
 -- 2019
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (96, 2019, 'PlayersPlayerOfTheYear', 88, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (97, 2019, 'CaptainsPlayerOfTheYear', 163, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (98, 2019, 'BatsmanOfTheYear', 163, '462 runs @ 35.54');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (99, 2019, 'BowlerOfTheYear', 88, '27 wkts @ 12');
@@ -210,7 +207,7 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (102, 202
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (103, 2020, 'BowlerOfTheYear', 88, '13 wkts @ 14');
 
 -- 2021
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (104, 2021, 'PlayersPlayerOfTheYear', 47, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (105, 2021, 'CaptainsPlayerOfTheYear', 200, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (106, 2021, 'BatsmanOfTheYear', 2, '571 runs @ 33.59');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (107, 2021, 'BowlerOfTheYear', 47, '22 wkts @ 18');
@@ -218,7 +215,7 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (108, 202
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (109, 2021, 'MostImprovedPlayer', 47, NULL);
 
 -- 2022
-INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (110, 2022, 'PlayersPlayerOfTheYear', 204, NULL);
+
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (111, 2022, 'CaptainsPlayerOfTheYear', 204, NULL);
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (112, 2022, 'BatsmanOfTheYear', 204, '449 runs @ 34.54');
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (113, 2022, 'BowlerOfTheYear', 65, '23 wkts @ 17');
@@ -245,4 +242,3 @@ INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (131, 202
 INSERT INTO dbo.Awards (award_id, Year, Award, player_id, Data) VALUES (132, 2022, 'CorridorOfUncertainty', 199,'https://www.youtube.com/embed/BcVdx84BtJ4');
 
 COMMIT TRANSACTION;
-

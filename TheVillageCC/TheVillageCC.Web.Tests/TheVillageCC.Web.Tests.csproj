@@ -38,13 +38,13 @@
       <HintPath>..\packages\Castle.Core.5.1.1\lib\net462\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="CricketClubDAL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CricketClubDAL.1.0.0-CI-20260109-120353\lib\net472\CricketClubDAL.dll</HintPath>
+      <HintPath>..\packages\CricketClubDAL.1.0.0-CI-20260109-172020\lib\net472\CricketClubDAL.dll</HintPath>
     </Reference>
     <Reference Include="CricketClubDomain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CricketClubDomain.1.0.0-CI-20260109-120353\lib\net472\CricketClubDomain.dll</HintPath>
+      <HintPath>..\packages\CricketClubDomain.1.0.0-CI-20260109-172020\lib\net472\CricketClubDomain.dll</HintPath>
     </Reference>
     <Reference Include="CricketClubMiddle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CricketClubMiddle.1.0.0-CI-20260109-120353\lib\net472\CricketClubMiddle.dll</HintPath>
+      <HintPath>..\packages\CricketClubMiddle.1.0.0-CI-20260109-172020\lib\net472\CricketClubMiddle.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=3.2.0.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.3.2.0\lib\net462\log4net.dll</HintPath>
