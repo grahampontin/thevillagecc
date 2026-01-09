@@ -12,3 +12,7 @@ C:/Users/graha/Documents/GitHub/thevillagecc/TheVillageCC/TheVillageCC.Web/bin/D
 C:/Users/graha/Documents/GitHub/thevillagecc/TheVillageCC/TheVillageCC.Web/bin/Debug/log4net.xml
 C:/Users/graha/Documents/GitHub/thevillagecc/TheVillageCC/TheVillageCC.Web/obj/Debug/TheVilla.082EDA2D.Up2Date
 C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\TheVillageCC.Web\bin\Debug\CricketClubAccounts.dll
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\TheVillageCC.Web\obj\Debug\TheVillageCC.Web.csproj.AssemblyReference.cache
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\TheVillageCC.Web\obj\Debug\TheVillageCC.Web.csproj.CoreCompileInputs.cache
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\TheVillageCC.Web\obj\Debug\TheVillageCC.Web.dll
+C:\Users\graha\Documents\GitHub\thevillagecc\TheVillageCC\TheVillageCC.Web\obj\Debug\TheVillageCC.Web.pdb
