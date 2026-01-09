@@ -48,7 +48,10 @@ namespace TheVillageCC.Web.HttpHandlers
             context.Response.End();
         }
 
-        protected abstract T UpdateEntity(T entity);
+        protected virtual T UpdateEntity(T entity)
+        {
+            throw new NotImplementedException();
+        }
 
         private void DoDelete(HttpContext context)
         {
@@ -69,7 +72,10 @@ namespace TheVillageCC.Web.HttpHandlers
             context.Response.End();
         }
 
-        protected abstract void DeleteEntity(int id);
+        protected virtual void DeleteEntity(int id)
+        {
+            throw new NotImplementedException();
+        }
 
         private void DoPost(HttpContext context)
         {
@@ -82,7 +88,10 @@ namespace TheVillageCC.Web.HttpHandlers
         
         
 
-        protected abstract T CreateEntity(T deserializeRequestBody);
+        protected virtual T CreateEntity(T deserializeRequestBody)
+        {
+            throw new NotImplementedException();
+        }
 
         private void DoGet(HttpContext context)
         {
@@ -113,7 +122,10 @@ namespace TheVillageCC.Web.HttpHandlers
             context.Response.End();        
         }
 
-        protected abstract List<T> GetAllEntities(NameValueCollection requestQueryString);
+        protected virtual List<T> GetAllEntities(NameValueCollection requestQueryString)
+        {
+            throw new NotImplementedException();
+        }
 
         private void GetSingle(int matchId, HttpContext context)
         {
@@ -137,7 +149,14 @@ namespace TheVillageCC.Web.HttpHandlers
             return javaScriptSerializer.Deserialize<T>(body);
         }
 
-        protected abstract T GetEntity(int id);
-        public abstract string GetTypeName();
+        protected virtual T GetEntity(int id)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public virtual string GetTypeName()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

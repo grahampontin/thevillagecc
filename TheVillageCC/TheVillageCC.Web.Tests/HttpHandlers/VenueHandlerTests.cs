@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Web;
 using System.Web.Script.Serialization;
+using Moq;
 using TheVillageCC.Web.Domain;
 using TheVillageCC.Web.HttpHandlers;
 using Xunit;
@@ -24,87 +25,96 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
         public void ProcessRequest_GetAll_InvokesGetAllEntities()
         {
             // Arrange
-            var handler = new TestableVenueHandler();
             var expectedVenues = new List<VenueV1>
             {
                 new VenueV1 { Id = 1, Name = "Test Venue", MapUrl = "http://test.com", Description = "Test Description" }
             };
-            handler.SetGetAllEntitiesResult(expectedVenues);
+            
+            var mockHandler = new Mock<VenueHandler> { CallBase = true };
+            mockHandler.Setup(h => h.GetAllEntities(It.IsAny<NameValueCollection>()))
+                .Returns(expectedVenues);
 
             var context = CreateHttpContext("GET", "http://test.com/venues");
 
             // Act
-            handler.ProcessRequest(context);
+            mockHandler.Object.ProcessRequest(context);
 
             // Assert
-            Assert.True(handler.GetAllEntitiesCalled);
+            mockHandler.Verify(h => h.GetAllEntities(It.IsAny<NameValueCollection>()), Times.Once);
         }
 
         [Fact]
         public void ProcessRequest_GetSingle_InvokesGetEntity()
         {
             // Arrange
-            var handler = new TestableVenueHandler();
             var expectedVenue = new VenueV1 { Id = 123, Name = "Test Venue", MapUrl = "http://test.com", Description = "Test Description" };
-            handler.SetGetEntityResult(expectedVenue);
+            
+            var mockHandler = new Mock<VenueHandler> { CallBase = true };
+            mockHandler.Setup(h => h.GetEntity(123))
+                .Returns(expectedVenue);
 
             var context = CreateHttpContext("GET", "http://test.com/venues/123");
 
             // Act
-            handler.ProcessRequest(context);
+            mockHandler.Object.ProcessRequest(context);
 
             // Assert
-            Assert.True(handler.GetEntityCalled);
-            Assert.Equal(123, handler.GetEntityCalledWithId);
+            mockHandler.Verify(h => h.GetEntity(123), Times.Once);
         }
 
         [Fact]
         public void ProcessRequest_Post_InvokesCreateEntity()
         {
             // Arrange
-            var handler = new TestableVenueHandler();
             var newVenue = new VenueV1 { Name = "Test Venue", MapUrl = "http://test.com", Description = "Test Description" };
-            handler.SetCreateEntityResult(new VenueV1 { Id = 1, Name = "Test Venue", MapUrl = "http://test.com", Description = "Test Description" });
+            var createdVenue = new VenueV1 { Id = 1, Name = "Test Venue", MapUrl = "http://test.com", Description = "Test Description" };
+            
+            var mockHandler = new Mock<VenueHandler> { CallBase = true };
+            mockHandler.Setup(h => h.CreateEntity(It.IsAny<VenueV1>()))
+                .Returns(createdVenue);
 
             var context = CreateHttpContext("POST", "http://test.com/venues", _serializer.Serialize(newVenue));
 
             // Act
-            handler.ProcessRequest(context);
+            mockHandler.Object.ProcessRequest(context);
 
             // Assert
-            Assert.True(handler.CreateEntityCalled);
+            mockHandler.Verify(h => h.CreateEntity(It.IsAny<VenueV1>()), Times.Once);
         }
 
         [Fact]
         public void ProcessRequest_Put_InvokesUpdateEntity()
         {
             // Arrange
-            var handler = new TestableVenueHandler();
             var updateVenue = new VenueV1 { Id = 1, Name = "Updated Venue", MapUrl = "http://test.com", Description = "Updated Description" };
-            handler.SetUpdateEntityResult(updateVenue);
+            
+            var mockHandler = new Mock<VenueHandler> { CallBase = true };
+            mockHandler.Setup(h => h.UpdateEntity(It.IsAny<VenueV1>()))
+                .Returns(updateVenue);
 
             var context = CreateHttpContext("PUT", "http://test.com/venues", _serializer.Serialize(updateVenue));
 
             // Act
-            handler.ProcessRequest(context);
+            mockHandler.Object.ProcessRequest(context);
 
             // Assert
-            Assert.True(handler.UpdateEntityCalled);
+            mockHandler.Verify(h => h.UpdateEntity(It.IsAny<VenueV1>()), Times.Once);
         }
 
         [Fact]
         public void ProcessRequest_Delete_InvokesDeleteEntity()
         {
             // Arrange
-            var handler = new TestableVenueHandler();
+            var mockHandler = new Mock<VenueHandler> { CallBase = true };
+            mockHandler.Setup(h => h.DeleteEntity(123));
+
             var context = CreateHttpContext("DELETE", "http://test.com/venues/123");
 
             // Act
-            handler.ProcessRequest(context);
+            mockHandler.Object.ProcessRequest(context);
 
             // Assert
-            Assert.True(handler.DeleteEntityCalled);
-            Assert.Equal(123, handler.DeleteEntityCalledWithId);
+            mockHandler.Verify(h => h.DeleteEntity(123), Times.Once);
         }
 
         private HttpContext CreateHttpContext(string httpMethod, string url, string requestBody = null)
@@ -130,58 +140,6 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             }
 
             return context;
-        }
-
-        private class TestableVenueHandler : VenueHandler
-        {
-            public bool GetAllEntitiesCalled { get; private set; }
-            public bool GetEntityCalled { get; private set; }
-            public int GetEntityCalledWithId { get; private set; }
-            public bool CreateEntityCalled { get; private set; }
-            public bool UpdateEntityCalled { get; private set; }
-            public bool DeleteEntityCalled { get; private set; }
-            public int DeleteEntityCalledWithId { get; private set; }
-
-            private List<VenueV1> _getAllEntitiesResult;
-            private VenueV1 _getEntityResult;
-            private VenueV1 _createEntityResult;
-            private VenueV1 _updateEntityResult;
-
-            public void SetGetAllEntitiesResult(List<VenueV1> result) => _getAllEntitiesResult = result;
-            public void SetGetEntityResult(VenueV1 result) => _getEntityResult = result;
-            public void SetCreateEntityResult(VenueV1 result) => _createEntityResult = result;
-            public void SetUpdateEntityResult(VenueV1 result) => _updateEntityResult = result;
-
-            protected override List<VenueV1> GetAllEntities(NameValueCollection requestQueryString)
-            {
-                GetAllEntitiesCalled = true;
-                return _getAllEntitiesResult ?? new List<VenueV1>();
-            }
-
-            protected override VenueV1 GetEntity(int id)
-            {
-                GetEntityCalled = true;
-                GetEntityCalledWithId = id;
-                return _getEntityResult;
-            }
-
-            protected override VenueV1 CreateEntity(VenueV1 deserializeRequestBody)
-            {
-                CreateEntityCalled = true;
-                return _createEntityResult ?? deserializeRequestBody;
-            }
-
-            protected override VenueV1 UpdateEntity(VenueV1 entity)
-            {
-                UpdateEntityCalled = true;
-                return _updateEntityResult ?? entity;
-            }
-
-            protected override void DeleteEntity(int id)
-            {
-                DeleteEntityCalled = true;
-                DeleteEntityCalledWithId = id;
-            }
         }
     }
 }
