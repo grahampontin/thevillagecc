@@ -31,7 +31,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
         public void ProcessRequest_GetAll_CallsDaoGetAllAwardsData()
         {
             // Arrange
-            var awardData = new AwardData { Id = 1, Year = 2023, Award = Award.BestBowler, PlayerId = 1, Data = "Test" };
+            var awardData = new AwardData { Id = 1, Year = 2023, Award = Award.BatsmanOfTheYear, PlayerId = 1, Data = "Test" };
             _mockDao.Setup(d => d.GetAllAwardsData()).Returns(new List<AwardData> { awardData });
 
             var context = CreateHttpContext("GET", "http://test.com/awards");
@@ -47,7 +47,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
         public void ProcessRequest_GetSingle_CallsDaoGetAwardDataWithCorrectId()
         {
             // Arrange
-            var awardData = new AwardData { Id = 123, Year = 2023, Award = Award.BestBowler, PlayerId = 1, Data = "Test" };
+            var awardData = new AwardData { Id = 123, Year = 2023, Award = Award.BowlerOfTheYear, PlayerId = 1, Data = "Test" };
             _mockDao.Setup(d => d.GetAwardData(123)).Returns(awardData);
 
             var context = CreateHttpContext("GET", "http://test.com/awards/123");
@@ -64,9 +64,9 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
         {
             // Arrange
             var newAward = new AwardV1 { Year = 2023, Award = "BestBowler", PlayerId = 1, Data = "Test" };
-            var createdAwardData = new AwardData { Id = 1, Year = 2023, Award = Award.BestBowler, PlayerId = 1, Data = "Test" };
+            var createdAwardData = new AwardData { Id = 1, Year = 2023, Award = Award.BatsmanOfTheYear, PlayerId = 1, Data = "Test" };
             
-            _mockDao.Setup(d => d.CreateNewAward(Award.BestBowler, 2023, 1, "Test")).Returns(1);
+            _mockDao.Setup(d => d.CreateNewAward(Award.BatsmanOfTheYear, 2023, 1, "Test")).Returns(1);
             _mockDao.Setup(d => d.GetAwardData(1)).Returns(createdAwardData);
 
             var context = CreateHttpContext("POST", "http://test.com/awards", _serializer.Serialize(newAward));
@@ -75,7 +75,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             _handler.ProcessRequest(context);
 
             // Assert
-            _mockDao.Verify(d => d.CreateNewAward(Award.BestBowler, 2023, 1, "Test"), Times.Once);
+            _mockDao.Verify(d => d.CreateNewAward(Award.BatsmanOfTheYear, 2023, 1, "Test"), Times.Once);
             _mockDao.Verify(d => d.GetAwardData(1), Times.Once);
         }
 
@@ -96,7 +96,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             _mockDao.Verify(d => d.UpdateAward(It.Is<AwardData>(a => 
                 a.Id == 1 && 
                 a.Year == 2023 && 
-                a.Award == Award.BestBowler && 
+                a.Award == Award.BatsmanOfTheYear && 
                 a.PlayerId == 1 && 
                 a.Data == "Updated")), Times.Once);
         }

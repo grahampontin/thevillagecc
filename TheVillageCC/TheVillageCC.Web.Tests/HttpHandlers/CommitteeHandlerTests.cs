@@ -31,7 +31,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
         public void ProcessRequest_GetAll_CallsDaoGetAllCommitteeData()
         {
             // Arrange
-            var committeeData = new CommitteeData { Id = 1, Year = 2023, Post = Post.Chairman, PlayerId = 1 };
+            var committeeData = new CommitteeData { Id = 1, Year = 2023, Post = Post.Captain, PlayerId = 1 };
             _mockDao.Setup(d => d.GetAllCommitteeData()).Returns(new List<CommitteeData> { committeeData });
 
             var context = CreateHttpContext("GET", "http://test.com/committee");
@@ -47,7 +47,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
         public void ProcessRequest_GetSingle_CallsDaoGetCommitteeDataWithCorrectId()
         {
             // Arrange
-            var committeeData = new CommitteeData { Id = 123, Year = 2023, Post = Post.Chairman, PlayerId = 1 };
+            var committeeData = new CommitteeData { Id = 123, Year = 2023, Post = Post.Captain, PlayerId = 1 };
             _mockDao.Setup(d => d.GetCommitteeData(123)).Returns(committeeData);
 
             var context = CreateHttpContext("GET", "http://test.com/committee/123");
@@ -64,7 +64,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
         {
             // Arrange
             var newCommittee = new CommitteePostV1 { Year = 2023, Post = "Chairman", PlayerId = 1 };
-            var createdCommitteeData = new CommitteeData { Id = 1, Year = 2023, Post = Post.Chairman, PlayerId = 1 };
+            var createdCommitteeData = new CommitteeData { Id = 1, Year = 2023, Post = Post.Captain, PlayerId = 1 };
             
             _mockDao.Setup(d => d.CreateNewCommittee(It.IsAny<CommitteeData>())).Returns(1);
             _mockDao.Setup(d => d.GetCommitteeData(1)).Returns(createdCommitteeData);
@@ -77,7 +77,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             // Assert
             _mockDao.Verify(d => d.CreateNewCommittee(It.Is<CommitteeData>(c => 
                 c.Year == 2023 && 
-                c.Post == Post.Chairman && 
+                c.Post == Post.Captain && 
                 c.PlayerId == 1)), Times.Once);
             _mockDao.Verify(d => d.GetCommitteeData(1), Times.Once);
         }
@@ -99,7 +99,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             _mockDao.Verify(d => d.UpdateCommittee(It.Is<CommitteeData>(c => 
                 c.Id == 1 && 
                 c.Year == 2023 && 
-                c.Post == Post.Chairman && 
+                c.Post == Post.Captain && 
                 c.PlayerId == 1)), Times.Once);
         }
 
