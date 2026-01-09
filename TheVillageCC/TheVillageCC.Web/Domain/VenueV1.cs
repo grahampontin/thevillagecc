@@ -1,7 +1,10 @@
-using CricketClubMiddle;
+﻿using CricketClubMiddle;
 
 namespace TheVillageCC.Web.Domain
 {
+    /// <summary>
+    /// Summary description for VenueV1
+    /// </summary>
     public class VenueV1
     {
         public int Id { get; set; }
@@ -10,6 +13,11 @@ namespace TheVillageCC.Web.Domain
         public string Description { get; set; }
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
+
+        public VenueV1()
+        {
+        }
+
 
         public static VenueV1 FromInternal(Venue venue)
         {
@@ -22,6 +30,12 @@ namespace TheVillageCC.Web.Domain
                 Latitude = venue.Coordinates.Item1,
                 Longitude = venue.Coordinates.Item2
             };
+
+
+
         }
+    
+
+
     }
 }
