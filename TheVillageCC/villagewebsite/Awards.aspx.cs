@@ -21,6 +21,8 @@ public partial class Stats : System.Web.UI.Page
     protected List<CommitteeYearData> ViceCaptainsData { get; set; }
     protected List<CommitteeYearData> PlayerOfYearData { get; set; }
     protected List<AwardYearData> AwardsData { get; set; }
+    // Hall of Fame (CorridorOfUncertainty) entries
+    protected List<HallOfFameEntry> HallOfFame { get; set; }
 
     private Dictionary<int, Player> _allPlayers;
     private Dictionary<int, Player> AllPlayers
@@ -98,6 +100,13 @@ public partial class Stats : System.Web.UI.Page
                 PlayerName = AllPlayers.ContainsKey(a.PlayerId) ? AllPlayers[a.PlayerId].Name : "Unknown"
             })
             .ToList();
+
+        // Insert a hard-coded 2020 Player of the Year entry for the COVID pandemic
+        if (!PlayerOfYearData.Any(p => p.Year == 2020))
+        {
+            PlayerOfYearData.Add(new CommitteeYearData { Year = 2020, PlayerName = "COVID" });
+            PlayerOfYearData = PlayerOfYearData.OrderBy(p => p.Year).ToList();
+        }
     }
 
     private void LoadAwardsData()
@@ -118,6 +127,34 @@ public partial class Stats : System.Web.UI.Page
             BestFielder = GetAwardWinner(yearGroup, Award.FielderOfTheYear),
             MostImproved = GetAwardWinner(yearGroup, Award.MostImprovedPlayer)
         }).ToList();
+
+        // Ensure a 2020 entry exists showing PlayerOfTheYear = "COVID" (pandemic year)
+        if (!AwardsData.Any(a => a.Year == 2020))
+        {
+            AwardsData.Add(new AwardYearData
+            {
+                Year = 2020,
+                PlayersPlayer = "COVID",
+                CaptainsPlayer = "",
+                BestBatsman = "",
+                BestBowler = "",
+                BestFielder = "",
+                MostImproved = ""
+            });
+            AwardsData = AwardsData.OrderBy(a => a.Year).ToList();
+        }
+
+        // Build Hall of Fame (CorridorOfUncertainty) entries from awards
+        HallOfFame = awardsData
+            .Where(a => a.Award == Award.CorridorOfUncertainty)
+            .OrderBy(a => a.Year)
+            .Select(a => new HallOfFameEntry
+            {
+                Year = a.Year,
+                PlayerName = AllPlayers.ContainsKey(a.PlayerId) ? AllPlayers[a.PlayerId].Name : "Unknown",
+                EmbedUrl = string.IsNullOrWhiteSpace(a.Data) ? "" : a.Data
+            })
+            .ToList();
     }
 
     private string GetAwardWinner(IGrouping<int, AwardData> yearGroup, Award awardType)
@@ -154,5 +191,13 @@ public partial class Stats : System.Web.UI.Page
         public string BestBowler { get; set; }
         public string BestFielder { get; set; }
         public string MostImproved { get; set; }
+    }
+
+    public class HallOfFameEntry
+    {
+        public int Year { get; set; }
+        public string PlayerName { get; set; }
+        // expected to be a full embed URL like "https://www.youtube.com/embed/ID" or starting with //
+        public string EmbedUrl { get; set; }
     }
 }

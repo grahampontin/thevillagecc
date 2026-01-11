@@ -3,7 +3,7 @@
 <%@ Register TagPrefix="CC" TagName="Footer" Src="~/UserControls/Footer.ascx" %>
 <%@ Register TagPrefix="CC" TagName="Styles" Src="~/UserControls/Styles.ascx" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html lang="en">
 <head runat="server">
@@ -25,55 +25,17 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex flex-wrap">
-                    <div class="flex-fill">
-                        <div class="text-center">
-                            <img src="Images/player_profiles/200.png" alt=""/>
-                        </div>
-                        <div class="fw-bold mx-auto text-center">Captain</div>
-                        <div class="fst-italic mx-auto text-center">Toby de Mellow</div>
-                    </div>
-                    <div class="flex-fill">
-                        <div class="text-center">
-                            <img src="Images/player_profiles/204.png" alt=""/>
-                        </div>
-                        <div class="fw-bold mx-auto text-center">Vice Captain</div>
-                        <div class="fst-italic mx-auto text-center">Prashant "Bosh" Mishra</div>
-                    </div>
-                    <div class="flex-fill">
-                        <div class="text-center">
-                            <img src="Images/player_profiles/88.png" alt=""/>
-                        </div>
-                        <div class="fw-bold mx-auto text-center">Treasurer & Fixtures</div>
-                        <div class="fst-italic mx-auto text-center">Eddie Francis</div>
-                    </div>
-                    <div class="flex-fill">
-                        <div class="text-center">
-                            <img src="Images/player_profiles/265.png" alt=""/>
-                        </div>
-                        <div class="fw-bold mx-auto text-center">Social Sec</div>
-                        <div class="fst-italic mx-auto text-center">Avi Rao</div>
-                    </div>
-                    <div class="flex-fill">
-                        <div class="text-center">
-                            <img src="Images/player_profiles/2.png" alt=""/>
-                        </div>
-                        <div class="fw-bold mx-auto text-center">Director of Cricket</div>
-                        <div class="fst-italic mx-auto text-center">Oliver Morgans</div>
-                    </div>
-                    <div class="flex-fill">
-                        <div class="text-center">
-                            <img src="Images/player_profiles/171.png" alt=""/>
-                        </div>
-                        <div class="fw-bold mx-auto text-center">Tour Sec</div>
-                        <div class="fst-italic mx-auto text-center">Nick Price-Thompson</div>
-                    </div>
-                    <div class="flex-fill">
-                        <div class="text-center">
-                            <img src="Images/player_profiles/1.png" alt=""/>
-                        </div>
-                        <div class="fw-bold mx-auto text-center">Webmaster</div>
-                        <div class="fst-italic mx-auto text-center">Graham Pontin</div>
-                    </div>
+                    <% if (CommitteePosts != null) { %>
+                        <% foreach (var post in CommitteePosts) { %>
+                            <div class="flex-fill">
+                                <div class="text-center">
+                                    <img src="Images/player_profiles/<%: post.PlayerImageId %>.png" alt=""/>
+                                </div>
+                                <div class="fw-bold mx-auto text-center"><%: post.Post %></div>
+                                <div class="fst-italic mx-auto text-center"><%: post.PlayerName %></div>
+                            </div>
+                        <% } %>
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -81,7 +43,7 @@
             <div class="panel-heading">Documents, minutes, meetings and such like</div>
             <div class="panel-body">
 
-                <p align="center">
+                <div class="text-center">
                     <a href=./documents/constitutionSEPT2006.pdf>Constitution</a>
 
                     <table border="0" width="100%" id="table2">
@@ -135,7 +97,7 @@
                             </td>
                         </tr>
                     </table>
-                </p>
+                </div>
 
             </div>
         </div>

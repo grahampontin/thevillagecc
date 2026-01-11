@@ -148,110 +148,19 @@
 
 <h5 class="mb-1">The Hall of Fame <small>(Corridor of Uncertainty)</small></h5>
 <div class="d-flex flex-wrap">
-    <div class="mx-1">
-        <div class="mb-1">2008 - Andrew Richardson</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/TfbYZxot8ek" frameborder="0" allowfullscreen></iframe>
+    <% if (HallOfFame != null && HallOfFame.Any()) { %>
+        <% foreach (var entry in HallOfFame) { %>
+            <div class="mx-1">
+                <div class="mb-1"><%: entry.Year %> - <%: entry.PlayerName %></div>
+                <div class="panel-body">
+                    <% if (!string.IsNullOrEmpty(entry.EmbedUrl)) { %>
+                        <iframe src="<%: entry.EmbedUrl %>" frameborder="0" allowfullscreen></iframe>
+                    <% } %>
 
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2009 - AA Page</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/JF9WgDY2bw8" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2010 - Alan White</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/_to1fIcc-cY" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2011 - Graham Pontin</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/cm4u1irM9U4" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2012 - Paul Bowman</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/w7_Gp1xPfuc" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2013 - John Lucarotti</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/ffju3JkcbHQ" frameborder="0" allowfullscreen></iframe>
-
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2014 - Matt Boa</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/F0Vqb7EJjng" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2014 - Oli Morgans</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/HWeb-6s-whQ" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2014 - Louse</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/T54xZvzu1xo" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2014 - Parp!</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/khbf4tOiNkM" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2015 - Klav</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/bybkcHYajJI" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2016 - Pitch</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/Eko_ih__G8g" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2017 - Troja</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/TODO" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2018 - Thommo</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/g1l6HAyCBMM" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2019 - JdM</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/sLHp4yUpFO4" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2021 - Eddie</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/gHN-UmjcWCM" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    <div class="mx-1">
-        <div class="mb-1">2022 - Cress</div>
-        <div class="panel-body">
-            <iframe src="//www.youtube.com/embed/BcVdx84BtJ4" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
+                </div>
+            </div>
+        <% } %>
+    <% } %>
 </div>
 
 <hr/>
