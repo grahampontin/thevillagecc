@@ -106,8 +106,9 @@ font-weight: bolder; font-size: 25px">
                 <li class="nav-item col-6 col-md-auto">
                     <a class="nav-link text-white" href="https://teamwear.nxt-sports.com/shop/the-village-cc" target="_blank"
                        rel="noopener">
-                        <span class="fa-solid fa-basket-shopping bi d-inline d-lg-block mx-auto mb-1"
+                        <span class="material-icons-outlined bi d-inline d-lg-block mx-auto mb-1"
                               style="text-align: center; font-size: 24px; vertical-align: text-bottom">
+                            shopping_cart
                         </span>
                         <div class="d-inline d-lg-none" style="margin-left: 18px">
                             Club Shop
@@ -115,10 +116,13 @@ font-weight: bolder; font-size: 25px">
                     </a>
                 </li>
                 <li class="nav-item col-6 col-md-auto">
+                    <!-- Note: Material Icons doesn't have Twitter logo, using generic share icon -->
                     <a class="nav-link text-white" href="https://twitter.com/villagecc" target="_blank"
                        rel="noopener">
-                        <span class="fa-brands fa-twitter bi d-inline d-lg-block mx-auto mb-1"
-                              style="text-align: center; font-size: 24px; vertical-align: text-bottom">
+                        <span class="material-icons-outlined bi d-inline d-lg-block mx-auto mb-1"
+                              style="text-align: center; font-size: 24px; vertical-align: text-bottom"
+                              title="Twitter">
+                            chat_bubble_outline
                         </span>
                         <div class="d-inline d-lg-none" style="margin-left: 18px">
                             Twitter
@@ -126,10 +130,13 @@ font-weight: bolder; font-size: 25px">
                     </a>
                 </li>
                 <li class="nav-item col-6 col-md-auto">
+                    <!-- Note: Material Icons doesn't have Instagram logo, using generic photo icon -->
                     <a class="nav-link text-white" href="https://www.instagram.com/thevillagecc_london/"
                        target="_blank" rel="noopener">
-                        <span class="fa-brands fa-instagram bi d-inline d-lg-block mx-auto mb-1"
-                              style="text-align: center; font-size: 24px; vertical-align: text-bottom">
+                        <span class="material-icons-outlined bi d-inline d-lg-block mx-auto mb-1"
+                              style="text-align: center; font-size: 24px; vertical-align: text-bottom"
+                              title="Instagram">
+                            photo_camera
                         </span>
                         <div class="d-inline d-lg-none" style="margin-left: 20px">
                             Instagram

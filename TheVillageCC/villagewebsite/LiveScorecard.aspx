@@ -539,16 +539,16 @@
                     <nav>
                         <div class="nav nav-pills nav-justified" id="accordian-analysis-tabs" role="tablist">
                             <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#worm" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
-                                <i class="fa-solid fa-chart-line"></i>
+                                <i class="material-icons-outlined">show_chart</i>
                             </button>
                             <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#wagon" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
-                                <i class="fa-solid fa-dharmachakra"></i>
+                                <i class="material-icons-outlined">donut_large</i>
                             </button>
                             <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#manhattan" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">
-                                <i class="fa-solid fa-chart-column"></i>
+                                <i class="material-icons-outlined">bar_chart</i>
                             </button>
                             <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#partnerships" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">
-                                <i class="fa-solid fa-people-arrows-left-right"></i>
+                                <i class="material-icons-outlined">compare_arrows</i>
                             </button>
                         </div>
                     </nav>
@@ -602,13 +602,13 @@
                     <nav>
                         <div id="player-chart-types-mobile" class="nav nav-pills nav-justified" role="tablist">
                             <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" chartType="wagon" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
-                                <i class="fa-solid fa-dharmachakra"></i>
+                                <i class="material-icons-outlined">donut_large</i>
                             </button>
                             <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" chartType="zones" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
-                                <i class="fa-solid fa-record-vinyl"></i>
+                                <i class="material-icons-outlined">album</i>
                             </button>
                             <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" chartType="worm" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">
-                                <i class="fa-solid fa-chart-line"></i>
+                                <i class="material-icons-outlined">show_chart</i>
                             </button>
                         </div>
                     </nav>
