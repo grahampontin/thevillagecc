@@ -75,13 +75,15 @@ public partial class Stats : System.Web.UI.Page
             })
             .ToList();
 
-        PlayerOfYearData = committeeData
-            .Where(c => c.Post == Post.PlayerOfTheYear)
-            .OrderBy(c => c.Year)
-            .Select(c => new CommitteeYearData
+        // PlayerOfTheYear is in Awards table, not Committee
+        var awardsData = dao.GetAllAwardsData();
+        PlayerOfYearData = awardsData
+            .Where(a => a.Award == Award.PlayerOfTheYear)
+            .OrderBy(a => a.Year)
+            .Select(a => new CommitteeYearData
             {
-                Year = c.Year,
-                PlayerName = allPlayers.ContainsKey(c.PlayerId) ? allPlayers[c.PlayerId].Name : "Unknown"
+                Year = a.Year,
+                PlayerName = allPlayers.ContainsKey(a.PlayerId) ? allPlayers[a.PlayerId].Name : "Unknown"
             })
             .ToList();
     }
@@ -98,12 +100,12 @@ public partial class Stats : System.Web.UI.Page
         AwardsData = awardsByYear.Select(yearGroup => new AwardYearData
         {
             Year = yearGroup.Key,
-            PlayersPlayer = GetAwardWinner(yearGroup, Award.PlayersPlayerOfTheSeason, allPlayers),
-            CaptainsPlayer = GetAwardWinner(yearGroup, Award.CaptainsPlayerOfTheSeason, allPlayers),
+            PlayersPlayer = GetAwardWinner(yearGroup, Award.PlayerOfTheYear, allPlayers),
+            CaptainsPlayer = GetAwardWinner(yearGroup, Award.CaptainsPlayerOfTheYear, allPlayers),
             BestBatsman = GetAwardWinner(yearGroup, Award.BatsmanOfTheYear, allPlayers),
             BestBowler = GetAwardWinner(yearGroup, Award.BowlerOfTheYear, allPlayers),
             BestFielder = GetAwardWinner(yearGroup, Award.FielderOfTheYear, allPlayers),
-            MostImproved = GetAwardWinner(yearGroup, Award.MostImproved, allPlayers)
+            MostImproved = GetAwardWinner(yearGroup, Award.MostImprovedPlayer, allPlayers)
         }).ToList();
     }
 
