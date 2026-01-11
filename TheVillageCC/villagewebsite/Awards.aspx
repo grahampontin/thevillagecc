@@ -74,193 +74,31 @@
     <div class="flex-grow-1 me-2 mb-2">
         <h5 class="text-center">Captains</h5>
         <table class="table">
+            <% foreach (var captain in CaptainsData) { %>
             <tr>
-                <td>2004</td><td>AEMcC Richardson</td>
+                <td><%= captain.Year %></td><td><%= captain.PlayerName %></td>
             </tr>
-            <tr>
-                <td>2005</td><td>AEMcC Richardson</td>
-            </tr>
-            <tr>
-                <td>2006</td><td>AEMcC Richardson</td>
-            </tr>
-            <tr>
-                <td>2007</td><td>Graham Pontin</td>
-            </tr>
-            <tr>
-                <td>2008</td><td>Paul Bowman</td>
-            </tr>
-            <tr>
-                <td>2009</td><td>Paul Bowman</td>
-            </tr>
-            <tr>
-                <td>2010</td><td>Paul Bowman</td>
-            </tr>
-            <tr>
-                <td>2011</td><td>Eklavya Gupte</td>
-            </tr>
-            <tr>
-                <td>2012</td><td>Eklavya Gupte</td>
-            </tr>
-            <tr>
-                <td>2013</td><td>Eklavya Gupte</td>
-            </tr>
-            <tr>
-                <td>2014</td><td>Nick Troja</td>
-            </tr>
-            <tr>
-                <td>2015</td><td>Nick Troja</td>
-            </tr>
-            <tr>
-                <td>2016</td><td>Nick Thompson</td>
-            </tr>
-            <tr>
-                <td>2017</td><td>Nick Thompson</td>
-            </tr>
-            <tr>
-                <td>2018</td><td>Richard Cressey</td>
-            </tr>
-            <tr>
-                <td>2019</td><td>Richard Cressey</td>
-            </tr>
-            <tr>
-                <td>2020</td><td>Oliver Morgans</td>
-            </tr>
-            <tr>
-                <td>2021</td><td>Oliver Morgans</td>
-            </tr>
-            <tr>
-                <td>2022</td><td>Oliver Morgans</td>
-            </tr>
-            <tr>
-                <td>2023</td><td>Toby de Mellow</td>
-            </tr>
+            <% } %>
         </table>
     </div>
     <div class="flex-grow-1 mb-2">
         <h5 class="text-center">Vice-Captains</h5>
         <table class="table">
+            <% foreach (var viceCaptain in ViceCaptainsData) { %>
             <tr>
-                <td>2004</td><td>Ed Thomas</td>
+                <td><%= viceCaptain.Year %></td><td><%= viceCaptain.PlayerName %></td>
             </tr>
-            <tr>
-                <td>2005</td><td>Graham Pontin</td>
-            </tr>
-            <tr>
-                <td>2006</td><td>Oliver Morgans</td>
-            </tr>
-            <tr>
-                <td>2007</td><td>John Lucarotti</td>
-            </tr>
-            <tr>
-                <td>2008</td><td>Alan White</td>
-            </tr>
-            <tr>
-                <td>2009</td><td>Marcus Littlejohns</td>
-            </tr>
-            <tr>
-                <td>2010</td><td>Eklavya Gupte</td>
-            </tr>
-            <tr>
-                <td>2011</td><td>Steve Harty</td>
-            </tr>
-            <tr>
-                <td>2012</td><td>Steve Harty</td>
-            </tr>
-            <tr>
-                <td>2013</td><td>Nick Troja</td>
-            </tr>
-            <tr>
-                <td>2014</td><td>Oliver Morgans</td>
-            </tr>
-            <tr>
-                <td>2015</td><td>Nick Thompson</td>
-            </tr>
-            <tr>
-                <td>2016</td><td>Toby de Mellow</td>
-            </tr>
-            <tr>
-                <td>2017</td><td>Richard Cressey</td>
-            </tr>
-            <tr>
-                <td>2018</td><td>James de Mellow</td>
-            </tr>
-            <tr>
-                <td>2019</td><td>James de Mellow</td>
-            </tr>
-            <tr>
-                <td>2020</td><td>Toby de Mellow</td>
-            </tr>
-            <tr>
-                <td>2021</td><td>Toby de Mellow</td>
-            </tr>
-            <tr>
-                <td>2022</td><td>Toby de Mellow</td>
-            </tr>
-            <tr>
-                <td>2023</td><td>Prashant Misra</td>
-            </tr>
+            <% } %>
         </table>
     </div>
     <div class="flex-grow-1 ms-2 mb-2">
         <h5 class="text-center">Player of the Year</h5>
         <table class="table">
+            <% foreach (var player in PlayerOfYearData) { %>
             <tr>
-                <td>2004</td><td>Graham Pontin</td>
+                <td><%= player.Year %></td><td><%= player.PlayerName %></td>
             </tr>
-            <tr>
-                <td>2005</td><td>Alan White</td>
-            </tr>
-            <tr>
-                <td>2006</td><td>Toby Proctor</td>
-            </tr>
-            <tr>
-                <td>2007</td><td>Paul Bowman</td>
-            </tr>
-            <tr>
-                <td>2008</td><td>Eklavya Gupte</td>
-            </tr>
-            <tr>
-                <td>2009</td><td>Marcus Littlejohns</td>
-            </tr>
-            <tr>
-                <td>2010</td><td>Oliver Morgans</td>
-            </tr>
-            <tr>
-                <td>2011</td><td>Steve Harty</td>
-            </tr>
-            <tr>
-                <td>2012</td><td>Nick Troja</td>
-            </tr>
-            <tr>
-                <td>2013</td><td>Matt Boa</td>
-            </tr>
-            <tr>
-                <td>2014</td><td>Nick Troja</td>
-            </tr>
-            <tr>
-                <td>2015</td><td>Nick Troja</td>
-            </tr>
-            <tr>
-                <td>2016</td><td>Prashant Mishra</td>
-            </tr>
-            <tr>
-                <td>2017</td><td>Nick Price-Thompson</td>
-            </tr>
-            <tr>
-                <td>2018</td><td>Nick Price-Thompson</td>
-            </tr>
-            <tr>
-                <td>2019</td><td>Eddie Francis</td>
-            </tr>
-            <tr>
-                <td>2020</td><td></td>
-            </tr>
-            <tr>
-                <td>2021</td><td>Chris Pitcher</td>
-            </tr>
-            <tr>
-                <td>2022</td><td>Prashant Misra</td>
-            </tr>
+            <% } %>
         </table>
     </div>
 
@@ -294,229 +132,17 @@
         <th class="text-center">Best Fielder</th>
         <th class="text-center">Most Improved</th>
     </tr>
+    <% foreach (var award in AwardsData) { %>
     <tr>
-        <th class="text-center">2004</th>
-        <td>Graham Pontin</td>
-        <td>Ed Thomas</td>
-        <td>Andy Richardson</td>
-        <td>Ed Thomas</td>
-        <td>?</td>
-        <td>?</td>
+        <th class="text-center"><%= award.Year %></th>
+        <td><%= award.PlayersPlayer %></td>
+        <td><%= award.CaptainsPlayer %></td>
+        <td><%= award.BestBatsman %></td>
+        <td><%= award.BestBowler %></td>
+        <td><%= award.BestFielder %></td>
+        <td><%= award.MostImproved %></td>
     </tr>
-    <tr>
-        <th class="text-center">2005</th>
-        <td>Alan White</td>
-        <td>?</td>
-        <td>?</td>
-        <td>?</td>
-        <td>?</td>
-        <td>?</td>
-    </tr>
-    <tr>
-        <th class="text-center">2006</th>
-        <td>Toby Proctor</td>
-        <td>Oliver Morgans</td>
-        <td>
-            Toby Proctor<br/>
-            (388 runs @ 78)
-        </td>
-        <td>
-            Toby Proctor<br/>
-            (16 wkts @ 8)
-        </td>
-        <td>?</td>
-        <td>?</td>
-    </tr>
-    <tr>
-        <th class="text-center">2007</th>
-        <td>Paul Bowman</td>
-        <td>John Lucarotti</td>
-        <td>
-            Alan White<br/>
-            (295 runs @ 74)
-        </td>
-        <td>
-            Andy Richardson<br/>
-            (23 wkts @ 11)
-        </td>
-        <td>Saul Reid</td>
-        <td>?</td>
-    </tr>
-    <tr>
-        <th class="text-center">2008</th>
-        <td>Eklavya Gupte</td>
-        <td>?</td>
-        <td>
-            Marcus Littlejohns
-            <br/>
-            (204 runs @ 20.4)
-        </td>
-        <td>
-            Alan White
-            <br/>
-            (23 wkts @ 12.8)
-        </td>
-        <td>Graham Pontin</td>
-        <td>?</td>
-    </tr>
-    <tr>
-        <th class="text-center">2009</th>
-        <td>Marcus Littlejohns</td>
-        <td>Craig Woodhouse</td>
-        <td>
-            Marcus Littlejohns<br/>
-            (479 runs @ 60)
-            <br/>
-        </td>
-        <td>
-            Paul Bowman<br/>
-            (34 wkts @ 11)
-            <br/>
-        </td>
-        <td>Graham Pontin</td>
-        <td>Martin Koder</td>
-    </tr>
-    <tr>
-        <th class="text-center">2010</th>
-        <td>Oliver Morgans</td>
-        <td>Eklayva Gupte</td>
-        <td>
-            Oliver Morgans<br/>
-            (665 runs @ 44)
-        </td>
-        <td>
-            Paul Bowman<br/>
-            (33 wkts @ 14)
-        </td>
-        <td>Chris Pitcher</td>
-        <td>?</td>
-    </tr>
-    <tr>
-        <th class="text-center">2011</th>
-        <td>Steve Harty</td>
-        <td>Matt Boa</td>
-        <td>
-            Steve Harty<br/>
-            (730 runs @ 91)
-        </td>
-        <td>
-            Eklavya Gupte<br/>
-            (25 wkts @ 17)
-        </td>
-        <td>Nick Troja</td>
-        <td>Craig Woodhouse</td>
-    </tr>
-    <tr>
-        <th class="text-center">2012</th>
-        <td>Nick Troja</td>
-        <td>Steve Harty</td>
-        <td>
-            Nick Troja<br/>
-            (696 runs @ 58)
-        </td>
-        <td>
-            Matt Boa<br/>
-            (29 wkts @ 14)
-        </td>
-        <td>Oliver Morgans</td>
-        <td>Ben Hampton</td>
-    </tr>
-    <tr>
-        <th class="text-center">2013</th>
-        <td>Matt Boa</td>
-        <td>Nick Troja</td>
-        <td>
-            Steve Harty<br/>
-            (582 runs @ 66)
-        </td>
-        <td>
-            Eklavya Gupte<br/>
-            (24 wkts @ 17)
-        </td>
-        <td>Oliver Morgans</td>
-        <td>Chris Pitcher</td>
-    </tr>
-    <tr>
-        <th class="text-center">2014</th>
-        <td>Nick Troja</td>
-        <td>Nick Thompson</td>
-        <td>Nick Troja<br/> (464 runs @ 65)</td>
-        <td>Eklavya Gupte<br/>(19 wkts @ 15)</td>
-        <td>Graham Pontin</td>
-        <td>James de Mellow</td>
-    </tr>
-    <tr>
-        <th class="text-center">2015</th>
-        <td>Nick Troja</td>
-        <td>Toby de Mellow</td>
-        <td>Nick Troja<br/> (582 runs @ 48.5)</td>
-        <td>Eklavya Gupte<br/>(34 wkts @ 15)</td>
-        <td>Oliver Morgans</td>
-        <td>Bilal Hussain</td>
-    </tr>
-    <tr>
-        <th class="text-center">2016</th>
-        <td>Prashant Mishra</td>
-        <td>Oliver Morgans</td>
-        <td>Prashant Mishra<br/>(492 runs @ 41)</td>
-        <td>Nick Price-Thompson<br/>(31 wkts @ 7)</td>
-        <td>Nick Troja</td>
-        <td>Prashant Mishra</td>
-    </tr>
-    <tr>
-        <th class="text-center">2017</th>
-        <td>Nick Price-Thompson</td>
-        <td>Prashant Mishra</td>
-        <td>Daniel Slevenson<br/>(518 runs @ 86.33)</td>
-        <td>Nick Price-Thompson<br/>(23 wkts @ 14)</td>
-        <td>James de Mellow</td>
-        <td>James de Mellow</td>
-    </tr>
-    <tr>
-        <th class="text-center">2018</th>
-        <td>Nick Price-Thompson</td>
-        <td>Toby de Mellow</td>
-        <td>Toby de Mellow<br/>(567 runs @ 141.75)</td>
-        <td>Nick Price-Thompson<br/>(22 wkts @ 18)</td>
-        <td>Toby de Mellow</td>
-        <td>Eddie Francis</td>
-    </tr>
-    <tr>
-        <th class="text-center">2019</th>
-        <td>Eddie Francis</td>
-        <td>James de Mellow</td>
-        <td>James de Mellow<br/>(462 runs @ 35.54)</td>
-        <td>Eddie Francis<br/>(27 wkts @ 12)</td>
-        <td>Chris Pitcher</td>
-        <td>James de Mellow</td>
-    </tr>
-    <tr>
-        <th class="text-center">2020</th>
-        <td>C. Ovid</td>
-        <td>C. Ovid</td>
-        <td>Oliver Morgans<br/>(242 runs @ 24.2)</td>
-        <td>Eddie Francis<br/>(13 wkts @ 14)</td>
-        <td>C. Ovid</td>
-        <td>C. Ovid</td>
-    </tr>
-    <tr>
-        <th class="text-center">2021</th>
-        <td>Chris Picher</td>
-        <td>Toby de Mellow</td>
-        <td>Oliver Morgans<br/>(571 runs @ 33.59)</td>
-        <td>Chris Pitcher<br/>(22 wkts @ 18)</td>
-        <td>Graham Pontin</td>
-        <td>Chris Pitcher</td>
-    </tr>
-    <tr>
-        <th class="text-center">2022</th>
-        <td>Prashant Misra</td>
-        <td>Prashant Misra</td>
-        <td>Prashant Misra<br/>(449 runs @ 34.54)</td>
-        <td>Eklavya Gupte<br/>(23 wkts @ 17)</td>
-        <td>Toby de Mellow</td>
-        <td>Prashant Misra</td>
-    </tr>
+    <% } %>
 </table>
 
 
