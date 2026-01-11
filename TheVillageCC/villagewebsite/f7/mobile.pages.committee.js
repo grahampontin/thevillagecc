@@ -37,13 +37,19 @@ $$(document).on('page:init', '.page[data-name="committee"]', function (e) {
                 data: JSON.stringify(committeeBeingEdited),
                 contentType: "application/json"
             })
-                .done(restRequestSucceeded())
+                .done(function (data) {
+                    app.preloader.hide();
+                    listCommitteeToEdit();
+                })
                 .fail(restRequestFailed());
         } else {
             //create
             $.post("/committee/",
                 JSON.stringify(committeeBeingEdited),
-                restRequestSucceeded(), "json")
+                function (data) {
+                    app.preloader.hide();
+                    listCommitteeToEdit();
+                }, "json")
                 .fail(restRequestFailed());
         }
         app.preloader.show();
@@ -85,13 +91,6 @@ $$(document).on('page:init', '.page[data-name="committee"]', function (e) {
 
 var committeeBeingEdited;
 var committeeYear = new Date().getFullYear();
-
-function restRequestSucceeded() {
-    return function (data) {
-        app.preloader.hide();
-        listCommitteeToEdit();
-    };
-}
 
 function listCommitteeToEdit() {
     $('#committee-list ul').empty();

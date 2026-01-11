@@ -38,14 +38,20 @@ $$(document).on('page:init', '.page[data-name="awards"]', function (e) {
                 data: JSON.stringify(awardBeingEdited),
                 contentType: "application/json"
             })
-                .done(restRequestSucceeded())
+                .done(function (data) {
+                    app.preloader.hide();
+                    listAwardsToEdit();
+                })
                 .fail(restRequestFailed())
 
         } else {
             //create award
             $.post("/awards/",
                 JSON.stringify(awardBeingEdited),
-                restRequestSucceeded(), "json")
+                function (data) {
+                    app.preloader.hide();
+                    listAwardsToEdit();
+                }, "json")
                 .fail(restRequestFailed())
 
         }
@@ -82,13 +88,6 @@ $$(document).on('page:init', '.page[data-name="awards"]', function (e) {
 var awardBeingEdited;
 var awardsSeason = new Date().getFullYear();
 
-
-function restRequestSucceeded() {
-    return function (data) {
-        app.preloader.hide();
-        listAwardsToEdit();
-    };
-}
 
 function listAwardsToEdit() {
     $('#awards ul').empty();
