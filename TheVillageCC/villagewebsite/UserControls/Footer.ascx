@@ -6,10 +6,12 @@
         </p>
         <p>
             &copy; 2022 The Village CC &middot;
-            <a href="https://github.com/grahampontin/thevillagecc">
+            <!-- Note: Material Icons doesn't have GitHub logo, using generic code icon -->
+            <a href="https://github.com/grahampontin/thevillagecc" title="GitHub">
                 <span
-                    class="fa-brands fa-github mx-auto mb-1"
+                    class="material-icons-outlined mx-auto mb-1"
                     style="text-align: center; font-size: 20px; vertical-align: text-top; color: grey">
+                    code
                 </span>
             </a>
         </p>

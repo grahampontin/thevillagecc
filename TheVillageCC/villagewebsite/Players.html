@@ -32,8 +32,8 @@
                 .buttonContent(({ node, state }) => {
                     return `<div style="border-radius:3px;padding:3px;font-size:10px;margin:auto auto;background-color:lightgray"> <span style="font-size:9px">${
                         node.children
-                            ? `<i class="fas fa-chevron-up"></i>`
-                            : `<i class="fas fa-chevron-down"></i>`
+                            ? `<i class="material-icons-outlined" style="font-size:12px">expand_less</i>`
+                            : `<i class="material-icons-outlined" style="font-size:12px">expand_more</i>`
                     }</span> ${node.data._directSubordinates}  </div>`;
                 })
                 .nodeContent(function (d, i, arr, state) {

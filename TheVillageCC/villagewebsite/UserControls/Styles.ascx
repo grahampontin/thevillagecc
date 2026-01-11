@@ -27,8 +27,6 @@
        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
        <link href="../CSS/google_fonts/source_sans_pro.css" rel="stylesheet">
    
-       <link href="/fonts/fontawesome/css/all.css" rel="stylesheet">
-   
        <style>
            .bd-placeholder-img {
                font-size: 1.125rem;
