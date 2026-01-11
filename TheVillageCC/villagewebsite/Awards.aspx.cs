@@ -22,6 +22,19 @@ public partial class Stats : System.Web.UI.Page
     protected List<CommitteeYearData> PlayerOfYearData { get; set; }
     protected List<AwardYearData> AwardsData { get; set; }
 
+    private Dictionary<int, Player> _allPlayers;
+    private Dictionary<int, Player> AllPlayers
+    {
+        get
+        {
+            if (_allPlayers == null)
+            {
+                _allPlayers = Player.GetAll().Where(a => a.Id > 0).ToDictionary(p => p.Id, p => p);
+            }
+            return _allPlayers;
+        }
+    }
+
     protected void Page_Load(object sender, EventArgs e)
     {
         Header1.PageID = "Awards";
@@ -51,7 +64,6 @@ public partial class Stats : System.Web.UI.Page
     private void LoadCommitteeData()
     {
         var dao = new Dao();
-        var allPlayers = Player.GetAll().Where(a => a.Id > 0).ToDictionary(p => p.Id, p => p);
         var committeeData = dao.GetAllCommitteeData();
 
         // Group by post type
@@ -61,7 +73,7 @@ public partial class Stats : System.Web.UI.Page
             .Select(c => new CommitteeYearData
             {
                 Year = c.Year,
-                PlayerName = allPlayers.ContainsKey(c.PlayerId) ? allPlayers[c.PlayerId].Name : "Unknown"
+                PlayerName = AllPlayers.ContainsKey(c.PlayerId) ? AllPlayers[c.PlayerId].Name : "Unknown"
             })
             .ToList();
 
@@ -71,7 +83,7 @@ public partial class Stats : System.Web.UI.Page
             .Select(c => new CommitteeYearData
             {
                 Year = c.Year,
-                PlayerName = allPlayers.ContainsKey(c.PlayerId) ? allPlayers[c.PlayerId].Name : "Unknown"
+                PlayerName = AllPlayers.ContainsKey(c.PlayerId) ? AllPlayers[c.PlayerId].Name : "Unknown"
             })
             .ToList();
 
@@ -83,7 +95,7 @@ public partial class Stats : System.Web.UI.Page
             .Select(a => new CommitteeYearData
             {
                 Year = a.Year,
-                PlayerName = allPlayers.ContainsKey(a.PlayerId) ? allPlayers[a.PlayerId].Name : "Unknown"
+                PlayerName = AllPlayers.ContainsKey(a.PlayerId) ? AllPlayers[a.PlayerId].Name : "Unknown"
             })
             .ToList();
     }
@@ -91,7 +103,6 @@ public partial class Stats : System.Web.UI.Page
     private void LoadAwardsData()
     {
         var dao = new Dao();
-        var allPlayers = Player.GetAll().Where(a => a.Id > 0).ToDictionary(p => p.Id, p => p);
         var awardsData = dao.GetAllAwardsData();
 
         // Group by year
@@ -100,28 +111,32 @@ public partial class Stats : System.Web.UI.Page
         AwardsData = awardsByYear.Select(yearGroup => new AwardYearData
         {
             Year = yearGroup.Key,
-            PlayersPlayer = GetAwardWinner(yearGroup, Award.PlayerOfTheYear, allPlayers),
-            CaptainsPlayer = GetAwardWinner(yearGroup, Award.CaptainsPlayerOfTheYear, allPlayers),
-            BestBatsman = GetAwardWinner(yearGroup, Award.BatsmanOfTheYear, allPlayers),
-            BestBowler = GetAwardWinner(yearGroup, Award.BowlerOfTheYear, allPlayers),
-            BestFielder = GetAwardWinner(yearGroup, Award.FielderOfTheYear, allPlayers),
-            MostImproved = GetAwardWinner(yearGroup, Award.MostImprovedPlayer, allPlayers)
+            PlayersPlayer = GetAwardWinner(yearGroup, Award.PlayerOfTheYear),
+            CaptainsPlayer = GetAwardWinner(yearGroup, Award.CaptainsPlayerOfTheYear),
+            BestBatsman = GetAwardWinner(yearGroup, Award.BatsmanOfTheYear),
+            BestBowler = GetAwardWinner(yearGroup, Award.BowlerOfTheYear),
+            BestFielder = GetAwardWinner(yearGroup, Award.FielderOfTheYear),
+            MostImproved = GetAwardWinner(yearGroup, Award.MostImprovedPlayer)
         }).ToList();
     }
 
-    private string GetAwardWinner(IGrouping<int, AwardData> yearGroup, Award awardType, Dictionary<int, Player> players)
+    private string GetAwardWinner(IGrouping<int, AwardData> yearGroup, Award awardType)
     {
         var award = yearGroup.FirstOrDefault(a => a.Award == awardType);
         if (award == null) return "";
 
-        var playerName = players.ContainsKey(award.PlayerId) ? players[award.PlayerId].Name : "Unknown";
+        var playerName = AllPlayers.ContainsKey(award.PlayerId) ? AllPlayers[award.PlayerId].Name : "Unknown";
+        
+        // HTML encode to prevent XSS
+        var encodedPlayerName = HttpUtility.HtmlEncode(playerName);
         
         if (!string.IsNullOrEmpty(award.Data))
         {
-            return $"{playerName}<br/>{award.Data}";
+            var encodedData = HttpUtility.HtmlEncode(award.Data);
+            return encodedPlayerName + "<br/>" + encodedData;
         }
         
-        return playerName;
+        return encodedPlayerName;
     }
 
     public class CommitteeYearData

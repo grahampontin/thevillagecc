@@ -76,7 +76,7 @@
         <table class="table">
             <% foreach (var captain in CaptainsData) { %>
             <tr>
-                <td><%= captain.Year %></td><td><%= captain.PlayerName %></td>
+                <td><%: captain.Year %></td><td><%: captain.PlayerName %></td>
             </tr>
             <% } %>
         </table>
@@ -86,7 +86,7 @@
         <table class="table">
             <% foreach (var viceCaptain in ViceCaptainsData) { %>
             <tr>
-                <td><%= viceCaptain.Year %></td><td><%= viceCaptain.PlayerName %></td>
+                <td><%: viceCaptain.Year %></td><td><%: viceCaptain.PlayerName %></td>
             </tr>
             <% } %>
         </table>
@@ -96,7 +96,7 @@
         <table class="table">
             <% foreach (var player in PlayerOfYearData) { %>
             <tr>
-                <td><%= player.Year %></td><td><%= player.PlayerName %></td>
+                <td><%: player.Year %></td><td><%: player.PlayerName %></td>
             </tr>
             <% } %>
         </table>
@@ -134,7 +134,7 @@
     </tr>
     <% foreach (var award in AwardsData) { %>
     <tr>
-        <th class="text-center"><%= award.Year %></th>
+        <th class="text-center"><%: award.Year %></th>
         <td><%= award.PlayersPlayer %></td>
         <td><%= award.CaptainsPlayer %></td>
         <td><%= award.BestBatsman %></td>
