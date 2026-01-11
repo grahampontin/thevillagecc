@@ -55,7 +55,7 @@ $$(document).on('page:init', '.page[data-name="committee"]', function (e) {
         app.smartSelect.get("#committee-player-smart-select").setValue("");
         app.smartSelect.get("#committee-post-smart-select").setValue("");
         $("#committee-post-other-input").val("");
-        $("#committee-year-input").val(new Date().getFullYear());
+        $("#committee-year-input").val(committeeYear);
         editCommitteePopup.open();
     });
 
