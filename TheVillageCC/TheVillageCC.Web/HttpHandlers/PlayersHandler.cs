@@ -20,7 +20,9 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override PlayerV1 UpdateEntity(PlayerV1 entity)
         {
-            throw new System.NotImplementedException();
+            var player = new Player(entity.playerId, Database);
+            UpdatePlayerFields(player, entity);
+            return entity;
         }
 
         protected override void DeleteEntity(int id)
@@ -30,7 +32,29 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override PlayerV1 CreateEntity(PlayerV1 deserializeRequestBody)
         {
-            throw new System.NotImplementedException();
+            var fullName = string.IsNullOrWhiteSpace(deserializeRequestBody.firstName) && string.IsNullOrWhiteSpace(deserializeRequestBody.surname)
+                ? "Unknown Player"
+                : $"{deserializeRequestBody.firstName} {deserializeRequestBody.surname}".Trim();
+            var player = Player.CreateNewPlayer(fullName, Database);
+            UpdatePlayerFields(player, deserializeRequestBody);
+            return PlayerV1.FromInternal(new Player(player.Id, Database));
+        }
+
+        private void UpdatePlayerFields(Player player, PlayerV1 entity)
+        {
+            player.Nickname = entity.nickname;
+            player.BattingStyle = entity.battingStyle;
+            player.BowlingStyle = entity.bowlingStyle;
+            player.IsActive = entity.isActive;
+            player.FirstName = entity.firstName;
+            player.Surname = entity.surname;
+            player.MiddleInitials = entity.middleInitials;
+            if (entity.clubConnection != null)
+            {
+                player.RingerOf = new Player(entity.clubConnection.playerId, Database);
+            }
+            player.IsRightHandBat = entity.isRightHandBat;
+            player.Save();
         }
 
         protected override List<PlayerV1> GetAllEntities(NameValueCollection requestQueryString)

@@ -26,25 +26,24 @@ $$(document).on('page:init', '.page[data-name="matches"]', function (e) {
         matchBeingEdited.Venue.Id = app.smartSelect.get("#venue-smart-select").getValue();
         matchBeingEdited.Type = app.smartSelect.get("#match-type-smart-select").getValue();
         matchBeingEdited.Date = toString(editMatchCalendar.getValue()[0]);
-        var postData;
-        if (matchBeingEdited.Id != undefined) {
-            postData = { 'command': "updateMatch", "payload": matchBeingEdited };
-        } else {
-            postData = { 'command': "createMatch", "payload": matchBeingEdited };
-        }
+        
         app.preloader.show();
-        $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                    JSON.stringify(postData),
-                    function(data) {
-                        app.preloader.hide();
-                        listMatchesToEdit();
-                    },
-                    "json")
-                .fail(function(data) {
-                    app.preloader.hide();
-                    showToastCenter(data.responseText);
-                })
-            ;
+        var httpMethod = matchBeingEdited.Id != undefined ? "PUT" : "POST";
+        $.ajax({
+            url: "/api/refdata/matches",
+            type: httpMethod,
+            data: JSON.stringify(matchBeingEdited),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data) {
+                app.preloader.hide();
+                listMatchesToEdit();
+            },
+            error: function(data) {
+                app.preloader.hide();
+                showToastCenter(data.responseText);
+            }
+        });
     });
 
     $("#add-match-button").click(() => {
@@ -85,9 +84,7 @@ var matchesSeason = new Date().getFullYear();
 function listMatchesToEdit() {
     $('#matches ul').empty();
     app.preloader.show();
-    var postData = { 'command': "matchesBySeason", 'payload' : matchesSeason};
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify(postData),
+    $.get("/api/refdata/matches?season=" + matchesSeason,
             function(data) {
                 app.preloader.hide();
                 //success
@@ -138,8 +135,7 @@ function populateTeamsAndVenues() {
                 //success
                 //add venues to smart select
                 addVenuesToSmartSelect(venues);
-                $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                        JSON.stringify({ 'command': "listTeams"}),
+                $.get("/api/refdata/teams",
                         function(teams) {
                             //success
                             //add teams to smart select

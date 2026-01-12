@@ -24,14 +24,8 @@ function loadBowlingChart(chartType) {
 }
 
 function loadPlayerDetailStats(statsType, loadedCallack, preloadCallback) {
-    var postData = {
-        'command': "loadPlayerStats",
-        "matchId": playerId,
-        "payload": statsType
-    }
-
     preloadCallback();
-    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+    $.get("./api/stats/player/" + playerId + "/" + statsType, function (data) {
         //success
         loadedCallack(data, statsType);
     }, 'json')
@@ -76,13 +70,8 @@ function renderAgGrid(containingDiv, gridOptions) {
 }
 
 function loadPlayerMatchDetails(loadedCallback, preloadCallback) {
-    var postData = {
-        'command': "loadPlayerMatches",
-        "matchId": playerId
-    }
-
     preloadCallback();
-    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+    $.get("./api/stats/playermatches/" + playerId, function (data) {
         //success
         hidePreloader();
         loadedCallback(data);
@@ -124,12 +113,8 @@ $(function () {
     
     
     playerId =  $.url().param('playerid')
-    var postData = {
-        'command': "getPlayerDetail",
-        "matchId": playerId
-    }
 
-    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+    $.get("./api/stats/player/" + playerId + "/detail", function (data) {
         //success
         playerDetailLoaded(data);
     }, 'json')
@@ -155,14 +140,7 @@ $(function () {
 });
 
 function loadChart(chartType, target, playerId, chartLoadedCallback, chartCreatedCallback) {
-    var postData = {
-        'command': "loadChart",
-        'payload' : {
-            playerId : playerId,
-            chartType : chartType
-        }
-    }
-    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+    $.get("./api/stats/chart/" + playerId + "/" + chartType, function (data) {
         //success
         var chartContainer = $("#"+target);
         chartContainer.removeClass("mx-auto");
