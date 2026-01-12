@@ -32,7 +32,10 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override PlayerV1 CreateEntity(PlayerV1 deserializeRequestBody)
         {
-            var player = Player.CreateNewPlayer(deserializeRequestBody.firstName + " " + deserializeRequestBody.surname, Database);
+            var fullName = string.IsNullOrWhiteSpace(deserializeRequestBody.firstName) && string.IsNullOrWhiteSpace(deserializeRequestBody.surname)
+                ? "Unknown Player"
+                : $"{deserializeRequestBody.firstName} {deserializeRequestBody.surname}".Trim();
+            var player = Player.CreateNewPlayer(fullName, Database);
             UpdatePlayerFields(player, deserializeRequestBody);
             return PlayerV1.FromInternal(new Player(player.Id, Database));
         }

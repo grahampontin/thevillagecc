@@ -146,13 +146,14 @@ namespace TheVillageCC.Web.HttpHandlers
 
         private void HandleFamilyTree(IHandlerContext context)
         {
-            var familyTreeNodes = Player.GetAll().Select(p => new FamilyTreeNode()
+            var allPlayers = Player.GetAll(true, new Dao());
+            var familyTreeNodes = allPlayers.Select(p => new FamilyTreeNode()
             {
                 id = p.Id,
                 parentId = p.RingerOf == null ? -2 : p.RingerOf.Id,
                 name = p.FirstName + " " + p.Surname,
                 caps = p.Caps,
-                responsibleCaps = Player.GetAll().Where(c => c.RingerOf != null && c.RingerOf.Id == p.Id).Sum(c => c.Caps) + p.Caps
+                responsibleCaps = allPlayers.Where(c => c.RingerOf != null && c.RingerOf.Id == p.Id).Sum(c => c.Caps) + p.Caps
             }).ToList();
             familyTreeNodes.Add(new FamilyTreeNode()
             {

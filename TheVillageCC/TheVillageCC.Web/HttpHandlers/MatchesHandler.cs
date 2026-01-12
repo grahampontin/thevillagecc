@@ -63,9 +63,7 @@ namespace TheVillageCC.Web.HttpHandlers
                     .OrderBy(m => m.MatchDate).Select(MatchV1.FromInternal).ToList();
             }
 
-            // For the default case without season parameter, return matches in MatchV1 format
-            // The old listMatches returned BallByBallMatchDescriptor, but that's not part of the RESTful pattern
-            // JavaScript clients should be updated to parse MatchV1 or we need a different endpoint
+            // Default: return in-progress games and upcoming fixtures in MatchV1 format
             var matchDescriptors = Match.GetInProgressGames(Database)
                 .Union(Match.GetFixtures(Database).Where(m =>
                     m.MatchDate < DateTime.Today.AddDays(14) &&
