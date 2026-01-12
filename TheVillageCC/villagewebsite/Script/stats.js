@@ -9,20 +9,16 @@ function loadStats(category, successCallback) {
 
 
     var postData = {
-        'command': "loadStats",
-        "payload": {
-            'category': category,
-            'from': from,
-            'to': to,
-            'venue': venue,
-            'matchTypes': matchTypes
-        }
-
+        'category': category,
+        'from': from,
+        'to': to,
+        'venue': venue,
+        'matchTypes': matchTypes
     };
 
     $('#filterButton').hide();
     $('#loadingButton').show();
-    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+    $.post("./api/stats/query", JSON.stringify(postData), function (data) {
         //success
         successCallback(data);
         $('#filterButton').show();

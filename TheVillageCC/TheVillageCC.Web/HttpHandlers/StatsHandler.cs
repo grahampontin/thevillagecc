@@ -26,6 +26,10 @@ namespace TheVillageCC.Web.HttpHandlers
                 {
                     HandleStatsQuery(context);
                 }
+                else if (path.Contains("/stats/player/") && path.Contains("/detail"))
+                {
+                    HandlePlayerDetail(context);
+                }
                 else if (path.Contains("/stats/player/"))
                 {
                     HandlePlayerStats(context);
@@ -69,6 +73,22 @@ namespace TheVillageCC.Web.HttpHandlers
             var statsData = StatsProvider.Query(query);
             context.Response.ContentType = "application/json";
             context.Response.Write(javaScriptSerializer.Serialize(statsData));
+            context.Response.StatusCode = 200;
+        }
+
+        private void HandlePlayerDetail(IHandlerContext context)
+        {
+            var match = Regex.Match(context.Request.Url.AbsolutePath, @"/stats/player/(\d+)/detail");
+            if (!match.Success)
+            {
+                context.Response.StatusCode = 400;
+                return;
+            }
+
+            var playerId = int.Parse(match.Groups[1].Value);
+            var playerDetailV1 = StatsProvider.QueryPlayer(playerId, (s) => HttpContext.Current.Server.MapPath(s));
+            context.Response.ContentType = "application/json";
+            context.Response.Write(javaScriptSerializer.Serialize(playerDetailV1));
             context.Response.StatusCode = 200;
         }
 

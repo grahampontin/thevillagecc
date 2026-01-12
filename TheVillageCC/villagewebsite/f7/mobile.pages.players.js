@@ -26,25 +26,24 @@ $$(document).on('page:init', '.page[data-name="players"]', function (e) {
         playerBeingEdited.clubConnection = { playerId: $("#club-connection-select").find('option:selected').attr("playerId") };
         playerBeingEdited.bowlingStyle = $("#bowling-style-select").find('option:selected').val();
         playerBeingEdited.isActive = $("#player-is-active-checkbox").prop("checked") == true;
-        var postData;
-        if (playerBeingEdited.playerId != undefined) {
-            postData = { 'command': "updatePlayer", "payload": playerBeingEdited };
-        } else {
-            postData = { 'command': "createPlayer", "payload": playerBeingEdited };
-        }
+        
         app.preloader.show();
-        $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                    JSON.stringify(postData),
-                    function(data) {
-                        app.preloader.hide();
-                        listPlayersToEdit();
-                    },
-                    "json")
-                .fail(function(data) {
-                    app.preloader.hide();
-                    showToastCenter(data.responseText);
-                })
-            ;
+        var httpMethod = playerBeingEdited.playerId != undefined ? "PUT" : "POST";
+        $.ajax({
+            url: "/api/refdata/players",
+            type: httpMethod,
+            data: JSON.stringify(playerBeingEdited),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data) {
+                app.preloader.hide();
+                listPlayersToEdit();
+            },
+            error: function(data) {
+                app.preloader.hide();
+                showToastCenter(data.responseText);
+            }
+        });
     });
 
     $("#add-player-button").click(() => {
@@ -71,9 +70,7 @@ function listPlayersToEdit() {
     $("[name='club-connection-select']").empty();
     $("[name='club-connection-select']").append("<option></option>");
     app.preloader.show();
-    var postData = { 'command': "listPlayers" };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx?includeInactive=true",
-            JSON.stringify(postData),
+    $.get("/api/refdata/players?includeInactive=true",
             function(data) {
                 app.preloader.hide();
                 //success

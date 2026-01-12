@@ -16,9 +16,7 @@ $$(document).on('page:init', '.page[data-name="selectTeam"]', function (e) {
 var selectedPlayerCount = 0;
 function listAllPlayers() {
     app.preloader.show();
-    var postData = { 'command': "listPlayers" };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify(postData),
+    $.get("/api/refdata/players",
             function(data) {
                 app.preloader.hide();
                 //success

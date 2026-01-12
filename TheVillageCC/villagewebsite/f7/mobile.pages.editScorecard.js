@@ -1047,9 +1047,7 @@ function makePlayerOption(player) {
             populatePlayerSelects(allPlayers);
             completedCallback();
         } else {
-            var postData = { 'command': "listPlayers" };
-            $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                    JSON.stringify(postData),
+            $.get("/api/refdata/players",
                     function(data) {
                         //success
                         allPlayers = data;

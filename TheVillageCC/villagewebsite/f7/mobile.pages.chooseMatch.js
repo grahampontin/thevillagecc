@@ -10,9 +10,7 @@
 
 function listMatches() {
     app.preloader.show();
-    var postData = { 'command': "listMatches" };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify(postData),
+    $.get("/api/refdata/matches",
             function(data) {
                 app.preloader.hide();
                 //success

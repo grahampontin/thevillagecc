@@ -20,25 +20,24 @@ $$(document).on('page:init', '.page[data-name="teams"]', function (e) {
     $("#save-team-button").click(() => {
         editTeamPopup.close();
         teamBeingEdited.Name = $("#team-name-input").val();
-        var postData;
-        if (teamBeingEdited.Id != undefined) {
-            postData = { 'command': "updateTeam", "payload": teamBeingEdited };
-        } else {
-            postData = { 'command': "createTeam", "payload": teamBeingEdited };
-        }
+        
         app.preloader.show();
-        $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                    JSON.stringify(postData),
-                    function(data) {
-                        app.preloader.hide();
-                        listTeams();
-                    },
-                    "json")
-                .fail(function(data) {
-                    app.preloader.hide();
-                    showToastCenter(data.responseText);
-                })
-            ;
+        var httpMethod = teamBeingEdited.Id != undefined ? "PUT" : "POST";
+        $.ajax({
+            url: "/api/refdata/teams",
+            type: httpMethod,
+            data: JSON.stringify(teamBeingEdited),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data) {
+                app.preloader.hide();
+                listTeams();
+            },
+            error: function(data) {
+                app.preloader.hide();
+                showToastCenter(data.responseText);
+            }
+        });
     });
 
     $("#add-team-button").click(() => {
@@ -58,9 +57,7 @@ var teamBeingEdited;
 function listTeams() {
     $('#teams ul').empty();
     app.preloader.show();
-    var postData = { 'command': "listTeams" };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify(postData),
+    $.get("/api/refdata/teams",
             function(data) {
                 app.preloader.hide();
                 //success

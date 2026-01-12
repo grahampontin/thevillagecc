@@ -14,10 +14,7 @@
 ></div>
 </body>
 
-<script>
-    var postData = {'command': "familyTree"};
-
-    function renderTree(data) {
+<script>    function renderTree(data) {
         var chart;
         
             chart = new d3.OrgChart()
@@ -73,7 +70,7 @@
             chart.expandAll();
     }
 
-    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+    $.get("./api/stats/familytree", function (data) {
         //success
         renderTree(data);
     }, 'json');
