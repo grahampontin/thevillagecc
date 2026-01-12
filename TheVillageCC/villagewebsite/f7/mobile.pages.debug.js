@@ -32,7 +32,9 @@ function executCommandOn(command, message) {
 
 function listMatchesEligibleForReset() {
     app.preloader.show();
-    $.get("/api/refdata/matches",
+    var postData = { 'command': "listMatches" };
+    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
+            JSON.stringify(postData),
             function(data) {
                 app.preloader.hide();
                 //success
