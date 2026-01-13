@@ -43,14 +43,14 @@ namespace TheVillageCC.Web.HttpHandlers
         {
             var matchType = (MatchType)Enum.Parse(typeof(MatchType), deserializeRequestBody.Type, true);
             var homeOrAway = deserializeRequestBody.IsHome ? HomeOrAway.Home : HomeOrAway.Away;
-            var matchId = Match.CreateNewMatch(
+            var match = Match.CreateNewMatch(
                 new Team(deserializeRequestBody.Opposition.Id, Database),
                 DateTime.Parse(deserializeRequestBody.Date),
                 new Venue(deserializeRequestBody.Venue.Id, Database),
                 matchType,
                 homeOrAway,
                 Database);
-            return MatchV1.FromInternal(new Match(matchId, Database));
+            return MatchV1.FromInternal(match);
         }
 
         protected override List<MatchV1> GetAllEntities(NameValueCollection requestQueryString)

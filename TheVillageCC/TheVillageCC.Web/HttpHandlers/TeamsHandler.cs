@@ -32,8 +32,8 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override TeamV1 CreateEntity(TeamV1 deserializeRequestBody)
         {
-            var teamId = Team.CreateNewTeam(deserializeRequestBody.Name, Database);
-            return TeamV1.FromInternal(new Team(teamId, Database));
+            var team = Team.CreateNewTeam(deserializeRequestBody.Name, Database);
+            return TeamV1.FromInternal(team);
         }
 
         protected override List<TeamV1> GetAllEntities(NameValueCollection requestQueryString)
