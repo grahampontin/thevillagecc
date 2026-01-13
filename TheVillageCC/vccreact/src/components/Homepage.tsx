@@ -110,7 +110,7 @@ const Homepage: React.FC = () => {
                 formed in 2004 by a bunch of singularly talentless but enthusiastic cricketers...
               </p>
               <p>
-                <Button variant="default" href="Awards.aspx">
+                <Button variant="default" href="/Awards.aspx">
                   View details &raquo;
                 </Button>
               </p>
@@ -126,7 +126,7 @@ const Homepage: React.FC = () => {
                 nice little form or even track us down on twitter.
               </p>
               <p>
-                <Button variant="default" href="Join.aspx">
+                <Button variant="default" href="/Join.aspx">
                   View details &raquo;
                 </Button>
               </p>
@@ -137,7 +137,7 @@ const Homepage: React.FC = () => {
               </span>
               <h2>Stats</h2>
               <p>
-                Let's be honest, it's the only reason most of us play the game. The chance to slice, dice and disect
+                Let's be honest, it's the only reason most of us play the game. The chance to slice, dice and dissect
                 every inch of your game then talk about it at the pub. That's real cricket.
               </p>
               <p>
@@ -213,9 +213,8 @@ const Homepage: React.FC = () => {
               <hr className="featurette-divider" />
             </React.Fragment>
           ))}
-
-          <Footer />
         </Container>
+        <Footer />
       </main>
     </>
   );
