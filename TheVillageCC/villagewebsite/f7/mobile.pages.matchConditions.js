@@ -11,10 +11,24 @@
         var wasDeclaration = $("#matchFormatSelect").find('option:selected').val() === "Declaration";
         var numberOfOvers = $("#numberOfOvers").val();
         
-        var postData = { 'command': "startMatch", 'matchId': matchId, 'payload': 
-            new MatchConditions(getPlayerIds(selectedPlayers), wicketKeeperId, captainId, weWonToss, tossWinnerBatted, wasDeclaration, numberOfOvers)
-        };
-        sendBallByBallCommand(postData);
+        var payload = new MatchConditions(getPlayerIds(selectedPlayers), wicketKeeperId, captainId, weWonToss, tossWinnerBatted, wasDeclaration, numberOfOvers);
+        
+        app.preloader.show();
+        $.ajax({
+            url: "/api/livescoring/" + matchId + "/start",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function(data) {
+                app.preloader.hide();
+                matchState = matchStateFromData(data);
+                goToNextState();
+            },
+            error: function(data) {
+                app.preloader.hide();
+                showToastCenter(data.responseText);
+            }
+        });
     });
     
 
