@@ -63,14 +63,9 @@ namespace TheVillageCC.Web.HttpHandlers
                     .OrderBy(m => m.MatchDate).Select(MatchV1.FromInternal).ToList();
             }
 
-            // Default: return in-progress games and upcoming fixtures in MatchV1 format
-            var matchDescriptors = Match.GetInProgressGames(Database)
-                .Union(Match.GetFixtures(Database).Where(m =>
-                    m.MatchDate < DateTime.Today.AddDays(14) &&
-                    !m.GetCurrentBallByBallState().IsMatchComplete()))
-                .Select(MatchV1.FromInternal)
-                .ToList();
-            return matchDescriptors;
+            return Match.GetAll(Database)
+                .OrderBy(m => m.MatchDate).Select(MatchV1.FromInternal).ToList();
+
         }
 
         protected override MatchV1 GetEntity(int id)
