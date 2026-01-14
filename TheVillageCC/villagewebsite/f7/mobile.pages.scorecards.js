@@ -21,9 +21,7 @@ function listScorecards() {
     $('#matches ul').empty();
     $("#scorecards-current-season").text(scoreCardsSeason);
     app.preloader.show();
-    var postData = { 'command': "matchesBySeason", 'payload': scoreCardsSeason };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify(postData),
+    $.get("/api/refdata/matches?season=" + scoreCardsSeason,
             function(data) {
                 app.preloader.hide();
                 //success
@@ -43,6 +41,7 @@ function listScorecards() {
         })
         ;
 };
+
 
 
 

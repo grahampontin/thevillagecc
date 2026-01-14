@@ -33,7 +33,7 @@ $$(document).on('page:init', '.page[data-name="awards"]', function (e) {
         awardBeingEdited.Data = $("#award-data-input").val();
         if (awardBeingEdited.Id !== undefined) {
             //update award
-            $.ajax("/awards/", {
+            $.ajax("/api/refdata/awards/", {
                 method: "PUT",
                 data: JSON.stringify(awardBeingEdited),
                 contentType: "application/json"
@@ -46,7 +46,7 @@ $$(document).on('page:init', '.page[data-name="awards"]', function (e) {
 
         } else {
             //create award
-            $.post("/awards/",
+            $.post("/api/refdata/awards/",
                 JSON.stringify(awardBeingEdited),
                 function (data) {
                     app.preloader.hide();
@@ -92,7 +92,7 @@ var awardsSeason = new Date().getFullYear();
 function listAwardsToEdit() {
     $('#awards ul').empty();
     app.preloader.show();
-    $.get("/awards/?season=" + awardsSeason,
+    $.get("/api/refdata/awards/?season=" + awardsSeason,
         function (data) {
             app.preloader.hide();
             //success
@@ -124,7 +124,7 @@ function listAwardsToEdit() {
                 var Id = idAttr && idAttr.startsWith('del-') ? idAttr.substring(4) : idAttr;
                 if (!confirm('Delete this award?')) return;
                 app.preloader.show();
-                $.ajax('/awards/' + Id, { method: 'DELETE' })
+                $.ajax('/api/refdata/awards/' + Id, { method: 'DELETE' })
                     .done(function () {
                         app.preloader.hide();
                         listAwardsToEdit();

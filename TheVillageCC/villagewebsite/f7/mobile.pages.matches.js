@@ -1,4 +1,4 @@
-﻿﻿var editMatchPopup;
+﻿var editMatchPopup;
 var editMatchCalendar;
 $$(document).on('page:init', '.page[data-name="matches"]', function (e) {
     if (e.detail.position != "next") {
@@ -130,7 +130,7 @@ function toDate(ddMMYYYY) {
 
 function populateTeamsAndVenues() {
     app.preloader.show();
-    $.get("/venues/",
+    $.get("/api/refdata/venues/",
             function(venues) {
                 //success
                 //add venues to smart select

@@ -32,7 +32,7 @@ $$(document).on('page:init', '.page[data-name="committee"]', function (e) {
         committeeBeingEdited.Year = $("#committee-year-input").val();
         if (committeeBeingEdited.Id !== undefined) {
             //update
-            $.ajax("/committee/" + committeeBeingEdited.Id, {
+            $.ajax("/api/refdata/committee/" + committeeBeingEdited.Id, {
                 method: "PUT",
                 data: JSON.stringify(committeeBeingEdited),
                 contentType: "application/json"
@@ -44,7 +44,7 @@ $$(document).on('page:init', '.page[data-name="committee"]', function (e) {
                 .fail(restRequestFailed());
         } else {
             //create
-            $.post("/committee/",
+            $.post("/api/refdata/committee/",
                 JSON.stringify(committeeBeingEdited),
                 function (data) {
                     app.preloader.hide();
@@ -95,7 +95,7 @@ var committeeYear = new Date().getFullYear();
 function listCommitteeToEdit() {
     $('#committee-list ul').empty();
     app.preloader.show();
-    $.get("/committee/?year=" + committeeYear,
+    $.get("/api/refdata/committee/?year=" + committeeYear,
         function (data) {
             app.preloader.hide();
             $('#committee-current-year').text(committeeYear);
@@ -140,7 +140,7 @@ function listCommitteeToEdit() {
                 var Id = idAttr && idAttr.startsWith('del-') ? idAttr.substring(4) : idAttr;
                 if (!confirm('Delete this committee post?')) return;
                 app.preloader.show();
-                $.ajax('/committee/' + Id, { method: 'DELETE' })
+                $.ajax('/api/refdata/committee/' + Id, { method: 'DELETE' })
                     .done(function () {
                         app.preloader.hide();
                         listCommitteeToEdit();

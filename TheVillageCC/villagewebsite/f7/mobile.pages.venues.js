@@ -1,4 +1,4 @@
-﻿﻿var editVenuePopup;
+﻿var editVenuePopup;
 $$(document).on('page:init', '.page[data-name="venues"]', function (e) {
     if (e.detail.position != "next") {
         return;
@@ -27,10 +27,10 @@ $$(document).on('page:init', '.page[data-name="venues"]', function (e) {
         var url;
         var method;
         if (venueBeingEdited.Id != undefined) {
-            url = "/venues/";
+            url = "api/refdata/venues/";
             method = "PUT";
         } else {
-            url = "/venues/";
+            url = "api/refdata/venues/";
             method = "POST";
         }
         app.preloader.show();
@@ -72,7 +72,7 @@ var venueBeingEdited;
 function listVenues() {
     $('#venues ul').empty();
     app.preloader.show();
-    $.get("/venues/",
+    $.get("/api/refdata/venues/",
             function(data) {
                 app.preloader.hide();
                 //success
@@ -104,7 +104,7 @@ function listVenues() {
                     var venue = data.filter(t => t.Id == venueId)[0];
                     if (!confirm('Delete venue "' + venue.Name + '"?')) return;
                     app.preloader.show();
-                    $.ajax('/venues/' + venueId, { method: 'DELETE' })
+                    $.ajax('/api/refdata/venues/' + venueId, { method: 'DELETE' })
                         .done(function() {
                             app.preloader.hide();
                             listVenues();
