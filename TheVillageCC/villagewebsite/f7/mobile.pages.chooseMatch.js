@@ -10,9 +10,7 @@
 
 function listMatches() {
     app.preloader.show();
-    var postData = { 'command': "listMatches" };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify(postData),
+    $.get("/api/livescoring/matches",
             function(data) {
                 app.preloader.hide();
                 //success
@@ -27,8 +25,15 @@ function listMatches() {
                     });
                 $(".new-match").click(function() {
                     matchId = $(this).attr("matchId");
-                    var postData = { 'command': "matchState", 'matchId': matchId };
-                    sendBallByBallCommand(postData);
+                    $.get("/api/livescoring/" + matchId,
+                        function(data) {
+                            matchState = matchStateFromData(data);
+                            goToNextState();
+                        },
+                        "json")
+                    .fail(function(data) {
+                        showToastCenter(data.responseText);
+                    });
                 });
             },
             "json")

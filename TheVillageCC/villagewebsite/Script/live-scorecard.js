@@ -7,8 +7,7 @@
         showError("No match id speified. How did you get here exactly?");
         return;
     }
-    var postData = {'command': "liveScorecard", 'matchId': matchId};
-    $.post("./MobileWeb/BallByBall/CommandHandler.ashx", JSON.stringify(postData), function (data) {
+    $.get("./api/livescoring/" + matchId + "/scorecard", function (data) {
         //success
         renderMatchData(data);
     }, 'json')

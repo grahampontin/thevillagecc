@@ -12,19 +12,33 @@ function addMatchRowWithCommand(o, selector, command) {
     $(selector).append('<li><a class="item-link item-content ' + command+'" matchId="' + o.matchId + '"><div class="item-inner"><div class="item-title">' + o.opponent + ' (' + o.overs + ' ovs)</div><div class="item-after"><span class="badge">' + o.batOrBowl + '</span></div></div></a></li>');
 }
 
-function executCommandOn(command, message) {
+function executCommandOn(command, message, matchId) {
     app.dialog.confirm(message,
         "Are you sure?",
         function () {
-            var postData = {'command': command, 'matchId': matchId};
-            $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                JSON.stringify(postData),
-                function (data) {
+            var url;
+            var method;
+            
+            if (command === "resetMatch") {
+                url = "/api/livescoring/" + matchId + "/reset";
+                method = "DELETE";
+            } else if (command === "forceEndMatch") {
+                url = "/api/livescoring/" + matchId + "/force-end";
+                method = "POST";
+            }
+            
+            $.ajax({
+                url: url,
+                method: method,
+                success: function (data) {
                     $('#in-progress-matches-to-reset ul').empty();
                     $('#in-progress-matches-to-force-end ul').empty();
                     listMatchesEligibleForReset();
+                },
+                error: function(data) {
+                    showToastCenter(data.responseText);
                 }
-            );
+            });
         },
         function () {
         });
@@ -32,9 +46,7 @@ function executCommandOn(command, message) {
 
 function listMatchesEligibleForReset() {
     app.preloader.show();
-    var postData = { 'command': "listMatches" };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify(postData),
+    $.get("/api/livescoring/matches",
             function(data) {
                 app.preloader.hide();
                 //success
@@ -49,12 +61,12 @@ function listMatchesEligibleForReset() {
                         
                     });
                 $(".reset-match").click(function() {
-                    matchId = $(this).attr("matchId");
-                    executCommandOn("resetMatch", "Resetting this match will delete all data and cannot be undone...");
+                    var matchId = $(this).attr("matchId");
+                    executCommandOn("resetMatch", "Resetting this match will delete all data and cannot be undone...", matchId);
                 });
                 $(".force-end-match").click(function() {
-                    matchId = $(this).attr("matchId");
-                    executCommandOn("forceEndMatch", "This will close out the match without adding any more balls, even though it's not done...");
+                    var matchId = $(this).attr("matchId");
+                    executCommandOn("forceEndMatch", "This will close out the match without adding any more balls, even though it's not done...", matchId);
                 });
             },
             "json")

@@ -204,9 +204,7 @@ function initializeMatchStateAndThen(force, callback)
 }
 
 function loadMatchState(matchId, callback) {
-    var postData = { 'command': "matchState", 'matchId': matchId };
-    $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-            JSON.stringify(postData),
+    $.get("/api/livescoring/" + matchId,
             function(data) {
                 //success
                 matchState = matchStateFromData(data);
@@ -218,45 +216,32 @@ function loadMatchState(matchId, callback) {
         });
 }
 
-function sendBallByBallCommand(postData, successCallback = null) {
-    app.preloader.show();
-    $.post('/MobileWeb/ballbyball/CommandHandler.ashx', JSON.stringify(postData), function (data) {
-            //success
-            matchState = matchStateFromData(data);
-            app.preloader.hide();
-            var pageName;
-            switch (data.NextState) {
-                case "BattingOver":
-                    pageName = "newOver";
-                    break;
-                case "BowlingOver":
-                    pageName = "oppositionScoring";
-                    break;
-                case "EndOfBattingInnings":
-                    pageName = "endInnings/batting";
-                    break;
-                case "EndOfBowlingInnings":
-                    pageName = "endInnings/bowling";
-                    break;
-                case "EndOfMatch":
-                    pageName = "endMatch";
-                    break;
-                case "SelectTeam":
-                    pageName = "selectTeam";
-                    break;
-                case "MatchConditions":
-                    pageName = "matchConditions";
-                    break;
-                default:
-                    pageName = "index";
-            }
-            if (successCallback != null) {
-                successCallback();
-            }
-            app.views.current.router.navigate("/"+pageName+"/");
-        }, 'json')
-        .fail(function (data) {
-            app.preloader.hide();
-            showToastCenter(data.responseText);
-        });
+function goToNextState() {
+    var pageName;
+    switch (matchState.NextState) {
+        case "BattingOver":
+            pageName = "newOver";
+            break;
+        case "BowlingOver":
+            pageName = "oppositionScoring";
+            break;
+        case "EndOfBattingInnings":
+            pageName = "endInnings/batting";
+            break;
+        case "EndOfBowlingInnings":
+            pageName = "endInnings/bowling";
+            break;
+        case "EndOfMatch":
+            pageName = "endMatch";
+            break;
+        case "SelectTeam":
+            pageName = "selectTeam";
+            break;
+        case "MatchConditions":
+            pageName = "matchConditions";
+            break;
+        default:
+            pageName = "index";
+    }
+    app.views.current.router.navigate("/"+pageName+"/");
 }

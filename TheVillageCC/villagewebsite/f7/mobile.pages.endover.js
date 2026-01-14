@@ -7,9 +7,23 @@ $$(document).on('page:init', '.page[data-name="endOver"]', function (e) {
         var textEditor = app.textEditor.get('.chat-text-editor');
 
         matchState.Over.Commentary = textEditor.value;
-        var postData = { 'command': "submitOver", 'matchId': matchId, 'payload': matchState };
-        //Post to server and handle response.
-        sendBallByBallCommand(postData);
+        
+        app.preloader.show();
+        $.ajax({
+            url: "/api/livescoring/" + matchId + "/over",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(matchState),
+            success: function(data) {
+                app.preloader.hide();
+                matchState = matchStateFromData(data);
+                goToNextState();
+            },
+            error: function(data) {
+                app.preloader.hide();
+                showToastCenter(data.responseText);
+            }
+        });
     });
 
    

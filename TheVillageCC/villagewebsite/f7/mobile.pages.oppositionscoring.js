@@ -12,21 +12,31 @@
         }
 
         if (validateOppositionScoring(score, overs, wickets)) {
-            var postData = {
-                'command': "updateOppositionScore",
-                'matchId': matchId,
-                'payload': {
-                    Over: overs,
-                    Wickets: wickets,
-                    Score: score,
-                    Commentary: textEditor.value
-                }
+            var payload = {
+                Over: overs,
+                Wickets: wickets,
+                Score: score,
+                Commentary: textEditor.value
             };
 
-            sendBallByBallCommand(postData, function() {
-                $("#opposition-runs-input").val('');
-                $("#opposition-overs-input").val('');
-                $("#opposition-wickets-input").val('');
+            app.preloader.show();
+            $.ajax({
+                url: "/api/livescoring/" + matchId + "/opposition-score",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function(data) {
+                    app.preloader.hide();
+                    matchState = matchStateFromData(data);
+                    goToNextState();
+                    $("#opposition-runs-input").val('');
+                    $("#opposition-overs-input").val('');
+                    $("#opposition-wickets-input").val('');
+                },
+                error: function(data) {
+                    app.preloader.hide();
+                    showToastCenter(data.responseText);
+                }
             });
         }
 

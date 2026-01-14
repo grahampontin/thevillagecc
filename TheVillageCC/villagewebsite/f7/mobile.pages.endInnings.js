@@ -9,13 +9,28 @@ function setupPageFor(inningsType) {
         var matchId = matchState.MatchId;
         var textEditor = app.textEditor.get('.chat-text-editor');
 
-        var postData = { 'command': "endInnings", 'matchId': matchId, 'payload': {
-                InningsType: inningsType,
-                WasDeclared: toBoolean($("#innings-declared-select").val()),
-                Commentary: textEditor.value
-            }
+        var payload = {
+            InningsType: inningsType,
+            WasDeclared: toBoolean($("#innings-declared-select").val()),
+            Commentary: textEditor.value
         };
-        sendBallByBallCommand(postData);
+        
+        app.preloader.show();
+        $.ajax({
+            url: "/api/livescoring/" + matchId + "/end-innings",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function(data) {
+                app.preloader.hide();
+                matchState = matchStateFromData(data);
+                goToNextState();
+            },
+            error: function(data) {
+                app.preloader.hide();
+                showToastCenter(data.responseText);
+            }
+        });
     });
     
     //once bound...
