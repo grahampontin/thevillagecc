@@ -150,16 +150,16 @@ namespace TheVillageCC.Web.HttpHandlers
             var allPlayers = Player.GetAll(true, new Dao());
             var familyTreeNodes = allPlayers.Select(p => new FamilyTreeNode()
             {
-                id = p.Id,
-                parentId = p.RingerOf == null ? -2 : p.RingerOf.Id,
-                name = p.FirstName + " " + p.Surname,
-                caps = p.Caps,
-                responsibleCaps = allPlayers.Where(c => c.RingerOf != null && c.RingerOf.Id == p.Id).Sum(c => c.Caps) + p.Caps
+                Id = p.Id,
+                ParentId = p.RingerOf == null ? -2 : p.RingerOf.Id,
+                Name = p.FirstName + " " + p.Surname,
+                Caps = p.Caps,
+                ResponsibleCaps = allPlayers.Where(c => c.RingerOf != null && c.RingerOf.Id == p.Id).Sum(c => c.Caps) + p.Caps
             }).ToList();
             familyTreeNodes.Add(new FamilyTreeNode()
             {
-                id = -2,
-                name = "The Village CC"
+                Id = -2,
+                Name = "The Village CC"
             });
 
             context.Response.ContentType = "application/json";
@@ -170,10 +170,10 @@ namespace TheVillageCC.Web.HttpHandlers
 
     public class FamilyTreeNode
     {
-        public int id { get; set; }
-        public int? parentId { get; set; }
-        public string name { get; set; }
-        public int caps { get; set; }
-        public int responsibleCaps { get; set; }
+        public int Id { get; set; }
+        public int? ParentId { get; set; }
+        public string Name { get; set; }
+        public int Caps { get; set; }
+        public int ResponsibleCaps { get; set; }
     }
 }

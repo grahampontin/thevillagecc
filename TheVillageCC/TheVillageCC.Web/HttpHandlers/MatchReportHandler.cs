@@ -9,8 +9,8 @@ namespace TheVillageCC.Web.HttpHandlers
 {
     public class MatchReportHandler : HttpHandlerBase
     {
-        private readonly IDao _database;
-        private readonly JavaScriptSerializer _javaScriptSerializer = new JavaScriptSerializer();
+        private readonly IDao database;
+        private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
 
         public MatchReportHandler() : this(new Dao())
         {
@@ -18,7 +18,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         public MatchReportHandler(IDao database)
         {
-            _database = database;
+            this.database = database;
         }
 
         public override void ProcessRequest(IHandlerContext context)
@@ -58,22 +58,22 @@ namespace TheVillageCC.Web.HttpHandlers
 
         private void GetMatchReport(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, _database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             var savedReport = match.GetMatchReport();
             var matchReport = new MatchReportV1(savedReport.Conditions, savedReport.Report,
                 savedReport.ReportImage);
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = 200;
-            context.Response.Write(_javaScriptSerializer.Serialize(matchReport));
+            context.Response.Write(javaScriptSerializer.Serialize(matchReport));
         }
 
         private void SaveMatchReport(IHandlerContext context, int matchId)
         {
             var stringReader = new StreamReader(context.Request.InputStream);
             string postData = stringReader.ReadToEnd();
-            var report = _javaScriptSerializer.Deserialize<MatchReportV1>(postData);
+            var report = javaScriptSerializer.Deserialize<MatchReportV1>(postData);
             
-            var match = new Match(matchId, _database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             match.CreateOrUpdateMatchReport(report.Conditions, report.Report, report.Base64EncodedImage);
             
             var updatedReport = match.GetMatchReport();
@@ -81,7 +81,7 @@ namespace TheVillageCC.Web.HttpHandlers
                 updatedReport.ReportImage);
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = 200;
-            context.Response.Write(_javaScriptSerializer.Serialize(updatedMatchReport));
+            context.Response.Write(javaScriptSerializer.Serialize(updatedMatchReport));
         }
     }
 }

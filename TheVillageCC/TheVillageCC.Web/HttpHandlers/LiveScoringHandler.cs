@@ -7,6 +7,7 @@ using System.Web.Script.Serialization;
 using CricketClubDAL;
 using CricketClubDomain;
 using CricketClubMiddle;
+using CricketClubMiddle.Stats;
 using log4net;
 using TheVillageCC.Web.Domain;
 
@@ -15,7 +16,7 @@ namespace TheVillageCC.Web.HttpHandlers
     // ReSharper disable once UnusedType.Global
     public class LiveScoringHandler : HttpHandlerBase
     {
-        private readonly IDao Database;
+        private readonly IDao database;
         private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
         private static readonly ILog Log = LogManager.GetLogger(typeof(LiveScoringHandler));
 
@@ -25,7 +26,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         public LiveScoringHandler(IDao database)
         {
-            Database = database;
+            this.database = database;
         }
 
         public override void ProcessRequest(IHandlerContext context)
@@ -101,7 +102,7 @@ namespace TheVillageCC.Web.HttpHandlers
                     context.Response.Write("Not Found");
                 }
             }
-            catch (BadRequestException ex)
+            catch (ArgumentException ex)
             {
                 Log.Error("Bad request error in LiveScoringHandler", ex);
                 context.Response.StatusCode = 400;
@@ -124,7 +125,7 @@ namespace TheVillageCC.Web.HttpHandlers
             var match = Regex.Match(path, pattern, RegexOptions.IgnoreCase);
             if (!match.Success)
             {
-                throw new BadRequestException("Invalid match ID in URL");
+                throw new ArgumentException("Invalid match ID in URL");
             }
             return int.Parse(match.Groups[1].Value);
         }
@@ -136,15 +137,15 @@ namespace TheVillageCC.Web.HttpHandlers
             if (seasonParam != null && int.TryParse(seasonParam, out var season))
             {
                 // matchesBySeason functionality
-                var matchDescriptors = Match.GetAll(new DateTime(season, 1, 1), new DateTime(season, 12, 31), null, null, Database)
+                var matchDescriptors = CricketClubMiddle.Match.GetAll(new DateTime(season, 1, 1), new DateTime(season, 12, 31), null, null, database)
                     .OrderBy(m => m.MatchDate).Select(MatchV1.FromInternal).ToList();
                 WriteJsonResponse(context, matchDescriptors);
             }
             else
             {
                 // listMatches functionality
-                var matchDescriptors = Match.GetInProgressGames()
-                    .Union(Match.GetFixtures().Where(m =>
+                var matchDescriptors = CricketClubMiddle.Match.GetInProgressGames()
+                    .Union(CricketClubMiddle.Match.GetFixtures().Where(m =>
                         m.MatchDate < DateTime.Today.AddDays(14) &&
                         !m.GetCurrentBallByBallState().IsMatchComplete()))
                     .Select(m => new BallByBallMatchDescriptor(m))
@@ -155,23 +156,23 @@ namespace TheVillageCC.Web.HttpHandlers
 
         private void HandleMatchState(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, Database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             ReturnCurrentMatchState(context, match);
         }
 
         private void HandleLiveScorecard(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, Database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             var liveScorecard = FromLiveScorecard(match);
             WriteJsonResponse(context, liveScorecard);
         }
 
         private void HandleStartMatch(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, Database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             if (match.GetIsBallByBallInProgress())
             {
-                throw new BadRequestException("Coverage for match vs " + match.Opposition.Name + " has already been started");
+                throw new ArgumentException("Coverage for match vs " + match.Opposition.Name + " has already been started");
             }
 
             var matchConditions = DeserializeRequestBody<BallByBallMatchConditions>(context);
@@ -181,7 +182,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         private void HandleSubmitOver(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, Database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             var stateFromClient = DeserializeRequestBody<MatchState>(context);
             match.UpdateCurrentBallByBallState(stateFromClient);
             ReturnCurrentMatchState(context, match);
@@ -189,7 +190,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         private void HandleUpdateOppositionScore(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, Database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             var incoming = DeserializeRequestBody<OppositionInningsDetails>(context);
             match.UpdateOppositionScore(incoming);
             ReturnCurrentMatchState(context, match);
@@ -197,7 +198,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         private void HandleEndInnings(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, Database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             var inningsEndDetails = DeserializeRequestBody<InningsEndDetails>(context);
             match.EndInnings(inningsEndDetails);
             ReturnCurrentMatchState(context, match);
@@ -205,14 +206,14 @@ namespace TheVillageCC.Web.HttpHandlers
 
         private void HandleDeleteLastOver(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, Database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             match.DeleteLastBallByBallOver();
             ReturnCurrentMatchState(context, match);
         }
 
         private void HandleResetMatch(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, Database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             match.ResetBallByBallData();
             context.Response.ContentType = "text/plain";
             context.Response.StatusCode = 204;
@@ -220,11 +221,11 @@ namespace TheVillageCC.Web.HttpHandlers
 
         private void HandleForceEndMatch(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, Database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             var nextInnings = EndInnings(match, match.GetCurrentBallByBallState().GetInningsStatus().OurInningsStatus == InningsStatus.InProgress
                 ? "Batting"
                 : "Bowling");
-            match = new Match(matchId, Database);
+            match = new CricketClubMiddle.Match(matchId, database);
             switch (nextInnings)
             {
                 case NextInnings.Batting:
@@ -241,7 +242,7 @@ namespace TheVillageCC.Web.HttpHandlers
             context.Response.StatusCode = 204;
         }
 
-        private static NextInnings EndInnings(Match match, string inningsType)
+        private static NextInnings EndInnings(CricketClubMiddle.Match match, string inningsType)
         {
             return match.EndInnings(new InningsEndDetails()
             {
@@ -251,7 +252,7 @@ namespace TheVillageCC.Web.HttpHandlers
             });
         }
 
-        private LiveScorecardV1 FromLiveScorecard(Match match)
+        private LiveScorecardV1 FromLiveScorecard(CricketClubMiddle.Match match)
         {
             var matchReportAndConditions = match.GetMatchReport();
             var external = new LiveScorecardV1
@@ -266,7 +267,7 @@ namespace TheVillageCC.Web.HttpHandlers
             return external;
         }
 
-        private void ReturnCurrentMatchState(IHandlerContext context, Match match)
+        private void ReturnCurrentMatchState(IHandlerContext context, CricketClubMiddle.Match match)
         {
             BallByBallMatch ballByBallMatch = match.GetCurrentBallByBallState();
             MatchState matchState = ballByBallMatch.GetMatchState();

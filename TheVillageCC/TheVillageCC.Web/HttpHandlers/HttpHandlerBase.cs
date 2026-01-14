@@ -44,39 +44,39 @@ namespace TheVillageCC.Web.HttpHandlers
 
         private class HttpRequestWrapperForHandlers : IRequestContext
         {
-            private readonly HttpRequest _request;
+            private readonly HttpRequest request;
             public HttpRequestWrapperForHandlers(HttpRequest request)
             {
-                _request = request;
+                this.request = request;
             }
-            public string HttpMethod => _request.HttpMethod;
-            public Stream InputStream => _request.InputStream;
-            public Uri Url => _request.Url;
-            public NameValueCollection QueryString => _request.QueryString;
+            public string HttpMethod => request.HttpMethod;
+            public Stream InputStream => request.InputStream;
+            public Uri Url => request.Url;
+            public NameValueCollection QueryString => request.QueryString;
         }
 
         private class HttpResponseWrapperForHandlers : IResponseContext
         {
-            private readonly HttpResponse _response;
+            private readonly HttpResponse response;
             public HttpResponseWrapperForHandlers(HttpResponse response)
             {
-                _response = response;
+                this.response = response;
             }
 
             public string ContentType
             {
-                get => _response.ContentType;
-                set => _response.ContentType = value;
+                get => response.ContentType;
+                set => response.ContentType = value;
             }
 
-            public void Write(string text) => _response.Write(text);
+            public void Write(string text) => response.Write(text);
             public int StatusCode
             {
-                get => _response.StatusCode;
-                set => _response.StatusCode = value;
+                get => response.StatusCode;
+                set => response.StatusCode = value;
             }
 
-            public void End() => _response.End();
+            public void End() => response.End();
         }
     }
 

@@ -26,13 +26,15 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             var context = TestHandlerContextFactory.CreateHttpContext("GET", "http://test.com/api/matchreports/123");
             
             // Setup minimal mock data to prevent NullReferenceException
-            mockDao.Setup(d => d.GetMatch(It.IsAny<int>())).Returns(new MatchData
+            mockDao.Setup(d => d.GetMatchData(It.IsAny<int>())).Returns(new MatchData
             {
                 ID = 123,
-                MatchDate = DateTime.Now,
+                Date = DateTime.Now,
                 OppositionID = 1,
                 VenueID = 1
             });
+            mockDao.Setup(d => d.GetMatchReport(It.IsAny<int>())).Returns(new MatchReportAndConditions(String.Empty, 
+                String.Empty, String.Empty));
 
             // Act
             handler.ProcessRequest(context);
@@ -63,14 +65,15 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             var context = TestHandlerContextFactory.CreateHttpContext("POST", "http://test.com/api/matchreports/123", matchReportJson);
             
             // Setup minimal mock data
-            mockDao.Setup(d => d.GetMatch(It.IsAny<int>())).Returns(new MatchData
+            mockDao.Setup(d => d.GetMatchData(It.IsAny<int>())).Returns(new MatchData
             {
                 ID = 123,
-                MatchDate = DateTime.Now,
+                Date = DateTime.Now,
                 OppositionID = 1,
                 VenueID = 1
             });
-
+            mockDao.Setup(d => d.GetMatchReport(It.IsAny<int>())).Returns(new MatchReportAndConditions(String.Empty, 
+                String.Empty, String.Empty));
             // Act
             handler.ProcessRequest(context);
 

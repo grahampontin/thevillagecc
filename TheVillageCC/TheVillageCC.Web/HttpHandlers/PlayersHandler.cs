@@ -20,7 +20,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override PlayerV1 UpdateEntity(PlayerV1 entity)
         {
-            var player = new Player(entity.playerId, Database);
+            var player = new Player(entity.playerId, database);
             UpdatePlayerFields(player, entity);
             return entity;
         }
@@ -35,9 +35,9 @@ namespace TheVillageCC.Web.HttpHandlers
             var fullName = string.IsNullOrWhiteSpace(deserializeRequestBody.firstName) && string.IsNullOrWhiteSpace(deserializeRequestBody.surname)
                 ? "Unknown Player"
                 : $"{deserializeRequestBody.firstName} {deserializeRequestBody.surname}".Trim();
-            var player = Player.CreateNewPlayer(fullName, Database);
+            var player = Player.CreateNewPlayer(fullName, database);
             UpdatePlayerFields(player, deserializeRequestBody);
-            return PlayerV1.FromInternal(new Player(player.Id, Database));
+            return PlayerV1.FromInternal(new Player(player.Id, database));
         }
 
         private void UpdatePlayerFields(Player player, PlayerV1 entity)
@@ -51,7 +51,7 @@ namespace TheVillageCC.Web.HttpHandlers
             player.MiddleInitials = entity.middleInitials;
             if (entity.clubConnection != null)
             {
-                player.RingerOf = new Player(entity.clubConnection.playerId, Database);
+                player.RingerOf = new Player(entity.clubConnection.playerId, database);
             }
             player.IsRightHandBat = entity.isRightHandBat;
             player.Save();
@@ -63,7 +63,7 @@ namespace TheVillageCC.Web.HttpHandlers
             var includeInactive = inactiveQueryParam != null && inactiveQueryParam.Length > 0 &&
                                   inactiveQueryParam[0] == "true";
 
-            return Player.GetAll(true, Database).Where(p => (p.IsActive || includeInactive) && p.Id > 0)
+            return Player.GetAll(true, database).Where(p => (p.IsActive || includeInactive) && p.Id > 0)
                 .OrderByDescending(p => p.NumberOfMatchesPlayedThisSeason)
                 .ThenBy(p => !p.IsActive)
                 .ThenBy(p => p.Surname)

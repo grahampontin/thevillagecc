@@ -11,7 +11,7 @@ namespace TheVillageCC.Web.HttpHandlers
 {
     public abstract class EntityHttpHandlerBase<T> : HttpHandlerBase
     {
-        protected readonly IDao Database;
+        protected readonly IDao database;
         private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
 
         protected EntityHttpHandlerBase() : this(new Dao())
@@ -20,7 +20,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected EntityHttpHandlerBase(IDao database)
         {
-            Database = database;
+            this.database = database;
         }
 
         // Testable entry point - receives an abstracted context suitable for unit tests

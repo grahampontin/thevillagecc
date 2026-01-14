@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -13,8 +12,8 @@ namespace TheVillageCC.Web.HttpHandlers
 {
     public class ScorecardHandler : HttpHandlerBase
     {
-        private readonly IDao _database;
-        private readonly JavaScriptSerializer _javaScriptSerializer = new JavaScriptSerializer();
+        private readonly IDao database;
+        private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
 
         public ScorecardHandler() : this(new Dao())
         {
@@ -22,7 +21,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         public ScorecardHandler(IDao database)
         {
-            _database = database;
+            this.database = database;
         }
 
         public override void ProcessRequest(IHandlerContext context)
@@ -62,20 +61,20 @@ namespace TheVillageCC.Web.HttpHandlers
 
         private void GetScorecard(IHandlerContext context, int matchId)
         {
-            var match = new Match(matchId, _database);
+            var match = new CricketClubMiddle.Match(matchId, database);
             var scorecard = MatchScorecardV1.GetExternalScorecard(match);
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = 200;
-            context.Response.Write(_javaScriptSerializer.Serialize(scorecard));
+            context.Response.Write(javaScriptSerializer.Serialize(scorecard));
         }
 
         private void SaveScorecard(IHandlerContext context, int matchId)
         {
             var stringReader = new StreamReader(context.Request.InputStream);
             string postData = stringReader.ReadToEnd();
-            var unsavedScorecard = _javaScriptSerializer.Deserialize<MatchScorecardV1>(postData);
+            var unsavedScorecard = javaScriptSerializer.Deserialize<MatchScorecardV1>(postData);
             
-            var match = new Match(matchId, _database);
+            var match = new CricketClubMiddle.Match(matchId, database);
 
             if (unsavedScorecard.ourInnings.batting.entries.Any())
             {
@@ -137,7 +136,7 @@ namespace TheVillageCC.Web.HttpHandlers
                 new Extras(match.ID, ThemOrUs.Us), match);
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = 200;
-            context.Response.Write(_javaScriptSerializer.Serialize(savedScorecard));
+            context.Response.Write(javaScriptSerializer.Serialize(savedScorecard));
         }
     }
 }

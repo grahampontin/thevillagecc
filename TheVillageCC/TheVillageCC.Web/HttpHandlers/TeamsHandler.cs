@@ -20,7 +20,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override TeamV1 UpdateEntity(TeamV1 entity)
         {
-            var team = new Team(entity.Id, Database) { Name = entity.Name };
+            var team = new Team(entity.Id, database) { Name = entity.Name };
             team.Save();
             return entity;
         }
@@ -32,19 +32,19 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override TeamV1 CreateEntity(TeamV1 deserializeRequestBody)
         {
-            var team = Team.CreateNewTeam(deserializeRequestBody.Name, Database);
+            var team = Team.CreateNewTeam(deserializeRequestBody.Name, database);
             return TeamV1.FromInternal(team);
         }
 
         protected override List<TeamV1> GetAllEntities(NameValueCollection requestQueryString)
         {
-            return Team.GetAll(Database).Where(t => !t.IsUs)
+            return Team.GetAll(database).Where(t => !t.IsUs)
                 .Select(TeamV1.FromInternal).OrderBy(t => t.Name).ToList();
         }
 
         protected override TeamV1 GetEntity(int id)
         {
-            var team = new Team(id, Database);
+            var team = new Team(id, database);
             return TeamV1.FromInternal(team);
         }
 

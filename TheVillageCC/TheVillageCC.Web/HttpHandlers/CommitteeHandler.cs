@@ -19,26 +19,26 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override CommitteePostV1 UpdateEntity(CommitteePostV1 entity)
         {
-            Database.UpdateCommittee(CommitteePostV1.ToInternal(entity));
+            database.UpdateCommittee(CommitteePostV1.ToInternal(entity));
             return entity;
         }
 
         protected override void DeleteEntity(int id)
         {
-            Database.DeleteCommittee(id);
+            database.DeleteCommittee(id);
         }
 
         protected override CommitteePostV1 CreateEntity(CommitteePostV1 deserializeRequestBody)
         {
-            var createdId = Database.CreateNewCommittee(CommitteePostV1.ToInternal(deserializeRequestBody));
-            return CommitteePostV1.ToExternal(Database.GetCommitteeData(createdId));
+            var createdId = database.CreateNewCommittee(CommitteePostV1.ToInternal(deserializeRequestBody));
+            return CommitteePostV1.ToExternal(database.GetCommitteeData(createdId));
         }
 
         protected override List<CommitteePostV1> GetAllEntities(NameValueCollection requestQueryString)
         {
             // Support both 'season' (used by AwardsHandler) and 'year' (used by some clients)
             var season = requestQueryString["season"] ?? requestQueryString["year"];
-            var allEntities = Database.GetAllCommitteeData().Select(CommitteePostV1.ToExternal).ToList();
+            var allEntities = database.GetAllCommitteeData().Select(CommitteePostV1.ToExternal).ToList();
             if (season != null && int.TryParse(season, out var seasonAsInt))
             {
                 allEntities = allEntities.Where(a => a.Year == seasonAsInt).ToList();
@@ -49,7 +49,7 @@ namespace TheVillageCC.Web.HttpHandlers
 
         protected override CommitteePostV1 GetEntity(int id)
         {
-            var committeeData = Database.GetCommitteeData(id);
+            var committeeData = database.GetCommitteeData(id);
             return committeeData == null ? null : CommitteePostV1.ToExternal(committeeData);
         }
 
