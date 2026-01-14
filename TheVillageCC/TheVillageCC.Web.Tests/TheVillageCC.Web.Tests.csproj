@@ -79,7 +79,9 @@
   <ItemGroup>
     <Compile Include="HttpHandlers\AwardsHandlerTests.cs" />
     <Compile Include="HttpHandlers\CommitteeHandlerTests.cs" />
+    <Compile Include="HttpHandlers\MatchReportHandlerTests.cs" />
     <Compile Include="HttpHandlers\PlayersHandlerTests.cs" />
+    <Compile Include="HttpHandlers\ScorecardHandlerTests.cs" />
     <Compile Include="HttpHandlers\VenueHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\TestHandlerContextFactory.cs" />
