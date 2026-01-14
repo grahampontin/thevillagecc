@@ -15,9 +15,18 @@ namespace TheVillageCC.Web.HttpHandlers
     // ReSharper disable once UnusedType.Global
     public class LiveScoringHandler : HttpHandlerBase
     {
-        private readonly IDao Database = new Dao();
+        private readonly IDao Database;
         private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
         private static readonly ILog Log = LogManager.GetLogger(typeof(LiveScoringHandler));
+
+        public LiveScoringHandler() : this(new Dao())
+        {
+        }
+
+        public LiveScoringHandler(IDao database)
+        {
+            Database = database;
+        }
 
         public override void ProcessRequest(IHandlerContext context)
         {
@@ -98,6 +107,7 @@ namespace TheVillageCC.Web.HttpHandlers
                 context.Response.StatusCode = 400;
                 context.Response.ContentType = "text/plain";
                 context.Response.Write(ex.Message);
+                context.Response.End();
             }
             catch (Exception ex)
             {
@@ -105,9 +115,6 @@ namespace TheVillageCC.Web.HttpHandlers
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "text/plain";
                 context.Response.Write(ex.Message + Environment.NewLine + ex.StackTrace);
-            }
-            finally
-            {
                 context.Response.End();
             }
         }
@@ -136,8 +143,8 @@ namespace TheVillageCC.Web.HttpHandlers
             else
             {
                 // listMatches functionality
-                var matchDescriptors = Match.GetInProgressGames(Database)
-                    .Union(Match.GetFixtures(Database).Where(m =>
+                var matchDescriptors = Match.GetInProgressGames()
+                    .Union(Match.GetFixtures().Where(m =>
                         m.MatchDate < DateTime.Today.AddDays(14) &&
                         !m.GetCurrentBallByBallState().IsMatchComplete()))
                     .Select(m => new BallByBallMatchDescriptor(m))
