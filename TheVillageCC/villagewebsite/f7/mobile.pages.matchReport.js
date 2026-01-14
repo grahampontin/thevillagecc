@@ -3,9 +3,7 @@ $$(document).on('page:init', '.page[data-name="matchReport"]', function(e) {
     //Do stuff
     app.preloader.show();
 
-        var postData = { 'command': "getMatchReport", 'matchId': matchId };
-        $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                JSON.stringify(postData),
+        $.get("/api/matchreports/" + matchId,
                 function(data) {
                     //success
                     matchReportData = data;
@@ -33,9 +31,8 @@ $$(document).on('page:init', '.page[data-name="matchReport"]', function(e) {
         matchReportData.Report = app.textEditor.get("#match-report-text-editor").getValue();
         matchReportData.Base64EncodedImage = $("#match-report-image").attr('src');
         app.preloader.show();
-        var postData = { 'command': "saveMatchReport", 'matchId': matchId, 'payload': matchReportData };
-        $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                JSON.stringify(postData),
+        $.post("/api/matchreports/" + matchId,
+                JSON.stringify(matchReportData),
                 function(data) {
                     //success
                     app.preloader.hide();
