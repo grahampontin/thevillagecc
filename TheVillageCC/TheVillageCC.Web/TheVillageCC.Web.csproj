@@ -109,7 +109,9 @@
         <Compile Include="HttpHandlers\EntityHttpHandlerBase.cs" />
         <Compile Include="HttpHandlers\HttpHandlerBase.cs" />
         <Compile Include="HttpHandlers\MatchesHandler.cs" />
+        <Compile Include="HttpHandlers\MatchReportHandler.cs" />
         <Compile Include="HttpHandlers\PlayersHandler.cs" />
+        <Compile Include="HttpHandlers\ScorecardHandler.cs" />
         <Compile Include="HttpHandlers\StatsHandler.cs" />
         <Compile Include="HttpHandlers\TeamsHandler.cs" />
         <Compile Include="HttpHandlers\VenueHandler.cs" />

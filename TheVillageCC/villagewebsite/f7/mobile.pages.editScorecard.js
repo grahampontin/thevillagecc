@@ -80,9 +80,8 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
         app.preloader.show();
         updateMatchConditions();
         //actually save it
-        var postData = { 'command': "saveScorecard", 'matchId': matchId, "payload" : scorecardData };
-        $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                    JSON.stringify(postData),
+        $.post("/api/scorecards/" + matchId,
+                    JSON.stringify(scorecardData),
                     function(data) {
                         scorecardData = data;
                         renderFullView(scorecardData);
@@ -522,9 +521,7 @@ $$(document).on('page:init', '.page[data-name="editScorecard"]', function (e) {
 
     app.preloader.show();
     loadAndProcessPlayers(function() {
-        var postData = { 'command': "getScorecard", 'matchId': matchId };
-        $.post("/MobileWeb/ballbyball/CommandHandler.ashx",
-                JSON.stringify(postData),
+        $.get("/api/scorecards/" + matchId,
                 function(data) {
                     app.toolbar.hide("#opposition-tabbar", false);
                     app.toolbar.hide("#home-tabbar", false);
