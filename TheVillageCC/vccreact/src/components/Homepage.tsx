@@ -27,6 +27,8 @@ interface MatchReport {
   imageSrc: string;
 }
 
+const MAX_REPORT_PREVIEW_LENGTH = 200;
+
 const Homepage: React.FC = () => {
   const [matchReports, setMatchReports] = useState<MatchReport[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -54,9 +56,9 @@ const Homepage: React.FC = () => {
             ? `${item.ResultText} - ${item.ResultMargin}`
             : item.ResultText;
           
-          // Use first 200 characters of report as preview text
-          const text = item.Report.length > 200 
-            ? item.Report.substring(0, 200) + '...'
+          // Use first MAX_REPORT_PREVIEW_LENGTH characters of report as preview text
+          const text = item.Report.length > MAX_REPORT_PREVIEW_LENGTH 
+            ? item.Report.substring(0, MAX_REPORT_PREVIEW_LENGTH) + '...'
             : item.Report;
           
           // Use report image if available, otherwise use default
