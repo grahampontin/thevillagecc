@@ -2,6 +2,32 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Development Setup
+
+### Prerequisites
+
+1. Install Node.js and npm
+2. Have the IIS backend server running locally (provides REST API endpoints)
+
+### Configuration
+
+The React development server is configured to proxy API requests to the IIS backend server. By default, it expects the backend to be running on `http://localhost:8080`.
+
+To configure a different backend URL:
+
+1. Create or edit `.env.development` file in this directory
+2. Set the `REACT_APP_API_URL` variable to your IIS server URL:
+   ```
+   REACT_APP_API_URL=http://localhost:80
+   ```
+
+Common IIS ports:
+- `http://localhost:80` - Default HTTP port
+- `http://localhost:8080` - Alternative HTTP port
+- `https://localhost:443` - Default HTTPS port
+
+**Note:** In production, the React build and REST endpoints are hosted on the same IIS instance, so API calls to `/api/...` work directly without proxy configuration.
+
 ## Available Scripts
 
 In the project directory, you can run:
