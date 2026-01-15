@@ -26,21 +26,21 @@ const Header: React.FC = () => {
         <Navbar.Toggle aria-controls="navbarCollapse" />
         <Navbar.Collapse id="navbarCollapse">
           <Nav className="me-auto mb-2 mb-lg-0">
-            <Nav.Link href="/Awards.aspx" className="text-white">
+            <Nav.Link href="/awards" className="text-white">
               <span className="material-icons-outlined bi d-inline d-lg-none mx-auto mb-1"
                     style={{ textAlign: 'center', fontSize: '24px' }}>
                 info
               </span>
               <div className="d-inline">About</div>
             </Nav.Link>
-            <Nav.Link href="/Fixtures.aspx" className="text-white">
+            <Nav.Link href="/fixtures" className="text-white">
               <span className="material-icons-outlined bi d-inline d-lg-none mx-auto mb-1"
                     style={{ textAlign: 'center', fontSize: '24px' }}>
                 calendar_month
               </span>
               <div className="d-inline">Fixtures</div>
             </Nav.Link>
-            <Nav.Link href="/Results.aspx" className="text-white">
+            <Nav.Link href="/results" className="text-white">
               <span className="material-icons-outlined bi d-inline d-lg-none mx-auto mb-1"
                     style={{ textAlign: 'center', fontSize: '24px' }}>
                 scoreboard
@@ -54,7 +54,7 @@ const Header: React.FC = () => {
               </span>
               <div className="d-inline">Stats</div>
             </Nav.Link>
-            <Nav.Link href="/Committee.aspx" className="text-white">
+            <Nav.Link href="/committee" className="text-white">
               <span className="material-icons-outlined bi d-inline d-lg-none mx-auto mb-1"
                     style={{ textAlign: 'center', fontSize: '24px' }}>
                 groups
