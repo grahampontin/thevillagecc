@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using CricketClubDAL;
 using CricketClubDomain;
+using CricketClubMiddle;
 using TheVillageCC.Web.Domain;
 
 namespace TheVillageCC.Web.HttpHandlers
@@ -24,20 +27,27 @@ namespace TheVillageCC.Web.HttpHandlers
         public override void ProcessRequest(IHandlerContext context)
         {
             var matchId = ExtractMatchIdFromUrl(context.Request.Url.ToString());
-            if (matchId == null)
-            {
-                context.Response.ContentType = "text/plain";
-                context.Response.Write("Match ID not specified in URL");
-                context.Response.StatusCode = 400;
-                return;
-            }
 
             switch (context.Request.HttpMethod)
             {
                 case "GET":
-                    GetMatchReport(context, matchId.Value);
+                    if (matchId == null)
+                    {
+                        GetAllMatchReports(context);
+                    }
+                    else
+                    {
+                        GetMatchReport(context, matchId.Value);
+                    }
                     break;
                 case "POST":
+                    if (matchId == null)
+                    {
+                        context.Response.ContentType = "text/plain";
+                        context.Response.Write("Match ID not specified in URL");
+                        context.Response.StatusCode = 400;
+                        return;
+                    }
                     SaveMatchReport(context, matchId.Value);
                     break;
                 default:
@@ -65,6 +75,56 @@ namespace TheVillageCC.Web.HttpHandlers
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = 200;
             context.Response.Write(javaScriptSerializer.Serialize(matchReport));
+        }
+
+        private void GetAllMatchReports(IHandlerContext context)
+        {
+            // Parse query parameters
+            var queryString = context.Request.QueryString;
+            var limitParam = queryString["limit"] ?? queryString["count"];
+            var orderParam = queryString["order"] ?? queryString["orderBy"];
+
+            // Default values
+            int? limit = null;
+            bool descending = true; // Default to most recent first
+
+            if (!string.IsNullOrEmpty(limitParam) && int.TryParse(limitParam, out var parsedLimit))
+            {
+                limit = parsedLimit;
+            }
+
+            if (!string.IsNullOrEmpty(orderParam))
+            {
+                descending = orderParam.ToLower() == "desc" || orderParam.ToLower() == "descending";
+            }
+
+            // Get all matches with results
+            var matches = Match.GetResults();
+            
+            // Order by date and filter for matches with reports
+            // Note: This follows the same pattern as Default.aspx.cs which calls GetMatchReport() 
+            // for all matches before filtering. Future optimization could add a method to check 
+            // if a match has a report before calling GetMatchReport().
+            var orderedMatches = descending 
+                ? matches.OrderByDescending(m => m.MatchDate) 
+                : matches.OrderBy(m => m.MatchDate);
+
+            var matchReports = orderedMatches
+                .Select(m => new { Match = m, Report = m.GetMatchReport() })
+                .Where(mr => mr.Report != MatchReportAndConditions.None && !string.IsNullOrEmpty(mr.Report.Report))
+                .Select(mr => MatchReportListItemV1.FromInternal(mr.Match, mr.Report));
+
+            // Apply limit if specified
+            if (limit.HasValue)
+            {
+                matchReports = matchReports.Take(limit.Value);
+            }
+
+            var result = matchReports.ToList();
+
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = 200;
+            context.Response.Write(javaScriptSerializer.Serialize(result));
         }
 
         private void SaveMatchReport(IHandlerContext context, int matchId)

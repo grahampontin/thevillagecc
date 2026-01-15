@@ -88,6 +88,7 @@
         <Compile Include="Domain\InningsScoreCardV1.cs" />
         <Compile Include="Domain\LiveScorecardV1.cs" />
         <Compile Include="Domain\MatchConditionsV1.cs" />
+        <Compile Include="Domain\MatchReportListItemV1.cs" />
         <Compile Include="Domain\MatchReportV1.cs" />
         <Compile Include="Domain\MatchScorecardV1.cs" />
         <Compile Include="Domain\MatchStateMapper.cs" />
