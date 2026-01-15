@@ -77,7 +77,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             mockDao.Setup(d => d.GetResults()).Returns(matchDataList);
             mockDao.Setup(d => d.GetMatchData(It.IsAny<int>())).Returns<int>(id => matchDataList.Find(m => m.ID == id));
             mockDao.Setup(d => d.GetMatchReport(It.IsAny<int>())).Returns(
-                new MatchReportAndConditions("Test conditions", "Test report", String.Empty));
+                new MatchReportAndConditions("Test conditions", "Test report", string.Empty));
 
             // Act
             handler.ProcessRequest(context);
@@ -104,7 +104,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             mockDao.Setup(d => d.GetResults()).Returns(matchDataList);
             mockDao.Setup(d => d.GetMatchData(It.IsAny<int>())).Returns<int>(id => matchDataList.Find(m => m.ID == id));
             mockDao.Setup(d => d.GetMatchReport(It.IsAny<int>())).Returns(
-                new MatchReportAndConditions("Test conditions", "Test report", String.Empty));
+                new MatchReportAndConditions("Test conditions", "Test report", string.Empty));
 
             // Act
             handler.ProcessRequest(context);

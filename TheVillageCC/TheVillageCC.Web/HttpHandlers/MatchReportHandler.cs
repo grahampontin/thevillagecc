@@ -102,6 +102,9 @@ namespace TheVillageCC.Web.HttpHandlers
             var matches = Match.GetResults();
             
             // Order by date and filter for matches with reports
+            // Note: This follows the same pattern as Default.aspx.cs which calls GetMatchReport() 
+            // for all matches before filtering. Future optimization could add a method to check 
+            // if a match has a report before calling GetMatchReport().
             var orderedMatches = descending 
                 ? matches.OrderByDescending(m => m.MatchDate) 
                 : matches.OrderBy(m => m.MatchDate);
