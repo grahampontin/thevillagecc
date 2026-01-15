@@ -104,7 +104,7 @@ const Homepage: React.FC = () => {
               <h1>Friendly Cricket in and around London</h1>
               <p>We play all over London and outside, check out our latest matches</p>
               <p>
-                <Button variant="success" size="lg" href="/Results.aspx">
+                <Button variant="success" size="lg" href="/results">
                   Results
                 </Button>
               </p>
@@ -160,7 +160,7 @@ const Homepage: React.FC = () => {
                 formed in 2004 by a bunch of singularly talentless but enthusiastic cricketers...
               </p>
               <p>
-                <Button variant="default" href="/Awards.aspx">
+                <Button variant="default" href="/awards">
                   View details &raquo;
                 </Button>
               </p>
