@@ -3,41 +3,23 @@ import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 
-interface Venue {
-  Id: number;
-  Name: string;
-}
-
-interface Team {
-  Id: number;
-  Name: string;
-}
-
-interface Match {
-  Id: number;
-  Date: string;
-  Venue: Venue;
-  Opposition: Team;
-  Type: string;
-  IsHome: boolean;
-}
-
-interface ResultDisplay {
-  Id: number;
-  MatchDateString: string;
+interface MatchReport {
+  MatchId: number;
   HomeTeamName: string;
   HomeTeamScore: string;
   AwayTeamName: string;
   AwayTeamScore: string;
   ResultText: string;
   ResultMargin: string;
-  VenueName: string;
-  IsHome: boolean;
+  MatchDate: string;
+  Conditions: string;
+  Report: string;
+  ReportImage: string;
 }
 
 const Results: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [results, setResults] = useState<ResultDisplay[]>([]);
+  const [results, setResults] = useState<MatchReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentYear, setCurrentYear] = useState<number>(0);
 
@@ -51,44 +33,27 @@ const Results: React.FC = () => {
         const year = seasonParam ? parseInt(seasonParam) : new Date().getFullYear();
         setCurrentYear(year);
 
-        const response = await fetch(`/api/refdata/matches?season=${year}`);
+        // Fetch all match reports which includes result data
+        const response = await fetch('/api/matchreports');
         if (!response.ok) {
           throw new Error('Failed to fetch results');
         }
 
-        const allMatches: Match[] = await response.json();
+        const allMatchReports: MatchReport[] = await response.json();
 
-        // Filter for past matches (results) within the season
+        // Filter for matches in the specified season (April to April)
         const seasonStart = new Date(year, 3, 1); // April 1st
         const seasonEnd = new Date(year + 1, 3, 1); // April 1st next year
-        const today = new Date();
-        today.setHours(23, 59, 59, 999);
 
-        const pastMatches = allMatches.filter(match => {
-          const matchDate = new Date(match.Date);
-          return matchDate >= seasonStart && matchDate < seasonEnd && matchDate <= today;
+        const seasonResults = allMatchReports.filter(match => {
+          const matchDate = new Date(match.MatchDate);
+          return matchDate >= seasonStart && matchDate < seasonEnd;
         });
 
-        // Transform to display format
-        // Note: The API doesn't return scores/results, so we'll use placeholders
-        const displayResults = pastMatches.map(match => ({
-          Id: match.Id,
-          MatchDateString: new Date(match.Date).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-          }),
-          HomeTeamName: match.IsHome ? 'The Village CC' : match.Opposition.Name,
-          HomeTeamScore: 'TBC', // Placeholder - would need scorecard API
-          AwayTeamName: match.IsHome ? match.Opposition.Name : 'The Village CC',
-          AwayTeamScore: 'TBC', // Placeholder - would need scorecard API
-          ResultText: 'Result', // Placeholder
-          ResultMargin: '', // Placeholder
-          VenueName: match.Venue.Name,
-          IsHome: match.IsHome
-        }));
+        // Sort by date descending (most recent first)
+        seasonResults.sort((a, b) => new Date(b.MatchDate).getTime() - new Date(a.MatchDate).getTime());
 
-        setResults(displayResults);
+        setResults(seasonResults);
       } catch (error) {
         console.error('Error fetching results:', error);
         setResults([]);
@@ -102,6 +67,18 @@ const Results: React.FC = () => {
 
   const navigateToSeason = (year: number) => {
     setSearchParams({ season: year.toString() });
+  };
+
+  const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  const isHomeMatch = (result: MatchReport): boolean => {
+    return result.HomeTeamName === 'The Village CC';
   };
 
   if (isLoading) {
@@ -152,44 +129,50 @@ const Results: React.FC = () => {
           <div id="resultsTable" className="list-group list-group-flush">
             {results.map((result) => (
               <a 
-                key={result.Id}
-                href={`/LiveScorecard.aspx?matchId=${result.Id}`}
+                key={result.MatchId}
+                href={`/LiveScorecard.aspx?matchId=${result.MatchId}`}
                 className="list-group-item list-group-item-action"
                 aria-current="true"
               >
                 <div className="d-flex w-100 justify-content-between">
                   <div className="d-block">
                     <div className="mb-1">
-                      <small>{result.MatchDateString}</small>
+                      <small>{formatDate(result.MatchDate)}</small>
                     </div>
                     <div className="w-75">
                       <h5 className="mb-1 d-flex flex-row flex-wrap flex-lg-nowrap">
                         <div 
                           className="text-nowrap pe-1"
-                          style={result.IsHome ? { fontWeight: 'bold' } : {}}
+                          style={isHomeMatch(result) ? { fontWeight: 'bold' } : {}}
                         >
                           {result.HomeTeamName}
                         </div>
-                        <div className="text-nowrap pe-1">
-                          ({result.HomeTeamScore})
-                        </div>
+                        {result.HomeTeamScore && (
+                          <div className="text-nowrap pe-1">
+                            ({result.HomeTeamScore})
+                          </div>
+                        )}
                         <div className="text-nowrap pe-1">
                           {result.ResultText}
                         </div>
                         <div 
                           className="text-nowrap pe-1"
-                          style={!result.IsHome ? { fontWeight: 'bold' } : {}}
+                          style={!isHomeMatch(result) ? { fontWeight: 'bold' } : {}}
                         >
                           {result.AwayTeamName}
                         </div>
-                        <div className="text-nowrap pe-1">
-                          ({result.AwayTeamScore})
-                        </div>
+                        {result.AwayTeamScore && (
+                          <div className="text-nowrap pe-1">
+                            ({result.AwayTeamScore})
+                          </div>
+                        )}
                       </h5>
                     </div>
-                    <p className="mb-1 fst-italic">
-                      {result.ResultMargin && `${result.ResultMargin} `}at {result.VenueName}
-                    </p>
+                    {result.ResultMargin && (
+                      <p className="mb-1 fst-italic">
+                        {result.ResultMargin}
+                      </p>
+                    )}
                   </div>
                   <div className="my-auto">
                     <span className="material-icons">
