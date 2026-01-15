@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Carousel, Button } from 'react-bootstrap';
 import Header from './Header';
 import Footer from './Footer';
 
-// Define interfaces for match report data
+// Define interfaces for match report data from API
+interface MatchReportListItem {
+  MatchId: number;
+  HomeTeamName: string;
+  HomeTeamScore: string;
+  AwayTeamName: string;
+  AwayTeamScore: string;
+  ResultText: string;
+  ResultMargin: string;
+  MatchDate: string;
+  Conditions: string;
+  Report: string;
+  ReportImage: string;
+}
+
+// Interface for display format
 interface MatchReport {
   heading: string;
   subText: string;
@@ -13,30 +28,63 @@ interface MatchReport {
 }
 
 const Homepage: React.FC = () => {
-  // Mock match reports data - in a real app, this would come from an API
-  const matchReports: MatchReport[] = [
-    {
-      heading: "Latest Match Report",
-      subText: "Recent Results",
-      text: "Check out our latest match reports and see how the team performed...",
-      matchId: "1",
-      imageSrc: "/match_reports/images/no_match_report_image.jpg"
-    },
-    {
-      heading: "Another Great Match",
-      subText: "Match Details",
-      text: "Another exciting match with great performances from all players...",
-      matchId: "2",
-      imageSrc: "/match_reports/images/no_match_report_image.jpg"
-    },
-    {
-      heading: "Weekend Victory",
-      subText: "Match Summary",
-      text: "A fantastic weekend victory with excellent batting and bowling displays...",
-      matchId: "3",
-      imageSrc: "/match_reports/images/no_match_report_image.jpg"
-    }
-  ];
+  const [matchReports, setMatchReports] = useState<MatchReport[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMatchReports = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/matchreports?limit=3&order=desc');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch match reports: ${response.status}`);
+        }
+        
+        const data: MatchReportListItem[] = await response.json();
+        
+        // Transform API data to display format
+        const transformedReports: MatchReport[] = data.map((item) => {
+          // Create heading from home vs away teams
+          const heading = `${item.HomeTeamName} vs ${item.AwayTeamName}`;
+          
+          // Use result text and margin as subtext
+          const subText = item.ResultMargin 
+            ? `${item.ResultText} - ${item.ResultMargin}`
+            : item.ResultText;
+          
+          // Use first 200 characters of report as preview text
+          const text = item.Report.length > 200 
+            ? item.Report.substring(0, 200) + '...'
+            : item.Report;
+          
+          // Use report image if available, otherwise use default
+          const imageSrc = item.ReportImage || '/match_reports/images/no_match_report_image.jpg';
+          
+          return {
+            heading,
+            subText,
+            text,
+            matchId: item.MatchId.toString(),
+            imageSrc
+          };
+        });
+        
+        setMatchReports(transformedReports);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching match reports:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load match reports');
+        // Set empty array on error so the page still renders
+        setMatchReports([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMatchReports();
+  }, []);
 
   return (
     <>
@@ -151,7 +199,25 @@ const Homepage: React.FC = () => {
           <hr className="featurette-divider d-none d-lg-block" style={{ marginTop: '1rem' }} />
 
           {/* Match Reports */}
-          {matchReports.map((report, index) => (
+          {isLoading && (
+            <div className="text-center" style={{ marginTop: '2rem' }}>
+              <p>Loading match reports...</p>
+            </div>
+          )}
+          
+          {error && (
+            <div className="alert alert-warning" style={{ marginTop: '2rem' }} role="alert">
+              {error}
+            </div>
+          )}
+          
+          {!isLoading && matchReports.length === 0 && !error && (
+            <div className="text-center" style={{ marginTop: '2rem' }}>
+              <p>No match reports available at this time.</p>
+            </div>
+          )}
+          
+          {!isLoading && matchReports.map((report, index) => (
             <React.Fragment key={index}>
               <div className="row featurette" style={{ marginTop: '2rem' }}>
                 {index % 2 === 0 ? (
