@@ -15,7 +15,7 @@ module.exports = function(app) {
       },
       onError: (err, req, res) => {
         console.error('[Proxy Error]', err);
-        res.status(500).send('Proxy Error: Unable to connect to backend API server');
+        res.status(500).send(`Proxy Error: Unable to connect to backend API server at ${apiTarget}`);
       }
     })
   );

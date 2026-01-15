@@ -24,7 +24,7 @@ To configure a different backend URL:
 Common IIS ports:
 - `http://localhost:80` - Default HTTP port
 - `http://localhost:8080` - Alternative HTTP port
-- `http://localhost:443` - Default HTTPS port
+- `https://localhost:443` - Default HTTPS port
 
 **Note:** In production, the React build and REST endpoints are hosted on the same IIS instance, so API calls to `/api/...` work directly without proxy configuration.
 
