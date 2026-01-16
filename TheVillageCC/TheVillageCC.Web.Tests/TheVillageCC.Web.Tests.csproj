@@ -81,6 +81,7 @@
     <Compile Include="HttpHandlers\CommitteeHandlerTests.cs" />
     <Compile Include="HttpHandlers\MatchReportHandlerTests.cs" />
     <Compile Include="HttpHandlers\PlayersHandlerTests.cs" />
+    <Compile Include="HttpHandlers\ResultsHandlerTests.cs" />
     <Compile Include="HttpHandlers\ScorecardHandlerTests.cs" />
     <Compile Include="HttpHandlers\VenueHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
