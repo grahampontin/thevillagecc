@@ -9,6 +9,14 @@ namespace TheVillageCC.Web.Domain
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class ResultV1
     {
+        public int MatchId { get; set; }
+        public string HomeTeamName { get; set; }
+        public string HomeTeamScore { get; set; }
+        public string AwayTeamName { get; set; }
+        public string AwayTeamScore { get; set; }
+        public string ResultText { get; set; }
+        public string ResultMargin { get; set; }
+        public string MatchDate { get; set; }
         public string WinningTeam { get; set; }
         public string LosingTeam { get; set; }
         public string Margin { get; set; }
@@ -26,6 +34,14 @@ namespace TheVillageCC.Web.Domain
         {
             return new ResultV1()
             {
+                MatchId = match.ID,
+                HomeTeamName = match.HomeTeamName,
+                HomeTeamScore = match.HomeTeamScore,
+                AwayTeamName = match.AwayTeamName,
+                AwayTeamScore = match.AwayTeamScore,
+                ResultText = match.ResultText,
+                ResultMargin = match.ResultMargin,
+                MatchDate = match.MatchDate.ToString("yyyy-MM-dd"),
                 WinningTeam = match.Winner != null ? match.Winner.Name : null,
                 LosingTeam = match.Loser != null ? match.Loser.Name : null,
                 Margin = match.ResultMargin,

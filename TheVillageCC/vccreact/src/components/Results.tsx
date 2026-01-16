@@ -33,22 +33,13 @@ const Results: React.FC = () => {
         const year = seasonParam ? parseInt(seasonParam) : new Date().getFullYear();
         setCurrentYear(year);
 
-        // Fetch all match reports which includes result data
-        const response = await fetch('/api/matchreports');
+        // Fetch results from the dedicated results endpoint with season parameter
+        const response = await fetch(`/api/results?season=${year}`);
         if (!response.ok) {
           throw new Error('Failed to fetch results');
         }
 
-        const allMatchReports: MatchReport[] = await response.json();
-
-        // Filter for matches in the specified season (April to April)
-        const seasonStart = new Date(year, 3, 1); // April 1st
-        const seasonEnd = new Date(year + 1, 3, 1); // April 1st next year
-
-        const seasonResults = allMatchReports.filter(match => {
-          const matchDate = new Date(match.MatchDate);
-          return matchDate >= seasonStart && matchDate < seasonEnd;
-        });
+        const seasonResults: MatchReport[] = await response.json();
 
         // Sort by date descending (most recent first)
         seasonResults.sort((a, b) => new Date(b.MatchDate).getTime() - new Date(a.MatchDate).getTime());
