@@ -99,7 +99,7 @@ namespace TheVillageCC.Web.HttpHandlers
             }
 
             // Get all matches with results
-            var matches = Match.GetResults();
+            var matches = CricketClubMiddle.Match.GetResults();
             
             // Order by date and filter for matches with reports
             // Note: This follows the same pattern as Default.aspx.cs which calls GetMatchReport() 

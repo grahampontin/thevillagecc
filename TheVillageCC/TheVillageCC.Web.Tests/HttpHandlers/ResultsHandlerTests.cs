@@ -28,7 +28,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             var context = TestHandlerContextFactory.CreateHttpContext("GET", "http://test.com/api/results");
             
             // Setup mock to return empty list
-            mockDao.Setup(d => d.GetResults()).Returns(new List<MatchData>());
+            mockDao.Setup(d => d.GetAllMatches()).Returns(new List<MatchData>());
 
             // Act
             handler.ProcessRequest(context);
@@ -45,7 +45,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             var context = TestHandlerContextFactory.CreateHttpContext("GET", "http://test.com/api/results?season=2023");
             
             // Setup mock to return empty list
-            mockDao.Setup(d => d.GetResults()).Returns(new List<MatchData>());
+            mockDao.Setup(d => d.GetAllMatches()).Returns(new List<MatchData>());
 
             // Act
             handler.ProcessRequest(context);
@@ -69,7 +69,6 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
                     Date = new DateTime(2023, 6, 15), 
                     OppositionID = 1, 
                     VenueID = 1,
-                    Result = "Won",
                     HomeOrAway = "Home"
                 },
                 new MatchData 
@@ -78,19 +77,13 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
                     Date = new DateTime(2023, 7, 20), 
                     OppositionID = 2, 
                     VenueID = 1,
-                    Result = "Lost",
                     HomeOrAway = "Away"
                 }
             };
 
-            mockDao.Setup(d => d.GetResults()).Returns(matchDataList);
+            mockDao.Setup(d => d.GetAllMatches()).Returns(matchDataList);
             mockDao.Setup(d => d.GetMatchData(It.IsAny<int>())).Returns<int>(id => matchDataList.Find(m => m.ID == id));
-            mockDao.Setup(d => d.GetOppositionTeams()).Returns(new List<OppositionData>
-            {
-                new OppositionData { ID = 1, Name = "Team A" },
-                new OppositionData { ID = 2, Name = "Team B" }
-            });
-
+          
             // Act
             handler.ProcessRequest(context);
 
@@ -121,7 +114,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             var context = TestHandlerContextFactory.CreateHttpContext("GET", "http://test.com/api/results?season=invalid");
             
             // Setup mock to return empty list
-            mockDao.Setup(d => d.GetResults()).Returns(new List<MatchData>());
+            mockDao.Setup(d => d.GetAllMatches()).Returns(new List<MatchData>());
 
             // Act
             handler.ProcessRequest(context);

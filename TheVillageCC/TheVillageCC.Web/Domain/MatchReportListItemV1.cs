@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using CricketClubDAL;
 using CricketClubMiddle;
 
 namespace TheVillageCC.Web.Domain
@@ -26,7 +27,7 @@ namespace TheVillageCC.Web.Domain
         {
         }
 
-        public static MatchReportListItemV1 FromInternal(Match match, CricketClubDomain.MatchReportAndConditions report)
+        public static MatchReportListItemV1 FromInternal(Match match, MatchReportAndConditions report)
         {
             return new MatchReportListItemV1
             {

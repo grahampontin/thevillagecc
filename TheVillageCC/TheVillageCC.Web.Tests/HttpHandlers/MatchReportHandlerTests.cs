@@ -51,7 +51,6 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             var context = TestHandlerContextFactory.CreateHttpContext("GET", "http://test.com/api/matchreports/");
             
             // Setup mock to return empty list for GetResults
-            mockDao.Setup(d => d.GetResults()).Returns(new System.Collections.Generic.List<MatchData>());
 
             // Act
             handler.ProcessRequest(context);
@@ -74,7 +73,6 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
                 new MatchData { ID = 2, Date = DateTime.Now.AddDays(-2), OppositionID = 1, VenueID = 1 },
                 new MatchData { ID = 3, Date = DateTime.Now.AddDays(-1), OppositionID = 1, VenueID = 1 }
             };
-            mockDao.Setup(d => d.GetResults()).Returns(matchDataList);
             mockDao.Setup(d => d.GetMatchData(It.IsAny<int>())).Returns<int>(id => matchDataList.Find(m => m.ID == id));
             mockDao.Setup(d => d.GetMatchReport(It.IsAny<int>())).Returns(
                 new MatchReportAndConditions("Test conditions", "Test report", string.Empty));
@@ -101,7 +99,6 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
                 new MatchData { ID = 1, Date = DateTime.Now.AddDays(-2), OppositionID = 1, VenueID = 1 },
                 new MatchData { ID = 2, Date = DateTime.Now.AddDays(-1), OppositionID = 1, VenueID = 1 }
             };
-            mockDao.Setup(d => d.GetResults()).Returns(matchDataList);
             mockDao.Setup(d => d.GetMatchData(It.IsAny<int>())).Returns<int>(id => matchDataList.Find(m => m.ID == id));
             mockDao.Setup(d => d.GetMatchReport(It.IsAny<int>())).Returns(
                 new MatchReportAndConditions("Test conditions", "Test report", string.Empty));
