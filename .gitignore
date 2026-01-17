@@ -16,3 +16,6 @@ TheVillageCC/.vs/TheVillageCC/config/applicationhost.config
 /TheVillageCC/.vs/TheVillageCC/project-colors.json
 /TheVillageCC/.idea/.idea.TheVillageCC/.idea/vcs.xml
 /TheVillageCC/node_modules
+*.patch
+*.cache
+*/.idea/*
