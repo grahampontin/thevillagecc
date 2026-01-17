@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CricketClubDAL;
 using CricketClubDomain;
 using Moq;
@@ -33,6 +34,11 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
                 OppositionID = 1,
                 VenueID = 1
             });
+            mockDao.Setup(d => d.GetBowlingStats(It.IsAny<int>(), It.IsAny<ThemOrUs>()))
+                .Returns(() => new List<BowlingStatsEntryData>());
+            mockDao.Setup(d => d.GetBattingCard(It.IsAny<int>(), It.IsAny<ThemOrUs>()))
+                .Returns(() => new List<BattingCardLineData>());
+
 
             // Act
             handler.ProcessRequest(context);

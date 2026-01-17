@@ -69,7 +69,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
                     Date = new DateTime(2023, 6, 15), 
                     OppositionID = 1, 
                     VenueID = 1,
-                    HomeOrAway = "Home"
+                    HomeOrAway = "H"
                 },
                 new MatchData 
                 { 
@@ -77,13 +77,18 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
                     Date = new DateTime(2023, 7, 20), 
                     OppositionID = 2, 
                     VenueID = 1,
-                    HomeOrAway = "Away"
+                    HomeOrAway = "A"
                 }
             };
 
             mockDao.Setup(d => d.GetAllMatches()).Returns(matchDataList);
             mockDao.Setup(d => d.GetMatchData(It.IsAny<int>())).Returns<int>(id => matchDataList.Find(m => m.ID == id));
-          
+            mockDao.Setup(d=>d.GetTeamData(It.IsAny<int>())).Returns(()=> new TeamData { ID = 1, Name = "Test Team" });
+            mockDao.Setup(d => d.GetBowlingStats(It.IsAny<int>(), It.IsAny<ThemOrUs>()))
+                .Returns(() => new List<BowlingStatsEntryData>());
+            mockDao.Setup(d => d.GetBattingCard(It.IsAny<int>(), It.IsAny<ThemOrUs>()))
+                .Returns(() => new List<BattingCardLineData>());
+            
             // Act
             handler.ProcessRequest(context);
 
