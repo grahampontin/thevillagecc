@@ -74,21 +74,33 @@ const Stats: React.FC = () => {
     fetchVenues();
   }, []);
 
+  // Helper function to get selected match types
+  const getSelectedMatchTypes = () => {
+    return Object.entries(matchTypes)
+      .filter(([_, checked]) => checked)
+      .map(([type, _]) => type);
+  };
+
+  // Helper function to configure first column
+  const configureFirstColumn = (columnDefs: ColDef[]) => {
+    if (columnDefs && columnDefs.length > 0) {
+      columnDefs[0].pinned = 'left';
+      columnDefs[0].sort = 'asc';
+      columnDefs[0].filter = 'agTextColumnFilter';
+    }
+  };
+
   // Load initial batting stats
   useEffect(() => {
     if (fromDate && toDate) {
       // Load batting stats on initial render
       const loadInitialStats = async () => {
-        const selectedMatchTypes = Object.entries(matchTypes)
-          .filter(([_, checked]) => checked)
-          .map(([type, _]) => type);
-
         const query: StatsQuery = {
           category: 'batting',
           from: fromDate,
           to: toDate,
           venue: selectedVenue,
-          matchTypes: selectedMatchTypes,
+          matchTypes: getSelectedMatchTypes(),
         };
 
         setIsLoading(true);
@@ -110,11 +122,7 @@ const Stats: React.FC = () => {
           const data: StatsData = await response.json();
           
           // Configure first column
-          if (data.gridOptions.columnDefs && data.gridOptions.columnDefs.length > 0) {
-            data.gridOptions.columnDefs[0].pinned = 'left';
-            data.gridOptions.columnDefs[0].sort = 'asc';
-            data.gridOptions.columnDefs[0].filter = 'agTextColumnFilter';
-          }
+          configureFirstColumn(data.gridOptions.columnDefs);
 
           setStatsData({ batting: data });
         } catch (error) {
@@ -135,16 +143,12 @@ const Stats: React.FC = () => {
       return;
     }
 
-    const selectedMatchTypes = Object.entries(matchTypes)
-      .filter(([_, checked]) => checked)
-      .map(([type, _]) => type);
-
     const query: StatsQuery = {
       category,
       from: fromDate,
       to: toDate,
       venue: selectedVenue,
-      matchTypes: selectedMatchTypes,
+      matchTypes: getSelectedMatchTypes(),
     };
 
     setIsLoading(true);
@@ -166,11 +170,7 @@ const Stats: React.FC = () => {
       const data: StatsData = await response.json();
       
       // Configure first column
-      if (data.gridOptions.columnDefs && data.gridOptions.columnDefs.length > 0) {
-        data.gridOptions.columnDefs[0].pinned = 'left';
-        data.gridOptions.columnDefs[0].sort = 'asc';
-        data.gridOptions.columnDefs[0].filter = 'agTextColumnFilter';
-      }
+      configureFirstColumn(data.gridOptions.columnDefs);
 
       setStatsData(prev => ({ ...prev, [category]: data }));
     } catch (error) {
@@ -347,32 +347,33 @@ const Stats: React.FC = () => {
                     </div>
                   </div>
                   <div className="mt-2 d-flex justify-content-end flex-column">
-                    <button
-                      id="filterButton"
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={handleFilterClick}
-                      disabled={isLoading}
-                      style={{ display: isLoading ? 'none' : 'block' }}
-                    >
-                      <span className="text-nowrap">Apply filter</span>
-                    </button>
-                    <button
-                      id="loadingButton"
-                      className="btn btn-primary"
-                      type="button"
-                      style={{ display: isLoading ? 'block' : 'none' }}
-                      disabled
-                    >
-                      <span className="text-nowrap">
-                        <span
-                          className="spinner-border spinner-border-sm"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                        {' '}Loading...
-                      </span>
-                    </button>
+                    {!isLoading && (
+                      <button
+                        id="filterButton"
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={handleFilterClick}
+                      >
+                        <span className="text-nowrap">Apply filter</span>
+                      </button>
+                    )}
+                    {isLoading && (
+                      <button
+                        id="loadingButton"
+                        className="btn btn-primary"
+                        type="button"
+                        disabled
+                      >
+                        <span className="text-nowrap">
+                          <span
+                            className="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
+                          {' '}Loading...
+                        </span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
