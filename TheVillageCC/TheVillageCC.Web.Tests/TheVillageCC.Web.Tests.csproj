@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="HttpHandlers\AwardsHandlerTests.cs" />
     <Compile Include="HttpHandlers\CommitteeHandlerTests.cs" />
+    <Compile Include="HttpHandlers\FixturesHandlerTests.cs" />
     <Compile Include="HttpHandlers\MatchReportHandlerTests.cs" />
     <Compile Include="HttpHandlers\PlayersHandlerTests.cs" />
     <Compile Include="HttpHandlers\ResultsHandlerTests.cs" />
