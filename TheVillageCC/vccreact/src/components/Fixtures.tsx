@@ -40,24 +40,15 @@ const Fixtures: React.FC = () => {
       try {
         setIsLoading(true);
 
-        const response = await fetch('/api/refdata/matches');
+        const response = await fetch('/api/fixtures');
         if (!response.ok) {
           throw new Error('Failed to fetch fixtures');
         }
 
-        const allMatches: Match[] = await response.json();
-
-        // Filter for future matches (fixtures)
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const futureMatches = allMatches.filter(match => {
-          const matchDate = new Date(match.Date);
-          return matchDate >= today;
-        });
+        const matches: Match[] = await response.json();
 
         // Transform to display format
-        const displayFixtures = futureMatches.map(match => ({
+        const displayFixtures = matches.map(match => ({
           Id: match.Id,
           MatchDateString: new Date(match.Date).toLocaleDateString('en-GB', {
             day: '2-digit',
