@@ -11,10 +11,6 @@ namespace TheVillageCC.Web.HttpHandlers
     {
         private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
 
-        public FixturesHandler()
-        {
-        }
-
         public override void ProcessRequest(IHandlerContext context)
         {
             switch (context.Request.HttpMethod)
