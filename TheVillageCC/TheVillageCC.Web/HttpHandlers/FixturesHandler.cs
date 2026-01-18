@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Script.Serialization;
-using CricketClubDAL;
 using CricketClubMiddle;
 using TheVillageCC.Web.Domain;
 
@@ -10,16 +9,10 @@ namespace TheVillageCC.Web.HttpHandlers
 {
     public class FixturesHandler : HttpHandlerBase
     {
-        private readonly IDao database;
         private readonly JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
 
-        public FixturesHandler() : this(new Dao())
+        public FixturesHandler()
         {
-        }
-
-        public FixturesHandler(IDao database)
-        {
-            this.database = database;
         }
 
         public override void ProcessRequest(IHandlerContext context)
@@ -42,7 +35,7 @@ namespace TheVillageCC.Web.HttpHandlers
             var seasonParam = queryString["season"];
 
             // Get fixtures using Match.GetFixtures()
-            var matches = Match.GetFixtures(database);
+            var matches = Match.GetFixtures();
 
             // Filter by season if specified
             if (!string.IsNullOrEmpty(seasonParam) && int.TryParse(seasonParam, out var season))
