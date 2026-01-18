@@ -27,7 +27,7 @@ interface StatsData {
   statsType: string;
   gridOptions: {
     columnDefs: ColDef[];
-    rowData: any[];
+    rowData: Record<string, unknown>[];
   };
 }
 
