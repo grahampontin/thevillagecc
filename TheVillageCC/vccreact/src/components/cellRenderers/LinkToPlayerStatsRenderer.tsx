@@ -10,7 +10,7 @@ const LinkToPlayerStatsRenderer: React.FC<ICellRendererParams> = (params) => {
   }
 
   return (
-    <a href={`/PlayerDetail.aspx?playerid=${playerId}`}>
+    <a href={`/player/${playerId}`}>
       {displayValue}
     </a>
   );
