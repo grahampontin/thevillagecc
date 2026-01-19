@@ -15,6 +15,8 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartData,
+  ChartOptions,
 } from 'chart.js';
 import { Line, Bar, Pie } from 'react-chartjs-2';
 import Header from './Header';
@@ -76,6 +78,12 @@ interface PlayerDetailData {
 
 interface StatsDataArray extends Array<StatsData> {}
 
+interface ChartDataWrapper {
+  type: 'line' | 'bar' | 'pie';
+  data: ChartData<'line' | 'bar' | 'pie'>;
+  options?: ChartOptions<'line' | 'bar' | 'pie'>;
+}
+
 const PlayerDetail: React.FC = () => {
   const { playerId } = useParams<{ playerId: string }>();
   const [playerDetail, setPlayerDetail] = useState<PlayerDetailData | null>(null);
@@ -86,8 +94,8 @@ const PlayerDetail: React.FC = () => {
   // Chart states
   const [battingChartType, setBattingChartType] = useState<string>('battingTimeline');
   const [bowlingChartType, setBowlingChartType] = useState<string>('wicketsBySeason');
-  const [battingChartData, setBattingChartData] = useState<any>(null);
-  const [bowlingChartData, setBowlingChartData] = useState<any>(null);
+  const [battingChartData, setBattingChartData] = useState<ChartDataWrapper | null>(null);
+  const [bowlingChartData, setBowlingChartData] = useState<ChartDataWrapper | null>(null);
   
   // Stats tab states
   const [statsType, setStatsType] = useState<'Batting' | 'Bowling'>('Batting');
@@ -220,17 +228,17 @@ const PlayerDetail: React.FC = () => {
     });
   };
 
-  const renderChart = (chartData: any) => {
+  const renderChart = (chartData: ChartDataWrapper | null) => {
     if (!chartData) return null;
 
     const chartType = chartData.type;
     
     if (chartType === 'line') {
-      return <Line data={chartData.data} options={chartData.options} />;
+      return <Line data={chartData.data as ChartData<'line'>} options={chartData.options as ChartOptions<'line'>} />;
     } else if (chartType === 'bar') {
-      return <Bar data={chartData.data} options={chartData.options} />;
+      return <Bar data={chartData.data as ChartData<'bar'>} options={chartData.options as ChartOptions<'bar'>} />;
     } else if (chartType === 'pie') {
-      return <Pie data={chartData.data} options={chartData.options} />;
+      return <Pie data={chartData.data as ChartData<'pie'>} options={chartData.options as ChartOptions<'pie'>} />;
     }
     
     return null;
