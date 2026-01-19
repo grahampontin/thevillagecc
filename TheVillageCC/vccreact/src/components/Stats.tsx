@@ -6,6 +6,8 @@ import 'ag-grid-community/styles/ag-theme-balham.css';
 import Header from './Header';
 import Footer from './Footer';
 import { ColDef } from 'ag-grid-community';
+import LinkToPlayerStatsRenderer from './cellRenderers/LinkToPlayerStatsRenderer';
+import ParameterizedLinkToMatchReportRenderer from './cellRenderers/ParameterizedLinkToMatchReportRenderer';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -422,6 +424,10 @@ const Stats: React.FC = () => {
                         rowData={statsData[tab.id].gridOptions.rowData}
                         defaultColDef={defaultColDef}
                         suppressColumnVirtualisation={true}
+                        components={{
+                          LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                          ParameterizedLinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                        }}
                       />
                     )}
                   </div>
