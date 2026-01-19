@@ -12,6 +12,8 @@
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "@types/react-router-dom": "^5.3.3",
+    "ag-grid-community": "^35.0.0",
+    "ag-grid-react": "^35.0.0",
     "bootstrap": "^5.3.8",
     "react": "^19.2.3",
     "react-bootstrap": "^2.10.10",

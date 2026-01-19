@@ -8,6 +8,7 @@ import Awards from './components/Awards';
 import Committee from './components/Committee';
 import Fixtures from './components/Fixtures';
 import Results from './components/Results';
+import Stats from './components/Stats';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/committee" element={<Committee />} />
           <Route path="/fixtures" element={<Fixtures />} />
           <Route path="/results" element={<Results />} />
+          <Route path="/stats" element={<Stats />} />
         </Routes>
       </div>
     </Router>

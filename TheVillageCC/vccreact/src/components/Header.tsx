@@ -47,7 +47,7 @@ const Header: React.FC = () => {
               </span>
               <div className="d-inline">Results</div>
             </Nav.Link>
-            <Nav.Link href="/Stats.aspx" className="text-white">
+            <Nav.Link href="/stats" className="text-white">
               <span className="material-icons-outlined bi d-inline d-lg-none mx-auto mb-1"
                     style={{ textAlign: 'center', fontSize: '24px' }}>
                 bar_chart
