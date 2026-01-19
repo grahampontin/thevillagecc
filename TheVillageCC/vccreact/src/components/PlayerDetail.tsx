@@ -84,6 +84,9 @@ interface ChartDataWrapper {
   options?: ChartOptions<'line' | 'bar' | 'pie'>;
 }
 
+// Constants
+const BACKGROUND_IMAGE_URL = '/Images/newCarousel/slide1.jpg';
+
 const PlayerDetail: React.FC = () => {
   const { playerId } = useParams<{ playerId: string }>();
   const [playerDetail, setPlayerDetail] = useState<PlayerDetailData | null>(null);
@@ -281,7 +284,7 @@ const PlayerDetail: React.FC = () => {
       <Header />
       
       <div className="d-lg-none" style={{
-        backgroundImage: 'url(\'/Images/newCarousel/slide1.jpg\')',
+        backgroundImage: `url('${BACKGROUND_IMAGE_URL}')`,
         backgroundPosition: '50%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat'
@@ -337,7 +340,7 @@ const PlayerDetail: React.FC = () => {
           <div className="d-none d-lg-block me-4 mt-3" style={{ width: '230px' }}>
             <div className="card" style={{
               width: '230px',
-              backgroundImage: 'url(\'/Images/newCarousel/slide1.jpg\')',
+              backgroundImage: `url('${BACKGROUND_IMAGE_URL}')`,
               backgroundPosition: '50%',
               backgroundSize: 'cover',
               backgroundRepeat: 'no-repeat'
