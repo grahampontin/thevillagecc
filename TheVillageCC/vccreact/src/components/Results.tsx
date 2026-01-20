@@ -23,20 +23,18 @@ const Results: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [results, setResults] = useState<MatchReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentYear, setCurrentYear] = useState<number>(0);
+  
+  // Get season from query params or use current year - calculate immediately
+  const seasonParam = searchParams.get('season');
+  const currentYear = seasonParam ? parseInt(seasonParam) : new Date().getFullYear();
 
   useEffect(() => {
     const fetchResults = async () => {
       try {
         setIsLoading(true);
 
-        // Get season from query params or use current year
-        const seasonParam = searchParams.get('season');
-        const year = seasonParam ? parseInt(seasonParam) : new Date().getFullYear();
-        setCurrentYear(year);
-
         // Fetch results from the dedicated results endpoint with season parameter
-        const response = await fetch(`/api/results?season=${year}`);
+        const response = await fetch(`/api/results?season=${currentYear}`);
         if (!response.ok) {
           throw new Error('Failed to fetch results');
         }
@@ -56,7 +54,7 @@ const Results: React.FC = () => {
     };
 
     fetchResults();
-  }, [searchParams]);
+  }, [searchParams, currentYear]);
 
   const navigateToSeason = (year: number) => {
     setSearchParams({ season: year.toString() });
@@ -73,23 +71,6 @@ const Results: React.FC = () => {
   const isHomeMatch = (result: MatchReport): boolean => {
     return result.HomeTeamName === 'The Village CC';
   };
-
-  if (isLoading) {
-    return (
-      <>
-        <Header />
-        <main className="container">
-          <div className="skeleton skeleton-header" aria-label="Loading results"></div>
-          <div className="list-group list-group-flush" aria-hidden="true">
-            {[...Array(SKELETON_ITEMS_COUNT)].map((_, index) => (
-              <div key={index} className="skeleton skeleton-item"></div>
-            ))}
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
 
   return (
     <>
@@ -117,7 +98,13 @@ const Results: React.FC = () => {
           </button>
         </h1>
 
-        {results.length === 0 ? (
+        {isLoading ? (
+          <div className="list-group list-group-flush" aria-hidden="true">
+            {[...Array(SKELETON_ITEMS_COUNT)].map((_, index) => (
+              <div key={index} className="skeleton skeleton-item"></div>
+            ))}
+          </div>
+        ) : results.length === 0 ? (
           <div className="alert alert-info">
             No results available for the {currentYear} season.
           </div>
