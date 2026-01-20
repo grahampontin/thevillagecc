@@ -8,6 +8,35 @@ namespace TheVillageCC.Web.Charts
 {
     internal static class ChartBuilder
     {
+        // Default color palette for charts
+        private static readonly List<string> DefaultColors = new List<string>
+        {
+            "rgba(54, 162, 235, 0.8)",   // Blue
+            "rgba(255, 99, 132, 0.8)",   // Red
+            "rgba(75, 192, 192, 0.8)",   // Teal
+            "rgba(255, 206, 86, 0.8)",   // Yellow
+            "rgba(153, 102, 255, 0.8)",  // Purple
+            "rgba(255, 159, 64, 0.8)",   // Orange
+            "rgba(199, 199, 199, 0.8)",  // Grey
+            "rgba(83, 102, 255, 0.8)",   // Indigo
+            "rgba(255, 99, 255, 0.8)",   // Pink
+            "rgba(99, 255, 132, 0.8)"    // Green
+        };
+
+        private static readonly List<string> DefaultBorderColors = new List<string>
+        {
+            "rgba(54, 162, 235, 1)",     // Blue
+            "rgba(255, 99, 132, 1)",     // Red
+            "rgba(75, 192, 192, 1)",     // Teal
+            "rgba(255, 206, 86, 1)",     // Yellow
+            "rgba(153, 102, 255, 1)",    // Purple
+            "rgba(255, 159, 64, 1)",     // Orange
+            "rgba(199, 199, 199, 1)",    // Grey
+            "rgba(83, 102, 255, 1)",     // Indigo
+            "rgba(255, 99, 255, 1)",     // Pink
+            "rgba(99, 255, 132, 1)"      // Green
+        };
+
         public static ChartJsConfig BuildBattingTimelineChart(int playerId)
         {
             var player = new Player(playerId);
@@ -88,6 +117,34 @@ namespace TheVillageCC.Web.Charts
         private static ChartJsConfig BuildChartJsConfig(string type, List<string> labels, string title,
             params ChartJsDataSet[] dataSets)
         {
+            // Apply colors to datasets based on chart type
+            for (int i = 0; i < dataSets.Length; i++)
+            {
+                var dataset = dataSets[i];
+                
+                if (type == "pie" || type == "doughnut")
+                {
+                    // For pie/doughnut charts, use multiple colors (one per data point)
+                    var backgroundColors = new List<string>();
+                    var borderColors = new List<string>();
+                    for (int j = 0; j < dataset.data.Count; j++)
+                    {
+                        backgroundColors.Add(DefaultColors[j % DefaultColors.Count]);
+                        borderColors.Add(DefaultBorderColors[j % DefaultBorderColors.Count]);
+                    }
+                    dataset.backgroundColor = backgroundColors;
+                    dataset.borderColor = borderColors;
+                    dataset.borderWidth = 1;
+                }
+                else
+                {
+                    // For other charts (line, bar, radar), use one color per dataset
+                    dataset.backgroundColor = DefaultColors[i % DefaultColors.Count];
+                    dataset.borderColor = DefaultBorderColors[i % DefaultBorderColors.Count];
+                    dataset.borderWidth = 2;
+                }
+            }
+            
             return new ChartJsConfig()
             {
                 type = type,
