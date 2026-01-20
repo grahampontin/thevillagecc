@@ -77,8 +77,11 @@ const Results: React.FC = () => {
       <>
         <Header />
         <main className="container">
-          <div className="text-center mt-5">
-            <p>Loading...</p>
+          <div className="skeleton skeleton-header" aria-label="Loading results"></div>
+          <div className="list-group list-group-flush">
+            {[...Array(5)].map((_, index) => (
+              <div key={index} className="skeleton skeleton-item"></div>
+            ))}
           </div>
         </main>
         <Footer />
