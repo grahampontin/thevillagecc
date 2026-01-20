@@ -17,6 +17,8 @@ interface MatchReport {
   ReportImage: string;
 }
 
+const SKELETON_ITEMS_COUNT = 5;
+
 const Results: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [results, setResults] = useState<MatchReport[]>([]);
@@ -78,8 +80,8 @@ const Results: React.FC = () => {
         <Header />
         <main className="container">
           <div className="skeleton skeleton-header" aria-label="Loading results"></div>
-          <div className="list-group list-group-flush">
-            {[...Array(5)].map((_, index) => (
+          <div className="list-group list-group-flush" aria-hidden="true">
+            {[...Array(SKELETON_ITEMS_COUNT)].map((_, index) => (
               <div key={index} className="skeleton skeleton-item"></div>
             ))}
           </div>

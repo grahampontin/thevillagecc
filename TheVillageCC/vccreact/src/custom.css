@@ -129,7 +129,8 @@ body {
 
 .skeleton-header {
   height: 48px;
-  width: 250px;
+  width: 100%;
+  max-width: 250px;
   margin: 20px auto;
 }
 
@@ -137,4 +138,5 @@ body {
   height: 80px;
   margin-bottom: 10px;
   border-radius: 8px;
+  width: 100%;
 }
