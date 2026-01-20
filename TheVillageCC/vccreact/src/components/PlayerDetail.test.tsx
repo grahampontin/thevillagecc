@@ -43,6 +43,69 @@ const mockPlayerDetailData = {
   }
 };
 
+const mockBattingChartData = {
+  type: 'line',
+  data: {
+    labels: ['Match 1', 'Match 2', 'Match 3'],
+    datasets: [
+      {
+        label: 'Runs',
+        data: [50, 30, 75],
+        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 2
+      },
+      {
+        label: 'Average',
+        data: [50, 40, 51.67],
+        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 2
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Batting Timeline'
+      },
+      legend: {
+        display: false
+      }
+    }
+  }
+};
+
+const mockBowlingChartData = {
+  type: 'bar',
+  data: {
+    labels: ['2020', '2021', '2022'],
+    datasets: [
+      {
+        label: 'Wickets',
+        data: [5, 8, 12],
+        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 2
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Wickets by Season'
+      },
+      legend: {
+        display: false
+      }
+    }
+  }
+};
+
 describe('PlayerDetail', () => {
   beforeEach(() => {
     (global.fetch as jest.Mock).mockClear();
@@ -118,5 +181,40 @@ describe('PlayerDetail', () => {
     await waitFor(() => {
       expect(screen.getByText(/Failed to load player details/i)).toBeInTheDocument();
     });
+  });
+
+  test('chart data includes color properties', async () => {
+    // Mock all the API calls
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockPlayerDetailData,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockBattingChartData,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockBowlingChartData,
+      });
+
+    renderWithRouter('1');
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/John Doe/i).length).toBeGreaterThan(0);
+    });
+
+    // Verify the chart API was called
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/stats/chart/1/battingTimeline');
+      expect(global.fetch).toHaveBeenCalledWith('/api/stats/chart/1/wicketsBySeason');
+    });
+
+    // Verify that our mock chart data has the color properties
+    expect(mockBattingChartData.data.datasets[0].backgroundColor).toBeDefined();
+    expect(mockBattingChartData.data.datasets[0].borderColor).toBeDefined();
+    expect(mockBowlingChartData.data.datasets[0].backgroundColor).toBeDefined();
+    expect(mockBowlingChartData.data.datasets[0].borderColor).toBeDefined();
   });
 });
