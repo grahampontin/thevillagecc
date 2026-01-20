@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-balham.css';
+import { ModuleRegistry, AllCommunityModule, themeBalham } from 'ag-grid-community';
 import Header from './Header';
 import Footer from './Footer';
 import { ColDef } from 'ag-grid-community';
@@ -415,11 +413,12 @@ const Stats: React.FC = () => {
               >
                 {activeTab === tab.id && (
                   <div
-                    className="ag-theme-balham stats-grid"
+                    className="stats-grid"
                     style={{ height: 'calc(100vh - 400px)', width: '100%' }}
                   >
                     {statsData[tab.id] && (
                       <AgGridReact
+                        theme={themeBalham}
                         columnDefs={statsData[tab.id].gridOptions.columnDefs}
                         rowData={statsData[tab.id].gridOptions.rowData}
                         defaultColDef={defaultColDef}

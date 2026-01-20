@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { AgGridReact } from 'ag-grid-react';
-import { ModuleRegistry, AllCommunityModule, ColDef } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
+import { ModuleRegistry, AllCommunityModule, ColDef, themeMaterial } from 'ag-grid-community';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -443,8 +441,9 @@ const PlayerDetail: React.FC = () => {
                         <hr />
                         Batting and Fielding
                       </div>
-                      <div className="ag-theme-material mb-3" style={{ width: '100%' }}>
+                      <div className="mb-3" style={{ width: '100%' }}>
                         <AgGridReact
+                          theme={themeMaterial}
                           columnDefs={battingStats.gridOptions.columnDefs}
                           rowData={battingStats.gridOptions.rowData}
                           pinnedBottomRowData={battingStats.gridOptions.footerRow ? [battingStats.gridOptions.footerRow] : undefined}
@@ -518,8 +517,9 @@ const PlayerDetail: React.FC = () => {
                         <hr />
                         Bowling
                       </div>
-                      <div className="ag-theme-material mb-3" style={{ width: '100%' }}>
+                      <div className="mb-3" style={{ width: '100%' }}>
                         <AgGridReact
+                          theme={themeMaterial}
                           columnDefs={bowlingStats.gridOptions.columnDefs}
                           rowData={bowlingStats.gridOptions.rowData}
                           pinnedBottomRowData={bowlingStats.gridOptions.footerRow ? [bowlingStats.gridOptions.footerRow] : undefined}
@@ -633,8 +633,9 @@ const PlayerDetail: React.FC = () => {
                         statsData && statsData.map((stats, index) => (
                           <div key={index}>
                             <div className="stats-grid-divider">{stats.statsType}</div>
-                            <div className="ag-theme-material" style={{ width: '100%' }}>
+                            <div style={{ width: '100%' }}>
                               <AgGridReact
+                                theme={themeMaterial}
                                 columnDefs={stats.gridOptions.columnDefs}
                                 rowData={stats.gridOptions.rowData}
                                 domLayout="autoHeight"
@@ -678,8 +679,9 @@ const PlayerDetail: React.FC = () => {
                         matchesData && (
                           <>
                             <div className="stats-grid-divider">All Matches</div>
-                            <div className="ag-theme-material" style={{ width: '100%' }}>
+                            <div style={{ width: '100%' }}>
                               <AgGridReact
+                                theme={themeMaterial}
                                 columnDefs={matchesData.columnDefs}
                                 rowData={matchesData.rowData}
                                 domLayout="autoHeight"
