@@ -66,7 +66,7 @@ const Stats: React.FC = () => {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const response = await fetch('/api/venues');
+        const response = await fetch('/api/refdata/venues');
         if (!response.ok) {
           throw new Error('Failed to fetch venues');
         }
