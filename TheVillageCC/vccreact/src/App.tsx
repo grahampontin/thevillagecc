@@ -9,6 +9,7 @@ import Committee from './components/Committee';
 import Fixtures from './components/Fixtures';
 import Results from './components/Results';
 import Stats from './components/Stats';
+import PlayerDetail from './components/PlayerDetail';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/fixtures" element={<Fixtures />} />
           <Route path="/results" element={<Results />} />
           <Route path="/stats" element={<Stats />} />
+          <Route path="/player/:playerId" element={<PlayerDetail />} />
         </Routes>
       </div>
     </Router>
