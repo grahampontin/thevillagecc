@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -24,9 +24,11 @@ const Results: React.FC = () => {
   const [results, setResults] = useState<MatchReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Get season from query params or use current year - calculate immediately
-  const seasonParam = searchParams.get('season');
-  const currentYear = seasonParam ? parseInt(seasonParam) : new Date().getFullYear();
+  // Get season from query params or use current year - calculate immediately and memoize
+  const currentYear = useMemo(() => {
+    const seasonParam = searchParams.get('season');
+    return seasonParam ? parseInt(seasonParam) : new Date().getFullYear();
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -54,7 +56,7 @@ const Results: React.FC = () => {
     };
 
     fetchResults();
-  }, [searchParams, currentYear]);
+  }, [currentYear]);
 
   const navigateToSeason = (year: number) => {
     setSearchParams({ season: year.toString() });
