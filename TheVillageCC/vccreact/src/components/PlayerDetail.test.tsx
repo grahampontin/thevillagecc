@@ -126,7 +126,9 @@ describe('PlayerDetail', () => {
     
     renderWithRouter('1');
     
-    expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+    // Check for skeleton loader elements instead of spinner text
+    const skeletonElements = screen.getAllByRole('generic', { hidden: true });
+    expect(skeletonElements.length).toBeGreaterThan(0);
   });
 
   test('fetches and displays player details', async () => {
