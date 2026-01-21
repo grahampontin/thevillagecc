@@ -40,6 +40,11 @@ const Fixtures: React.FC = () => {
   // Helper function to format date for calendar
   const formatDateForCalendar = (dateString: string): string => {
     const date = new Date(dateString);
+    // Check if date is valid before calling toISOString
+    if (isNaN(date.getTime())) {
+      console.error(`Invalid date string: ${dateString}`);
+      return '';
+    }
     return date.toISOString().split('T')[0];
   };
 
@@ -76,21 +81,30 @@ const Fixtures: React.FC = () => {
 
         const matches: Match[] = await response.json();
 
-        // Transform to display format
-        const displayFixtures = matches.map(match => ({
-          Id: match.Id,
-          MatchDateString: new Date(match.Date).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-          }),
-          MatchDate: match.Date,
-          HomeTeamName: match.IsHome ? 'The Village CC' : match.Opposition.Name,
-          AwayTeamName: match.IsHome ? match.Opposition.Name : 'The Village CC',
-          VenueName: match.Venue.Name,
-          Type: match.Type,
-          IsHome: match.IsHome
-        }));
+        // Transform to display format, filtering out invalid dates
+        const displayFixtures = matches
+          .filter(match => {
+            const date = new Date(match.Date);
+            const isValid = !isNaN(date.getTime());
+            if (!isValid) {
+              console.error(`Skipping fixture with invalid date: ${match.Date}`, match);
+            }
+            return isValid;
+          })
+          .map(match => ({
+            Id: match.Id,
+            MatchDateString: new Date(match.Date).toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric'
+            }),
+            MatchDate: match.Date,
+            HomeTeamName: match.IsHome ? 'The Village CC' : match.Opposition.Name,
+            AwayTeamName: match.IsHome ? match.Opposition.Name : 'The Village CC',
+            VenueName: match.Venue.Name,
+            Type: match.Type,
+            IsHome: match.IsHome
+          }));
 
         setFixtures(displayFixtures);
       } catch (error) {

@@ -140,4 +140,86 @@ describe('Fixtures', () => {
     // Ensure "Invalid Date" is not present anywhere
     expect(screen.queryByText(/Invalid Date/i)).not.toBeInTheDocument();
   });
+
+  test('filters out fixtures with invalid dates', async () => {
+    const fixturesWithInvalidDate = [
+      ...mockFixtures,
+      {
+        Id: 3,
+        Date: 'invalid-date-string',
+        Venue: { Id: 3, Name: 'Test Ground' },
+        Opposition: { Id: 3, Name: 'Test Team' },
+        Type: 'Friendly',
+        IsHome: true
+      },
+      {
+        Id: 4,
+        Date: '',
+        Venue: { Id: 4, Name: 'Another Ground' },
+        Opposition: { Id: 4, Name: 'Another Team' },
+        Type: 'League',
+        IsHome: false
+      }
+    ];
+
+    // Mock console.error to check it's called
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => fixturesWithInvalidDate,
+    });
+
+    render(<Fixtures />);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Loading/i)).not.toBeInTheDocument();
+    });
+
+    // Should only display the 2 valid fixtures
+    await waitFor(() => {
+      const dateElements = screen.getAllByText(/15\/06\/2024/);
+      expect(dateElements.length).toBeGreaterThan(0);
+    });
+
+    // Should have logged errors for invalid dates
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Skipping fixture with invalid date'),
+      expect.anything()
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  test('formatDateForCalendar handles invalid dates gracefully', async () => {
+    const fixturesWithEdgeCase = [
+      {
+        Id: 1,
+        Date: '2024-06-15T12:00:00Z',
+        Venue: { Id: 1, Name: 'Valid Ground' },
+        Opposition: { Id: 1, Name: 'Valid Team' },
+        Type: 'Friendly',
+        IsHome: true
+      }
+    ];
+
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => fixturesWithEdgeCase,
+    });
+
+    render(<Fixtures />);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Loading/i)).not.toBeInTheDocument();
+    });
+
+    // The fixture should render without errors
+    await waitFor(() => {
+      expect(screen.getAllByText(/Valid Team/).length).toBeGreaterThan(0);
+    });
+
+    // No error should appear
+    expect(screen.queryByText(/Invalid Date/i)).not.toBeInTheDocument();
+  });
 });
