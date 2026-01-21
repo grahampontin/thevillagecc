@@ -87,6 +87,31 @@ interface ChartDataWrapper {
 // Constants
 const BACKGROUND_IMAGE_URL = '/Images/newCarousel/slide1.jpg';
 
+// Helper function to get chart title based on chart type
+const getChartTitle = (chartType: string): string => {
+  const titles: Record<string, string> = {
+    'battingTimeline': 'Batting Timeline',
+    'modesOfDismissal': 'Modes of Dismissal',
+    'scoringZones': 'Scoring Areas',
+    'strikeRates': 'Strike Rates',
+    'wicketsBySeason': 'Wickets by Season',
+    'averageBySeason': 'Average by Season',
+    'bowlingDismissalsByType': 'Dismissal Types',
+  };
+  return titles[chartType] || 'Select Chart';
+};
+
+// Skeleton loading components
+const SkeletonLoader: React.FC = () => (
+  <div className="skeleton-container">
+    <span className="visually-hidden">Loading...</span>
+    <div className="skeleton skeleton-header" aria-hidden="true"></div>
+    <div className="skeleton skeleton-item" aria-hidden="true"></div>
+    <div className="skeleton skeleton-item" aria-hidden="true"></div>
+    <div className="skeleton skeleton-item" aria-hidden="true"></div>
+  </div>
+);
+
 const PlayerDetail: React.FC = () => {
   const { playerId } = useParams<{ playerId: string }>();
   const [playerDetail, setPlayerDetail] = useState<PlayerDetailData | null>(null);
@@ -256,11 +281,7 @@ const PlayerDetail: React.FC = () => {
       <>
         <Header />
         <main className="container">
-          <div className="text-center mt-5">
-            <div className="spinner-border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
+          <SkeletonLoader />
         </main>
         <Footer />
       </>
@@ -454,6 +475,7 @@ const PlayerDetail: React.FC = () => {
                           rowData={battingStats.gridOptions.rowData}
                           pinnedBottomRowData={battingStats.gridOptions.footerRow ? [battingStats.gridOptions.footerRow] : undefined}
                           domLayout="autoHeight"
+                          headerHeight={40}
                           components={{
                             LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
                             LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
@@ -476,7 +498,7 @@ const PlayerDetail: React.FC = () => {
                               data-bs-toggle="dropdown" 
                               aria-expanded="false"
                             >
-                              {battingChartData.options?.plugins?.title?.text || 'Select Chart'}
+                              {getChartTitle(battingChartType)}
                             </button>
                             <ul className="dropdown-menu">
                               <li>
@@ -530,6 +552,7 @@ const PlayerDetail: React.FC = () => {
                           rowData={bowlingStats.gridOptions.rowData}
                           pinnedBottomRowData={bowlingStats.gridOptions.footerRow ? [bowlingStats.gridOptions.footerRow] : undefined}
                           domLayout="autoHeight"
+                          headerHeight={40}
                           components={{
                             LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
                             LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
@@ -552,7 +575,7 @@ const PlayerDetail: React.FC = () => {
                               data-bs-toggle="dropdown" 
                               aria-expanded="false"
                             >
-                              {bowlingChartData.options?.plugins?.title?.text || 'Select Chart'}
+                              {getChartTitle(bowlingChartType)}
                             </button>
                             <ul className="dropdown-menu">
                               <li>
@@ -630,10 +653,8 @@ const PlayerDetail: React.FC = () => {
                       </div>
                       
                       {statsLoading ? (
-                        <div className="text-center mt-3">
-                          <div className="spinner-border" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                          </div>
+                        <div className="px-3 mt-3">
+                          <SkeletonLoader />
                         </div>
                       ) : (
                         statsData && statsData.map((stats, index) => (
@@ -645,6 +666,7 @@ const PlayerDetail: React.FC = () => {
                                 columnDefs={stats.gridOptions.columnDefs}
                                 rowData={stats.gridOptions.rowData}
                                 domLayout="autoHeight"
+                                headerHeight={40}
                                 components={{
                                   LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
                                   LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
@@ -676,10 +698,8 @@ const PlayerDetail: React.FC = () => {
                       </div>
                       
                       {matchesLoading ? (
-                        <div className="text-center mt-3">
-                          <div className="spinner-border" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                          </div>
+                        <div className="px-3 mt-3">
+                          <SkeletonLoader />
                         </div>
                       ) : (
                         matchesData && (
@@ -691,6 +711,7 @@ const PlayerDetail: React.FC = () => {
                                 columnDefs={matchesData.columnDefs}
                                 rowData={matchesData.rowData}
                                 domLayout="autoHeight"
+                                headerHeight={40}
                                 components={{
                                   LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
                                   LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
