@@ -104,10 +104,11 @@ const getChartTitle = (chartType: string): string => {
 // Skeleton loading components
 const SkeletonLoader: React.FC = () => (
   <div className="skeleton-container">
-    <div className="skeleton skeleton-header"></div>
-    <div className="skeleton skeleton-item"></div>
-    <div className="skeleton skeleton-item"></div>
-    <div className="skeleton skeleton-item"></div>
+    <span className="visually-hidden">Loading...</span>
+    <div className="skeleton skeleton-header" aria-hidden="true"></div>
+    <div className="skeleton skeleton-item" aria-hidden="true"></div>
+    <div className="skeleton skeleton-item" aria-hidden="true"></div>
+    <div className="skeleton skeleton-item" aria-hidden="true"></div>
   </div>
 );
 
