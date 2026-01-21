@@ -22,7 +22,7 @@ namespace TheVillageCC.Web.Domain
                 Id = match.ID,
                 Venue = VenueV1.FromInternal(match.Venue),
                 Opposition = TeamV1.FromInternal(match.Opposition),
-                Date = match.MatchDate.ToShortDateString(),
+                Date = match.MatchDate.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                 Type = match.Type.ToString(),
                 IsHome = match.HomeOrAway == HomeOrAway.Home
             };
