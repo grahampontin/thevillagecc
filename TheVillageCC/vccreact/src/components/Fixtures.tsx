@@ -83,17 +83,20 @@ const Fixtures: React.FC = () => {
 
         // Transform to display format, filtering out invalid dates
         const displayFixtures = matches
-          .filter(match => {
+          .map(match => {
             const date = new Date(match.Date);
+            return { match, date };
+          })
+          .filter(({ match, date }) => {
             const isValid = !isNaN(date.getTime());
             if (!isValid) {
               console.error(`Skipping fixture with invalid date: ${match.Date}`, match);
             }
             return isValid;
           })
-          .map(match => ({
+          .map(({ match, date }) => ({
             Id: match.Id,
-            MatchDateString: new Date(match.Date).toLocaleDateString('en-GB', {
+            MatchDateString: date.toLocaleDateString('en-GB', {
               day: '2-digit',
               month: '2-digit',
               year: 'numeric'
