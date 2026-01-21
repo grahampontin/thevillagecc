@@ -513,7 +513,7 @@ const PlayerDetail: React.FC = () => {
                               </li>
                             </ul>
                           </div>
-                          <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                          <div key={battingChartType} style={{ maxWidth: '600px', margin: '0 auto' }}>
                             {renderChart(battingChartData)}
                           </div>
                         </div>
@@ -581,7 +581,7 @@ const PlayerDetail: React.FC = () => {
                               </li>
                             </ul>
                           </div>
-                          <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                          <div key={bowlingChartType} style={{ maxWidth: '600px', margin: '0 auto' }}>
                             {renderChart(bowlingChartData)}
                           </div>
                         </div>
