@@ -416,6 +416,15 @@ const Stats: React.FC = () => {
                     className="stats-grid"
                     style={{ height: 'calc(100vh - 400px)', width: '100%' }}
                   >
+                    {isLoading && !statsData[tab.id] && (
+                      <div className="skeleton-grid">
+                        <span className="visually-hidden">Loading...</span>
+                        <div className="skeleton skeleton-grid-header" aria-hidden="true"></div>
+                        {Array.from({ length: 10 }).map((_, index) => (
+                          <div key={index} className="skeleton skeleton-grid-row" aria-hidden="true"></div>
+                        ))}
+                      </div>
+                    )}
                     {statsData[tab.id] && (
                       <AgGridReact
                         theme={themeBalham}
