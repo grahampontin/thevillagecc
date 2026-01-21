@@ -116,4 +116,28 @@ describe('Fixtures', () => {
       expect(screen.getByText(/No upcoming fixtures at this time/i)).toBeInTheDocument();
     });
   });
+
+  test('displays dates correctly and not as "Invalid Date"', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockFixtures,
+    });
+
+    render(<Fixtures />);
+
+    // Wait for loading to complete and the date to be rendered
+    await waitFor(() => {
+      expect(screen.queryByText(/Loading/i)).not.toBeInTheDocument();
+    });
+
+    // Check that the date is formatted correctly (UK format: DD/MM/YYYY)
+    // There should be at least one element with this date
+    await waitFor(() => {
+      const dateElements = screen.getAllByText(/15\/06\/2024/);
+      expect(dateElements.length).toBeGreaterThan(0);
+    });
+    
+    // Ensure "Invalid Date" is not present anywhere
+    expect(screen.queryByText(/Invalid Date/i)).not.toBeInTheDocument();
+  });
 });
