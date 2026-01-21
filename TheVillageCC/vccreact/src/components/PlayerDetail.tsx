@@ -10,13 +10,14 @@ import {
   LineElement,
   BarElement,
   ArcElement,
+  RadialLinearScale,
   Title,
   Tooltip,
   Legend,
   ChartData,
   ChartOptions,
 } from 'chart.js';
-import { Line, Bar, Pie } from 'react-chartjs-2';
+import { Line, Bar, Pie, Doughnut, Radar } from 'react-chartjs-2';
 import Header from './Header';
 import Footer from './Footer';
 import LinkToPlayerStatsRenderer from './cellRenderers/LinkToPlayerStatsRenderer';
@@ -33,6 +34,7 @@ ChartJS.register(
   LineElement,
   BarElement,
   ArcElement,
+  RadialLinearScale,
   Title,
   Tooltip,
   Legend
@@ -77,9 +79,9 @@ interface PlayerDetailData {
 interface StatsDataArray extends Array<StatsData> {}
 
 interface ChartDataWrapper {
-  type: 'line' | 'bar' | 'pie';
-  data: ChartData<'line' | 'bar' | 'pie'>;
-  options?: ChartOptions<'line' | 'bar' | 'pie'>;
+  type: 'line' | 'bar' | 'pie' | 'doughnut' | 'radar';
+  data: ChartData<'line' | 'bar' | 'pie' | 'doughnut' | 'radar'>;
+  options?: ChartOptions<'line' | 'bar' | 'pie' | 'doughnut' | 'radar'>;
 }
 
 // Constants
@@ -240,6 +242,10 @@ const PlayerDetail: React.FC = () => {
       return <Bar data={chartData.data as ChartData<'bar'>} options={chartData.options as ChartOptions<'bar'>} />;
     } else if (chartType === 'pie') {
       return <Pie data={chartData.data as ChartData<'pie'>} options={chartData.options as ChartOptions<'pie'>} />;
+    } else if (chartType === 'doughnut') {
+      return <Doughnut data={chartData.data as ChartData<'doughnut'>} options={chartData.options as ChartOptions<'doughnut'>} />;
+    } else if (chartType === 'radar') {
+      return <Radar data={chartData.data as ChartData<'radar'>} options={chartData.options as ChartOptions<'radar'>} />;
     }
     
     return null;
