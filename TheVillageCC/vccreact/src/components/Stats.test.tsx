@@ -38,12 +38,9 @@ describe('Stats Component', () => {
 
     // Wait for component to mount and start loading
     await waitFor(() => {
-      // Check for skeleton loader elements
-      const skeletonElements = screen.getAllByRole('generic', { hidden: true });
-      const hasSkeletonClass = skeletonElements.some(
-        (el) => el.className.includes('skeleton')
-      );
-      expect(hasSkeletonClass).toBe(true);
+      // Check for skeleton loader elements using class selector
+      const skeletonElements = document.querySelectorAll('.skeleton');
+      expect(skeletonElements.length).toBeGreaterThan(0);
     }, { timeout: 2000 });
   });
 
