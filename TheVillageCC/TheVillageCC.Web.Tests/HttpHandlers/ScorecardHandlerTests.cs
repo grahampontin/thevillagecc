@@ -20,7 +20,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             handler = new ScorecardHandler(mockDao.Object);
         }
 
-        [Fact(Skip = "needs more mocking in middle")]
+        [Fact(Skip = "needs fowData to accept mock dao")]
         public void ProcessRequest_GetScorecard_WithValidMatchId_ReturnsStatusCode200()
         {
             // Arrange
@@ -61,7 +61,7 @@ namespace TheVillageCC.Web.Tests.HttpHandlers
             Assert.Equal(400, context.Response.StatusCode);
         }
 
-        [Fact(Skip = "needs more mocking in middle")]
+        [Fact(Skip = "needs fowData to accept mock dao")]
         public void ProcessRequest_PostScorecard_WithValidMatchId_ReturnsStatusCode200()
         {
             // Arrange
