@@ -14,6 +14,8 @@
     <!-- CricketClub packages - from Azure DevOps feed -->
     <!-- NOTE: These packages require access to the private Azure DevOps feed -->
     <!-- When building with network access, these will be resolved from the feed configured in nuget.config -->
+    <!-- Wildcard versions (*-*) are used intentionally to always get the latest .NET 9 compatible versions -->
+    <!-- TODO: Pin to specific versions once the package versions are stabilized -->
     <PackageReference Include="CricketClubAccounts" Version="*-*" />
     <PackageReference Include="CricketClubDAL" Version="*-*" />
     <PackageReference Include="CricketClubDomain" Version="*-*" />

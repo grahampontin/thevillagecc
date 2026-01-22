@@ -22,6 +22,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <!-- CricketClub packages -->
+    <!-- Wildcard versions (*-*) match the main project to get latest .NET 9 compatible versions -->
+    <!-- TODO: Pin to specific versions once the package versions are stabilized -->
     <PackageReference Include="CricketClubAccounts" Version="*-*" />
     <PackageReference Include="CricketClubDAL" Version="*-*" />
     <PackageReference Include="CricketClubDomain" Version="*-*" />

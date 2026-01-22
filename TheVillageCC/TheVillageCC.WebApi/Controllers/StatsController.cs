@@ -14,10 +14,12 @@ namespace TheVillageCC.WebApi.Controllers
     public class StatsController : ControllerBase
     {
         private readonly IWebHostEnvironment environment;
+        private readonly IDao database;
 
-        public StatsController(IWebHostEnvironment environment)
+        public StatsController(IWebHostEnvironment environment, IDao database)
         {
             this.environment = environment;
+            this.database = database;
         }
 
         [HttpPost("query")]
@@ -161,7 +163,7 @@ namespace TheVillageCC.WebApi.Controllers
 
         private void HandleFamilyTree(IHandlerContext context)
         {
-            var allPlayers = Player.GetAll(true, new Dao());
+            var allPlayers = Player.GetAll(true, database);
             var familyTreeNodes = allPlayers.Select(p => new FamilyTreeNode()
             {
                 Id = p.Id,

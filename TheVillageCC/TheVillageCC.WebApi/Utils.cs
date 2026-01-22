@@ -1,11 +1,11 @@
-﻿using System;
-using System.Web;
+﻿#nullable disable
+using System;
 
-namespace TheVillageCC.Web
+namespace TheVillageCC.WebApi
 {
     public class Utils
     {
-        public static Q ParseEnumOrThrow<T, Q>(String enumAsString, Func<T, Q> parsedAction ) where T : struct
+        public static Q ParseEnumOrThrow<T, Q>(string enumAsString, Func<T, Q> parsedAction) where T : struct
         {
             if (Enum.TryParse<T>(enumAsString, true, out var award))
             {
@@ -13,8 +13,7 @@ namespace TheVillageCC.Web
             }
             else
             {
-                var badRequestException = new HttpRequestValidationException("Enum value " + enumAsString + " is not recognised");
-                throw badRequestException;
+                throw new ArgumentException($"Enum value '{enumAsString}' is not recognized for type {typeof(T).Name}");
             }
         }
     }
