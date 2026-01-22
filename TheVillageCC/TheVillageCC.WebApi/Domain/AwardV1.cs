@@ -24,15 +24,14 @@ namespace TheVillageCC.WebApi.Domain
 
         public static AwardData ToInternal(AwardV1 entity)
         {
-            return Utils.ParseEnumOrThrow<Award, AwardData>(entity.Award, asString => new AwardData
+            return Utils.ParseEnumOrThrow<Award, AwardData>(entity.Award, parsedAward => new AwardData
             {
                 Year = entity.Year,
-                Award = (Award)System.Enum.Parse(typeof(Award), entity.Award),
+                Award = parsedAward,
                 PlayerId = entity.PlayerId,
                 Data = entity.Data,
                 Id = entity.Id
             });
-            
         }
     }
 }

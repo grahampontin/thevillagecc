@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using CricketClubDomain;
 using CricketClubMiddle.Stats;
-using TheVillageCC.Web.Domain;
+using TheVillageCC.WebApi.Domain;
 
 namespace TheVillageCC.WebApi.Stats
 {
@@ -19,7 +19,7 @@ namespace TheVillageCC.WebApi.Stats
             new StatsColumnDefinitionV1("Wkts Taken", "wicketsTaken"),
             new StatsColumnDefinitionV1("Wkts Lost", "wicketsLost"),
             new StatsColumnDefinitionV1("LBWs Given", "lbwsGiven"),
-            new StatsColumnDefinitionV1("LBWs Conceded", "lbwsConceeded"),
+            new StatsColumnDefinitionV1("LBWs Conceded", "lbwsConceded"),
        
         };
     
@@ -33,7 +33,7 @@ namespace TheVillageCC.WebApi.Stats
         public int wicketsTaken {get; private set; }
         public int wicketsLost {get; private set; }
         public int lbwsGiven {get; private set; }
-        public int lbwsConceeded {get; private set; }
+        public int lbwsConceded {get; private set; }
         public int matches {get; private set; }
     
         public TeamStatsRowData(TeamStats teamStats)
@@ -47,7 +47,7 @@ namespace TheVillageCC.WebApi.Stats
             wicketsTaken = teamStats.GetWicketsTaken();
             wicketsLost = teamStats.GetWicketsLost();
             lbwsGiven = teamStats.GetNumberOfDismissals(ModesOfDismissal.LBW);
-            lbwsConceeded = teamStats.GetNumberOfWickets(ModesOfDismissal.LBW);
+            lbwsConceded = teamStats.GetNumberOfWickets(ModesOfDismissal.LBW);
             matches = teamStats.GetMatchesPlayed();           
         }
     }

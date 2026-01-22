@@ -18,7 +18,6 @@ namespace TheVillageCC.WebApi.Domain
         {
         }
 
-
         public static VenueV1 FromInternal(Venue venue)
         {
             return new VenueV1()
@@ -30,12 +29,7 @@ namespace TheVillageCC.WebApi.Domain
                 Latitude = venue.Coordinates.Item1,
                 Longitude = venue.Coordinates.Item2
             };
-
-
-
         }
-    
-
-
     }
+}
 }
