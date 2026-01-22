@@ -1,6 +1,6 @@
 ﻿using CricketClubMiddle;
 
-namespace TheVillageCC.Web.Stats
+namespace TheVillageCC.WebApi.Stats
 {
     public class InningsPerformanceStatsV1
     {

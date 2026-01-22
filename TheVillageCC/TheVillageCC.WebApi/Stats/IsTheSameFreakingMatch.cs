@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using CricketClubMiddle;
 
-namespace TheVillageCC.Web.Stats
+namespace TheVillageCC.WebApi.Stats
 {
     public class IsTheSameFreakingMatch : EqualityComparer<Match>
     {

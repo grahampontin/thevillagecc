@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace TheVillageCC.Web.Domain
+namespace TheVillageCC.WebApi.Domain
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "NotAccessedField.Global")]

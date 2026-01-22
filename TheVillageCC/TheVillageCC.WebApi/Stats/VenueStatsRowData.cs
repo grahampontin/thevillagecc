@@ -7,7 +7,7 @@ using TheVillageCC.Web.Domain;
 // ReSharper disable ArrangeObjectCreationWhenTypeEvident
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace TheVillageCC.Web.Stats
+namespace TheVillageCC.WebApi.Stats
 {
     public class VenueStatsRowData {
         public static List<StatsColumnDefinitionV1> ColumnDefinitions = new List<StatsColumnDefinitionV1>()

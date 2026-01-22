@@ -1,7 +1,7 @@
 ﻿using CricketClubDomain;
 using CricketClubMiddle;
 
-namespace TheVillageCC.Web.Domain
+namespace TheVillageCC.WebApi.Domain
 {
     /// <summary>
     /// Summary description for MatchV1

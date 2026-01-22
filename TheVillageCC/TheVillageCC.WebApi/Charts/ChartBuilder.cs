@@ -4,7 +4,7 @@ using CricketClubDomain;
 using CricketClubMiddle;
 using CricketClubMiddle.Stats;
 
-namespace TheVillageCC.Web.Charts
+namespace TheVillageCC.WebApi.Charts
 {
     internal static class ChartBuilder
     {

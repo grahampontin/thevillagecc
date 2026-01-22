@@ -3,7 +3,7 @@ using CricketClubDomain;
 using CricketClubMiddle;
 using CricketClubMiddle.Stats;
 
-namespace TheVillageCC.Web.Domain
+namespace TheVillageCC.WebApi.Domain
 {
     [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]

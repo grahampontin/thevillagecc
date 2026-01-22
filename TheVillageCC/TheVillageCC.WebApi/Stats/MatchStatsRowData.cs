@@ -9,7 +9,7 @@ using TheVillageCC.Web.Domain;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 // ReSharper disable ArrangeObjectCreationWhenTypeEvident
 
-namespace TheVillageCC.Web.Stats
+namespace TheVillageCC.WebApi.Stats
 {
     public class MatchStatsRowData
     {

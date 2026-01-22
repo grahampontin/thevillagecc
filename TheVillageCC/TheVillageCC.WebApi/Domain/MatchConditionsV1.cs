@@ -1,6 +1,6 @@
 ﻿using CricketClubMiddle;
 
-namespace TheVillageCC.Web.Domain
+namespace TheVillageCC.WebApi.Domain
 {
     public class MatchConditionsV1
     {

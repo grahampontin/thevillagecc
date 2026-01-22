@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using TheVillageCC.Web.Domain;
 
-namespace TheVillageCC.Web.Stats
+namespace TheVillageCC.WebApi.Stats
 {
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]

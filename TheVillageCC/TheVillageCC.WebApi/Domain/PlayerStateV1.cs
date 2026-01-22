@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TheVillageCC.Web.Domain
+namespace TheVillageCC.WebApi.Domain
 {
     public class PlayerStateV1
     {

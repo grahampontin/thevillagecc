@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TheVillageCC.Web.Charts
+namespace TheVillageCC.WebApi.Charts
 {
     public class ChartJsDataSet
     {

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using CricketClubDomain;
 
-namespace TheVillageCC.Web.Domain
+namespace TheVillageCC.WebApi.Domain
 {
     public static class MatchStateMapper
     {

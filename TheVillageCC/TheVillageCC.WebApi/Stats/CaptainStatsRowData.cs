@@ -5,7 +5,7 @@ using TheVillageCC.Web.Domain;
 // ReSharper disable ArrangeObjectCreationWhenTypeEvident
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace TheVillageCC.Web.Stats
+namespace TheVillageCC.WebApi.Stats
 {
     public class CaptainStatsRowData
     {

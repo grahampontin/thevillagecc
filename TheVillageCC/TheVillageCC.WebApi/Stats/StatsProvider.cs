@@ -13,7 +13,7 @@ using TheVillageCC.Web.AGGrid;
 using TheVillageCC.Web.Charts;
 using TheVillageCC.Web.Domain;
 
-namespace TheVillageCC.Web.Stats
+namespace TheVillageCC.WebApi.Stats
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]

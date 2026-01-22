@@ -2,7 +2,7 @@
 using System.Linq;
 using CricketClubMiddle;
 
-namespace TheVillageCC.Web.Domain
+namespace TheVillageCC.WebApi.Domain
 {
     public class PlayerV1
     {

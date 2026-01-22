@@ -1,4 +1,4 @@
-﻿namespace TheVillageCC.Web.Charts
+﻿namespace TheVillageCC.WebApi.Charts
 {
     public class ChartJsScale
     {

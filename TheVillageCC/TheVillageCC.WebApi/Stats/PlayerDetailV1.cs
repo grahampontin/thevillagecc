@@ -1,6 +1,6 @@
 ﻿using TheVillageCC.Web.Domain;
 
-namespace TheVillageCC.Web.Stats
+namespace TheVillageCC.WebApi.Stats
 {
     public class PlayerDetailV1
     {

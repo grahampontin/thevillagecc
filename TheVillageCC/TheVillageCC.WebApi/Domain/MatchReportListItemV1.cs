@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using CricketClubDAL;
 using CricketClubMiddle;
 
-namespace TheVillageCC.Web.Domain
+namespace TheVillageCC.WebApi.Domain
 {
     /// <summary>
     /// Domain model for match report list items returned by GetAll endpoint

@@ -3,7 +3,7 @@ using CricketClubDomain;
 using CricketClubMiddle.Stats;
 using TheVillageCC.Web.Domain;
 
-namespace TheVillageCC.Web.Stats
+namespace TheVillageCC.WebApi.Stats
 {
     public class TeamStatsRowData
     {

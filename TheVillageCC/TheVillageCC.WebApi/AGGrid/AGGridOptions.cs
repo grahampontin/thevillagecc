@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using TheVillageCC.Web.Domain;
 
-namespace TheVillageCC.Web.AGGrid
+namespace TheVillageCC.WebApi.AGGrid
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
