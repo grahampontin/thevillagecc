@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Header from './Header';
-import Footer from './Footer';
 
 // Define interfaces for match report data from API
 interface MatchReportListItem {
@@ -24,6 +22,8 @@ interface MatchReport {
   text: string;
   matchId: string;
   imageSrc: string;
+  matchDate: string;
+  resultText: string;
 }
 
 const MAX_REPORT_PREVIEW_LENGTH = 200;
@@ -57,6 +57,7 @@ const Homepage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -100,7 +101,9 @@ const Homepage: React.FC = () => {
             subText,
             text,
             matchId: item.MatchId.toString(),
-            imageSrc
+            imageSrc,
+            matchDate: item.MatchDate,
+            resultText: item.ResultText
           };
         });
         
@@ -120,220 +123,290 @@ const Homepage: React.FC = () => {
   }, []);
 
   return (
-    <>
-      <Header />
-      <main className="container">
-        {/* Carousel */}
-        <div className="hidden md:block relative" id="myCarousel">
-          <div className="relative h-[500px] overflow-hidden">
-            {CAROUSEL_SLIDES.map((slide, index) => (
-              <div
-                key={index}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
-                  index === currentSlide ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
+    <div className="font-sans text-gray-800 bg-gray-50">
+      {/* HEADER */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+          {/* Logo */}
+          <a href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-md border-2 border-seagreen flex items-center justify-center">
+              <div className="w-4 h-4 border-l-2 border-b-2 border-seagreen rotate-[-20deg]"></div>
+            </div>
+            <span className="text-lg font-semibold tracking-wide uppercase text-gray-800">
+              The Village
+            </span>
+          </a>
+
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+            <a href="/awards" className="text-gray-700 hover:text-seagreen transition">About</a>
+            <a href="/fixtures" className="text-gray-700 hover:text-seagreen transition">Fixtures</a>
+            <a href="/results" className="text-gray-700 hover:text-seagreen transition">Results</a>
+            <a href="/stats" className="text-gray-700 hover:text-seagreen transition">Stats</a>
+            <a href="/committee" className="text-gray-700 hover:text-seagreen transition">Committee</a>
+            <a href="/Tours.aspx" className="text-gray-700 hover:text-seagreen transition">Tours</a>
+            <a
+              href="/f7/index.html"
+              className="border border-seagreen text-seagreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-seagreen hover:text-white transition"
+            >
+              Admin
+            </a>
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden text-sm font-medium text-seagreen"
+            aria-label="Open menu"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            Menu
+          </button>
+        </div>
+
+        {/* Mobile Nav */}
+        <nav className={`md:hidden border-t border-gray-200 bg-white ${isMobileMenuOpen ? '' : 'hidden'}`}>
+          <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2 text-sm font-medium">
+            <a href="/awards" className="py-1 text-gray-700 hover:text-seagreen transition">About</a>
+            <a href="/fixtures" className="py-1 text-gray-700 hover:text-seagreen transition">Fixtures</a>
+            <a href="/results" className="py-1 text-gray-700 hover:text-seagreen transition">Results</a>
+            <a href="/stats" className="py-1 text-gray-700 hover:text-seagreen transition">Stats</a>
+            <a href="/committee" className="py-1 text-gray-700 hover:text-seagreen transition">Committee</a>
+            <a href="/Tours.aspx" className="py-1 text-gray-700 hover:text-seagreen transition">Tours</a>
+            <a
+              href="/f7/index.html"
+              className="mt-1 inline-flex items-center justify-center border border-seagreen text-seagreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-seagreen hover:text-white transition w-max"
+            >
+              Admin
+            </a>
+          </div>
+        </nav>
+      </header>
+
+      <main>
+        {/* HERO - Rotating Carousel */}
+        <section className="bg-white">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20 grid lg:grid-cols-2 gap-10 items-center">
+            {/* Copy */}
+            <div>
+              <p className="text-xs font-semibold tracking-[0.2em] uppercase text-seagreen mb-3">
+                Wandering cricket club · Est. 1976
+              </p>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-800 leading-tight">
+                {CAROUSEL_SLIDES[currentSlide].title}
+              </h1>
+              <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-xl">
+                {CAROUSEL_SLIDES[currentSlide].subtitle}
+              </p>
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <a
+                  href={CAROUSEL_SLIDES[currentSlide].buttonLink}
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-md bg-seagreen text-white text-sm font-medium shadow-sm hover:bg-emerald-700 transition"
+                >
+                  {CAROUSEL_SLIDES[currentSlide].buttonText}
+                </a>
+                <a
+                  href="/awards"
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:border-seagreen hover:text-seagreen transition"
+                >
+                  Learn more about us
+                </a>
+              </div>
+              <p className="mt-4 text-xs text-gray-500">
+                New players welcome. No ability or familiarity with cricket required (or expected).
+              </p>
+            </div>
+
+            {/* Image / Placeholder */}
+            <div className="relative">
+              <div className="aspect-[4/3] rounded-xl overflow-hidden shadow-sm">
                 <img
-                  src={slide.image}
+                  src={CAROUSEL_SLIDES[currentSlide].image}
+                  alt={CAROUSEL_SLIDES[currentSlide].title}
                   className="w-full h-full object-cover"
-                  alt={slide.title}
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                  <div className="hidden md:block text-center text-white">
-                    <h1 className="text-5xl font-bold mb-4">{slide.title}</h1>
-                    <p className="text-xl mb-6">{slide.subtitle}</p>
-                    <p>
-                      <a
-                        href={slide.buttonLink}
-                        className="inline-block px-6 py-3 text-lg font-semibold text-white bg-green-600 hover:bg-green-700 rounded"
-                      >
-                        {slide.buttonText}
-                      </a>
-                    </p>
-                  </div>
+              </div>
+              
+              {/* Carousel Indicators */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {CAROUSEL_SLIDES.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-3 h-3 rounded-full ${
+                      index === currentSlide ? 'bg-white' : 'bg-white/50'
+                    }`}
+                    aria-label={`Slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* INTRO + FEATURE CARDS */}
+        <section className="bg-gray-50 border-t border-gray-200">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+            <div className="max-w-3xl">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800">
+                Village by name...
+              </h2>
+              <p className="mt-3 text-gray-600">
+                An amicable, social, and largely non‑competitive wandering cricket club, playing the sport
+                in some of the most pleasant bits of London and beyond. More pub chat than proper net
+                practice. More tours than trophies.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-5 md:grid-cols-3">
+              {/* About card */}
+              <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
+                <div className="w-8 h-8 rounded-md bg-green-100 flex items-center justify-center">
+                  <span className="text-xs text-seagreen font-semibold">i</span>
                 </div>
+                <h3 className="text-sm font-semibold text-gray-800">About us</h3>
+                <p className="text-sm text-gray-600">
+                  Your one‑stop shop for club history, myths, legends and well‑worn clichés.
+                </p>
+                <a href="/awards" className="mt-2 text-sm font-medium text-seagreen hover:underline">
+                  Read the origin story →
+                </a>
               </div>
-            ))}
-          </div>
-          
-          {/* Carousel Indicators */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {CAROUSEL_SLIDES.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full ${
-                  index === currentSlide ? 'bg-white' : 'bg-white/50'
-                }`}
-                aria-label={`Slide ${index + 1}`}
-              />
-            ))}
-          </div>
 
-          {/* Carousel Controls */}
-          <button
-            className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded"
-            onClick={() => setCurrentSlide((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length)}
-          >
-            <span className="sr-only">Previous</span>
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded"
-            onClick={() => setCurrentSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length)}
-          >
-            <span className="sr-only">Next</span>
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Marketing Section */}
-        <div className="px-4 pt-5">
-          <div className="hidden lg:flex flex-wrap -mx-3">
-            <div className="w-full lg:w-1/3 px-3 mb-6 text-center">
-              <img
-                src="/images/vcc_cricle_small.png"
-                alt="About Us"
-                width="140"
-                height="140"
-                className="mx-auto"
-              />
-              <h2 className="text-2xl font-normal my-4">About us</h2>
-              <p className="mx-3">
-                The Village Cricket Club is a small club based loosely around its roots in North East London. We were
-                formed in 2004 by a bunch of singularly talentless but enthusiastic cricketers...
-              </p>
-              <p>
-                <a href="/awards" className="inline-block px-4 py-2 border border-gray-400 rounded hover:bg-gray-100">
-                  View details &raquo;
+              {/* Get involved card */}
+              <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
+                <div className="w-8 h-8 rounded-md bg-green-100 flex items-center justify-center">
+                  <span className="text-xs text-seagreen font-semibold">+</span>
+                </div>
+                <h3 className="text-sm font-semibold text-gray-800">Get involved</h3>
+                <p className="text-sm text-gray-600">
+                  We want new players. No trials, no egos, no problem. Turn up, have a go, find the pub.
+                </p>
+                <a href="mailto:thevillagecc@gmail.com" className="mt-2 text-sm font-medium text-seagreen hover:underline">
+                  Get in touch →
                 </a>
-              </p>
-            </div>
-            <div className="w-full lg:w-1/3 px-3 mb-6 text-center">
-              <span className="material-icons-round text-[125px]">
-                sports_cricket
-              </span>
-              <h2 className="text-2xl font-normal my-4">Get involved</h2>
-              <p className="mx-3">
-                We're always on the lookout for new recruits of all abilities. Batsman, bowler, enthusiast, novice;
-                The Village welcomes all. If you're looking to get involved you can shoot us an email, fill in this
-                nice little form or even track us down on twitter.
-              </p>
-              <p>
-                <a href="/Join.aspx" className="inline-block px-4 py-2 border border-gray-400 rounded hover:bg-gray-100">
-                  View details &raquo;
-                </a>
-              </p>
-            </div>
-            <div className="w-full lg:w-1/3 px-3 mb-6 text-center">
-              <span className="material-icons-round text-[125px]">
-                query_stats
-              </span>
-              <h2 className="text-2xl font-normal my-4">Stats</h2>
-              <p className="mx-3">
-                Let's be honest, it's the only reason most of us play the game. The chance to slice, dice and dissect
-                every inch of your game then talk about it at the pub. That's real cricket.
-              </p>
-              <p>
-                <a href="/stats.aspx" className="inline-block px-4 py-2 border border-gray-400 rounded hover:bg-gray-100">
-                  View details &raquo;
-                </a>
-              </p>
-            </div>
-          </div>
-
-          <hr className="hidden lg:block my-4 border-gray-300" />
-
-          {/* Match Reports */}
-          {isLoading && (
-            <div className="text-center mt-8">
-              <p>Loading match reports...</p>
-            </div>
-          )}
-          
-          {error && (
-            <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mt-8" role="alert">
-              {error}
-            </div>
-          )}
-          
-          {!isLoading && matchReports.length === 0 && !error && (
-            <div className="text-center mt-8">
-              <p>No match reports available at this time.</p>
-            </div>
-          )}
-          
-          {!isLoading && matchReports.map((report, index) => (
-            <React.Fragment key={index}>
-              <div className="flex flex-wrap mt-8">
-                {index % 2 === 0 ? (
-                  <>
-                    <div className="w-full md:w-7/12 px-3">
-                      <h2 className="text-3xl font-light leading-tight tracking-tight">
-                        {report.heading}
-                        <span className="text-gray-500"> {report.subText}</span>
-                      </h2>
-                      <p className="text-lg mt-4">{report.text}</p>
-                      <p className="mt-4">
-                        <a
-                          href={`/LiveScorecard.aspx?matchId=${report.matchId}`}
-                          className="inline-block px-4 py-2 border border-gray-400 rounded hover:bg-gray-100"
-                        >
-                          Read more &raquo;
-                        </a>
-                      </p>
-                    </div>
-                    <div className="w-full md:w-5/12 px-3">
-                      <img
-                        className="w-full max-w-[500px] mx-auto"
-                        src={report.imageSrc}
-                        alt="Match Report"
-                        width="500"
-                        height="500"
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-full md:w-7/12 md:order-2 px-3">
-                      <h2 className="text-3xl font-light leading-tight tracking-tight">
-                        {report.heading}
-                        <span className="text-gray-500"> {report.subText}</span>
-                      </h2>
-                      <p className="text-lg mt-4">{report.text}</p>
-                      <p className="mt-4">
-                        <a
-                          href={`/LiveScorecard.aspx?matchId=${report.matchId}`}
-                          className="inline-block px-4 py-2 border border-gray-400 rounded hover:bg-gray-100"
-                        >
-                          Read more &raquo;
-                        </a>
-                      </p>
-                    </div>
-                    <div className="w-full md:w-5/12 md:order-1 px-3">
-                      <img
-                        className="w-full max-w-[500px] mx-auto"
-                        src={report.imageSrc}
-                        alt="Match Report"
-                        width="500"
-                        height="500"
-                      />
-                    </div>
-                  </>
-                )}
               </div>
-              <hr className="my-20 border-gray-300" />
-            </React.Fragment>
-          ))}
-        </div>
-        <Footer />
+
+              {/* Stats card */}
+              <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
+                <div className="w-8 h-8 rounded-md bg-green-100 flex items-center justify-center">
+                  <span className="text-xs text-seagreen font-semibold">%</span>
+                </div>
+                <h3 className="text-sm font-semibold text-gray-800">Stats</h3>
+                <p className="text-sm text-gray-600">
+                  Current players enjoy squinting at their lifetime failures. Others are welcome to
+                  rubber‑neck.
+                </p>
+                <a href="/stats" className="mt-2 text-sm font-medium text-seagreen hover:underline">
+                  Browse the numbers →
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* RESULTS SNAPSHOT */}
+        <section className="bg-white border-t border-gray-200">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-800">Recent results</h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  Highlights from the latest masterpieces, both heroic and humiliating.
+                </p>
+              </div>
+              <a
+                href="/results"
+                className="text-sm font-medium text-seagreen hover:underline"
+              >
+                View all results →
+              </a>
+            </div>
+
+            {isLoading && (
+              <div className="text-center mt-8">
+                <p>Loading match reports...</p>
+              </div>
+            )}
+            
+            {error && (
+              <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mt-8" role="alert">
+                {error}
+              </div>
+            )}
+            
+            {!isLoading && matchReports.length === 0 && !error && (
+              <div className="text-center mt-8">
+                <p>No match reports available at this time.</p>
+              </div>
+            )}
+
+            {!isLoading && matchReports.length > 0 && (
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                {matchReports.slice(0, 2).map((report, index) => {
+                  // Determine if this is a win, loss, or draw based on result text
+                  const isWon = report.resultText.toLowerCase().includes('won');
+                  const isLost = report.resultText.toLowerCase().includes('lost');
+                  const statusColor = isWon 
+                    ? 'bg-emerald-100 text-emerald-700' 
+                    : isLost 
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-gray-100 text-gray-700';
+                  const statusText = isWon ? 'Won' : isLost ? 'Lost' : report.resultText;
+                  
+                  // Safely parse the date
+                  const matchDate = new Date(report.matchDate);
+                  const dateDisplay = !isNaN(matchDate.getTime()) 
+                    ? matchDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+                    : report.matchDate;
+                  
+                  // Safely extract opponent name
+                  const headingParts = report.heading.split(' vs ');
+                  const opponentName = headingParts.length > 1 ? headingParts[1] : report.heading;
+
+                  return (
+                    <article key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-2">
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>{dateDisplay} · {opponentName}</span>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full ${statusColor}`}>
+                          {statusText}
+                        </span>
+                      </div>
+                      <div className="text-base font-semibold text-gray-800">
+                        {report.heading}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {report.subText}
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        {report.text}
+                      </p>
+                      <a
+                        href={`/LiveScorecard.aspx?matchId=${report.matchId}`}
+                        className="text-sm font-medium text-seagreen hover:underline mt-2"
+                      >
+                        Read full report →
+                      </a>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
       </main>
-    </>
+
+      {/* FOOTER */}
+      <footer className="bg-gray-900 text-gray-400 text-xs">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p>© {new Date().getFullYear()} The Village Cricket Club</p>
+          <div className="flex items-center gap-4">
+            <a href="https://twitter.com/villagecc" className="hover:text-white transition">Twitter</a>
+            <a href="https://www.instagram.com/thevillagecc_london/" className="hover:text-white transition">Instagram</a>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 };
 
