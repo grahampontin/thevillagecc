@@ -122,7 +122,7 @@ const Homepage: React.FC = () => {
   return (
     <>
       <Header />
-      <main className="max-w-[1320px] mx-auto">
+      <main className="container">
         {/* Carousel */}
         <div className="hidden md:block relative" id="myCarousel">
           <div className="relative h-[500px] overflow-hidden">

@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="bg-gray-100 py-4" id="pageFooter">
-      <div className="max-w-[1320px] mx-auto px-4">
+      <div className="container">
         <div className="flex justify-between items-center flex-wrap">
           <p className="order-2 lg:order-1 w-full lg:w-auto text-center lg:text-left">
             &copy; 2022 The Village CC &middot;

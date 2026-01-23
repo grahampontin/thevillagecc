@@ -4,8 +4,8 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-[#2e8b57] text-white sticky top-0 z-50">
-      <div className="max-w-[1320px] mx-auto px-4">
+    <nav className="bg-seagreen text-white sticky top-0 z-50">
+      <div className="container">
         <div className="flex justify-between items-center">
           <a href="/" className="flex items-center py-2">
             <div className="inline-flex p-0 rounded-[25%]">
@@ -37,7 +37,7 @@ const Header: React.FC = () => {
           >
             <ul className="flex flex-col lg:flex-row lg:space-x-4 lg:mr-auto mb-0">
               <li>
-                <a href="/awards" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg">
+                <a href="/awards" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
                   <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
                     info
                   </span>
@@ -45,7 +45,7 @@ const Header: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="/fixtures" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg">
+                <a href="/fixtures" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
                   <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
                     calendar_month
                   </span>
@@ -53,7 +53,7 @@ const Header: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="/results" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg">
+                <a href="/results" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
                   <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
                     scoreboard
                   </span>
@@ -61,7 +61,7 @@ const Header: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="/stats" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg">
+                <a href="/stats" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
                   <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
                     bar_chart
                   </span>
@@ -69,7 +69,7 @@ const Header: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="/committee" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg">
+                <a href="/committee" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
                   <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
                     groups
                   </span>
@@ -77,7 +77,7 @@ const Header: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="/Tours.aspx" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg">
+                <a href="/Tours.aspx" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
                   <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
                     flight_takeoff
                   </span>
@@ -85,7 +85,7 @@ const Header: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="/f7/index.html" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg">
+                <a href="/f7/index.html" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
                   <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
                     settings
                   </span>
@@ -100,7 +100,7 @@ const Header: React.FC = () => {
                   href="https://teamwear.nxt-sports.com/shop/the-village-cc"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg"
+                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg"
                 >
                   <span className="material-icons-outlined inline lg:block text-2xl align-text-bottom mx-auto text-center">
                     shopping_cart
@@ -113,7 +113,7 @@ const Header: React.FC = () => {
                   href="https://twitter.com/villagecc"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg"
+                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg"
                   title="Twitter"
                 >
                   <span className="material-icons-outlined inline lg:block text-2xl align-text-bottom mx-auto text-center">
@@ -127,7 +127,7 @@ const Header: React.FC = () => {
                   href="https://www.instagram.com/thevillagecc_london/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg"
+                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg"
                   title="Instagram"
                 >
                   <span className="material-icons-outlined inline lg:block text-2xl align-text-bottom mx-auto text-center">
@@ -141,7 +141,7 @@ const Header: React.FC = () => {
                   href="mailto:thevillagecc@gmail.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg"
+                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg"
                 >
                   <span className="material-icons-outlined inline lg:block text-2xl align-text-bottom mx-auto text-center">
                     email
