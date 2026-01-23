@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Village Cricket Club</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            villageGreen: '#1d7a4b',
+            villageGreenLight: '#e6f4ee',
+            villageText: '#1f2933'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body class="font-sans text-villageText bg-gray-50">
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-md border-2 border-villageGreen flex items-center justify-center">
+          <div class="w-4 h-4 border-l-2 border-b-2 border-villageGreen rotate-[-20deg]"></div>
+        </div>
+        <span class="text-lg font-semibold tracking-wide uppercase text-villageText">
+          The Village
+        </span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="#" class="text-gray-700 hover:text-villageGreen transition">About</a>
+        <a href="#" class="text-gray-700 hover:text-villageGreen transition">Fixtures</a>
+        <a href="#" class="text-gray-700 hover:text-villageGreen transition">Results</a>
+        <a href="#" class="text-gray-700 hover:text-villageGreen transition">Stats</a>
+        <a href="#" class="text-gray-700 hover:text-villageGreen transition">Committee</a>
+        <a href="#" class="text-gray-700 hover:text-villageGreen transition">Tours</a>
+        <a
+          href="#"
+          class="border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition"
+        >
+          Admin
+        </a>
+      </nav>
+
+      <!-- Mobile Menu Button -->
+      <button
+        class="md:hidden text-sm font-medium text-villageGreen"
+        aria-label="Open menu"
+        onclick="document.getElementById('mobile-nav').classList.toggle('hidden')"
+      >
+        Menu
+      </button>
+    </div>
+
+    <!-- Mobile Nav -->
+    <nav id="mobile-nav" class="md:hidden border-t border-gray-200 bg-white hidden">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2 text-sm font-medium">
+        <a href="#" class="py-1 text-gray-700 hover:text-villageGreen transition">About</a>
+        <a href="#" class="py-1 text-gray-700 hover:text-villageGreen transition">Fixtures</a>
+        <a href="#" class="py-1 text-gray-700 hover:text-villageGreen transition">Results</a>
+        <a href="#" class="py-1 text-gray-700 hover:text-villageGreen transition">Stats</a>
+        <a href="#" class="py-1 text-gray-700 hover:text-villageGreen transition">Committee</a>
+        <a href="#" class="py-1 text-gray-700 hover:text-villageGreen transition">Tours</a>
+        <a
+          href="#"
+          class="mt-1 inline-flex items-center justify-center border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition w-max"
+        >
+          Admin
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="bg-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20 grid lg:grid-cols-2 gap-10 items-center">
+        <!-- Copy -->
+        <div>
+          <p class="text-xs font-semibold tracking-[0.2em] uppercase text-villageGreen mb-3">
+            Wandering cricket club · Est. 1976
+          </p>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-villageText leading-tight">
+            Friendly cricket in and around London.
+          </h1>
+          <p class="mt-4 text-base sm:text-lg text-gray-600 max-w-xl">
+            Creating masterpieces of mediocrity since 1976. A social, largely non‑competitive
+            wandering club playing in some of the most pleasant bits of London and beyond.
+          </p>
+          <div class="mt-6 flex flex-wrap items-center gap-3">
+            <a
+              href="#"
+              class="inline-flex items-center justify-center px-5 py-2.5 rounded-md bg-villageGreen text-white text-sm font-medium shadow-sm hover:bg-emerald-700 transition"
+            >
+              View fixtures
+            </a>
+            <a
+              href="#"
+              class="inline-flex items-center justify-center px-4 py-2 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:border-villageGreen hover:text-villageGreen transition"
+            >
+              Learn more about us
+            </a>
+          </div>
+          <p class="mt-4 text-xs text-gray-500">
+            New players welcome. No ability or familiarity with cricket required (or expected).
+          </p>
+        </div>
+
+        <!-- Image / Placeholder -->
+        <div class="relative">
+          <div class="aspect-[4/3] rounded-xl bg-gray-200 overflow-hidden shadow-sm">
+            <!-- Replace this div with a real image if you like -->
+            <div class="w-full h-full bg-[radial-gradient(circle_at_top,_#e6f4ee,_#9ca3af)] flex items-center justify-center">
+              <span class="text-xs sm:text-sm text-gray-600 px-6 text-center">
+                Hero image: someone in whites attempting something vaguely resembling a cover drive.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTRO + FEATURE CARDS -->
+    <section class="bg-gray-50 border-t border-gray-200">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <div class="max-w-3xl">
+          <h2 class="text-2xl sm:text-3xl font-semibold text-villageText">
+            Village by name...
+          </h2>
+          <p class="mt-3 text-gray-600">
+            An amicable, social, and largely non‑competitive wandering cricket club, playing the sport
+            in some of the most pleasant bits of London and beyond. More pub chat than proper net
+            practice. More tours than trophies.
+          </p>
+        </div>
+
+        <div class="mt-8 grid gap-5 md:grid-cols-3">
+          <!-- About card -->
+          <div class="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
+            <div class="w-8 h-8 rounded-md bg-villageGreenLight flex items-center justify-center">
+              <span class="text-xs text-villageGreen font-semibold">i</span>
+            </div>
+            <h3 class="text-sm font-semibold text-villageText">About us</h3>
+            <p class="text-sm text-gray-600">
+              Your one‑stop shop for club history, myths, legends and well‑worn clichés.
+            </p>
+            <a href="#" class="mt-2 text-sm font-medium text-villageGreen hover:underline">
+              Read the origin story →
+            </a>
+          </div>
+
+          <!-- Get involved card -->
+          <div class="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
+            <div class="w-8 h-8 rounded-md bg-villageGreenLight flex items-center justify-center">
+              <span class="text-xs text-villageGreen font-semibold">+</span>
+            </div>
+            <h3 class="text-sm font-semibold text-villageText">Get involved</h3>
+            <p class="text-sm text-gray-600">
+              We want new players. No trials, no egos, no problem. Turn up, have a go, find the pub.
+            </p>
+            <a href="#" class="mt-2 text-sm font-medium text-villageGreen hover:underline">
+              Join the WhatsApp circus →
+            </a>
+          </div>
+
+          <!-- Stats card -->
+          <div class="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
+            <div class="w-8 h-8 rounded-md bg-villageGreenLight flex items-center justify-center">
+              <span class="text-xs text-villageGreen font-semibold">%</span>
+            </div>
+            <h3 class="text-sm font-semibold text-villageText">Stats</h3>
+            <p class="text-sm text-gray-600">
+              Current players enjoy squinting at their lifetime failures. Others are welcome to
+              rubber‑neck.
+            </p>
+            <a href="#" class="mt-2 text-sm font-medium text-villageGreen hover:underline">
+              Browse the numbers →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS SNAPSHOT -->
+    <section class="bg-white border-t border-gray-200">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-semibold text-villageText">Recent results</h2>
+            <p class="mt-2 text-sm text-gray-600">
+              Highlights from the latest masterpieces, both heroic and humiliating.
+            </p>
+          </div>
+          <a
+            href="#"
+            class="text-sm font-medium text-villageGreen hover:underline"
+          >
+            View all results →
+          </a>
+        </div>
+
+        <div class="mt-6 grid gap-4 md:grid-cols-2">
+          <!-- Result card 1 -->
+          <article class="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-2">
+            <div class="flex items-center justify-between text-xs text-gray-500">
+              <span>14 April 2024 · vs Chiswick</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-red-100 text-red-700">
+                Lost
+              </span>
+            </div>
+            <div class="text-sm font-semibold text-villageText">
+              TV 162–7 · Chiswick 163–4
+            </div>
+            <p class="text-sm text-gray-600">
+              A humbling defeat to begin the season. Spirits high, line and length less so.
+            </p>
+          </article>
+
+          <!-- Result card 2 -->
+          <article class="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-2">
+            <div class="flex items-center justify-between text-xs text-gray-500">
+              <span>7 April 2024 · vs Colombo</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                Won
+              </span>
+            </div>
+            <div class="text-sm font-semibold text-villageText">
+              Colombo 115–7 · TV 118–6
+            </div>
+            <p class="text-sm text-gray-600">
+              High fives rained down after an encouraging win. Talk of promotion swiftly ignored.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-gray-400 text-xs">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© 2024 The Village Cricket Club</p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:text-white transition">Twitter</a>
+        <a href="#" class="hover:text-white transition">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

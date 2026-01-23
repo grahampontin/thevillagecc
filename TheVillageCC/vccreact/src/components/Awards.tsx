@@ -61,9 +61,9 @@ const Awards: React.FC = () => {
 
         // Fetch all required data in parallel
         const [playersRes, awardsRes, committeeRes] = await Promise.all([
-          fetch('/api/refdata/players'),
-          fetch('/api/refdata/awards'),
-          fetch('/api/refdata/committee')
+          fetch('/api/players'),
+          fetch('/api/awards'),
+          fetch('/api/committee')
         ]);
 
         if (!playersRes.ok || !awardsRes.ok || !committeeRes.ok) {

@@ -31,8 +31,8 @@ const Committee: React.FC = () => {
         setIsLoading(true);
 
         const [playersRes, committeeRes] = await Promise.all([
-          fetch('/api/refdata/players'),
-          fetch('/api/refdata/committee')
+          fetch('/api/players'),
+          fetch('/api/committee')
         ]);
 
         if (!playersRes.ok || !committeeRes.ok) {
