@@ -28,9 +28,9 @@ namespace TheVillageCC.WebApi.Controllers
         [HttpGet("chart/{playerId}/{chartType}")]
         [HttpGet("playermatches/{playerId}")]
         [HttpGet("familytree")]
-        public IActionResult HandleRequest()
+        public async Task<IActionResult> HandleRequest()
         {
-            return ProcessRequest();
+            return await ProcessRequestAsync();
         }
 
         public override void ProcessRequest(IHandlerContext context)

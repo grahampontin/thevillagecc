@@ -24,9 +24,9 @@ namespace TheVillageCC.WebApi.Controllers
 
         [HttpGet("{id}")]
         [HttpPost("{id}")]
-        public IActionResult HandleRequest()
+        public async Task<IActionResult> HandleRequest()
         {
-            return ProcessRequest();
+            return await ProcessRequestAsync();
         }
 
         public override void ProcessRequest(IHandlerContext context)
