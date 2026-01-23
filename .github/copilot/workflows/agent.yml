@@ -1,0 +1,22 @@
+name: Copilot Agent Environment
+
+on:
+  copilot-workflow: {}
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure Azure DevOps NuGet feed
+        run: |
+          dotnet nuget remove source AzureDevOps || true
+          dotnet nuget add source "https://pkgs.dev.azure.com/grahampontin/109e362b-62db-4727-9d2a-e2d0e8f55904/_packaging/CricketClubCore/nuget/v3/index.json" \
+            --name AzureDevOps \
+            --username "$AZDO_USER" \
+            --password "$AZDO_PAT" \
+            --store-password-in-clear-text \
+            --valid-authentication-types basic
+        env:
+          AZDO_USER: ${{ secrets.AZDO_USER }}
+          AZDO_PAT: ${{ secrets.AZDO_PAT }}
