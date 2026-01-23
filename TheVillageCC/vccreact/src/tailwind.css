@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
-@theme {
+/* Custom theme variables and helper classes */
+:root {
   --color-seagreen: #2e8b57;
   --color-darkslategray: #2f4f4f;
   --color-villageGreen: #1d7a4b;
   --color-villageGreenLight: #e6f4ee;
-  
-  --font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
+  --font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   --font-family-heading: 'Source Sans Pro', sans-serif;
-  
+
   --breakpoint-xs: 0px;
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
