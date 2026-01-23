@@ -19,9 +19,9 @@ namespace TheVillageCC.WebApi.Controllers
         [HttpPost]
         [HttpPut]
         [HttpDelete("{id}")]
-        public IActionResult HandleRequest()
+        public async Task<IActionResult> HandleRequest()
         {
-            return ProcessRequest();
+            return await ProcessRequestAsync();
         }
 
         protected override TeamV1 UpdateEntity(TeamV1 entity)
