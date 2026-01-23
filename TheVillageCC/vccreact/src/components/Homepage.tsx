@@ -28,42 +28,42 @@ interface MatchReport {
 
 const MAX_REPORT_PREVIEW_LENGTH = 200;
 
+const CAROUSEL_SLIDES = [
+  {
+    image: '/images/newCarousel/slide2.jpg',
+    title: 'Friendly Cricket in and around London',
+    subtitle: 'We play all over London and outside, check out our latest matches',
+    buttonText: 'Results',
+    buttonLink: '/results'
+  },
+  {
+    image: '/images/newCarousel/slide3.jpg',
+    title: 'Tours!',
+    subtitle: 'The Village CC loves a spot of touring, check out some our recent trips.',
+    buttonText: 'Touring',
+    buttonLink: '/Tours.html'
+  },
+  {
+    image: '/images/newCarousel/slide1.jpg',
+    title: "We're Recruiting!",
+    subtitle: 'Players of all abilities welcome.',
+    buttonText: 'Join Us!',
+    buttonLink: 'mailto:thevillagecc@gmail.com'
+  }
+];
+
 const Homepage: React.FC = () => {
   const [matchReports, setMatchReports] = useState<MatchReport[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState<number>(0);
 
-  const carouselSlides = [
-    {
-      image: '/images/newCarousel/slide2.jpg',
-      title: 'Friendly Cricket in and around London',
-      subtitle: 'We play all over London and outside, check out our latest matches',
-      buttonText: 'Results',
-      buttonLink: '/results'
-    },
-    {
-      image: '/images/newCarousel/slide3.jpg',
-      title: 'Tours!',
-      subtitle: 'The Village CC loves a spot of touring, check out some our recent trips.',
-      buttonText: 'Touring',
-      buttonLink: '/Tours.html'
-    },
-    {
-      image: '/images/newCarousel/slide1.jpg',
-      title: "We're Recruiting!",
-      subtitle: 'Players of all abilities welcome.',
-      buttonText: 'Join Us!',
-      buttonLink: 'mailto:thevillagecc@gmail.com'
-    }
-  ];
-
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
+      setCurrentSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [carouselSlides.length]);
+  }, []);
 
   useEffect(() => {
     const fetchMatchReports = async () => {
@@ -126,7 +126,7 @@ const Homepage: React.FC = () => {
         {/* Carousel */}
         <div className="hidden md:block relative" id="myCarousel">
           <div className="relative h-[500px] overflow-hidden">
-            {carouselSlides.map((slide, index) => (
+            {CAROUSEL_SLIDES.map((slide, index) => (
               <div
                 key={index}
                 className={`absolute inset-0 transition-opacity duration-1000 ${
@@ -158,7 +158,7 @@ const Homepage: React.FC = () => {
           
           {/* Carousel Indicators */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {carouselSlides.map((_, index) => (
+            {CAROUSEL_SLIDES.map((_, index) => (
               <button
                 key={index}
                 type="button"
@@ -174,7 +174,7 @@ const Homepage: React.FC = () => {
           {/* Carousel Controls */}
           <button
             className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded"
-            onClick={() => setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length)}
+            onClick={() => setCurrentSlide((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length)}
           >
             <span className="sr-only">Previous</span>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,7 +183,7 @@ const Homepage: React.FC = () => {
           </button>
           <button
             className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded"
-            onClick={() => setCurrentSlide((prev) => (prev + 1) % carouselSlides.length)}
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length)}
           >
             <span className="sr-only">Next</span>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

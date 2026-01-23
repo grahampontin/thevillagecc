@@ -22,13 +22,19 @@ const Header: React.FC = () => {
             className="lg:hidden text-white p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle navigation"
+            aria-expanded={isMenuOpen}
+            aria-controls="navbarCollapse"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
 
-          <div className={`${isMenuOpen ? 'block' : 'hidden'} lg:flex lg:items-center w-full lg:w-auto`}>
+          <div 
+            id="navbarCollapse"
+            className={`${isMenuOpen ? 'block' : 'hidden'} lg:flex lg:items-center w-full lg:w-auto`}
+            aria-hidden={!isMenuOpen}
+          >
             <ul className="flex flex-col lg:flex-row lg:space-x-4 lg:mr-auto mb-0">
               <li>
                 <a href="/awards" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-[#2e8b57] transition-all font-['Source_Sans_Pro'] font-bold text-lg">
