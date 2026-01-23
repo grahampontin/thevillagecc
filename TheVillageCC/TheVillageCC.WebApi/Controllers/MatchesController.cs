@@ -5,6 +5,8 @@ using CricketClubDomain;
 using CricketClubMiddle;
 using Microsoft.AspNetCore.Mvc;
 using TheVillageCC.WebApi.Domain;
+using Match = CricketClubMiddle.Match;
+using MatchType = CricketClubDomain.MatchType;
 
 namespace TheVillageCC.WebApi.Controllers
 {

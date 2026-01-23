@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using CricketClubMiddle.Stats;
-using TheVillageCC.Web.Domain;
+using TheVillageCC.WebApi.Domain;
 
 // ReSharper disable ArrangeObjectCreationWhenTypeEvident
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local

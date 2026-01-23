@@ -1,4 +1,4 @@
-﻿using TheVillageCC.Web.Domain;
+﻿using TheVillageCC.WebApi.Domain;
 
 namespace TheVillageCC.WebApi.Stats
 {

@@ -53,7 +53,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Debug|x64.Build.0 = Debug|Any CPU
 		{AD14ECFD-823C-4252-87D7-C13D2A738545}.Debug|x86.ActiveCfg = Debug|Any CPU

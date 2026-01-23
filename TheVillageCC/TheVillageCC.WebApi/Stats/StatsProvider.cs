@@ -9,9 +9,10 @@ using System.Net.Mime;
 using CricketClubDomain;
 using CricketClubMiddle;
 using CricketClubMiddle.Stats;
-using TheVillageCC.Web.AGGrid;
-using TheVillageCC.Web.Charts;
-using TheVillageCC.Web.Domain;
+using TheVillageCC.WebApi.AGGrid;
+using TheVillageCC.WebApi.Charts;
+using TheVillageCC.WebApi.Domain;
+using MatchType = CricketClubDomain.MatchType;
 
 namespace TheVillageCC.WebApi.Stats
 {

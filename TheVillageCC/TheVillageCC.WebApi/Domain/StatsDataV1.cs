@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using TheVillageCC.Web.AGGrid;
+using TheVillageCC.WebApi.AGGrid;
 
 namespace TheVillageCC.WebApi.Domain
 {
