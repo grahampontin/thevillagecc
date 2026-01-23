@@ -6,7 +6,11 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
-
+    
+    env: 
+      AZDO_PAT: ${{ secrets.AZDO_PAT }} 
+      AZDO_USER: ${{ secrets.AZDO_USER }}
+    
     steps:
       - name: Configure Azure DevOps NuGet feed
         run: |
