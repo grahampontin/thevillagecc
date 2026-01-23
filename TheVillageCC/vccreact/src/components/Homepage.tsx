@@ -57,6 +57,7 @@ const Homepage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -156,17 +157,14 @@ const Homepage: React.FC = () => {
           <button
             className="md:hidden text-sm font-medium text-seagreen"
             aria-label="Open menu"
-            onClick={() => {
-              const nav = document.getElementById('mobile-nav');
-              if (nav) nav.classList.toggle('hidden');
-            }}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             Menu
           </button>
         </div>
 
         {/* Mobile Nav */}
-        <nav id="mobile-nav" className="md:hidden border-t border-gray-200 bg-white hidden">
+        <nav className={`md:hidden border-t border-gray-200 bg-white ${isMobileMenuOpen ? '' : 'hidden'}`}>
           <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2 text-sm font-medium">
             <a href="/awards" className="py-1 text-gray-700 hover:text-seagreen transition">About</a>
             <a href="/fixtures" className="py-1 text-gray-700 hover:text-seagreen transition">Fixtures</a>
@@ -355,11 +353,21 @@ const Homepage: React.FC = () => {
                     ? 'bg-red-100 text-red-700'
                     : 'bg-gray-100 text-gray-700';
                   const statusText = isWon ? 'Won' : isLost ? 'Lost' : report.resultText;
+                  
+                  // Safely parse the date
+                  const matchDate = new Date(report.matchDate);
+                  const dateDisplay = !isNaN(matchDate.getTime()) 
+                    ? matchDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+                    : report.matchDate;
+                  
+                  // Safely extract opponent name
+                  const headingParts = report.heading.split(' vs ');
+                  const opponentName = headingParts.length > 1 ? headingParts[1] : report.heading;
 
                   return (
                     <article key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-2">
                       <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span>{new Date(report.matchDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} · {report.heading.split(' vs ')[1]}</span>
+                        <span>{dateDisplay} · {opponentName}</span>
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full ${statusColor}`}>
                           {statusText}
                         </span>
@@ -391,7 +399,7 @@ const Homepage: React.FC = () => {
       {/* FOOTER */}
       <footer className="bg-gray-900 text-gray-400 text-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>© 2024 The Village Cricket Club</p>
+          <p>© {new Date().getFullYear()} The Village Cricket Club</p>
           <div className="flex items-center gap-4">
             <a href="https://twitter.com/villagecc" className="hover:text-white transition">Twitter</a>
             <a href="https://www.instagram.com/thevillagecc_london/" className="hover:text-white transition">Instagram</a>
