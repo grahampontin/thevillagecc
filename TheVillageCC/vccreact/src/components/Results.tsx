@@ -151,41 +151,35 @@ const Results: React.FC = () => {
                 <a
                   key={result.MatchId}
                   href={`/LiveScorecard.aspx?matchId=${result.MatchId}`}
-                  className="block bg-white border border-gray-200 rounded-lg p-5 hover:border-villageGreen hover:shadow-sm transition group"
+                  className="block bg-white border border-gray-200 rounded-lg p-4 hover:border-villageGreen hover:shadow-sm transition group"
                 >
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      {/* Date and status */}
-                      <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <span className="text-sm text-gray-500">
-                          {formatDate(result.MatchDate)}
-                        </span>
-                        <span className="text-gray-300">·</span>
-                        <span className="text-sm text-gray-600">
-                          vs {opponentName}
-                        </span>
+                    <div className="flex-1 min-w-0 flex flex-col gap-2">
+                      {/* Date, opponent and status in one line */}
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2 text-gray-500">
+                          <span>{formatDate(result.MatchDate)}</span>
+                          <span>·</span>
+                          <span>vs {opponentName}</span>
+                        </div>
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
                           {status.text}
                         </span>
                       </div>
                       
-                      {/* Match details */}
-                      <div className="mb-2">
-                        <div className="text-base sm:text-lg font-semibold text-gray-800 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                          <span className={isHomeMatch(result) ? 'font-bold' : ''}>
-                            {result.HomeTeamName}
-                          </span>
+                      {/* Match details with scores */}
+                      <div className="text-base font-semibold text-gray-800">
+                        <div className="flex flex-wrap items-baseline gap-x-2">
+                          <span>{result.HomeTeamName}</span>
                           {result.HomeTeamScore && (
                             <span className="text-sm font-normal text-gray-600">
                               {result.HomeTeamScore}
                             </span>
                           )}
-                          <span className="text-gray-500 font-normal">
+                          <span className="text-sm font-normal text-gray-500">
                             {result.ResultText}
                           </span>
-                          <span className={!isHomeMatch(result) ? 'font-bold' : ''}>
-                            {result.AwayTeamName}
-                          </span>
+                          <span>{result.AwayTeamName}</span>
                           {result.AwayTeamScore && (
                             <span className="text-sm font-normal text-gray-600">
                               {result.AwayTeamScore}
@@ -196,9 +190,9 @@ const Results: React.FC = () => {
                       
                       {/* Result margin */}
                       {result.ResultMargin && (
-                        <p className="text-sm text-gray-600 italic">
+                        <div className="text-sm text-gray-600 italic">
                           {result.ResultMargin}
-                        </p>
+                        </div>
                       )}
                     </div>
                     
