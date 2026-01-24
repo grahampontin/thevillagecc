@@ -236,7 +236,7 @@ const Fixtures: React.FC = () => {
                         href={generateCalendarUrl(fixture)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-gray-700 hover:border-villageGreen hover:text-villageGreen transition"
+                        className="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-gray-700 hover:border-villageGreen hover:text-villageGreen hover:bg-villageGreenLight transition"
                         aria-label="Add to calendar"
                         title="Add to calendar"
                       >
