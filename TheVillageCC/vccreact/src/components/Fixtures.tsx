@@ -147,110 +147,84 @@ const Fixtures: React.FC = () => {
   return (
     <div className="font-sans text-villageText bg-gray-50 min-h-screen">
       <Header />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-        {/* Header with season navigation */}
-        <div className="flex items-center justify-between mb-8">
-          <button
-            onClick={() => navigateToSeason(currentYear - 1)}
-            className="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-gray-700 hover:border-villageGreen hover:text-villageGreen transition"
-            aria-label="Previous season"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          
-          <h1 className="text-2xl sm:text-3xl font-semibold text-villageText">
-            Fixtures {currentYear}
-          </h1>
-          
-          <button
-            onClick={() => navigateToSeason(currentYear + 1)}
-            className="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-gray-700 hover:border-villageGreen hover:text-villageGreen transition"
-            aria-label="Next season"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
+      <main>
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-villageText">Fixtures</h1>
+          <p className="mt-2 text-gray-600 text-base">Upcoming matches for the season ahead.</p>
 
-        {/* Loading state */}
-        {isLoading ? (
-          <div className="space-y-4">
-            {[...Array(SKELETON_ITEMS_COUNT)].map((_, index) => (
-              <div 
-                key={index} 
-                className="bg-white border border-gray-200 rounded-lg p-4 animate-pulse"
-              >
-                <div className="h-4 bg-gray-200 rounded w-1/4 mb-3"></div>
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            ))}
+          {/* Season Navigation */}
+          <div className="mt-6 flex items-center justify-between">
+            <button
+              onClick={() => navigateToSeason(currentYear - 1)}
+              className="text-sm font-medium text-villageGreen hover:underline"
+            >
+              ← Previous season
+            </button>
+            <span className="text-sm text-gray-500">{currentYear} Season</span>
+            <button
+              onClick={() => navigateToSeason(currentYear + 1)}
+              className="text-sm font-medium text-villageGreen hover:underline"
+            >
+              Next season →
+            </button>
           </div>
-        ) : fixtures.length === 0 ? (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-            <p className="text-blue-700">
-              No fixtures available for the {currentYear} season.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {fixtures.map((fixture) => {
-              const opponentName = getOpponentName(fixture);
-              
-              return (
-                <article
-                  key={fixture.Id}
-                  className="bg-white border border-gray-200 rounded-lg p-4 hover:border-villageGreen hover:shadow-sm transition"
+
+          {/* Loading state */}
+          {isLoading ? (
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              {[...Array(SKELETON_ITEMS_COUNT)].map((_, index) => (
+                <div 
+                  key={index} 
+                  className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm animate-pulse"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0 flex flex-col gap-2">
-                      {/* Date, opponent and badge in one line */}
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2 text-gray-500">
-                          <span>{formatDate(fixture.MatchDate)}</span>
-                          <span>·</span>
-                          <span>vs {opponentName}</span>
-                        </div>
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${fixture.IsHome ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
-                          {fixture.IsHome ? 'Home' : 'Away'}
-                        </span>
-                      </div>
-                      
-                      {/* Match details */}
-                      <div className="text-base font-semibold text-gray-800">
-                        {fixture.HomeTeamName} vs {fixture.AwayTeamName}
-                      </div>
-                      
-                      {/* Venue and type */}
-                      <div className="text-sm text-gray-600">
-                        at {fixture.VenueName} · {fixture.Type}
-                      </div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
+                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                </div>
+              ))}
+            </div>
+          ) : fixtures.length === 0 ? (
+            <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+              <p className="text-blue-700">
+                No fixtures available for the {currentYear} season.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              {fixtures.map((fixture) => {
+                const opponentName = getOpponentName(fixture);
+                
+                return (
+                  <article
+                    key={fixture.Id}
+                    className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                  >
+                    <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                      <span>{formatDate(fixture.MatchDate)} · vs {opponentName}</span>
+                      <span className={`px-2 py-0.5 rounded-full font-semibold text-[11px] ${fixture.IsHome ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
+                        {fixture.IsHome ? 'HOME' : 'AWAY'}
+                      </span>
                     </div>
-                    
-                    {/* Calendar icon */}
-                    <div className="flex-shrink-0">
-                      <a
-                        href={generateCalendarUrl(fixture)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-gray-700 hover:border-villageGreen hover:text-villageGreen hover:bg-villageGreenLight transition"
-                        aria-label="Add to calendar"
-                        title="Add to calendar"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </a>
+                    <div className="text-sm font-semibold text-villageText">
+                      {fixture.HomeTeamName} vs {fixture.AwayTeamName}
                     </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
+                    <p className="mt-1 text-sm text-gray-600 italic">
+                      {fixture.VenueName} · {fixture.Type}
+                    </p>
+                    <a
+                      href={generateCalendarUrl(fixture)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block mt-2 text-sm font-medium text-villageGreen hover:underline"
+                    >
+                      Add to calendar →
+                    </a>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
       </main>
       <Footer />
     </div>
