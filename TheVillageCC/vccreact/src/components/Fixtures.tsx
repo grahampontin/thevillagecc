@@ -201,43 +201,33 @@ const Fixtures: React.FC = () => {
               const opponentName = getOpponentName(fixture);
               
               return (
-                <div
+                <article
                   key={fixture.Id}
-                  className="block bg-white border border-gray-200 rounded-lg p-5 hover:border-villageGreen hover:shadow-sm transition group"
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:border-villageGreen hover:shadow-sm transition"
                 >
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      {/* Date and location */}
-                      <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <span className="text-sm text-gray-500">
-                          {formatDate(fixture.MatchDate)}
-                        </span>
-                        <span className="text-gray-300">·</span>
-                        <span className="text-sm text-gray-600">
-                          vs {opponentName}
-                        </span>
+                    <div className="flex-1 min-w-0 flex flex-col gap-2">
+                      {/* Date, opponent and badge in one line */}
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2 text-gray-500">
+                          <span>{formatDate(fixture.MatchDate)}</span>
+                          <span>·</span>
+                          <span>vs {opponentName}</span>
+                        </div>
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${fixture.IsHome ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
                           {fixture.IsHome ? 'Home' : 'Away'}
                         </span>
                       </div>
                       
                       {/* Match details */}
-                      <div className="mb-2">
-                        <div className="text-base sm:text-lg font-semibold text-gray-800 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                          <span className={fixture.IsHome ? 'font-bold' : ''}>
-                            {fixture.HomeTeamName}
-                          </span>
-                          <span className="text-gray-500 font-normal">vs</span>
-                          <span className={!fixture.IsHome ? 'font-bold' : ''}>
-                            {fixture.AwayTeamName}
-                          </span>
-                        </div>
+                      <div className="text-base font-semibold text-gray-800">
+                        {fixture.HomeTeamName} vs {fixture.AwayTeamName}
                       </div>
                       
                       {/* Venue and type */}
-                      <p className="text-sm text-gray-600">
-                        at {fixture.VenueName} ({fixture.Type})
-                      </p>
+                      <div className="text-sm text-gray-600">
+                        at {fixture.VenueName} · {fixture.Type}
+                      </div>
                     </div>
                     
                     {/* Calendar icon */}
@@ -246,7 +236,7 @@ const Fixtures: React.FC = () => {
                         href={generateCalendarUrl(fixture)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-gray-700 hover:border-villageGreen hover:text-villageGreen hover:bg-villageGreenLight transition"
+                        className="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-gray-700 hover:border-villageGreen hover:text-villageGreen transition"
                         aria-label="Add to calendar"
                         title="Add to calendar"
                       >
@@ -256,7 +246,7 @@ const Fixtures: React.FC = () => {
                       </a>
                     </div>
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>
