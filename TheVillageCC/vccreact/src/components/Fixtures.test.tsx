@@ -51,7 +51,7 @@ describe('Fixtures', () => {
     render(<Fixtures />);
 
     await waitFor(() => {
-      expect(screen.getByText('Fixtures')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Fixtures' })).toBeInTheDocument();
     });
 
     // Verify the API was called
