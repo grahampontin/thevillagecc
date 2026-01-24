@@ -40,10 +40,9 @@ describe('Fixtures', () => {
     (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
     
     renderWithRouter(<Fixtures />);
-    
+
     // Check for skeleton loading state
-    const skeletonElements = document.querySelectorAll('.animate-pulse');
-    expect(skeletonElements.length).toBeGreaterThan(0);
+    expect(screen.getAllByLabelText(/loading fixture/i).length).toBeGreaterThan(0);
   });
 
   test('fetches and displays fixtures from API', async () => {
@@ -71,7 +70,7 @@ describe('Fixtures', () => {
     renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      const calendarLinks = screen.getAllByText('Add to calendar →');
+      const calendarLinks = screen.getAllByLabelText(/add to calendar/i);
       expect(calendarLinks.length).toBe(mockFixtures.length);
     });
   });
@@ -112,16 +111,10 @@ describe('Fixtures', () => {
 
     // Wait for loading to complete
     await waitFor(() => {
-      const skeletonElements = document.querySelectorAll('.animate-pulse');
-      expect(skeletonElements.length).toBe(0);
+      expect(screen.queryByLabelText(/loading fixture/i)).not.toBeInTheDocument();
     });
 
-    // Check that dates are displayed in the long format
-    await waitFor(() => {
-      expect(screen.getByText(/15 June 2024/)).toBeInTheDocument();
-    });
-    
-    // Ensure "Invalid Date" is not present anywhere
+    expect(await screen.findByText(/15 June 2024/)).toBeInTheDocument();
     expect(screen.queryByText(/Invalid Date/i)).not.toBeInTheDocument();
   });
 
@@ -157,14 +150,10 @@ describe('Fixtures', () => {
     renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      const skeletonElements = document.querySelectorAll('.animate-pulse');
-      expect(skeletonElements.length).toBe(0);
+      expect(screen.queryByLabelText(/loading fixture/i)).not.toBeInTheDocument();
     });
 
-    // Should display the valid fixtures
-    await waitFor(() => {
-      expect(screen.getByText(/15 June 2024/)).toBeInTheDocument();
-    });
+    expect(await screen.findByText(/15 June 2024/)).toBeInTheDocument();
 
     // Should have logged errors for invalid dates
     expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -195,16 +184,10 @@ describe('Fixtures', () => {
     renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      const skeletonElements = document.querySelectorAll('.animate-pulse');
-      expect(skeletonElements.length).toBe(0);
+      expect(screen.queryByLabelText(/loading fixture/i)).not.toBeInTheDocument();
     });
 
-    // The fixture should render without errors
-    await waitFor(() => {
-      expect(screen.getAllByText(/Valid Team/).length).toBeGreaterThan(0);
-    });
-
-    // No error should appear
+    expect((await screen.findAllByText(/Valid Team/)).length).toBeGreaterThan(0);
     expect(screen.queryByText(/Invalid Date/i)).not.toBeInTheDocument();
   });
 
@@ -216,9 +199,7 @@ describe('Fixtures', () => {
 
     renderWithRouter(<Fixtures />);
 
-    await waitFor(() => {
-      expect(screen.getByText('HOME')).toBeInTheDocument();
-      expect(screen.getByText('AWAY')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('HOME')).toBeInTheDocument();
+    expect(await screen.findByText('AWAY')).toBeInTheDocument();
   });
 });

@@ -152,23 +152,6 @@ const Fixtures: React.FC = () => {
           <h1 className="text-3xl sm:text-4xl font-semibold text-villageText">Fixtures</h1>
           <p className="mt-2 text-gray-600 text-base">Upcoming matches for the season ahead.</p>
 
-          {/* Season Navigation */}
-          <div className="mt-6 flex items-center justify-between">
-            <button
-              onClick={() => navigateToSeason(currentYear - 1)}
-              className="text-sm font-medium text-villageGreen hover:underline"
-            >
-              ← Previous season
-            </button>
-            <span className="text-sm text-gray-500">{currentYear} Season</span>
-            <button
-              onClick={() => navigateToSeason(currentYear + 1)}
-              className="text-sm font-medium text-villageGreen hover:underline"
-            >
-              Next season →
-            </button>
-          </div>
-
           {/* Loading state */}
           {isLoading ? (
             <div className="mt-8 grid gap-6 md:grid-cols-2">
@@ -176,6 +159,8 @@ const Fixtures: React.FC = () => {
                 <div 
                   key={index} 
                   className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm animate-pulse"
+                  role="status"
+                  aria-label="Loading fixture"
                 >
                   <div className="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
                   <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
@@ -197,27 +182,36 @@ const Fixtures: React.FC = () => {
                 return (
                   <article
                     key={fixture.Id}
-                    className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                    className="bg-white border border-gray-200 rounded-lg p-4 pb-12 shadow-sm relative"
                   >
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                      <span>{formatDate(fixture.MatchDate)} · vs {opponentName}</span>
-                      <span className={`px-2 py-0.5 rounded-full font-semibold text-[11px] ${fixture.IsHome ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
+                    <div className="flex items-start justify-between gap-4 mb-1">
+                      <span className="text-xs text-gray-500 flex-1 min-w-0 truncate">
+                        {formatDate(fixture.MatchDate)} · vs {opponentName}
+                      </span>
+
+                      <span
+                        className={`px-2 py-0.5 rounded-full font-semibold text-[11px] shrink-0 ${fixture.IsHome ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}
+                      >
                         {fixture.IsHome ? 'HOME' : 'AWAY'}
                       </span>
                     </div>
+
                     <div className="text-sm font-semibold text-villageText">
                       {fixture.HomeTeamName} vs {fixture.AwayTeamName}
                     </div>
                     <p className="mt-1 text-sm text-gray-600 italic">
                       {fixture.VenueName} · {fixture.Type}
                     </p>
+
                     <a
                       href={generateCalendarUrl(fixture)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block mt-2 text-sm font-medium text-villageGreen hover:underline"
+                      className="absolute bottom-4 right-4 inline-flex items-center justify-center h-8 w-8 rounded-md border border-gray-200 bg-white text-gray-600 shadow-sm hover:border-villageGreen hover:text-villageGreen hover:bg-gray-50 transition"
+                      aria-label="Add to calendar"
+                      title="Add to calendar"
                     >
-                      Add to calendar →
+                      <span className="material-symbols-outlined text-[20px] leading-none">calendar_add_on</span>
                     </a>
                   </article>
                 );
