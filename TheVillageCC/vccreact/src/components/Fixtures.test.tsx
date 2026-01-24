@@ -1,18 +1,20 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import Fixtures from './Fixtures';
 
 // Mock fetch globally
 global.fetch = jest.fn();
 
-// Mock window.confirm
-global.confirm = jest.fn();
+// Wrapper component to provide routing context
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(<BrowserRouter>{component}</BrowserRouter>);
+};
 
 describe('Fixtures', () => {
   beforeEach(() => {
     // Reset mocks before each test
     (global.fetch as jest.Mock).mockClear();
-    (global.confirm as jest.Mock).mockClear();
   });
 
   const mockFixtures = [
@@ -37,9 +39,11 @@ describe('Fixtures', () => {
   test('renders loading state initially', () => {
     (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
     
-    render(<Fixtures />);
+    renderWithRouter(<Fixtures />);
     
-    expect(screen.getByText(/Loading/i)).toBeInTheDocument();
+    // Check for skeleton loading state
+    const skeletonElements = document.querySelectorAll('.animate-pulse');
+    expect(skeletonElements.length).toBeGreaterThan(0);
   });
 
   test('fetches and displays fixtures from API', async () => {
@@ -48,47 +52,28 @@ describe('Fixtures', () => {
       json: async () => mockFixtures,
     });
 
-    render(<Fixtures />);
+    renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Fixtures' })).toBeInTheDocument();
+      expect(screen.getByText(/Fixtures \d{4}/)).toBeInTheDocument();
     });
 
-    // Verify the API was called
-    expect(global.fetch).toHaveBeenCalledWith('/api/fixtures');
+    // Verify the API was called with season parameter
+    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/fixtures?season='));
   });
 
-  test('displays "Add All to Calendar" button when fixtures are loaded', async () => {
+  test('displays calendar icon for each fixture', async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockFixtures,
     });
 
-    render(<Fixtures />);
+    renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      expect(screen.getByText('Add All to Calendar')).toBeInTheDocument();
+      const calendarLinks = screen.getAllByLabelText('Add to calendar');
+      expect(calendarLinks.length).toBe(mockFixtures.length);
     });
-  });
-
-  test('shows confirmation dialog when "Add All to Calendar" is clicked', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockFixtures,
-    });
-
-    render(<Fixtures />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Add All to Calendar')).toBeInTheDocument();
-    });
-
-    const addAllButton = screen.getByText('Add All to Calendar');
-    fireEvent.click(addAllButton);
-
-    expect(global.confirm).toHaveBeenCalledWith(
-      'Are you sure you want to add all 2 fixtures to your calendar?'
-    );
   });
 
   test('displays message when no fixtures are available', async () => {
@@ -97,10 +82,10 @@ describe('Fixtures', () => {
       json: async () => [],
     });
 
-    render(<Fixtures />);
+    renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      expect(screen.getByText(/No upcoming fixtures at this time/i)).toBeInTheDocument();
+      expect(screen.getByText(/No fixtures available for the \d{4} season/i)).toBeInTheDocument();
     });
   });
 
@@ -110,10 +95,10 @@ describe('Fixtures', () => {
       status: 500,
     });
 
-    render(<Fixtures />);
+    renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      expect(screen.getByText(/No upcoming fixtures at this time/i)).toBeInTheDocument();
+      expect(screen.getByText(/No fixtures available for the \d{4} season/i)).toBeInTheDocument();
     });
   });
 
@@ -123,18 +108,17 @@ describe('Fixtures', () => {
       json: async () => mockFixtures,
     });
 
-    render(<Fixtures />);
+    renderWithRouter(<Fixtures />);
 
-    // Wait for loading to complete and the date to be rendered
+    // Wait for loading to complete
     await waitFor(() => {
-      expect(screen.queryByText(/Loading/i)).not.toBeInTheDocument();
+      const skeletonElements = document.querySelectorAll('.animate-pulse');
+      expect(skeletonElements.length).toBe(0);
     });
 
-    // Check that the date is formatted correctly (UK format: DD/MM/YYYY)
-    // There should be at least one element with this date
+    // Check that dates are displayed in the long format
     await waitFor(() => {
-      const dateElements = screen.getAllByText(/15\/06\/2024/);
-      expect(dateElements.length).toBeGreaterThan(0);
+      expect(screen.getByText(/15 June 2024/)).toBeInTheDocument();
     });
     
     // Ensure "Invalid Date" is not present anywhere
@@ -170,16 +154,16 @@ describe('Fixtures', () => {
       json: async () => fixturesWithInvalidDate,
     });
 
-    render(<Fixtures />);
+    renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      expect(screen.queryByText(/Loading/i)).not.toBeInTheDocument();
+      const skeletonElements = document.querySelectorAll('.animate-pulse');
+      expect(skeletonElements.length).toBe(0);
     });
 
-    // Should only display the 2 valid fixtures
+    // Should display the valid fixtures
     await waitFor(() => {
-      const dateElements = screen.getAllByText(/15\/06\/2024/);
-      expect(dateElements.length).toBeGreaterThan(0);
+      expect(screen.getByText(/15 June 2024/)).toBeInTheDocument();
     });
 
     // Should have logged errors for invalid dates
@@ -208,10 +192,11 @@ describe('Fixtures', () => {
       json: async () => fixturesWithEdgeCase,
     });
 
-    render(<Fixtures />);
+    renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      expect(screen.queryByText(/Loading/i)).not.toBeInTheDocument();
+      const skeletonElements = document.querySelectorAll('.animate-pulse');
+      expect(skeletonElements.length).toBe(0);
     });
 
     // The fixture should render without errors
@@ -221,5 +206,19 @@ describe('Fixtures', () => {
 
     // No error should appear
     expect(screen.queryByText(/Invalid Date/i)).not.toBeInTheDocument();
+  });
+
+  test('displays Home/Away badge correctly', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockFixtures,
+    });
+
+    renderWithRouter(<Fixtures />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Home')).toBeInTheDocument();
+      expect(screen.getByText('Away')).toBeInTheDocument();
+    });
   });
 });
