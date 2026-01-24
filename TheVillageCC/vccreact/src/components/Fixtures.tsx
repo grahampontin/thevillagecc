@@ -35,6 +35,11 @@ interface FixtureDisplay {
 
 const SKELETON_ITEMS_COUNT = 5;
 
+// Default match times for calendar entries
+// Cricket matches typically start at noon and can run until late evening
+const MATCH_START_TIME = '120000'; // 12:00 PM
+const MATCH_END_TIME = '230000';   // 11:00 PM
+
 const Fixtures: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [fixtures, setFixtures] = useState<FixtureDisplay[]>([]);
@@ -84,7 +89,7 @@ const Fixtures: React.FC = () => {
     const location = encodeURIComponent(fixture.VenueName);
     
     // Google Calendar URL format
-    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate.replace(/-/g, '')}T120000/${startDate.replace(/-/g, '')}T230000&details=${details}&location=${location}`;
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate.replace(/-/g, '')}T${MATCH_START_TIME}/${startDate.replace(/-/g, '')}T${MATCH_END_TIME}&details=${details}&location=${location}`;
   };
 
   useEffect(() => {
