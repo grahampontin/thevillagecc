@@ -155,7 +155,7 @@ const Results: React.FC = () => {
                         </span>
                       </div>
                       <div className="text-sm font-semibold text-villageText">
-                        {result.HomeTeamName} {result.HomeTeamScore || ''} · {result.AwayTeamName} {result.AwayTeamScore || ''}
+                        {result.HomeTeamName}{result.HomeTeamScore ? ` ${result.HomeTeamScore}` : ''} · {result.AwayTeamName}{result.AwayTeamScore ? ` ${result.AwayTeamScore}` : ''}
                       </div>
                       {result.ResultMargin && (
                         <p className="mt-1 text-sm text-gray-600 italic">
