@@ -123,31 +123,30 @@ const Homepage: React.FC = () => {
   }, []);
 
   return (
-    <div className="font-sans text-gray-800 bg-gray-50">
+    <div className="font-sans text-villageText bg-gray-50">
       {/* HEADER */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-md border-2 border-seagreen flex items-center justify-center">
-              <div className="w-4 h-4 border-l-2 border-b-2 border-seagreen rotate-[-20deg]"></div>
-            </div>
-            <span className="text-lg font-semibold tracking-wide uppercase text-gray-800">
-              The Village
-            </span>
+            <img
+              src={'/images/logo/logo_dark_transparent.png'}
+              alt="The Village CC"
+              className="h-12 object-contain"
+            />
           </a>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <a href="/awards" className="text-gray-700 hover:text-seagreen transition">About</a>
-            <a href="/fixtures" className="text-gray-700 hover:text-seagreen transition">Fixtures</a>
-            <a href="/results" className="text-gray-700 hover:text-seagreen transition">Results</a>
-            <a href="/stats" className="text-gray-700 hover:text-seagreen transition">Stats</a>
-            <a href="/committee" className="text-gray-700 hover:text-seagreen transition">Committee</a>
-            <a href="/Tours.aspx" className="text-gray-700 hover:text-seagreen transition">Tours</a>
+            <a href="/awards" className="text-gray-700 hover:text-villageGreen transition">About</a>
+            <a href="/fixtures" className="text-gray-700 hover:text-villageGreen transition">Fixtures</a>
+            <a href="/results" className="text-gray-700 hover:text-villageGreen transition">Results</a>
+            <a href="/stats" className="text-gray-700 hover:text-villageGreen transition">Stats</a>
+            <a href="/committee" className="text-gray-700 hover:text-villageGreen transition">Committee</a>
+            <a href="/Tours.aspx" className="text-gray-700 hover:text-villageGreen transition">Tours</a>
             <a
               href="/f7/index.html"
-              className="border border-seagreen text-seagreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-seagreen hover:text-white transition"
+              className="border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition"
             >
               Admin
             </a>
@@ -155,7 +154,7 @@ const Homepage: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-sm font-medium text-seagreen"
+            className="md:hidden text-sm font-medium text-villageGreen"
             aria-label="Open menu"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -166,15 +165,15 @@ const Homepage: React.FC = () => {
         {/* Mobile Nav */}
         <nav className={`md:hidden border-t border-gray-200 bg-white ${isMobileMenuOpen ? '' : 'hidden'}`}>
           <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2 text-sm font-medium">
-            <a href="/awards" className="py-1 text-gray-700 hover:text-seagreen transition">About</a>
-            <a href="/fixtures" className="py-1 text-gray-700 hover:text-seagreen transition">Fixtures</a>
-            <a href="/results" className="py-1 text-gray-700 hover:text-seagreen transition">Results</a>
-            <a href="/stats" className="py-1 text-gray-700 hover:text-seagreen transition">Stats</a>
-            <a href="/committee" className="py-1 text-gray-700 hover:text-seagreen transition">Committee</a>
-            <a href="/Tours.aspx" className="py-1 text-gray-700 hover:text-seagreen transition">Tours</a>
+            <a href="/awards" className="py-1 text-gray-700 hover:text-villageGreen transition">About</a>
+            <a href="/fixtures" className="py-1 text-gray-700 hover:text-villageGreen transition">Fixtures</a>
+            <a href="/results" className="py-1 text-gray-700 hover:text-villageGreen transition">Results</a>
+            <a href="/stats" className="py-1 text-gray-700 hover:text-villageGreen transition">Stats</a>
+            <a href="/committee" className="py-1 text-gray-700 hover:text-villageGreen transition">Committee</a>
+            <a href="/Tours.aspx" className="py-1 text-gray-700 hover:text-villageGreen transition">Tours</a>
             <a
               href="/f7/index.html"
-              className="mt-1 inline-flex items-center justify-center border border-seagreen text-seagreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-seagreen hover:text-white transition w-max"
+              className="mt-1 inline-flex items-center justify-center border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition w-max"
             >
               Admin
             </a>
@@ -188,10 +187,10 @@ const Homepage: React.FC = () => {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20 grid lg:grid-cols-2 gap-10 items-center">
             {/* Copy */}
             <div>
-              <p className="text-xs font-semibold tracking-[0.2em] uppercase text-seagreen mb-3">
-                Wandering cricket club · Est. 1976
+              <p className="text-xs font-semibold tracking-[0.2em] uppercase text-villageGreen mb-3">
+                A very friendly cricket club · Est. 2002
               </p>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-800 leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-villageText leading-tight">
                 {CAROUSEL_SLIDES[currentSlide].title}
               </h1>
               <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-xl">
@@ -200,13 +199,13 @@ const Homepage: React.FC = () => {
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <a
                   href={CAROUSEL_SLIDES[currentSlide].buttonLink}
-                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-md bg-seagreen text-white text-sm font-medium shadow-sm hover:bg-emerald-700 transition"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-md bg-villageGreen text-white text-sm font-medium shadow-sm hover:bg-emerald-700 transition"
                 >
                   {CAROUSEL_SLIDES[currentSlide].buttonText}
                 </a>
                 <a
                   href="/awards"
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:border-seagreen hover:text-seagreen transition"
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:border-villageGreen hover:text-villageGreen transition"
                 >
                   Learn more about us
                 </a>
@@ -248,7 +247,7 @@ const Homepage: React.FC = () => {
         <section className="bg-gray-50 border-t border-gray-200">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
             <div className="max-w-3xl">
-              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-villageText">
                 Village by name...
               </h2>
               <p className="mt-3 text-gray-600">
@@ -261,43 +260,43 @@ const Homepage: React.FC = () => {
             <div className="mt-8 grid gap-5 md:grid-cols-3">
               {/* About card */}
               <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
-                <div className="w-8 h-8 rounded-md bg-green-100 flex items-center justify-center">
-                  <span className="text-xs text-seagreen font-semibold">i</span>
+                <div className="w-8 h-8 rounded-md bg-villageGreenLight flex items-center justify-center">
+                  <span className="text-xs text-villageGreen font-semibold">i</span>
                 </div>
-                <h3 className="text-sm font-semibold text-gray-800">About us</h3>
+                <h3 className="text-sm font-semibold text-villageText">About us</h3>
                 <p className="text-sm text-gray-600">
                   Your one‑stop shop for club history, myths, legends and well‑worn clichés.
                 </p>
-                <a href="/awards" className="mt-2 text-sm font-medium text-seagreen hover:underline">
+                <a href="/awards" className="mt-2 text-sm font-medium text-villageGreen hover:underline">
                   Read the origin story →
                 </a>
               </div>
 
               {/* Get involved card */}
               <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
-                <div className="w-8 h-8 rounded-md bg-green-100 flex items-center justify-center">
-                  <span className="text-xs text-seagreen font-semibold">+</span>
+                <div className="w-8 h-8 rounded-md bg-villageGreenLight flex items-center justify-center">
+                  <span className="text-xs text-villageGreen font-semibold">+</span>
                 </div>
-                <h3 className="text-sm font-semibold text-gray-800">Get involved</h3>
+                <h3 className="text-sm font-semibold text-villageText">Get involved</h3>
                 <p className="text-sm text-gray-600">
                   We want new players. No trials, no egos, no problem. Turn up, have a go, find the pub.
                 </p>
-                <a href="mailto:thevillagecc@gmail.com" className="mt-2 text-sm font-medium text-seagreen hover:underline">
+                <a href="mailto:thevillagecc@gmail.com" className="mt-2 text-sm font-medium text-villageGreen hover:underline">
                   Get in touch →
                 </a>
               </div>
 
               {/* Stats card */}
               <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
-                <div className="w-8 h-8 rounded-md bg-green-100 flex items-center justify-center">
-                  <span className="text-xs text-seagreen font-semibold">%</span>
+                <div className="w-8 h-8 rounded-md bg-villageGreenLight flex items-center justify-center">
+                  <span className="text-xs text-villageGreen font-semibold">%</span>
                 </div>
-                <h3 className="text-sm font-semibold text-gray-800">Stats</h3>
+                <h3 className="text-sm font-semibold text-villageText">Stats</h3>
                 <p className="text-sm text-gray-600">
                   Current players enjoy squinting at their lifetime failures. Others are welcome to
                   rubber‑neck.
                 </p>
-                <a href="/stats" className="mt-2 text-sm font-medium text-seagreen hover:underline">
+                <a href="/stats" className="mt-2 text-sm font-medium text-villageGreen hover:underline">
                   Browse the numbers →
                 </a>
               </div>
@@ -310,21 +309,18 @@ const Homepage: React.FC = () => {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-semibold text-gray-800">Recent results</h2>
+                <h2 className="text-2xl font-semibold text-villageText">Recent results</h2>
                 <p className="mt-2 text-sm text-gray-600">
                   Highlights from the latest masterpieces, both heroic and humiliating.
                 </p>
               </div>
-              <a
-                href="/results"
-                className="text-sm font-medium text-seagreen hover:underline"
-              >
+              <a href="/results" className="text-sm font-medium text-villageGreen hover:underline">
                 View all results →
               </a>
             </div>
 
             {isLoading && (
-              <div className="text-center mt-8">
+              <div className="mt-8">
                 <p>Loading match reports...</p>
               </div>
             )}
@@ -336,7 +332,7 @@ const Homepage: React.FC = () => {
             )}
             
             {!isLoading && matchReports.length === 0 && !error && (
-              <div className="text-center mt-8">
+              <div className="mt-8">
                 <p>No match reports available at this time.</p>
               </div>
             )}
@@ -383,7 +379,7 @@ const Homepage: React.FC = () => {
                       </p>
                       <a
                         href={`/LiveScorecard.aspx?matchId=${report.matchId}`}
-                        className="text-sm font-medium text-seagreen hover:underline mt-2"
+                        className="text-sm font-medium text-villageGreen hover:underline mt-2"
                       >
                         Read full report →
                       </a>

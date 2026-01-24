@@ -1,56 +1,18 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Custom theme variables and helper classes */
-:root {
-  --color-seagreen: #2e8b57;
-  --color-darkslategray: #2f4f4f;
-  --color-villageGreen: #1d7a4b;
-  --color-villageGreenLight: #e6f4ee;
-
-  --font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  --font-family-heading: 'Source Sans Pro', sans-serif;
-
-  --breakpoint-xs: 0px;
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 992px;
-  --breakpoint-xl: 1200px;
-  --breakpoint-2xl: 1320px;
-}
-
+/* Optional: if you still want a custom container sizing, keep this.
+   Otherwise, prefer Tailwind's built-in `container` class. */
 .container {
-  max-width: var(--breakpoint-2xl);
+  max-width: 1320px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1rem;
   padding-right: 1rem;
 }
 
-.bg-seagreen {
-  background-color: var(--color-seagreen);
-}
-
-.border-seagreen {
-  border-color: var(--color-seagreen);
-}
-
-.text-seagreen {
-  color: var(--color-seagreen);
-}
-
-.hover\:text-seagreen:hover {
-  color: var(--color-seagreen);
-}
-
-.hover\:bg-seagreen:hover {
-  background-color: var(--color-seagreen);
-}
-
-.hover\:border-seagreen:hover {
-  border-color: var(--color-seagreen);
-}
-
+/* Keep any truly custom helpers that Tailwind doesn't provide */
 .font-heading {
-  font-family: var(--font-family-heading);
+  font-family: 'Source Sans Pro', sans-serif;
 }
