@@ -55,14 +55,14 @@ describe('Fixtures', () => {
     renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Fixtures \d{4}/)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Fixtures', level: 1 })).toBeInTheDocument();
     });
 
     // Verify the API was called with season parameter
     expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/fixtures?season='));
   });
 
-  test('displays calendar icon for each fixture', async () => {
+  test('displays "Add to calendar" link for each fixture', async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockFixtures,
@@ -71,7 +71,7 @@ describe('Fixtures', () => {
     renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      const calendarLinks = screen.getAllByLabelText('Add to calendar');
+      const calendarLinks = screen.getAllByText('Add to calendar →');
       expect(calendarLinks.length).toBe(mockFixtures.length);
     });
   });
@@ -208,7 +208,7 @@ describe('Fixtures', () => {
     expect(screen.queryByText(/Invalid Date/i)).not.toBeInTheDocument();
   });
 
-  test('displays Home/Away badge correctly', async () => {
+  test('displays HOME/AWAY badge correctly', async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockFixtures,
@@ -217,8 +217,8 @@ describe('Fixtures', () => {
     renderWithRouter(<Fixtures />);
 
     await waitFor(() => {
-      expect(screen.getByText('Home')).toBeInTheDocument();
-      expect(screen.getByText('Away')).toBeInTheDocument();
+      expect(screen.getByText('HOME')).toBeInTheDocument();
+      expect(screen.getByText('AWAY')).toBeInTheDocument();
     });
   });
 });

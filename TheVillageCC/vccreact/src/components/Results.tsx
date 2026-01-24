@@ -93,121 +93,82 @@ const Results: React.FC = () => {
   return (
     <div className="font-sans text-villageText bg-gray-50 min-h-screen">
       <Header />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-        {/* Header with season navigation */}
-        <div className="flex items-center justify-between mb-8">
-          <button
-            onClick={() => navigateToSeason(currentYear - 1)}
-            className="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-gray-700 hover:border-villageGreen hover:text-villageGreen transition"
-            aria-label="Previous season"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          
-          <h1 className="text-2xl sm:text-3xl font-semibold text-villageText">
-            Results {currentYear}
-          </h1>
-          
-          <button
-            onClick={() => navigateToSeason(currentYear + 1)}
-            className="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-gray-700 hover:border-villageGreen hover:text-villageGreen transition"
-            aria-label="Next season"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
+      <main>
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-villageText">Results</h1>
+          <p className="mt-2 text-gray-600 text-base">The highs, the lows, and the occasional miracle.</p>
 
-        {/* Loading state */}
-        {isLoading ? (
-          <div className="space-y-4">
-            {[...Array(SKELETON_ITEMS_COUNT)].map((_, index) => (
-              <div 
-                key={index} 
-                className="bg-white border border-gray-200 rounded-lg p-4 animate-pulse"
-              >
-                <div className="h-4 bg-gray-200 rounded w-1/4 mb-3"></div>
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            ))}
+          {/* Season Navigation */}
+          <div className="mt-6 flex items-center justify-between">
+            <button
+              onClick={() => navigateToSeason(currentYear - 1)}
+              className="text-sm font-medium text-villageGreen hover:underline"
+            >
+              ← Previous season
+            </button>
+            <span className="text-sm text-gray-500">{currentYear} Season</span>
+            <button
+              onClick={() => navigateToSeason(currentYear + 1)}
+              className="text-sm font-medium text-villageGreen hover:underline"
+            >
+              Next season →
+            </button>
           </div>
-        ) : results.length === 0 ? (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-            <p className="text-blue-700">
-              No results available for the {currentYear} season.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {results.map((result) => {
-              const status = getResultStatus(result);
-              const opponentName = getOpponentName(result);
-              
-              return (
-                <a
-                  key={result.MatchId}
-                  href={`/LiveScorecard.aspx?matchId=${result.MatchId}`}
-                  className="block bg-white border border-gray-200 rounded-lg p-4 hover:border-villageGreen hover:shadow-sm transition group"
+
+          {/* Loading state */}
+          {isLoading ? (
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              {[...Array(SKELETON_ITEMS_COUNT)].map((_, index) => (
+                <div 
+                  key={index} 
+                  className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm animate-pulse"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0 flex flex-col gap-2">
-                      {/* Date, opponent and status in one line */}
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2 text-gray-500">
-                          <span>{formatDate(result.MatchDate)}</span>
-                          <span>·</span>
-                          <span>vs {opponentName}</span>
-                        </div>
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
-                          {status.text}
+                  <div className="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
+                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                </div>
+              ))}
+            </div>
+          ) : results.length === 0 ? (
+            <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+              <p className="text-blue-700">
+                No results available for the {currentYear} season.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              {results.map((result) => {
+                const status = getResultStatus(result);
+                const opponentName = getOpponentName(result);
+                
+                return (
+                  <a
+                    key={result.MatchId}
+                    href={`/LiveScorecard.aspx?matchId=${result.MatchId}`}
+                    className="block"
+                  >
+                    <article className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:border-villageGreen transition">
+                      <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                        <span>{formatDate(result.MatchDate)} · vs {opponentName}</span>
+                        <span className={`px-2 py-0.5 rounded-full font-semibold text-[11px] ${status.color}`}>
+                          {status.text.toUpperCase()}
                         </span>
                       </div>
-                      
-                      {/* Match details with scores */}
-                      <div className="text-base font-semibold text-gray-800">
-                        <div className="flex flex-wrap items-baseline gap-x-2">
-                          <span>{result.HomeTeamName}</span>
-                          {result.HomeTeamScore && (
-                            <span className="text-sm font-normal text-gray-600">
-                              {result.HomeTeamScore}
-                            </span>
-                          )}
-                          <span className="text-sm font-normal text-gray-500">
-                            {result.ResultText}
-                          </span>
-                          <span>{result.AwayTeamName}</span>
-                          {result.AwayTeamScore && (
-                            <span className="text-sm font-normal text-gray-600">
-                              {result.AwayTeamScore}
-                            </span>
-                          )}
-                        </div>
+                      <div className="text-sm font-semibold text-villageText">
+                        {result.HomeTeamName}{result.HomeTeamScore ? ` ${result.HomeTeamScore}` : ''} · {result.AwayTeamName}{result.AwayTeamScore ? ` ${result.AwayTeamScore}` : ''}
                       </div>
-                      
-                      {/* Result margin */}
                       {result.ResultMargin && (
-                        <div className="text-sm text-gray-600 italic">
+                        <p className="mt-1 text-sm text-gray-600 italic">
                           {result.ResultMargin}
-                        </div>
+                        </p>
                       )}
-                    </div>
-                    
-                    {/* Arrow icon */}
-                    <div className="flex-shrink-0 text-gray-400 group-hover:text-villageGreen transition">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-        )}
+                    </article>
+                  </a>
+                );
+              })}
+            </div>
+          )}
+        </section>
       </main>
       <Footer />
     </div>
