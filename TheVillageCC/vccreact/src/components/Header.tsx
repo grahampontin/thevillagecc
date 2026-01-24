@@ -1,159 +1,64 @@
 import React, { useState } from 'react';
 
 const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   return (
-    <nav className="bg-seagreen text-white sticky top-0 z-50">
-      <div className="container">
-        <div className="flex justify-between items-center">
-          <a href="/" className="flex items-center py-2">
-            <div className="inline-flex p-0 rounded-[25%]">
-              <img
-                src="/images/logo/logo_dark_transparent.png"
-                height="50"
-                alt="The Village CC Logo"
-                className="h-[50px]"
-              />
-            </div>
-          </a>
-          
-          <button
-            className="lg:hidden text-white p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle navigation"
-            aria-expanded={isMenuOpen}
-            aria-controls="navbarCollapse"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+        {/* Logo */}
+        <a href="/" className="flex items-center gap-2">
+          <img
+            src={'/images/logo/logo_dark_transparent.png'}
+            alt="The Village CC"
+            className="h-12 object-contain"
+          />
+        </a>
 
-          <div 
-            id="navbarCollapse"
-            className={`${isMenuOpen ? 'block' : 'hidden'} lg:flex lg:items-center w-full lg:w-auto`}
-            aria-hidden={!isMenuOpen}
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+          <a href="/awards" className="text-gray-700 hover:text-villageGreen transition">About</a>
+          <a href="/fixtures" className="text-gray-700 hover:text-villageGreen transition">Fixtures</a>
+          <a href="/results" className="text-gray-700 hover:text-villageGreen transition">Results</a>
+          <a href="/stats" className="text-gray-700 hover:text-villageGreen transition">Stats</a>
+          <a href="/committee" className="text-gray-700 hover:text-villageGreen transition">Committee</a>
+          <a href="/Tours.aspx" className="text-gray-700 hover:text-villageGreen transition">Tours</a>
+          <a
+            href="/f7/index.html"
+            className="border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition"
           >
-            <ul className="flex flex-col lg:flex-row lg:space-x-4 lg:mr-auto mb-0">
-              <li>
-                <a href="/awards" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
-                  <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
-                    info
-                  </span>
-                  <span className="inline">About</span>
-                </a>
-              </li>
-              <li>
-                <a href="/fixtures" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
-                  <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
-                    calendar_month
-                  </span>
-                  <span className="inline">Fixtures</span>
-                </a>
-              </li>
-              <li>
-                <a href="/results" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
-                  <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
-                    scoreboard
-                  </span>
-                  <span className="inline">Results</span>
-                </a>
-              </li>
-              <li>
-                <a href="/stats" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
-                  <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
-                    bar_chart
-                  </span>
-                  <span className="inline">Stats</span>
-                </a>
-              </li>
-              <li>
-                <a href="/committee" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
-                  <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
-                    groups
-                  </span>
-                  <span className="inline">Committee</span>
-                </a>
-              </li>
-              <li>
-                <a href="/Tours.aspx" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
-                  <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
-                    flight_takeoff
-                  </span>
-                  <span className="inline">Tours</span>
-                </a>
-              </li>
-              <li>
-                <a href="/f7/index.html" className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg">
-                  <span className="material-icons-outlined inline lg:hidden text-2xl align-middle mr-2">
-                    settings
-                  </span>
-                  <span className="inline">Admin</span>
-                </a>
-              </li>
-            </ul>
-            
-            <ul className="flex flex-col lg:flex-row lg:space-x-2 lg:ml-auto mb-0">
-              <li>
-                <a
-                  href="https://teamwear.nxt-sports.com/shop/the-village-cc"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg"
-                >
-                  <span className="material-icons-outlined inline lg:block text-2xl align-text-bottom mx-auto text-center">
-                    shopping_cart
-                  </span>
-                  <span className="inline lg:hidden ml-4">Club Shop</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://twitter.com/villagecc"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg"
-                  title="Twitter"
-                >
-                  <span className="material-icons-outlined inline lg:block text-2xl align-text-bottom mx-auto text-center">
-                    chat_bubble_outline
-                  </span>
-                  <span className="inline lg:hidden ml-4">Twitter</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.instagram.com/thevillagecc_london/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg"
-                  title="Instagram"
-                >
-                  <span className="material-icons-outlined inline lg:block text-2xl align-text-bottom mx-auto text-center">
-                    photo_camera
-                  </span>
-                  <span className="inline lg:hidden ml-5">Instagram</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:thevillagecc@gmail.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="nav-link block py-2 px-2 text-white hover:border-b-2 hover:border-white lg:border-b-2 lg:border-seagreen transition-all font-heading font-bold text-lg"
-                >
-                  <span className="material-icons-outlined inline lg:block text-2xl align-text-bottom mx-auto text-center">
-                    email
-                  </span>
-                  <span className="inline lg:hidden">Contact Us</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+            Admin
+          </a>
+        </nav>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-sm font-medium text-villageGreen"
+          aria-label="Open menu"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          Menu
+        </button>
       </div>
-    </nav>
+
+      {/* Mobile Nav */}
+      <nav className={`md:hidden border-t border-gray-200 bg-white ${isMobileMenuOpen ? '' : 'hidden'}`}>
+        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2 text-sm font-medium">
+          <a href="/awards" className="py-1 text-gray-700 hover:text-villageGreen transition">About</a>
+          <a href="/fixtures" className="py-1 text-gray-700 hover:text-villageGreen transition">Fixtures</a>
+          <a href="/results" className="py-1 text-gray-700 hover:text-villageGreen transition">Results</a>
+          <a href="/stats" className="py-1 text-gray-700 hover:text-villageGreen transition">Stats</a>
+          <a href="/committee" className="py-1 text-gray-700 hover:text-villageGreen transition">Committee</a>
+          <a href="/Tours.aspx" className="py-1 text-gray-700 hover:text-villageGreen transition">Tours</a>
+          <a
+            href="/f7/index.html"
+            className="mt-1 inline-flex items-center justify-center border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition w-max"
+          >
+            Admin
+          </a>
+        </div>
+      </nav>
+    </header>
   );
 };
 

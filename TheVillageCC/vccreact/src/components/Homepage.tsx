@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Header from './Header';
+import Footer from './Footer';
 
 // Define interfaces for match report data from API
 interface MatchReportListItem {
@@ -57,7 +59,6 @@ const Homepage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState<number>(0);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -124,62 +125,7 @@ const Homepage: React.FC = () => {
 
   return (
     <div className="font-sans text-villageText bg-gray-50">
-      {/* HEADER */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-          {/* Logo */}
-          <a href="/" className="flex items-center gap-2">
-            <img
-              src={'/images/logo/logo_dark_transparent.png'}
-              alt="The Village CC"
-              className="h-12 object-contain"
-            />
-          </a>
-
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <a href="/awards" className="text-gray-700 hover:text-villageGreen transition">About</a>
-            <a href="/fixtures" className="text-gray-700 hover:text-villageGreen transition">Fixtures</a>
-            <a href="/results" className="text-gray-700 hover:text-villageGreen transition">Results</a>
-            <a href="/stats" className="text-gray-700 hover:text-villageGreen transition">Stats</a>
-            <a href="/committee" className="text-gray-700 hover:text-villageGreen transition">Committee</a>
-            <a href="/Tours.aspx" className="text-gray-700 hover:text-villageGreen transition">Tours</a>
-            <a
-              href="/f7/index.html"
-              className="border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition"
-            >
-              Admin
-            </a>
-          </nav>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-sm font-medium text-villageGreen"
-            aria-label="Open menu"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            Menu
-          </button>
-        </div>
-
-        {/* Mobile Nav */}
-        <nav className={`md:hidden border-t border-gray-200 bg-white ${isMobileMenuOpen ? '' : 'hidden'}`}>
-          <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2 text-sm font-medium">
-            <a href="/awards" className="py-1 text-gray-700 hover:text-villageGreen transition">About</a>
-            <a href="/fixtures" className="py-1 text-gray-700 hover:text-villageGreen transition">Fixtures</a>
-            <a href="/results" className="py-1 text-gray-700 hover:text-villageGreen transition">Results</a>
-            <a href="/stats" className="py-1 text-gray-700 hover:text-villageGreen transition">Stats</a>
-            <a href="/committee" className="py-1 text-gray-700 hover:text-villageGreen transition">Committee</a>
-            <a href="/Tours.aspx" className="py-1 text-gray-700 hover:text-villageGreen transition">Tours</a>
-            <a
-              href="/f7/index.html"
-              className="mt-1 inline-flex items-center justify-center border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition w-max"
-            >
-              Admin
-            </a>
-          </div>
-        </nav>
-      </header>
+      <Header />
 
       <main>
         {/* HERO - Rotating Carousel */}
@@ -392,16 +338,7 @@ const Homepage: React.FC = () => {
         </section>
       </main>
 
-      {/* FOOTER */}
-      <footer className="bg-gray-900 text-gray-400 text-xs">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>© {new Date().getFullYear()} The Village Cricket Club</p>
-          <div className="flex items-center gap-4">
-            <a href="https://twitter.com/villagecc" className="hover:text-white transition">Twitter</a>
-            <a href="https://www.instagram.com/thevillagecc_london/" className="hover:text-white transition">Instagram</a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
