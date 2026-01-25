@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Awards — The Village Cricket Club</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            villageGreen: '#1d7a4b',
+            villageGreenLight: '#e6f4ee',
+            villageText: '#1f2933'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body class="font-sans text-villageText bg-gray-50">
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-md border-2 border-villageGreen flex items-center justify-center">
+          <div class="w-4 h-4 border-l-2 border-b-2 border-villageGreen rotate-[-20deg]"></div>
+        </div>
+        <span class="text-lg font-semibold tracking-wide uppercase text-villageText">The Village</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="/About" class="text-gray-700 hover:text-villageGreen transition">About</a>
+        <a href="/Fixtures" class="text-gray-700 hover:text-villageGreen transition">Fixtures</a>
+        <a href="/Results" class="text-gray-700 hover:text-villageGreen transition">Results</a>
+        <a href="/Stats" class="text-gray-700 hover:text-villageGreen transition">Stats</a>
+        <a href="/Committee" class="text-gray-700 hover:text-villageGreen transition">Committee</a>
+        <a href="/Tours" class="text-gray-700 hover:text-villageGreen transition">Tours</a>
+        <a href="/Awards" class="text-villageGreen font-semibold border-b-2 border-villageGreen">Awards</a>
+      </nav>
+
+      <button class="md:hidden text-sm font-medium text-villageGreen">Menu</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+
+      <!-- Page Title -->
+      <h1 class="text-3xl sm:text-4xl font-semibold text-villageText">Awards</h1>
+      <p class="mt-2 text-gray-600 text-base">Celebrating excellence, effort, and the occasional fluke.</p>
+
+      <!-- Season Navigation -->
+      <div class="mt-6 flex items-center justify-between">
+        <a href="#" class="text-sm font-medium text-villageGreen hover:underline">← Previous season</a>
+        <span class="text-sm text-gray-500">2024 Awards</span>
+        <a href="#" class="text-sm font-medium text-villageGreen hover:underline">Next season →</a>
+      </div>
+
+      <!-- Player Awards -->
+      <section class="mt-10">
+        <h2 class="text-2xl font-semibold text-villageText">Player Awards</h2>
+        <p class="mt-1 text-gray-600 text-sm">The big ones — the glory, the prestige, the bragging rights.</p>
+
+        <div class="mt-6 grid gap-6 md:grid-cols-3 sm:grid-cols-2">
+          <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+            <h3 class="text-sm font-semibold text-villageText">Player of the Year</h3>
+            <p class="mt-1 text-gray-700">Neil Barstow</p>
+          </div>
+
+          <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+            <h3 class="text-sm font-semibold text-villageText">Batter of the Year</h3>
+            <p class="mt-1 text-gray-700">Ian Mutch</p>
+          </div>
+
+          <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+            <h3 class="text-sm font-semibold text-villageText">Bowler of the Year</h3>
+            <p class="mt-1 text-gray-700">Mehdi Hasan</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Club Awards -->
+      <section class="mt-12">
+        <h2 class="text-2xl font-semibold text-villageText">Club Awards</h2>
+        <p class="mt-1 text-gray-600 text-sm">For contributions on and off the field.</p>
+
+        <div class="mt-6 grid gap-6 md:grid-cols-3 sm:grid-cols-2">
+          <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+            <h3 class="text-sm font-semibold text-villageText">Clubman of the Year</h3>
+            <p class="mt-1 text-gray-700">Ken Mackenzie</p>
+          </div>
+
+          <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+            <h3 class="text-sm font-semibold text-villageText">Most Improved Player</h3>
+            <p class="mt-1 text-gray-700">Louis Stonier</p>
+          </div>
+
+          <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+            <h3 class="text-sm font-semibold text-villageText">Spirit of Cricket Award</h3>
+            <p class="mt-1 text-gray-700">Jon Ryall-Charme</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Captains & Vice-Captains -->
+      <section class="mt-12">
+        <h2 class="text-2xl font-semibold text-villageText">Captains & Vice‑Captains</h2>
+
+        <div class="mt-6 grid md:grid-cols-2 gap-10">
+          <div>
+            <h3 class="text-lg font-semibold text-villageText">Captains</h3>
+            <ul class="mt-3 space-y-1 text-gray-700 text-sm">
+              <li>2024 — Toby de Mellow</li>
+              <li>2023 — Toby de Mellow</li>
+              <li>2022 — Oliver Morgans</li>
+              <li>2021 — Oliver Morgans</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold text-villageText">Vice‑Captains</h3>
+            <ul class="mt-3 space-y-1 text-gray-700 text-sm">
+              <li>2024 — Prashant Misra</li>
+              <li>2023 — Toby de Mellow</li>
+              <li>2022 — Ken Mackenzie</li>
+              <li>2021 — Ken Mackenzie</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-gray-400 text-xs">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© 2024 The Village Cricket Club</p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:text-white transition">Twitter</a>
+        <a href="#" class="hover:text-white transition">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

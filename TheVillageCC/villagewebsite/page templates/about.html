@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>About — The Village Cricket Club</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            villageGreen: '#1d7a4b',
+            villageGreenLight: '#e6f4ee',
+            villageText: '#1f2933'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body class="font-sans text-villageText bg-gray-50">
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-md border-2 border-villageGreen flex items-center justify-center">
+          <div class="w-4 h-4 border-l-2 border-b-2 border-villageGreen rotate-[-20deg]"></div>
+        </div>
+        <span class="text-lg font-semibold tracking-wide uppercase text-villageText">The Village</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="/About" class="text-villageGreen font-semibold border-b-2 border-villageGreen">About</a>
+        <a href="/Fixtures" class="text-gray-700 hover:text-villageGreen transition">Fixtures</a>
+        <a href="/Results" class="text-gray-700 hover:text-villageGreen transition">Results</a>
+        <a href="/Stats" class="text-gray-700 hover:text-villageGreen transition">Stats</a>
+        <a href="/Committee" class="text-gray-700 hover:text-villageGreen transition">Committee</a>
+        <a href="/Tours" class="text-gray-700 hover:text-villageGreen transition">Tours</a>
+        <a href="/Awards" class="text-gray-700 hover:text-villageGreen transition">Awards</a>
+      </nav>
+
+      <button class="md:hidden text-sm font-medium text-villageGreen">Menu</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+
+      <!-- Page Title -->
+      <h1 class="text-3xl sm:text-4xl font-semibold text-villageText">About the Club</h1>
+      <p class="mt-2 text-gray-600 text-base">
+        A wandering cricket club with a talent for enthusiasm, chaos, and the occasional moment of brilliance.
+      </p>
+
+      <!-- Club Stats -->
+      <section class="mt-8 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+        <h2 class="text-xl font-semibold mb-4">Club Stats</h2>
+
+        <div class="grid sm:grid-cols-3 gap-4 text-sm">
+          <div>
+            Formed: <strong>Feb 2004</strong>
+          </div>
+          <div>
+            Home Ground: <strong>Parliament Hill</strong>
+          </div>
+          <div>
+            Capacity: <strong>250,000 (standing); 5 (seated)</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- History -->
+      <section class="mt-10 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+        <h2 class="text-xl font-semibold mb-4">History</h2>
+
+        <div class="space-y-4 text-gray-700 text-sm leading-relaxed">
+          <p>
+            The Village Cricket Club is a small nomadic club with its roots in North East London and players spread across London and surrounding areas. After one bizarre meeting in Stamford Hill's Birdcage, we were formed in 2004 by a bunch of singularly talentless but over enthusiastic cricketers who decided that they wanted to continue to entertain non-existent crowds beyond the end of their university days.
+          </p>
+          <p>
+            Its first competitive foray was initial enrollment in NELC League exalting it's status for the first few seasons and then instinctive transition into the world of friendly Cricket across London and invitational relationships outside of it, playing games either Saturday or Sunday every weekend for most of the summer from April to September.
+          </p>
+          <p>
+            Since its inception, much has changed. The social and cultural fabric of the club has grown, diversified and integrated with members from Australia, New Zealand, India, Pakistan, Nepal, Canada, Oman, Netherlands, Greece and of course, from all over the UK. Our second generation is starting to come through with contributions both in and out of the field of play.
+          </p>
+          <p>
+            We play most of our matches in central London but we also make yearly trips to Oxford, Maidenhead and the West Country through some of the relationships we have built over the last 20 years. Every two years, we strive to take an International tour. We've visited Corfu, Malta, Amsterdam, Montenegro, Croatia, Porto and the 2026 tour is already under planning stages.
+          </p>
+          <p>
+            We are always on the lookout for new members of any ability from anywhere. Enthusiasm for the game and an inclination to bond with our club and members is our only selection criteria.
+          </p>
+          <p>
+            Email us and find out more on how our mutual cricketing journey can start and build.
+          </p>
+        </div>
+      </section>
+
+      <!-- Leading Players -->
+      <section class="mt-10 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+        <h2 class="text-xl font-semibold mb-4">Leading Players</h2>
+
+        <div class="grid sm:grid-cols-3 gap-4 text-sm">
+          <div>
+            Leading Run Scorer:
+            <strong>OL Morgans (5473)</strong>
+          </div>
+          <div>
+            Leading Wicket Taker:
+            <strong>E Gupte (347)</strong>
+          </div>
+          <div>
+            Most Catches:
+            <strong>OL Morgans (137)</strong>
+          </div>
+        </div>
+      </section>
+
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-gray-400 text-xs">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© 2024 The Village Cricket Club</p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:text-white transition">Twitter</a>
+        <a href="#" class="hover:text-white transition">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
