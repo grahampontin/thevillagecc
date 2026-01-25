@@ -41,7 +41,7 @@ const MATCH_START_TIME = '120000'; // 12:00 PM
 const MATCH_END_TIME = '230000';   // 11:00 PM
 
 const Fixtures: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [fixtures, setFixtures] = useState<FixtureDisplay[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -50,10 +50,6 @@ const Fixtures: React.FC = () => {
     const seasonParam = searchParams.get('season');
     return seasonParam ? parseInt(seasonParam) : new Date().getFullYear();
   }, [searchParams]);
-
-  const navigateToSeason = (year: number) => {
-    setSearchParams({ season: year.toString() });
-  };
 
   // Helper function to format date for calendar
   const formatDateForCalendar = (dateString: string): string => {

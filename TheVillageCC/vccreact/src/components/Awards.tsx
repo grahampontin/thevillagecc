@@ -1,310 +1,119 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
 
-// Define interfaces for API data
-interface Player {
-  playerId: number;
-  firstName: string;
-  surname: string;
-}
-
-interface Award {
-  Id: number;
-  Year: number;
-  Award: string;
-  PlayerId: number;
-  Data: string;
-}
-
-interface CommitteePost {
-  Id: number;
-  Year: number;
-  Post: string;
-  PlayerId: number;
-}
-
-// Display data structures
-interface YearPlayerData {
-  Year: number;
-  PlayerName: string;
-}
-
-interface AwardYearData {
-  Year: number;
-  PlayersPlayer: string;
-  CaptainsPlayer: string;
-  BestBatsman: string;
-  BestBowler: string;
-  BestFielder: string;
-  MostImproved: string;
-}
-
-interface HallOfFameEntry {
-  Year: number;
-  PlayerName: string;
-  EmbedUrl: string;
-}
-
 const Awards: React.FC = () => {
-  const [captains, setCaptains] = useState<YearPlayerData[]>([]);
-  const [viceCaptains, setViceCaptains] = useState<YearPlayerData[]>([]);
-  const [playerOfYear, setPlayerOfYear] = useState<YearPlayerData[]>([]);
-  const [awards, setAwards] = useState<AwardYearData[]>([]);
-  const [hallOfFame, setHallOfFame] = useState<HallOfFameEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-
-        // Fetch all required data in parallel
-        const [playersRes, awardsRes, committeeRes] = await Promise.all([
-          fetch('/api/players'),
-          fetch('/api/awards'),
-          fetch('/api/committee')
-        ]);
-
-        if (!playersRes.ok || !awardsRes.ok || !committeeRes.ok) {
-          throw new Error('Failed to fetch data');
-        }
-
-        const players: Player[] = await playersRes.json();
-        const allAwards: Award[] = await awardsRes.json();
-        const allCommittee: CommitteePost[] = await committeeRes.json();
-
-        // Create player lookup
-        const playerMap = new Map(players.map(p => [p.playerId, `${p.firstName} ${p.surname}`.trim()]));
-
-        // Process committee data
-        const captainsData = allCommittee
-          .filter(c => c.Post === 'Captain')
-          .sort((a, b) => a.Year - b.Year)
-          .map(c => ({
-            Year: c.Year,
-            PlayerName: playerMap.get(c.PlayerId) || 'Unknown'
-          }));
-
-        const viceCaptainsData = allCommittee
-          .filter(c => c.Post === 'ViceCaptain')
-          .sort((a, b) => a.Year - b.Year)
-          .map(c => ({
-            Year: c.Year,
-            PlayerName: playerMap.get(c.PlayerId) || 'Unknown'
-          }));
-
-        // Process awards data
-        const playerOfYearData = allAwards
-          .filter(a => a.Award === 'PlayerOfTheYear')
-          .sort((a, b) => a.Year - b.Year)
-          .map(a => ({
-            Year: a.Year,
-            PlayerName: playerMap.get(a.PlayerId) || 'Unknown'
-          }));
-
-        // Add COVID entry for 2020 if not present
-        if (!playerOfYearData.some(p => p.Year === 2020)) {
-          playerOfYearData.push({ Year: 2020, PlayerName: 'COVID' });
-          playerOfYearData.sort((a, b) => a.Year - b.Year);
-        }
-
-        // Group awards by year for the table
-        const awardsByYear = new Map<number, Map<string, Award>>();
-        allAwards.forEach(award => {
-          if (!awardsByYear.has(award.Year)) {
-            awardsByYear.set(award.Year, new Map());
-          }
-          awardsByYear.get(award.Year)!.set(award.Award, award);
-        });
-
-        const awardsData: AwardYearData[] = Array.from(awardsByYear.entries())
-          .map(([year, yearAwards]) => ({
-            Year: year,
-            PlayersPlayer: formatAwardWinner(yearAwards.get('PlayerOfTheYear'), playerMap),
-            CaptainsPlayer: formatAwardWinner(yearAwards.get('CaptainsPlayerOfTheYear'), playerMap),
-            BestBatsman: formatAwardWinner(yearAwards.get('BatsmanOfTheYear'), playerMap),
-            BestBowler: formatAwardWinner(yearAwards.get('BowlerOfTheYear'), playerMap),
-            BestFielder: formatAwardWinner(yearAwards.get('FielderOfTheYear'), playerMap),
-            MostImproved: formatAwardWinner(yearAwards.get('MostImprovedPlayer'), playerMap)
-          }))
-          .sort((a, b) => a.Year - b.Year);
-
-        // Add COVID entry for 2020 if not present
-        if (!awardsData.some(a => a.Year === 2020)) {
-          awardsData.push({
-            Year: 2020,
-            PlayersPlayer: 'COVID',
-            CaptainsPlayer: '',
-            BestBatsman: '',
-            BestBowler: '',
-            BestFielder: '',
-            MostImproved: ''
-          });
-          awardsData.sort((a, b) => a.Year - b.Year);
-        }
-
-        // Process Hall of Fame
-        const hallOfFameData = allAwards
-          .filter(a => a.Award === 'CorridorOfUncertainty')
-          .sort((a, b) => a.Year - b.Year)
-          .map(a => ({
-            Year: a.Year,
-            PlayerName: playerMap.get(a.PlayerId) || 'Unknown',
-            EmbedUrl: a.Data || ''
-          }));
-
-        // Calculate leading players stats
-        // Note: The API doesn't provide aggregated stats, so we'll skip this for now
-        // In a full implementation, we'd need a stats API endpoint
-
-        setCaptains(captainsData);
-        setViceCaptains(viceCaptainsData);
-        setPlayerOfYear(playerOfYearData);
-        setAwards(awardsData);
-        setHallOfFame(hallOfFameData);
-      } catch (error) {
-        console.error('Error fetching awards data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const formatAwardWinner = (award: Award | undefined, playerMap: Map<number, string>): string => {
-    if (!award) return '';
-    const playerName = playerMap.get(award.PlayerId) || 'Unknown';
-    if (award.Data) {
-      return playerName + '<br/>' + award.Data;
-    }
-    return playerName;
+  // Static data matching the template
+  const currentYear = 2024;
+  
+  const currentSeasonAwards = {
+    playerOfYear: 'Neil Barstow',
+    batterOfYear: 'Ian Mutch',
+    bowlerOfYear: 'Mehdi Hasan',
+    clubmanOfYear: 'Ken Mackenzie',
+    mostImproved: 'Louis Stonier',
+    spiritOfCricket: 'Jon Ryall-Charme'
   };
 
-  if (isLoading) {
-    return (
-      <>
-        <Header />
-        <main className="container">
-          <div className="text-center mt-5">
-            <p>Loading...</p>
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
+  const captains = [
+    { Year: 2024, PlayerName: 'Toby de Mellow' },
+    { Year: 2023, PlayerName: 'Toby de Mellow' },
+    { Year: 2022, PlayerName: 'Oliver Morgans' },
+    { Year: 2021, PlayerName: 'Oliver Morgans' }
+  ];
+
+  const viceCaptains = [
+    { Year: 2024, PlayerName: 'Prashant Misra' },
+    { Year: 2023, PlayerName: 'Toby de Mellow' },
+    { Year: 2022, PlayerName: 'Ken Mackenzie' },
+    { Year: 2021, PlayerName: 'Ken Mackenzie' }
+  ];
 
   return (
     <>
       <Header />
-      <main className="container">
-        <div className="d-flex flex-wrap align-items-stretch mt-3 w-100">
-          <div className="flex-grow-1 me-2 mb-2">
-            <h5 className="text-center">Captains</h5>
-            <table className="table">
-              <tbody>
-                {captains.map((captain, idx) => (
-                  <tr key={idx}>
-                    <td>{captain.Year}</td>
-                    <td>{captain.PlayerName}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <main>
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          {/* Page Title */}
+          <h1 className="text-3xl sm:text-4xl font-semibold text-villageText">Awards</h1>
+          <p className="mt-2 text-gray-600 text-base">Celebrating excellence, effort, and the occasional fluke.</p>
+
+          {/* Season Navigation */}
+          <div className="mt-6 flex items-center justify-center">
+            <span className="text-sm text-gray-500">{currentYear} Awards</span>
           </div>
-          <div className="flex-grow-1 mb-2">
-            <h5 className="text-center">Vice-Captains</h5>
-            <table className="table">
-              <tbody>
-                {viceCaptains.map((viceCaptain, idx) => (
-                  <tr key={idx}>
-                    <td>{viceCaptain.Year}</td>
-                    <td>{viceCaptain.PlayerName}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="flex-grow-1 ms-2 mb-2">
-            <h5 className="text-center">Player of the Year</h5>
-            <table className="table">
-              <tbody>
-                {playerOfYear.map((player, idx) => (
-                  <tr key={idx}>
-                    <td>{player.Year}</td>
-                    <td>{player.PlayerName}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
 
-        <hr />
+          {/* Player Awards */}
+          <section className="mt-10">
+            <h2 className="text-2xl font-semibold text-villageText">Player Awards</h2>
+            <p className="mt-1 text-gray-600 text-sm">The big ones — the glory, the prestige, the bragging rights.</p>
 
-        <h5>Leading Players</h5>
-        <div className="d-flex flex-wrap">
-          <div className="mx-auto" style={{ whiteSpace: 'nowrap' }}>
-            <em>Leading player statistics will be available soon</em>
-          </div>
-        </div>
-
-        <hr />
-
-        <h5>Awards</h5>
-        <table className="table">
-          <thead>
-            <tr>
-              <th className="text-center"></th>
-              <th className="text-center">Players' Player of The Season</th>
-              <th className="text-center">Captain's Player of The Season</th>
-              <th className="text-center">Best Batsman</th>
-              <th className="text-center">Best Bowler</th>
-              <th className="text-center">Best Fielder</th>
-              <th className="text-center">Most Improved</th>
-            </tr>
-          </thead>
-          <tbody>
-            {awards.map((award, idx) => (
-              <tr key={idx}>
-                <th className="text-center">{award.Year}</th>
-                <td dangerouslySetInnerHTML={{ __html: award.PlayersPlayer }}></td>
-                <td dangerouslySetInnerHTML={{ __html: award.CaptainsPlayer }}></td>
-                <td dangerouslySetInnerHTML={{ __html: award.BestBatsman }}></td>
-                <td dangerouslySetInnerHTML={{ __html: award.BestBowler }}></td>
-                <td dangerouslySetInnerHTML={{ __html: award.BestFielder }}></td>
-                <td dangerouslySetInnerHTML={{ __html: award.MostImproved }}></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <h5 className="mb-1">The Hall of Fame <small>(Corridor of Uncertainty)</small></h5>
-        <div className="d-flex flex-wrap">
-          {hallOfFame.length > 0 ? (
-            hallOfFame.map((entry, idx) => (
-              <div key={idx} className="mx-1">
-                <div className="mb-1">{entry.Year} - {entry.PlayerName}</div>
-                <div className="panel-body">
-                  {entry.EmbedUrl && (
-                    <iframe 
-                      src={entry.EmbedUrl} 
-                      frameBorder="0" 
-                      allowFullScreen
-                      title={`Hall of Fame ${entry.Year}`}
-                    ></iframe>
-                  )}
-                </div>
+            <div className="mt-6 grid gap-6 md:grid-cols-3 sm:grid-cols-2">
+              <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                <h3 className="text-sm font-semibold text-villageText">Player of the Year</h3>
+                <p className="mt-1 text-gray-700">{currentSeasonAwards.playerOfYear}</p>
               </div>
-            ))
-          ) : (
-            <p>No Hall of Fame entries yet.</p>
-          )}
-        </div>
 
-        <hr />
+              <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                <h3 className="text-sm font-semibold text-villageText">Batter of the Year</h3>
+                <p className="mt-1 text-gray-700">{currentSeasonAwards.batterOfYear}</p>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                <h3 className="text-sm font-semibold text-villageText">Bowler of the Year</h3>
+                <p className="mt-1 text-gray-700">{currentSeasonAwards.bowlerOfYear}</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Club Awards */}
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold text-villageText">Club Awards</h2>
+            <p className="mt-1 text-gray-600 text-sm">For contributions on and off the field.</p>
+
+            <div className="mt-6 grid gap-6 md:grid-cols-3 sm:grid-cols-2">
+              <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                <h3 className="text-sm font-semibold text-villageText">Clubman of the Year</h3>
+                <p className="mt-1 text-gray-700">{currentSeasonAwards.clubmanOfYear}</p>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                <h3 className="text-sm font-semibold text-villageText">Most Improved Player</h3>
+                <p className="mt-1 text-gray-700">{currentSeasonAwards.mostImproved}</p>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                <h3 className="text-sm font-semibold text-villageText">Spirit of Cricket Award</h3>
+                <p className="mt-1 text-gray-700">{currentSeasonAwards.spiritOfCricket}</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Captains & Vice-Captains */}
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold text-villageText">Captains & Vice‑Captains</h2>
+
+            <div className="mt-6 grid md:grid-cols-2 gap-10">
+              <div>
+                <h3 className="text-lg font-semibold text-villageText">Captains</h3>
+                <ul className="mt-3 space-y-1 text-gray-700 text-sm">
+                  {captains.map((captain, idx) => (
+                    <li key={idx}>{captain.Year} — {captain.PlayerName}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-villageText">Vice‑Captains</h3>
+                <ul className="mt-3 space-y-1 text-gray-700 text-sm">
+                  {viceCaptains.map((viceCaptain, idx) => (
+                    <li key={idx}>{viceCaptain.Year} — {viceCaptain.PlayerName}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+        </section>
       </main>
       <Footer />
     </>
