@@ -17,11 +17,12 @@ const Header: React.FC = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-          <a href="/awards" className="text-gray-700 hover:text-villageGreen transition">About</a>
+          <a href="/about" className="text-gray-700 hover:text-villageGreen transition">About</a>
           <a href="/fixtures" className="text-gray-700 hover:text-villageGreen transition">Fixtures</a>
           <a href="/results" className="text-gray-700 hover:text-villageGreen transition">Results</a>
           <a href="/stats" className="text-gray-700 hover:text-villageGreen transition">Stats</a>
           <a href="/committee" className="text-gray-700 hover:text-villageGreen transition">Committee</a>
+          <a href="/awards" className="text-gray-700 hover:text-villageGreen transition">Awards</a>
           <a href="/Tours.aspx" className="text-gray-700 hover:text-villageGreen transition">Tours</a>
           <a
             href="/f7/index.html"
@@ -44,11 +45,12 @@ const Header: React.FC = () => {
       {/* Mobile Nav */}
       <nav className={`md:hidden border-t border-gray-200 bg-white ${isMobileMenuOpen ? '' : 'hidden'}`}>
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2 text-sm font-medium">
-          <a href="/awards" className="py-1 text-gray-700 hover:text-villageGreen transition">About</a>
+          <a href="/about" className="py-1 text-gray-700 hover:text-villageGreen transition">About</a>
           <a href="/fixtures" className="py-1 text-gray-700 hover:text-villageGreen transition">Fixtures</a>
           <a href="/results" className="py-1 text-gray-700 hover:text-villageGreen transition">Results</a>
           <a href="/stats" className="py-1 text-gray-700 hover:text-villageGreen transition">Stats</a>
           <a href="/committee" className="py-1 text-gray-700 hover:text-villageGreen transition">Committee</a>
+          <a href="/awards" className="py-1 text-gray-700 hover:text-villageGreen transition">Awards</a>
           <a href="/Tours.aspx" className="py-1 text-gray-700 hover:text-villageGreen transition">Tours</a>
           <a
             href="/f7/index.html"

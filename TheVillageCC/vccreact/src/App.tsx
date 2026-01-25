@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './custom.css';
 
 import Homepage from './components/Homepage';
+import About from './components/About';
 import Awards from './components/Awards';
 import Committee from './components/Committee';
 import Fixtures from './components/Fixtures';
@@ -15,6 +16,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Homepage />} />
+        <Route path="/about" element={<About />} />
         <Route path="/awards" element={<Awards />} />
         <Route path="/committee" element={<Committee />} />
         <Route path="/fixtures" element={<Fixtures />} />
