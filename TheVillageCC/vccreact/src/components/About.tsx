@@ -1,8 +1,57 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 
+interface LeadingPlayer {
+  playerId: number;
+  playerName: string;
+  value: number;
+}
+
+interface LeadingPlayerCategory {
+  category: string;
+  players: LeadingPlayer[];
+}
+
+// Map category names to Material Icons
+const getCategoryIcon = (category: string): string => {
+  const normalizedCategory = category.toLowerCase();
+  
+  if (normalizedCategory.includes('run')) return 'sports_cricket';
+  if (normalizedCategory.includes('wicket')) return 'sports_baseball';
+  if (normalizedCategory.includes('catch')) return 'back_hand';
+  if (normalizedCategory.includes('appearance')) return 'calendar_month';
+  
+  // Default icon for unknown categories
+  return 'emoji_events';
+};
+
 const About: React.FC = () => {
+  const [leadingPlayers, setLeadingPlayers] = useState<LeadingPlayerCategory[]>([]);
+  const [isLoadingPlayers, setIsLoadingPlayers] = useState<boolean>(true);
+  const [playersError, setPlayersError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLeadingPlayers = async () => {
+      try {
+        setIsLoadingPlayers(true);
+        const response = await fetch('/api/Stats/leadingplayers');
+        if (!response.ok) {
+          throw new Error('Failed to fetch leading players');
+        }
+        const data: LeadingPlayerCategory[] = await response.json();
+        setLeadingPlayers(data);
+        setPlayersError(null);
+      } catch (err) {
+        console.error('Error fetching leading players:', err);
+        setPlayersError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setIsLoadingPlayers(false);
+      }
+    };
+
+    fetchLeadingPlayers();
+  }, []);
   return (
     <>
       <Header />
@@ -58,23 +107,53 @@ const About: React.FC = () => {
           </section>
 
           {/* Leading Players */}
-          <section className="mt-10 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <section className="mt-10">
             <h2 className="text-xl font-semibold mb-4">Leading Players</h2>
 
-            <div className="grid sm:grid-cols-3 gap-4 text-sm">
-              <div>
-                Leading Run Scorer:
-                <strong> OL Morgans (5473)</strong>
+            {isLoadingPlayers ? (
+              <div className="grid gap-6 md:grid-cols-4 sm:grid-cols-2">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-6 bg-gray-200 rounded w-full"></div>
+                  </div>
+                ))}
               </div>
-              <div>
-                Leading Wicket Taker:
-                <strong> E Gupte (347)</strong>
+            ) : playersError ? (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                <p className="text-red-700">Failed to load leading players: {playersError}</p>
               </div>
-              <div>
-                Most Catches:
-                <strong> OL Morgans (137)</strong>
+            ) : leadingPlayers.length === 0 ? (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                <p className="text-blue-700">No leading players data available.</p>
               </div>
-            </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-4 sm:grid-cols-2">
+                {leadingPlayers.map((category) => {
+                  const iconName = getCategoryIcon(category.category);
+                  const player = category.players && category.players.length > 0 ? category.players[0] : null;
+
+                  return (
+                    <div key={category.category} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                      <h3 className="text-sm font-semibold text-villageText flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[18px] leading-none text-gray-700" aria-hidden="true">
+                          {iconName}
+                        </span>
+                        <span>{category.category}</span>
+                      </h3>
+                      {player ? (
+                        <>
+                          <p className="mt-1 text-gray-700">{player.playerName}</p>
+                          <p className="mt-1 text-sm text-gray-600">{player.value.toLocaleString()}</p>
+                        </>
+                      ) : (
+                        <p className="mt-1 text-gray-700">—</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </section>
         </section>
       </main>
