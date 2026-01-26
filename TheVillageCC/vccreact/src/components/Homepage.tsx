@@ -1,31 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import { MatchResult } from './ResultCard';
+import { getResultStatus, formatDate, getOpponentName } from './resultUtils';
 
-// Define interfaces for match report data from API
-interface MatchReportListItem {
-  MatchId: number;
-  HomeTeamName: string;
-  HomeTeamScore: string;
-  AwayTeamName: string;
-  AwayTeamScore: string;
-  ResultText: string;
-  ResultMargin: string;
-  MatchDate: string;
+// Interface for display format with additional report details
+interface MatchReport extends MatchResult {
   Conditions: string;
   Report: string;
   ReportImage: string;
-}
-
-// Interface for display format
-interface MatchReport {
-  heading: string;
-  subText: string;
-  text: string;
-  matchId: string;
-  imageSrc: string;
-  matchDate: string;
-  resultText: string;
 }
 
 const MAX_REPORT_PREVIEW_LENGTH = 200;
@@ -71,44 +54,22 @@ const Homepage: React.FC = () => {
     const fetchMatchReports = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/matchreports?limit=3&order=desc');
+        // Use the same API endpoint as Results page
+        const currentYear = new Date().getFullYear();
+        const response = await fetch(`/api/results?season=${currentYear}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch match reports: ${response.status}`);
         }
         
-        const data: MatchReportListItem[] = await response.json();
+        const data: MatchReport[] = await response.json();
         
-        // Transform API data to display format
-        const transformedReports: MatchReport[] = data.map((item) => {
-          // Create heading from home vs away teams
-          const heading = `${item.HomeTeamName} vs ${item.AwayTeamName}`;
-          
-          // Use result text and margin as subtext
-          const subText = item.ResultMargin 
-            ? `${item.ResultText} - ${item.ResultMargin}`
-            : item.ResultText;
-          
-          // Use first MAX_REPORT_PREVIEW_LENGTH characters of report as preview text
-          const text = item.Report.length > MAX_REPORT_PREVIEW_LENGTH 
-            ? item.Report.substring(0, MAX_REPORT_PREVIEW_LENGTH) + '...'
-            : item.Report;
-          
-          // Use report image if available, otherwise use default
-          const imageSrc = item.ReportImage || '/match_reports/images/no_match_report_image.jpg';
-          
-          return {
-            heading,
-            subText,
-            text,
-            matchId: item.MatchId.toString(),
-            imageSrc,
-            matchDate: item.MatchDate,
-            resultText: item.ResultText
-          };
-        });
+        // Filter to only matches with reports and sort by date descending
+        const reportsWithContent = data
+          .filter(item => item.Report && item.Report.trim().length > 0)
+          .sort((a, b) => new Date(b.MatchDate).getTime() - new Date(a.MatchDate).getTime());
         
-        setMatchReports(transformedReports);
+        setMatchReports(reportsWithContent);
         setError(null);
       } catch (err) {
         console.error('Error fetching match reports:', err);
@@ -286,45 +247,43 @@ const Homepage: React.FC = () => {
             {!isLoading && matchReports.length > 0 && (
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {matchReports.slice(0, 2).map((report, index) => {
-                  // Determine if this is a win, loss, or draw based on result text
-                  const isWon = report.resultText.toLowerCase().includes('won');
-                  const isLost = report.resultText.toLowerCase().includes('lost');
-                  const statusColor = isWon 
-                    ? 'bg-emerald-100 text-emerald-700' 
-                    : isLost 
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-700';
-                  const statusText = isWon ? 'Won' : isLost ? 'Lost' : report.resultText;
+                  // Use the helper functions to get status and opponent
+                  const status = getResultStatus(report);
+                  const opponentName = getOpponentName(report);
+                  const dateDisplay = formatDate(report.MatchDate);
                   
-                  // Safely parse the date
-                  const matchDate = new Date(report.matchDate);
-                  const dateDisplay = !isNaN(matchDate.getTime()) 
-                    ? matchDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-                    : report.matchDate;
+                  // Prepare report preview text
+                  const reportPreview = report.Report.length > MAX_REPORT_PREVIEW_LENGTH 
+                    ? report.Report.substring(0, MAX_REPORT_PREVIEW_LENGTH) + '...'
+                    : report.Report;
                   
-                  // Safely extract opponent name
-                  const headingParts = report.heading.split(' vs ');
-                  const opponentName = headingParts.length > 1 ? headingParts[1] : report.heading;
+                  // Create heading
+                  const heading = `${report.HomeTeamName} vs ${report.AwayTeamName}`;
+                  
+                  // Create subtext from result
+                  const subText = report.ResultMargin 
+                    ? `${report.ResultText} - ${report.ResultMargin}`
+                    : report.ResultText;
 
                   return (
                     <article key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-2">
                       <div className="flex items-center justify-between text-xs text-gray-500">
                         <span>{dateDisplay} · {opponentName}</span>
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full ${statusColor}`}>
-                          {statusText}
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full ${status.color}`}>
+                          {status.text}
                         </span>
                       </div>
                       <div className="text-base font-semibold text-gray-800">
-                        {report.heading}
+                        {heading}
                       </div>
                       <div className="text-sm text-gray-600">
-                        {report.subText}
+                        {subText}
                       </div>
                       <p className="text-sm text-gray-600">
-                        {report.text}
+                        {reportPreview}
                       </p>
                       <a
-                        href={`/LiveScorecard.aspx?matchId=${report.matchId}`}
+                        href={`/LiveScorecard.aspx?matchId=${report.MatchId}`}
                         className="text-sm font-medium text-villageGreen hover:underline mt-2"
                       >
                         Read full report →

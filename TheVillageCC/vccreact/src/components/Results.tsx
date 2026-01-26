@@ -2,16 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import ResultCard, { MatchResult } from './ResultCard';
 
-interface MatchReport {
-  MatchId: number;
-  HomeTeamName: string;
-  HomeTeamScore: string;
-  AwayTeamName: string;
-  AwayTeamScore: string;
-  ResultText: string;
-  ResultMargin: string;
-  MatchDate: string;
+interface MatchReport extends MatchResult {
   Conditions: string;
   Report: string;
   ReportImage: string;
@@ -62,34 +55,6 @@ const Results: React.FC = () => {
     setSearchParams({ season: year.toString() });
   };
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
-
-  const isHomeMatch = (result: MatchReport): boolean => {
-    return result.HomeTeamName === 'The Village CC';
-  };
-
-  const getResultStatus = (result: MatchReport): { color: string; text: string } => {
-    const resultLower = result.ResultText.toLowerCase();
-    if (resultLower.includes('won')) {
-      return { color: 'bg-emerald-100 text-emerald-700', text: 'Won' };
-    } else if (resultLower.includes('lost')) {
-      return { color: 'bg-red-100 text-red-700', text: 'Lost' };
-    } else {
-      return { color: 'bg-gray-100 text-gray-700', text: result.ResultText };
-    }
-  };
-
-  const getOpponentName = (result: MatchReport): string => {
-    return isHomeMatch(result) ? result.AwayTeamName : result.HomeTeamName;
-  };
-
   return (
     <div className="font-sans text-villageText bg-gray-50 min-h-screen">
       <Header />
@@ -137,35 +102,9 @@ const Results: React.FC = () => {
             </div>
           ) : (
             <div className="mt-8 grid gap-6 md:grid-cols-2">
-              {results.map((result) => {
-                const status = getResultStatus(result);
-                const opponentName = getOpponentName(result);
-                
-                return (
-                  <a
-                    key={result.MatchId}
-                    href={`/LiveScorecard.aspx?matchId=${result.MatchId}`}
-                    className="block"
-                  >
-                    <article className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:border-villageGreen transition">
-                      <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                        <span>{formatDate(result.MatchDate)} · vs {opponentName}</span>
-                        <span className={`px-2 py-0.5 rounded-full font-semibold text-[11px] ${status.color}`}>
-                          {status.text.toUpperCase()}
-                        </span>
-                      </div>
-                      <div className="text-sm font-semibold text-villageText">
-                        {result.HomeTeamName}{result.HomeTeamScore ? ` ${result.HomeTeamScore}` : ''} · {result.AwayTeamName}{result.AwayTeamScore ? ` ${result.AwayTeamScore}` : ''}
-                      </div>
-                      {result.ResultMargin && (
-                        <p className="mt-1 text-sm text-gray-600 italic">
-                          {result.ResultMargin}
-                        </p>
-                      )}
-                    </article>
-                  </a>
-                );
-              })}
+              {results.map((result) => (
+                <ResultCard key={result.MatchId} result={result} />
+              ))}
             </div>
           )}
         </section>

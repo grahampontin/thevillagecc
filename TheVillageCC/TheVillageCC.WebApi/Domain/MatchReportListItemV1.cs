@@ -22,6 +22,11 @@ namespace TheVillageCC.WebApi.Domain
         public string Conditions { get; set; }
         public string Report { get; set; }
         public string ReportImage { get; set; }
+        public string WinningTeam { get; set; }
+        public string LosingTeam { get; set; }
+        public bool IsTied { get; set; }
+        public bool IsDrawn { get; set; }
+        public bool IsAbandoned { get; set; }
 
         public MatchReportListItemV1()
         {
@@ -41,7 +46,12 @@ namespace TheVillageCC.WebApi.Domain
                 MatchDate = match.MatchDate.ToString("yyyy-MM-dd"),
                 Conditions = report?.Conditions ?? string.Empty,
                 Report = report?.Report ?? string.Empty,
-                ReportImage = report?.ReportImage ?? string.Empty
+                ReportImage = report?.ReportImage ?? string.Empty,
+                WinningTeam = match.Winner != null ? match.Winner.Name : null,
+                LosingTeam = match.Loser != null ? match.Loser.Name : null,
+                IsTied = match.ResultTied,
+                IsDrawn = match.ResultDrawn,
+                IsAbandoned = match.Abandoned
             };
         }
     }
