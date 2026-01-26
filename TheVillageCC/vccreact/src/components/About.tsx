@@ -131,7 +131,7 @@ const About: React.FC = () => {
               <div className="grid gap-6 md:grid-cols-4 sm:grid-cols-2">
                 {leadingPlayers.map((category) => {
                   const iconName = getCategoryIcon(category.category);
-                  const player = category.players[0]; // Get the top player
+                  const player = category.players && category.players.length > 0 ? category.players[0] : null;
 
                   return (
                     <div key={category.category} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
