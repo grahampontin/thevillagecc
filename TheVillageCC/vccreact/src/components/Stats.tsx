@@ -6,18 +6,12 @@ import Footer from './Footer';
 import { ColDef } from 'ag-grid-community';
 import LinkToPlayerStatsRenderer from './cellRenderers/LinkToPlayerStatsRenderer';
 import ParameterizedLinkToMatchReportRenderer from './cellRenderers/ParameterizedLinkToMatchReportRenderer';
+import { getAllVenues } from '../api/venuesApi';
+import { queryStats } from '../api/statsApi';
+import { VenueV1 } from '../domain/venue';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
-
-interface Venue {
-  Id: number;
-  Name: string;
-  MapUrl: string;
-  Description: string;
-  Latitude: number | null;
-  Longitude: number | null;
-}
 
 interface StatsQuery {
   category: string;
@@ -36,7 +30,7 @@ interface StatsData {
 }
 
 const Stats: React.FC = () => {
-  const [venues, setVenues] = useState<Venue[]>([]);
+  const [venues, setVenues] = useState<VenueV1[]>([]);
   const [selectedVenue, setSelectedVenue] = useState<string>('');
   const [fromDate, setFromDate] = useState<string>('');
   const [toDate, setToDate] = useState<string>('');
@@ -64,11 +58,7 @@ const Stats: React.FC = () => {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const response = await fetch('/api/venues');
-        if (!response.ok) {
-          throw new Error('Failed to fetch venues');
-        }
-        const venuesData: Venue[] = await response.json();
+        const venuesData = await getAllVenues();
         setVenues(venuesData);
       } catch (error) {
         console.error('Error fetching venues:', error);
@@ -111,19 +101,7 @@ const Stats: React.FC = () => {
         setError(null);
 
         try {
-          const response = await fetch('/api/stats/query', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(query),
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to load statistics');
-          }
-
-          const data: StatsData = await response.json();
+          const data: StatsData = await queryStats(query);
           
           // Configure first column
           configureFirstColumn(data.gridOptions.columnDefs);
@@ -159,19 +137,7 @@ const Stats: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch('/api/stats/query', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(query),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to load statistics');
-      }
-
-      const data: StatsData = await response.json();
+      const data: StatsData = await queryStats(query);
       
       // Configure first column
       configureFirstColumn(data.gridOptions.columnDefs);
@@ -279,8 +245,8 @@ const Stats: React.FC = () => {
                       >
                         <option value=""></option>
                         {venues.map(venue => (
-                          <option key={venue.Id} value={venue.Name}>
-                            {venue.Name}
+                          <option key={venue.id} value={venue.name ?? ''}>
+                            {venue.name}
                           </option>
                         ))}
                       </select>

@@ -3,37 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import { getResultBadge } from '../utils/matchResultUtils';
-
-interface ResultV1 {
-  matchId: number;
-  homeTeamName?: string | null;
-  homeTeamScore?: string | null;
-  awayTeamName?: string | null;
-  awayTeamScore?: string | null;
-  resultText?: string | null;
-  resultMargin?: string | null;
-  matchDate?: string | null;
-  // NOTE: venue is not in cricketclub.json ResultV1, but some deployments include it.
-  venue?: string | null;
-  venueName?: string | null;
-  VenueName?: string | null;
-  winningTeam?: string | null;
-  losingTeam?: string | null;
-  theirOversFaced?: number;
-  theirWickets?: number;
-  theirScore?: number;
-  ourOversFaced?: number;
-  ourWickets?: number;
-  ourScore?: number;
-  margin?: string | null;
-  matchReportConditions?: string | null;
-  matchReportText?: string | null;
-  matchReportImage?: string | null;
-  isWinner?: boolean | null;
-  isTied: boolean;
-  isDrawn: boolean;
-  isAbandoned: boolean;
-}
+import { getResultsBySeason } from '../api/resultsApi';
+import { ResultV1 } from '../domain/result';
 
 interface MatchReport {
   MatchId: number;
@@ -75,17 +46,18 @@ const mapResultV1ToMatchReport = (r: ResultV1): MatchReport => ({
   Report: r.matchReportText ?? '',
   ReportImage: r.matchReportImage ?? '',
   isWinner: r.isWinner ?? null,
-  isTied: r.isTied,
-  isDrawn: r.isDrawn,
-  isAbandoned: r.isAbandoned,
+  isTied: r.isTied ?? false,
+  isDrawn: r.isDrawn ?? false,
+  isAbandoned: r.isAbandoned ?? false,
 
   WinningTeam: r.winningTeam ?? '',
   LosingTeam: r.losingTeam ?? '',
-  OurScore: typeof r.ourScore === 'number' ? r.ourScore : null,
-  OurWickets: typeof r.ourWickets === 'number' ? r.ourWickets : null,
-  TheirScore: typeof r.theirScore === 'number' ? r.theirScore : null,
-  TheirWickets: typeof r.theirWickets === 'number' ? r.theirWickets : null,
-  VenueName: (r.venueName ?? r.venue ?? (r as any).VenueName ?? ''),
+  OurScore: r.ourScore ?? null,
+  OurWickets: r.ourWickets ?? null,
+  TheirScore: r.theirScore ?? null,
+  TheirWickets: r.theirWickets ?? null,
+  // Handle potential venueName variations (backend inconsistency)
+  VenueName: r.venueName ?? (r as any).venue ?? (r as any).VenueName ?? '',
 });
 
 const SKELETON_ITEMS_COUNT = 5;
@@ -106,13 +78,8 @@ const Results: React.FC = () => {
       try {
         setIsLoading(true);
 
-        // Fetch results from the dedicated results endpoint with season parameter
-        const response = await fetch(`/api/Results?season=${currentYear}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch results');
-        }
-
-        const seasonResultsApi: ResultV1[] = await response.json();
+        // Use centralized API to fetch results by season
+        const seasonResultsApi = await getResultsBySeason(currentYear);
         const seasonResults: MatchReport[] = seasonResultsApi.map(mapResultV1ToMatchReport);
 
         // Sort by date descending (most recent first)
@@ -162,8 +129,8 @@ const Results: React.FC = () => {
   };
 
   const getScorelineText = (result: MatchReport): string => {
-    const homeText = formatInnings(result.HomeTeamName, null, null, result.HomeTeamScore);
-    const awayText = formatInnings(result.AwayTeamName, null, null, result.AwayTeamScore);
+    const homeText = formatInnings(result.HomeTeamName, undefined, undefined, result.HomeTeamScore);
+    const awayText = formatInnings(result.AwayTeamName, undefined, undefined, result.AwayTeamScore);
 
     // Neutral outcomes
     if (result.isAbandoned || result.isTied || result.isDrawn) {

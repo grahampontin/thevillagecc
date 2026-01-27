@@ -2,35 +2,17 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-
-interface Venue {
-  Id: number;
-  Name: string;
-}
-
-interface Team {
-  Id: number;
-  Name: string;
-}
-
-interface Match {
-  Id: number;
-  Date: string;
-  Venue: Venue;
-  Opposition: Team;
-  Type: string;
-  IsHome: boolean;
-}
+import { getFixturesBySeason } from '../api/fixturesApi';
 
 interface FixtureDisplay {
-  Id: number;
-  MatchDateString: string;
-  MatchDate: string; // Original ISO date string
-  HomeTeamName: string;
-  AwayTeamName: string;
-  VenueName: string;
-  Type: string;
-  IsHome: boolean;
+  id: number;
+  matchDateString: string;
+  matchDate: string; // Original ISO date string
+  homeTeamName: string;
+  awayTeamName: string;
+  venueName: string;
+  type: string;
+  isHome: boolean;
 }
 
 const SKELETON_ITEMS_COUNT = 5;
@@ -74,15 +56,15 @@ const Fixtures: React.FC = () => {
 
   // Helper to get opponent name
   const getOpponentName = (fixture: FixtureDisplay): string => {
-    return fixture.IsHome ? fixture.AwayTeamName : fixture.HomeTeamName;
+    return fixture.isHome ? fixture.awayTeamName : fixture.homeTeamName;
   };
 
   // Helper to generate calendar URL
   const generateCalendarUrl = (fixture: FixtureDisplay): string => {
-    const startDate = formatDateForCalendar(fixture.MatchDate);
-    const title = encodeURIComponent(`${fixture.HomeTeamName} vs ${fixture.AwayTeamName}`);
-    const details = encodeURIComponent(`${fixture.HomeTeamName} vs ${fixture.AwayTeamName} at ${fixture.VenueName}`);
-    const location = encodeURIComponent(fixture.VenueName);
+    const startDate = formatDateForCalendar(fixture.matchDate);
+    const title = encodeURIComponent(`${fixture.homeTeamName} vs ${fixture.awayTeamName}`);
+    const details = encodeURIComponent(`${fixture.homeTeamName} vs ${fixture.awayTeamName} at ${fixture.venueName}`);
+    const location = encodeURIComponent(fixture.venueName);
     
     // Google Calendar URL format
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate.replace(/-/g, '')}T${MATCH_START_TIME}/${startDate.replace(/-/g, '')}T${MATCH_END_TIME}&details=${details}&location=${location}`;
@@ -93,39 +75,34 @@ const Fixtures: React.FC = () => {
       try {
         setIsLoading(true);
 
-        const response = await fetch(`/api/fixtures?season=${currentYear}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch fixtures');
-        }
-
-        const matches: Match[] = await response.json();
+        const matches = await getFixturesBySeason(currentYear);
 
         // Transform to display format, filtering out invalid dates
         const displayFixtures = matches
           .map(match => {
-            const date = new Date(match.Date);
+            const date = new Date(match.date ?? '');
             return { match, date };
           })
           .filter(({ match, date }) => {
             const isValid = !isNaN(date.getTime());
             if (!isValid) {
-              console.error(`Skipping fixture with invalid date: ${match.Date}`, match);
+              console.error(`Skipping fixture with invalid date: ${match.date}`, match);
             }
             return isValid;
           })
           .map(({ match, date }) => ({
-            Id: match.Id,
-            MatchDateString: date.toLocaleDateString('en-GB', {
+            id: match.id ?? 0,
+            matchDateString: date.toLocaleDateString('en-GB', {
               day: '2-digit',
               month: '2-digit',
               year: 'numeric'
             }),
-            MatchDate: match.Date,
-            HomeTeamName: match.IsHome ? 'The Village CC' : match.Opposition.Name,
-            AwayTeamName: match.IsHome ? match.Opposition.Name : 'The Village CC',
-            VenueName: match.Venue.Name,
-            Type: match.Type,
-            IsHome: match.IsHome
+            matchDate: match.date ?? '',
+            homeTeamName: match.isHome ? 'The Village CC' : (match.opposition?.name ?? ''),
+            awayTeamName: match.isHome ? (match.opposition?.name ?? '') : 'The Village CC',
+            venueName: match.venue?.name ?? '',
+            type: match.type ?? '',
+            isHome: match.isHome ?? false
           }));
 
         setFixtures(displayFixtures);
@@ -177,26 +154,26 @@ const Fixtures: React.FC = () => {
                 
                 return (
                   <article
-                    key={fixture.Id}
+                    key={fixture.id}
                     className="bg-white border border-gray-200 rounded-lg p-4 pb-12 shadow-sm relative"
                   >
                     <div className="flex items-start justify-between gap-4 mb-1">
                       <span className="text-xs text-gray-500 flex-1 min-w-0 truncate">
-                        {formatDate(fixture.MatchDate)} · vs {opponentName}
+                        {formatDate(fixture.matchDate)} · vs {opponentName}
                       </span>
 
                       <span
-                        className={`px-2 py-0.5 rounded-full font-semibold text-[11px] shrink-0 ${fixture.IsHome ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}
+                        className={`px-2 py-0.5 rounded-full font-semibold text-[11px] shrink-0 ${fixture.isHome ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}
                       >
-                        {fixture.IsHome ? 'HOME' : 'AWAY'}
+                        {fixture.isHome ? 'HOME' : 'AWAY'}
                       </span>
                     </div>
 
                     <div className="text-sm font-semibold text-villageText">
-                      {fixture.HomeTeamName} vs {fixture.AwayTeamName}
+                      {fixture.homeTeamName} vs {fixture.awayTeamName}
                     </div>
                     <p className="mt-1 text-sm text-gray-600 italic">
-                      {fixture.VenueName} · {fixture.Type}
+                      {fixture.venueName} · {fixture.type}
                     </p>
 
                     <a

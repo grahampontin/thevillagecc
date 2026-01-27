@@ -2,15 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-
-interface AwardApiItem {
-  Id?: number;
-  Year: number;
-  Award: string;
-  PlayerId?: number;
-  PlayerName?: string;
-  Data?: string;
-}
+import { getAwardsBySeason } from '../api/awardsApi';
+import { AwardV1 } from '../domain/award';
 
 const SKELETON_ITEMS_COUNT = 6;
 
@@ -43,10 +36,10 @@ const humanizeAwardTitle = (raw: string): string => {
     .join(' ');
 };
 
-// Replace getAwardValue with a small renderer so we can style Data on a new line.
-const AwardValue: React.FC<{ award: AwardApiItem }> = ({ award }) => {
-  const player = award.PlayerName?.trim();
-  const data = award.Data?.trim();
+// Replace getAwardValue with a small renderer so we can style data on a new line.
+const AwardValue: React.FC<{ award: AwardV1 }> = ({ award }) => {
+  const player = award.playerName?.trim();
+  const data = award.data?.trim();
 
   const primary = player || data || '—';
   const secondary = player && data ? data : undefined;
@@ -115,15 +108,15 @@ const AwardTitle: React.FC<{ awardKey: string; title: string }> = ({ awardKey, t
   );
 };
 
-const CorridorOfUncertaintyCard: React.FC<{ award: AwardApiItem }> = ({ award }) => {
-  const title = humanizeAwardTitle(award.Award);
-  const winner = award.PlayerName?.trim() || '—';
-  const embedUrl = award.Data?.trim();
+const CorridorOfUncertaintyCard: React.FC<{ award: AwardV1 }> = ({ award }) => {
+  const title = humanizeAwardTitle(award.award ?? '');
+  const winner = award.playerName?.trim() || '—';
+  const embedUrl = award.data?.trim();
 
   if (!embedUrl) {
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-        <AwardTitle awardKey={award.Award} title={title} />
+        <AwardTitle awardKey={award.award ?? ''} title={title} />
         <p className="mt-1 text-gray-700">{winner}</p>
       </div>
     );
@@ -135,7 +128,7 @@ const CorridorOfUncertaintyCard: React.FC<{ award: AwardApiItem }> = ({ award })
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-      <AwardTitle awardKey={award.Award} title={title} />
+      <AwardTitle awardKey={award.award ?? ''} title={title} />
       <p className="mt-1 text-gray-700">{winner}</p>
 
       {thumbnailUrl ? (
@@ -171,7 +164,7 @@ const CorridorOfUncertaintyCard: React.FC<{ award: AwardApiItem }> = ({ award })
 
 const Awards: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [awards, setAwards] = useState<AwardApiItem[]>([]);
+  const [awards, setAwards] = useState<AwardV1[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const currentYear = useMemo(() => {
@@ -187,13 +180,10 @@ const Awards: React.FC = () => {
     const fetchAwards = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/awards?season=${currentYear}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch awards');
-        }
-        const data: AwardApiItem[] = await response.json();
+        const data = await getAwardsBySeason(currentYear);
+        
         // Stable ordering for rendering
-        data.sort((a, b) => (a.Award || '').localeCompare(b.Award || ''));
+        data.sort((a, b) => (a.award || '').localeCompare(b.award || ''));
         setAwards(data);
       } catch (error) {
         console.error('Error fetching awards:', error);
@@ -207,18 +197,18 @@ const Awards: React.FC = () => {
   }, [currentYear]);
 
   const playerAwards = useMemo(
-    () => awards.filter(a => PLAYER_AWARD_KEYS.has((a.Award || '').toLowerCase())),
+    () => awards.filter(a => PLAYER_AWARD_KEYS.has((a.award || '').toLowerCase())),
     [awards]
   );
 
   const corridorAward = useMemo(
-    () => awards.find(a => (a.Award || '').toLowerCase() === CORRIDOR_AWARD_KEY),
+    () => awards.find(a => (a.award || '').toLowerCase() === CORRIDOR_AWARD_KEY),
     [awards]
   );
 
   const clubAwards = useMemo(
     () => awards.filter(a => {
-      const key = (a.Award || '').toLowerCase();
+      const key = (a.award || '').toLowerCase();
       return !PLAYER_AWARD_KEYS.has(key) && key !== CORRIDOR_AWARD_KEY;
     }),
     [awards]
@@ -274,8 +264,8 @@ const Awards: React.FC = () => {
                 ) : (
                   <div className="mt-6 grid gap-6 md:grid-cols-3 sm:grid-cols-2">
                     {playerAwards.map((award) => (
-                      <div key={award.Id ?? `${award.Year}-${award.Award}`} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-                        <AwardTitle awardKey={award.Award} title={humanizeAwardTitle(award.Award)} />
+                      <div key={award.id ?? `${award.year}-${award.award}`} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                        <AwardTitle awardKey={award.award ?? ''} title={humanizeAwardTitle(award.award ?? '')} />
                         <AwardValue award={award} />
                       </div>
                     ))}
@@ -293,8 +283,8 @@ const Awards: React.FC = () => {
                 ) : (
                   <div className="mt-6 grid gap-6 md:grid-cols-3 sm:grid-cols-2">
                     {clubAwards.map((award) => (
-                      <div key={award.Id ?? `${award.Year}-${award.Award}`} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-                        <AwardTitle awardKey={award.Award} title={humanizeAwardTitle(award.Award)} />
+                      <div key={award.id ?? `${award.year}-${award.award}`} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                        <AwardTitle awardKey={award.award ?? ''} title={humanizeAwardTitle(award.award ?? '')} />
                         <AwardValue award={award} />
                       </div>
                     ))}

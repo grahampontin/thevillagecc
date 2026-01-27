@@ -23,38 +23,58 @@ describe('Homepage', () => {
   test('fetches and displays match reports from API', async () => {
     const mockMatchReports = [
       {
-        MatchId: 1,
-        HomeTeamName: 'The Village CC',
-        HomeTeamScore: '200/5',
-        AwayTeamName: 'Opponents CC',
-        AwayTeamScore: '150/10',
-        ResultText: 'The Village CC won',
-        ResultMargin: 'by 50 runs',
-        MatchDate: '2024-01-15',
-        Conditions: 'Sunny day',
-        Report: 'Great match with excellent batting performance from the team.',
-        ReportImage: '/match_reports/images/test.jpg',
+        matchId: 1,
+        homeTeamName: 'The Village CC',
+        homeTeamScore: '200/5',
+        awayTeamName: 'Opponents CC',
+        awayTeamScore: '150/10',
+        resultText: 'The Village CC won',
+        resultMargin: 'by 50 runs',
+        matchDate: '2024-01-15',
+        matchReportConditions: 'Sunny day',
+        matchReportText: 'Great match with excellent batting performance from the team.',
+        matchReportImage: '/match_reports/images/test.jpg',
         isWinner: true,
         isTied: false,
         isDrawn: false,
-        isAbandoned: false
+        isAbandoned: false,
+        venueName: null,
+        winningTeam: null,
+        losingTeam: null,
+        margin: null,
+        theirOversFaced: 0,
+        theirWickets: 0,
+        theirScore: 0,
+        ourOversFaced: 0,
+        ourWickets: 0,
+        ourScore: 0
       },
       {
-        MatchId: 2,
-        HomeTeamName: 'Team A',
-        HomeTeamScore: '180/8',
-        AwayTeamName: 'The Village CC',
-        AwayTeamScore: '170/9',
-        ResultText: 'Team A won',
-        ResultMargin: 'by 10 runs',
-        MatchDate: '2024-01-10',
-        Conditions: 'Cloudy',
-        Report: 'Close match with thrilling finish.',
-        ReportImage: '',
+        matchId: 2,
+        homeTeamName: 'Team A',
+        homeTeamScore: '180/8',
+        awayTeamName: 'The Village CC',
+        awayTeamScore: '170/9',
+        resultText: 'Team A won',
+        resultMargin: 'by 10 runs',
+        matchDate: '2024-01-10',
+        matchReportConditions: 'Cloudy',
+        matchReportText: 'Close match with thrilling finish.',
+        matchReportImage: '',
         isWinner: false,
         isTied: false,
         isDrawn: false,
-        isAbandoned: false
+        isAbandoned: false,
+        venueName: null,
+        winningTeam: null,
+        losingTeam: null,
+        margin: null,
+        theirOversFaced: 0,
+        theirWickets: 0,
+        theirScore: 0,
+        ourOversFaced: 0,
+        ourWickets: 0,
+        ourScore: 0
       }
     ];
 
@@ -70,9 +90,12 @@ describe('Homepage', () => {
       expect(screen.getByText(/The Village CC vs Opponents CC/i)).toBeInTheDocument();
     });
 
-    // Verify the API was called with correct parameters (now using /api/Results)
-    const currentYear = new Date().getFullYear();
-    expect(global.fetch).toHaveBeenCalledWith(`/api/Results?season=${currentYear}`);
+    // Verify the API was called with correct parameters (now using /api/Results/recent)
+    expect(global.fetch).toHaveBeenCalledWith('/api/Results/recent?count=3', expect.objectContaining({
+      headers: expect.objectContaining({
+        'Accept': 'application/json'
+      })
+    }));
     
     // Check that result text is displayed
     expect(screen.getByText(/The Village CC won - by 50 runs/i)).toBeInTheDocument();
@@ -83,13 +106,15 @@ describe('Homepage', () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: false,
       status: 500,
+      statusText: 'Internal Server Error',
+      text: async () => 'Server error',
     });
 
     render(<Homepage />);
 
-    // Wait for error message to appear
+    // Wait for error message to appear (now includes statusText from http helper)
     await waitFor(() => {
-      expect(screen.getByText(/Failed to fetch match reports: 500/i)).toBeInTheDocument();
+      expect(screen.getByText(/HTTP 500 Internal Server Error/i)).toBeInTheDocument();
     });
   });
 

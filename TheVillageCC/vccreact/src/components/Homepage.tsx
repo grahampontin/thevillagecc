@@ -2,26 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import { getResultBadge } from '../utils/matchResultUtils';
-
-// Define interfaces for results data from API (ResultV1 from cricketclub.json)
-interface ResultV1 {
-  matchId: number;
-  homeTeamName?: string | null;
-  homeTeamScore?: string | null;
-  awayTeamName?: string | null;
-  awayTeamScore?: string | null;
-  resultText?: string | null;
-  resultMargin?: string | null;
-  matchDate?: string | null;
-  venueName?: string | null;
-  matchReportConditions?: string | null;
-  matchReportText?: string | null;
-  matchReportImage?: string | null;
-  isWinner?: boolean | null;
-  isTied: boolean;
-  isDrawn: boolean;
-  isAbandoned: boolean;
-}
+import { getRecentResults } from '../api/resultsApi';
 
 // Interface for display format
 interface MatchReport {
@@ -82,15 +63,9 @@ const Homepage: React.FC = () => {
       try {
         setIsLoading(true);
 
-        // Use the dedicated recent results endpoint (no season needed)
+        // Use the centralized API to fetch recent results
         const desiredCount = 3;
-        const response = await fetch(`/api/Results/recent?count=${desiredCount}`);
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch match reports: ${response.status}`);
-        }
-
-        const data: ResultV1[] = await response.json();
+        const data = await getRecentResults(desiredCount);
 
         // Transform API data to display format
         const transformedReports: MatchReport[] = data.map((item) => {
@@ -117,9 +92,9 @@ const Homepage: React.FC = () => {
             matchDate: item.matchDate ?? '',
             resultText: item.resultText ?? '',
             isWinner: item.isWinner ?? null,
-            isTied: item.isTied,
-            isDrawn: item.isDrawn,
-            isAbandoned: item.isAbandoned,
+            isTied: item.isTied ?? false,
+            isDrawn: item.isDrawn ?? false,
+            isAbandoned: item.isAbandoned ?? false,
           };
         });
 
