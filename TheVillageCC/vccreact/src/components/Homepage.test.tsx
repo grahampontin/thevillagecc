@@ -24,29 +24,37 @@ describe('Homepage', () => {
     const mockMatchReports = [
       {
         MatchId: 1,
-        HomeTeamName: 'Village CC',
+        HomeTeamName: 'The Village CC',
         HomeTeamScore: '200/5',
         AwayTeamName: 'Opponents CC',
         AwayTeamScore: '150/10',
-        ResultText: 'Village CC won',
+        ResultText: 'The Village CC won',
         ResultMargin: 'by 50 runs',
         MatchDate: '2024-01-15',
         Conditions: 'Sunny day',
         Report: 'Great match with excellent batting performance from the team.',
-        ReportImage: '/match_reports/images/test.jpg'
+        ReportImage: '/match_reports/images/test.jpg',
+        isWinner: true,
+        isTied: false,
+        isDrawn: false,
+        isAbandoned: false
       },
       {
         MatchId: 2,
         HomeTeamName: 'Team A',
         HomeTeamScore: '180/8',
-        AwayTeamName: 'Team B',
+        AwayTeamName: 'The Village CC',
         AwayTeamScore: '170/9',
         ResultText: 'Team A won',
         ResultMargin: 'by 10 runs',
         MatchDate: '2024-01-10',
         Conditions: 'Cloudy',
         Report: 'Close match with thrilling finish.',
-        ReportImage: ''
+        ReportImage: '',
+        isWinner: false,
+        isTied: false,
+        isDrawn: false,
+        isAbandoned: false
       }
     ];
 
@@ -59,14 +67,15 @@ describe('Homepage', () => {
 
     // Wait for the match reports to be loaded and displayed
     await waitFor(() => {
-      expect(screen.getByText(/Village CC vs Opponents CC/i)).toBeInTheDocument();
+      expect(screen.getByText(/The Village CC vs Opponents CC/i)).toBeInTheDocument();
     });
 
-    // Verify the API was called with correct parameters
-    expect(global.fetch).toHaveBeenCalledWith('/api/matchreports?limit=3&order=desc');
+    // Verify the API was called with correct parameters (now using /api/Results)
+    const currentYear = new Date().getFullYear();
+    expect(global.fetch).toHaveBeenCalledWith(`/api/Results?season=${currentYear}`);
     
     // Check that result text is displayed
-    expect(screen.getByText(/Village CC won - by 50 runs/i)).toBeInTheDocument();
+    expect(screen.getByText(/The Village CC won - by 50 runs/i)).toBeInTheDocument();
     expect(screen.getByText(/Team A won - by 10 runs/i)).toBeInTheDocument();
   });
 

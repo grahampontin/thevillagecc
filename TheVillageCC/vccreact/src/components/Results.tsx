@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import { getResultBadge } from '../utils/matchResultUtils';
 
 interface MatchReport {
   MatchId: number;
@@ -15,6 +16,10 @@ interface MatchReport {
   Conditions: string;
   Report: string;
   ReportImage: string;
+  isWinner: boolean | null;
+  isTied: boolean;
+  isDrawn: boolean;
+  isAbandoned: boolean;
 }
 
 const SKELETON_ITEMS_COUNT = 5;
@@ -75,17 +80,6 @@ const Results: React.FC = () => {
     return result.HomeTeamName === 'The Village CC';
   };
 
-  const getResultStatus = (result: MatchReport): { color: string; text: string } => {
-    const resultLower = result.ResultText.toLowerCase();
-    if (resultLower.includes('won')) {
-      return { color: 'bg-emerald-100 text-emerald-700', text: 'Won' };
-    } else if (resultLower.includes('lost')) {
-      return { color: 'bg-red-100 text-red-700', text: 'Lost' };
-    } else {
-      return { color: 'bg-gray-100 text-gray-700', text: result.ResultText };
-    }
-  };
-
   const getOpponentName = (result: MatchReport): string => {
     return isHomeMatch(result) ? result.AwayTeamName : result.HomeTeamName;
   };
@@ -138,7 +132,7 @@ const Results: React.FC = () => {
           ) : (
             <div className="mt-8 grid gap-6 md:grid-cols-2">
               {results.map((result) => {
-                const status = getResultStatus(result);
+                const status = getResultBadge(result);
                 const opponentName = getOpponentName(result);
                 
                 return (
