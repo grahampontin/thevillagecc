@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import { getResultBadge } from '../utils/matchResultUtils';
 
 // Define interfaces for match report data from API (using ResultV1 from API spec)
 interface MatchReportListItem {
@@ -305,23 +306,8 @@ const Homepage: React.FC = () => {
             {!isLoading && matchReports.length > 0 && (
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {matchReports.slice(0, 2).map((report, index) => {
-                  // Determine badge based on match outcome from The Village CC's perspective
-                  let statusColor: string;
-                  let statusText: string;
-                  
-                  if (report.isAbandoned || report.isTied || report.isDrawn) {
-                    statusColor = 'bg-gray-100 text-gray-700';
-                    statusText = 'N/R';
-                  } else if (report.isWinner === true) {
-                    statusColor = 'bg-emerald-100 text-emerald-700';
-                    statusText = 'WIN';
-                  } else if (report.isWinner === false) {
-                    statusColor = 'bg-red-100 text-red-700';
-                    statusText = 'LOSS';
-                  } else {
-                    statusColor = 'bg-gray-100 text-gray-700';
-                    statusText = 'N/R';
-                  }
+                  // Use shared utility to get badge
+                  const { color: statusColor, text: statusText } = getResultBadge(report);
                   
                   // Safely parse the date
                   const matchDate = new Date(report.matchDate);
