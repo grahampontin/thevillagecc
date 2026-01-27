@@ -19,20 +19,20 @@ describe('Fixtures', () => {
 
   const mockFixtures = [
     {
-      Id: 1,
-      Date: '2024-06-15T12:00:00Z',
-      Venue: { Id: 1, Name: 'Lords Cricket Ground' },
-      Opposition: { Id: 1, Name: 'Opponents CC' },
-      Type: 'Friendly',
-      IsHome: true
+      id: 1,
+      date: '2024-06-15T12:00:00Z',
+      venue: { id: 1, name: 'Lords Cricket Ground' },
+      opposition: { id: 1, name: 'Opponents CC' },
+      type: 'Friendly',
+      isHome: true
     },
     {
-      Id: 2,
-      Date: '2024-06-22T12:00:00Z',
-      Venue: { Id: 2, Name: 'The Oval' },
-      Opposition: { Id: 2, Name: 'Another Team' },
-      Type: 'League',
-      IsHome: false
+      id: 2,
+      date: '2024-06-22T12:00:00Z',
+      venue: { id: 2, name: 'The Oval' },
+      opposition: { id: 2, name: 'Another Team' },
+      type: 'League',
+      isHome: false
     }
   ];
 
@@ -57,8 +57,15 @@ describe('Fixtures', () => {
       expect(screen.getByRole('heading', { name: 'Fixtures', level: 1 })).toBeInTheDocument();
     });
 
-    // Verify the API was called with season parameter
-    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/fixtures?season='));
+    // Verify the API was called with season parameter (now with headers from API layer)
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('/api/Fixtures?season='),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'Accept': 'application/json'
+        })
+      })
+    );
   });
 
   test('displays "Add to calendar" link for each fixture', async () => {
@@ -122,20 +129,20 @@ describe('Fixtures', () => {
     const fixturesWithInvalidDate = [
       ...mockFixtures,
       {
-        Id: 3,
-        Date: 'invalid-date-string',
-        Venue: { Id: 3, Name: 'Test Ground' },
-        Opposition: { Id: 3, Name: 'Test Team' },
-        Type: 'Friendly',
-        IsHome: true
+        id: 3,
+        date: 'invalid-date-string',
+        venue: { id: 3, name: 'Test Ground' },
+        opposition: { id: 3, name: 'Test Team' },
+        type: 'Friendly',
+        isHome: true
       },
       {
-        Id: 4,
-        Date: '',
-        Venue: { Id: 4, Name: 'Another Ground' },
-        Opposition: { Id: 4, Name: 'Another Team' },
-        Type: 'League',
-        IsHome: false
+        id: 4,
+        date: '',
+        venue: { id: 4, name: 'Another Ground' },
+        opposition: { id: 4, name: 'Another Team' },
+        type: 'League',
+        isHome: false
       }
     ];
 
@@ -167,12 +174,12 @@ describe('Fixtures', () => {
   test('formatDateForCalendar handles invalid dates gracefully', async () => {
     const fixturesWithEdgeCase = [
       {
-        Id: 1,
-        Date: '2024-06-15T12:00:00Z',
-        Venue: { Id: 1, Name: 'Valid Ground' },
-        Opposition: { Id: 1, Name: 'Valid Team' },
-        Type: 'Friendly',
-        IsHome: true
+        id: 1,
+        date: '2024-06-15T12:00:00Z',
+        venue: { id: 1, name: 'Valid Ground' },
+        opposition: { id: 1, name: 'Valid Team' },
+        type: 'Friendly',
+        isHome: true
       }
     ];
 

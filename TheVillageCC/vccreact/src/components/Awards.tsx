@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import { getAwardsBySeason } from '../api/awardsApi';
 
 interface AwardApiItem {
   Id?: number;
@@ -187,11 +188,18 @@ const Awards: React.FC = () => {
     const fetchAwards = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/awards?season=${currentYear}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch awards');
-        }
-        const data: AwardApiItem[] = await response.json();
+        const apiData = await getAwardsBySeason(currentYear);
+        
+        // Map AwardV1 to AwardApiItem (PascalCase for component usage)
+        const data: AwardApiItem[] = apiData.map(item => ({
+          Id: item.id,
+          Year: item.year ?? currentYear,
+          Award: item.award ?? '',
+          PlayerId: item.playerId,
+          PlayerName: item.playerName ?? undefined,
+          Data: item.data ?? undefined,
+        }));
+        
         // Stable ordering for rendering
         data.sort((a, b) => (a.Award || '').localeCompare(b.Award || ''));
         setAwards(data);

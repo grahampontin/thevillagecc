@@ -143,7 +143,14 @@ describe('PlayerDetail', () => {
       expect(screen.getAllByText(/John Doe/i).length).toBeGreaterThan(0);
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/stats/player/1/detail');
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/Stats/player/1/detail',
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'Accept': 'application/json'
+        })
+      })
+    );
   });
 
   test('displays error message when API call fails', async () => {
@@ -209,8 +216,22 @@ describe('PlayerDetail', () => {
 
     // Verify the chart API was called
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith('/api/stats/chart/1/battingTimeline');
-      expect(global.fetch).toHaveBeenCalledWith('/api/stats/chart/1/wicketsBySeason');
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/Stats/chart/1/battingTimeline',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Accept': 'application/json'
+          })
+        })
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/Stats/chart/1/wicketsBySeason',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Accept': 'application/json'
+          })
+        })
+      );
     });
 
     // Verify that our mock chart data has the color properties

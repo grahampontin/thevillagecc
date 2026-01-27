@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import { getFixturesBySeason } from '../api/fixturesApi';
 
 interface Venue {
   Id: number;
@@ -93,12 +94,23 @@ const Fixtures: React.FC = () => {
       try {
         setIsLoading(true);
 
-        const response = await fetch(`/api/fixtures?season=${currentYear}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch fixtures');
-        }
+        const apiMatches = await getFixturesBySeason(currentYear);
 
-        const matches: Match[] = await response.json();
+        // Map MatchV1 to Match (PascalCase for component usage)
+        const matches: Match[] = apiMatches.map(m => ({
+          Id: m.id ?? 0,
+          Date: m.date ?? '',
+          Venue: {
+            Id: m.venue?.id ?? 0,
+            Name: m.venue?.name ?? '',
+          },
+          Opposition: {
+            Id: m.opposition?.id ?? 0,
+            Name: m.opposition?.name ?? '',
+          },
+          Type: m.type ?? '',
+          IsHome: m.isHome ?? false,
+        }));
 
         // Transform to display format, filtering out invalid dates
         const displayFixtures = matches

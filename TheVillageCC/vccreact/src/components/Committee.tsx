@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import { getAllPlayers } from '../api/playersApi';
+import { getAllCommitteePosts } from '../api/committeeApi';
 
 interface Player {
   playerId: number;
@@ -30,17 +32,25 @@ const Committee: React.FC = () => {
       try {
         setIsLoading(true);
 
-        const [playersRes, committeeRes] = await Promise.all([
-          fetch('/api/players'),
-          fetch('/api/committee')
+        const [apiPlayers, apiCommittee] = await Promise.all([
+          getAllPlayers(),
+          getAllCommitteePosts()
         ]);
 
-        if (!playersRes.ok || !committeeRes.ok) {
-          throw new Error('Failed to fetch committee data');
-        }
+        // Map PlayerV1 to Player
+        const players: Player[] = apiPlayers.map(p => ({
+          playerId: p.playerId ?? 0,
+          firstName: p.firstName ?? '',
+          surname: p.surname ?? '',
+        }));
 
-        const players: Player[] = await playersRes.json();
-        const allCommittee: CommitteePost[] = await committeeRes.json();
+        // Map CommitteePostV1 to CommitteePost
+        const allCommittee: CommitteePost[] = apiCommittee.map(c => ({
+          Id: c.id ?? 0,
+          Year: c.year ?? 0,
+          Post: c.post ?? '',
+          PlayerId: c.playerId ?? 0,
+        }));
 
         if (allCommittee.length === 0) {
           setCommitteePosts([]);

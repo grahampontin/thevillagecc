@@ -22,6 +22,7 @@ import Header from './Header';
 import Footer from './Footer';
 import LinkToPlayerStatsRenderer from './cellRenderers/LinkToPlayerStatsRenderer';
 import ParameterizedLinkToMatchReportRenderer from './cellRenderers/ParameterizedLinkToMatchReportRenderer';
+import { getPlayerDetail, getPlayerChart, getPlayerStats, getPlayerMatches } from '../api/statsApi';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -40,7 +41,7 @@ ChartJS.register(
   Legend
 );
 
-interface PlayerV1 {
+interface LocalPlayerV1 {
   playerId: number;
   matches: number;
   name: string;
@@ -70,7 +71,7 @@ interface StatsData {
 }
 
 interface PlayerDetailData {
-  player: PlayerV1;
+  player: LocalPlayerV1;
   playerImage: string;
   battingStats: StatsData;
   bowlingStats: StatsData;
@@ -141,11 +142,7 @@ const PlayerDetail: React.FC = () => {
       
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/stats/player/${playerId}/detail`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch player details');
-        }
-        const data: PlayerDetailData = await response.json();
+        const data: PlayerDetailData = await getPlayerDetail(parseInt(playerId));
         setPlayerDetail(data);
       } catch (error) {
         console.error('Error fetching player details:', error);
@@ -164,11 +161,7 @@ const PlayerDetail: React.FC = () => {
       if (!playerId) return;
       
       try {
-        const response = await fetch(`/api/stats/chart/${playerId}/${battingChartType}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch batting chart');
-        }
-        const data = await response.json();
+        const data = await getPlayerChart(parseInt(playerId), battingChartType);
         setBattingChartData(data);
       } catch (error) {
         console.error('Error fetching batting chart:', error);
@@ -186,11 +179,7 @@ const PlayerDetail: React.FC = () => {
       if (!playerId) return;
       
       try {
-        const response = await fetch(`/api/stats/chart/${playerId}/${bowlingChartType}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch bowling chart');
-        }
-        const data = await response.json();
+        const data = await getPlayerChart(parseInt(playerId), bowlingChartType);
         setBowlingChartData(data);
       } catch (error) {
         console.error('Error fetching bowling chart:', error);
@@ -209,11 +198,7 @@ const PlayerDetail: React.FC = () => {
       
       try {
         setStatsLoading(true);
-        const response = await fetch(`/api/stats/player/${playerId}/${statsType}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch stats');
-        }
-        const data: StatsDataArray = await response.json();
+        const data: StatsDataArray = await getPlayerStats(parseInt(playerId), statsType);
         setStatsData(data);
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -232,11 +217,7 @@ const PlayerDetail: React.FC = () => {
       
       try {
         setMatchesLoading(true);
-        const response = await fetch(`/api/stats/playermatches/${playerId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch matches');
-        }
-        const data: { gridOptions: GridOptions } = await response.json();
+        const data: { gridOptions: GridOptions } = await getPlayerMatches(parseInt(playerId));
         setMatchesData(data.gridOptions);
       } catch (error) {
         console.error('Error fetching matches:', error);

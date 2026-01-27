@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import { getLeadingPlayers } from '../api/statsApi';
 
 interface LeadingPlayer {
   playerId: number;
@@ -35,11 +36,7 @@ const About: React.FC = () => {
     const fetchLeadingPlayers = async () => {
       try {
         setIsLoadingPlayers(true);
-        const response = await fetch('/api/Stats/leadingplayers');
-        if (!response.ok) {
-          throw new Error('Failed to fetch leading players');
-        }
-        const data: LeadingPlayerCategory[] = await response.json();
+        const data: LeadingPlayerCategory[] = await getLeadingPlayers();
         setLeadingPlayers(data);
         setPlayersError(null);
       } catch (err) {
