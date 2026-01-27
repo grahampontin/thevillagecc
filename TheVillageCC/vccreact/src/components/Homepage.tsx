@@ -3,20 +3,21 @@ import Header from './Header';
 import Footer from './Footer';
 import { getResultBadge } from '../utils/matchResultUtils';
 
-// Define interfaces for match report data from API (using ResultV1 from API spec)
-interface MatchReportListItem {
-  MatchId: number;
-  HomeTeamName: string;
-  HomeTeamScore: string;
-  AwayTeamName: string;
-  AwayTeamScore: string;
-  ResultText: string;
-  ResultMargin: string;
-  MatchDate: string;
-  Conditions: string;
-  Report: string;
-  ReportImage: string;
-  isWinner: boolean | null;
+// Define interfaces for results data from API (ResultV1 from cricketclub.json)
+interface ResultV1 {
+  matchId: number;
+  homeTeamName?: string | null;
+  homeTeamScore?: string | null;
+  awayTeamName?: string | null;
+  awayTeamScore?: string | null;
+  resultText?: string | null;
+  resultMargin?: string | null;
+  matchDate?: string | null;
+  venueName?: string | null;
+  matchReportConditions?: string | null;
+  matchReportText?: string | null;
+  matchReportImage?: string | null;
+  isWinner?: boolean | null;
   isTied: boolean;
   isDrawn: boolean;
   isAbandoned: boolean;
@@ -80,61 +81,53 @@ const Homepage: React.FC = () => {
     const fetchMatchReports = async () => {
       try {
         setIsLoading(true);
-        // Use /api/Results endpoint with limit parameter (get current year results)
-        const currentYear = new Date().getFullYear();
-        const response = await fetch(`/api/Results?season=${currentYear}`);
-        
+
+        // Use the dedicated recent results endpoint (no season needed)
+        const desiredCount = 3;
+        const response = await fetch(`/api/Results/recent?count=${desiredCount}`);
+
         if (!response.ok) {
           throw new Error(`Failed to fetch match reports: ${response.status}`);
         }
-        
-        const data: MatchReportListItem[] = await response.json();
-        
-        // Sort by date descending (most recent first) and take only first 3
-        const sortedData = data
-          .sort((a, b) => new Date(b.MatchDate).getTime() - new Date(a.MatchDate).getTime())
-          .slice(0, 3);
-        
+
+        const data: ResultV1[] = await response.json();
+
         // Transform API data to display format
-        const transformedReports: MatchReport[] = sortedData.map((item) => {
-          // Create heading from home vs away teams
-          const heading = `${item.HomeTeamName} vs ${item.AwayTeamName}`;
-          
-          // Use result text and margin as subtext
-          const subText = item.ResultMargin 
-            ? `${item.ResultText} - ${item.ResultMargin}`
-            : item.ResultText;
-          
-          // Use first MAX_REPORT_PREVIEW_LENGTH characters of report as preview text
-          const reportText = item.Report || '';
-          const text = reportText.length > MAX_REPORT_PREVIEW_LENGTH 
+        const transformedReports: MatchReport[] = data.map((item) => {
+          const heading = `${item.homeTeamName ?? ''} vs ${item.awayTeamName ?? ''}`.trim();
+
+          const subText = item.resultMargin
+            ? `${item.resultText ?? ''} - ${item.resultMargin}`.trim()
+            : (item.resultText ?? '').trim();
+
+          // Prefer match report text if present (falls back to empty string)
+          const reportText = item.matchReportText || '';
+          const text = reportText.length > MAX_REPORT_PREVIEW_LENGTH
             ? reportText.substring(0, MAX_REPORT_PREVIEW_LENGTH) + '...'
             : reportText;
-          
-          // Use report image if available, otherwise use default
-          const imageSrc = item.ReportImage || '/match_reports/images/no_match_report_image.jpg';
-          
+
+          const imageSrc = item.matchReportImage || '/match_reports/images/no_match_report_image.jpg';
+
           return {
             heading,
             subText,
             text,
-            matchId: item.MatchId.toString(),
+            matchId: item.matchId.toString(),
             imageSrc,
-            matchDate: item.MatchDate,
-            resultText: item.ResultText,
-            isWinner: item.isWinner,
+            matchDate: item.matchDate ?? '',
+            resultText: item.resultText ?? '',
+            isWinner: item.isWinner ?? null,
             isTied: item.isTied,
             isDrawn: item.isDrawn,
-            isAbandoned: item.isAbandoned
+            isAbandoned: item.isAbandoned,
           };
         });
-        
+
         setMatchReports(transformedReports);
         setError(null);
       } catch (err) {
         console.error('Error fetching match reports:', err);
         setError(err instanceof Error ? err.message : 'Failed to load match reports');
-        // Set empty array on error so the page still renders
         setMatchReports([]);
       } finally {
         setIsLoading(false);
