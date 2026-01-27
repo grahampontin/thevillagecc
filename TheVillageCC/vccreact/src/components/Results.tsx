@@ -4,6 +4,37 @@ import Header from './Header';
 import Footer from './Footer';
 import { getResultBadge } from '../utils/matchResultUtils';
 
+interface ResultV1 {
+  matchId: number;
+  homeTeamName?: string | null;
+  homeTeamScore?: string | null;
+  awayTeamName?: string | null;
+  awayTeamScore?: string | null;
+  resultText?: string | null;
+  resultMargin?: string | null;
+  matchDate?: string | null;
+  // NOTE: venue is not in cricketclub.json ResultV1, but some deployments include it.
+  venue?: string | null;
+  venueName?: string | null;
+  VenueName?: string | null;
+  winningTeam?: string | null;
+  losingTeam?: string | null;
+  theirOversFaced?: number;
+  theirWickets?: number;
+  theirScore?: number;
+  ourOversFaced?: number;
+  ourWickets?: number;
+  ourScore?: number;
+  margin?: string | null;
+  matchReportConditions?: string | null;
+  matchReportText?: string | null;
+  matchReportImage?: string | null;
+  isWinner?: boolean | null;
+  isTied: boolean;
+  isDrawn: boolean;
+  isAbandoned: boolean;
+}
+
 interface MatchReport {
   MatchId: number;
   HomeTeamName: string;
@@ -20,7 +51,42 @@ interface MatchReport {
   isTied: boolean;
   isDrawn: boolean;
   isAbandoned: boolean;
+
+  // Extra fields for richer rendering
+  WinningTeam: string;
+  LosingTeam: string;
+  OurScore: number | null;
+  OurWickets: number | null;
+  TheirScore: number | null;
+  TheirWickets: number | null;
+  VenueName: string;
 }
+
+const mapResultV1ToMatchReport = (r: ResultV1): MatchReport => ({
+  MatchId: r.matchId,
+  HomeTeamName: r.homeTeamName ?? '',
+  HomeTeamScore: r.homeTeamScore ?? '',
+  AwayTeamName: r.awayTeamName ?? '',
+  AwayTeamScore: r.awayTeamScore ?? '',
+  ResultText: r.resultText ?? '',
+  ResultMargin: r.resultMargin ?? r.margin ?? '',
+  MatchDate: r.matchDate ?? '',
+  Conditions: r.matchReportConditions ?? '',
+  Report: r.matchReportText ?? '',
+  ReportImage: r.matchReportImage ?? '',
+  isWinner: r.isWinner ?? null,
+  isTied: r.isTied,
+  isDrawn: r.isDrawn,
+  isAbandoned: r.isAbandoned,
+
+  WinningTeam: r.winningTeam ?? '',
+  LosingTeam: r.losingTeam ?? '',
+  OurScore: typeof r.ourScore === 'number' ? r.ourScore : null,
+  OurWickets: typeof r.ourWickets === 'number' ? r.ourWickets : null,
+  TheirScore: typeof r.theirScore === 'number' ? r.theirScore : null,
+  TheirWickets: typeof r.theirWickets === 'number' ? r.theirWickets : null,
+  VenueName: (r.venueName ?? r.venue ?? (r as any).VenueName ?? ''),
+});
 
 const SKELETON_ITEMS_COUNT = 5;
 
@@ -41,12 +107,13 @@ const Results: React.FC = () => {
         setIsLoading(true);
 
         // Fetch results from the dedicated results endpoint with season parameter
-        const response = await fetch(`/api/results?season=${currentYear}`);
+        const response = await fetch(`/api/Results?season=${currentYear}`);
         if (!response.ok) {
           throw new Error('Failed to fetch results');
         }
 
-        const seasonResults: MatchReport[] = await response.json();
+        const seasonResultsApi: ResultV1[] = await response.json();
+        const seasonResults: MatchReport[] = seasonResultsApi.map(mapResultV1ToMatchReport);
 
         // Sort by date descending (most recent first)
         seasonResults.sort((a, b) => new Date(b.MatchDate).getTime() - new Date(a.MatchDate).getTime());
@@ -76,12 +143,65 @@ const Results: React.FC = () => {
     });
   };
 
-  const isHomeMatch = (result: MatchReport): boolean => {
-    return result.HomeTeamName === 'The Village CC';
+  const formatInnings = (teamName: string, score?: number | null, wickets?: number | null, scoreString?: string): string => {
+    // Prefer numeric score/wickets if present
+    if (typeof score === 'number' && typeof wickets === 'number') {
+      return `${teamName} ${score} for ${wickets}`;
+    }
+
+    // Fall back to the API string (often like "162-7")
+    const s = (scoreString || '').trim();
+    if (s) {
+      // Try to convert "162-7" => "162 for 7"
+      const m = s.match(/^\s*(\d+)\s*[-–]\s*(\d+)\s*$/);
+      if (m) return `${teamName} ${m[1]} for ${m[2]}`;
+      return `${teamName} ${s}`;
+    }
+
+    return teamName;
   };
 
-  const getOpponentName = (result: MatchReport): string => {
-    return isHomeMatch(result) ? result.AwayTeamName : result.HomeTeamName;
+  const getScorelineText = (result: MatchReport): string => {
+    const homeText = formatInnings(result.HomeTeamName, null, null, result.HomeTeamScore);
+    const awayText = formatInnings(result.AwayTeamName, null, null, result.AwayTeamScore);
+
+    // Neutral outcomes
+    if (result.isAbandoned || result.isTied || result.isDrawn) {
+      return `${homeText} vs ${awayText}`;
+    }
+
+    // Determine if home team won.
+    // Prefer explicit winning/losing team names from API.
+    let homeWon: boolean | null = null;
+    if (result.WinningTeam && result.LosingTeam) {
+      if (result.WinningTeam === result.HomeTeamName) homeWon = true;
+      else if (result.WinningTeam === result.AwayTeamName) homeWon = false;
+    }
+
+    // Fallback to isWinner (Village perspective)
+    if (homeWon === null) {
+      if (result.isWinner === null) {
+        homeWon = null;
+      } else {
+        const villageIsHome = result.HomeTeamName === 'The Village CC';
+        // If Village is home, isWinner reflects home result; otherwise invert.
+        homeWon = villageIsHome ? result.isWinner : !result.isWinner;
+      }
+    }
+
+    if (homeWon === true) return `${homeText} beat ${awayText}`;
+    if (homeWon === false) return `${homeText} lost to ${awayText}`;
+    return `${homeText} vs ${awayText}`;
+  };
+
+  const getVenueText = (result: MatchReport): string => {
+    if (result.VenueName) return result.VenueName;
+
+    // Sometimes resultMargin includes "... at Venue" in legacy systems.
+    const m = (result.ResultMargin || '').match(/\s+at\s+(.+)$/i);
+    if (m && m[1]) return m[1].trim();
+
+    return 'TBC';
   };
 
   return (
@@ -133,8 +253,7 @@ const Results: React.FC = () => {
             <div className="mt-8 grid gap-6 md:grid-cols-2">
               {results.map((result) => {
                 const status = getResultBadge(result);
-                const opponentName = getOpponentName(result);
-                
+
                 return (
                   <a
                     key={result.MatchId}
@@ -143,13 +262,13 @@ const Results: React.FC = () => {
                   >
                     <article className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:border-villageGreen transition">
                       <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                        <span>{formatDate(result.MatchDate)} · vs {opponentName}</span>
+                        <span>{formatDate(result.MatchDate)} · {getVenueText(result)}</span>
                         <span className={`px-2 py-0.5 rounded-full font-semibold text-[11px] ${status.color}`}>
                           {status.text.toUpperCase()}
                         </span>
                       </div>
                       <div className="text-sm font-semibold text-villageText">
-                        {result.HomeTeamName}{result.HomeTeamScore ? ` ${result.HomeTeamScore}` : ''} · {result.AwayTeamName}{result.AwayTeamScore ? ` ${result.AwayTeamScore}` : ''}
+                        {getScorelineText(result)}
                       </div>
                       {result.ResultMargin && (
                         <p className="mt-1 text-sm text-gray-600 italic">
