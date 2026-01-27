@@ -106,9 +106,10 @@ const Homepage: React.FC = () => {
             : item.ResultText;
           
           // Use first MAX_REPORT_PREVIEW_LENGTH characters of report as preview text
-          const text = item.Report && item.Report.length > MAX_REPORT_PREVIEW_LENGTH 
-            ? item.Report.substring(0, MAX_REPORT_PREVIEW_LENGTH) + '...'
-            : item.Report || '';
+          const reportText = item.Report || '';
+          const text = reportText.length > MAX_REPORT_PREVIEW_LENGTH 
+            ? reportText.substring(0, MAX_REPORT_PREVIEW_LENGTH) + '...'
+            : reportText;
           
           // Use report image if available, otherwise use default
           const imageSrc = item.ReportImage || '/match_reports/images/no_match_report_image.jpg';
