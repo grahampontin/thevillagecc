@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 
-// Define interfaces for match report data from API
+// Define interfaces for match report data from API (using ResultV1 from API spec)
 interface MatchReportListItem {
   MatchId: number;
   HomeTeamName: string;
@@ -15,6 +15,10 @@ interface MatchReportListItem {
   Conditions: string;
   Report: string;
   ReportImage: string;
+  isWinner: boolean | null;
+  isTied: boolean;
+  isDrawn: boolean;
+  isAbandoned: boolean;
 }
 
 // Interface for display format
@@ -26,6 +30,10 @@ interface MatchReport {
   imageSrc: string;
   matchDate: string;
   resultText: string;
+  isWinner: boolean | null;
+  isTied: boolean;
+  isDrawn: boolean;
+  isAbandoned: boolean;
 }
 
 const MAX_REPORT_PREVIEW_LENGTH = 200;
@@ -71,7 +79,9 @@ const Homepage: React.FC = () => {
     const fetchMatchReports = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/matchreports?limit=3&order=desc');
+        // Use /api/Results endpoint with limit parameter (get current year results)
+        const currentYear = new Date().getFullYear();
+        const response = await fetch(`/api/Results?season=${currentYear}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch match reports: ${response.status}`);
@@ -79,8 +89,13 @@ const Homepage: React.FC = () => {
         
         const data: MatchReportListItem[] = await response.json();
         
+        // Sort by date descending (most recent first) and take only first 3
+        const sortedData = data
+          .sort((a, b) => new Date(b.MatchDate).getTime() - new Date(a.MatchDate).getTime())
+          .slice(0, 3);
+        
         // Transform API data to display format
-        const transformedReports: MatchReport[] = data.map((item) => {
+        const transformedReports: MatchReport[] = sortedData.map((item) => {
           // Create heading from home vs away teams
           const heading = `${item.HomeTeamName} vs ${item.AwayTeamName}`;
           
@@ -90,9 +105,9 @@ const Homepage: React.FC = () => {
             : item.ResultText;
           
           // Use first MAX_REPORT_PREVIEW_LENGTH characters of report as preview text
-          const text = item.Report.length > MAX_REPORT_PREVIEW_LENGTH 
+          const text = item.Report && item.Report.length > MAX_REPORT_PREVIEW_LENGTH 
             ? item.Report.substring(0, MAX_REPORT_PREVIEW_LENGTH) + '...'
-            : item.Report;
+            : item.Report || '';
           
           // Use report image if available, otherwise use default
           const imageSrc = item.ReportImage || '/match_reports/images/no_match_report_image.jpg';
@@ -104,7 +119,11 @@ const Homepage: React.FC = () => {
             matchId: item.MatchId.toString(),
             imageSrc,
             matchDate: item.MatchDate,
-            resultText: item.ResultText
+            resultText: item.ResultText,
+            isWinner: item.isWinner,
+            isTied: item.isTied,
+            isDrawn: item.isDrawn,
+            isAbandoned: item.isAbandoned
           };
         });
         
@@ -286,15 +305,23 @@ const Homepage: React.FC = () => {
             {!isLoading && matchReports.length > 0 && (
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {matchReports.slice(0, 2).map((report, index) => {
-                  // Determine if this is a win, loss, or draw based on result text
-                  const isWon = report.resultText.toLowerCase().includes('won');
-                  const isLost = report.resultText.toLowerCase().includes('lost');
-                  const statusColor = isWon 
-                    ? 'bg-emerald-100 text-emerald-700' 
-                    : isLost 
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-700';
-                  const statusText = isWon ? 'Won' : isLost ? 'Lost' : report.resultText;
+                  // Determine badge based on match outcome from The Village CC's perspective
+                  let statusColor: string;
+                  let statusText: string;
+                  
+                  if (report.isAbandoned || report.isTied || report.isDrawn) {
+                    statusColor = 'bg-gray-100 text-gray-700';
+                    statusText = 'N/R';
+                  } else if (report.isWinner === true) {
+                    statusColor = 'bg-emerald-100 text-emerald-700';
+                    statusText = 'WIN';
+                  } else if (report.isWinner === false) {
+                    statusColor = 'bg-red-100 text-red-700';
+                    statusText = 'LOSS';
+                  } else {
+                    statusColor = 'bg-gray-100 text-gray-700';
+                    statusText = 'N/R';
+                  }
                   
                   // Safely parse the date
                   const matchDate = new Date(report.matchDate);

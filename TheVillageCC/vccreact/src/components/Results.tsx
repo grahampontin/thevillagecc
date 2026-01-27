@@ -15,6 +15,10 @@ interface MatchReport {
   Conditions: string;
   Report: string;
   ReportImage: string;
+  isWinner: boolean | null;
+  isTied: boolean;
+  isDrawn: boolean;
+  isAbandoned: boolean;
 }
 
 const SKELETON_ITEMS_COUNT = 5;
@@ -76,13 +80,19 @@ const Results: React.FC = () => {
   };
 
   const getResultStatus = (result: MatchReport): { color: string; text: string } => {
-    const resultLower = result.ResultText.toLowerCase();
-    if (resultLower.includes('won')) {
-      return { color: 'bg-emerald-100 text-emerald-700', text: 'Won' };
-    } else if (resultLower.includes('lost')) {
-      return { color: 'bg-red-100 text-red-700', text: 'Lost' };
+    // Check for no result scenarios
+    if (result.isAbandoned || result.isTied || result.isDrawn) {
+      return { color: 'bg-gray-100 text-gray-700', text: 'N/R' };
+    }
+    
+    // Check if The Village CC won or lost from their perspective
+    if (result.isWinner === true) {
+      return { color: 'bg-emerald-100 text-emerald-700', text: 'WIN' };
+    } else if (result.isWinner === false) {
+      return { color: 'bg-red-100 text-red-700', text: 'LOSS' };
     } else {
-      return { color: 'bg-gray-100 text-gray-700', text: result.ResultText };
+      // Fallback if isWinner is null
+      return { color: 'bg-gray-100 text-gray-700', text: 'N/R' };
     }
   };
 
