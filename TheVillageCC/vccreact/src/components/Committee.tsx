@@ -4,23 +4,10 @@ import Footer from './Footer';
 import { getAllPlayers } from '../api/playersApi';
 import { getAllCommitteePosts } from '../api/committeeApi';
 
-interface Player {
-  playerId: number;
-  firstName: string;
-  surname: string;
-}
-
-interface CommitteePost {
-  Id: number;
-  Year: number;
-  Post: string;
-  PlayerId: number;
-}
-
 interface CommitteeDisplay {
-  Post: string;
-  PlayerName: string;
-  PlayerImageId: number;
+  post: string;
+  playerName: string;
+  playerImageId: number;
 }
 
 const Committee: React.FC = () => {
@@ -32,25 +19,10 @@ const Committee: React.FC = () => {
       try {
         setIsLoading(true);
 
-        const [apiPlayers, apiCommittee] = await Promise.all([
+        const [players, allCommittee] = await Promise.all([
           getAllPlayers(),
           getAllCommitteePosts()
         ]);
-
-        // Map PlayerV1 to Player
-        const players: Player[] = apiPlayers.map(p => ({
-          playerId: p.playerId ?? 0,
-          firstName: p.firstName ?? '',
-          surname: p.surname ?? '',
-        }));
-
-        // Map CommitteePostV1 to CommitteePost
-        const allCommittee: CommitteePost[] = apiCommittee.map(c => ({
-          Id: c.id ?? 0,
-          Year: c.year ?? 0,
-          Post: c.post ?? '',
-          PlayerId: c.playerId ?? 0,
-        }));
 
         if (allCommittee.length === 0) {
           setCommitteePosts([]);
@@ -58,11 +30,11 @@ const Committee: React.FC = () => {
         }
 
         // Create player lookup
-        const playerMap = new Map(players.map(p => [p.playerId, `${p.firstName} ${p.surname}`.trim()]));
+        const playerMap = new Map(players.map(p => [p.playerId ?? 0, `${p.firstName ?? ''} ${p.surname ?? ''}`.trim()]));
 
         // Get most recent year
-        const mostRecentYear = Math.max(...allCommittee.map(c => c.Year));
-        const postsForMostRecentYear = allCommittee.filter(c => c.Year === mostRecentYear);
+        const mostRecentYear = Math.max(...allCommittee.map(c => c.year ?? 0));
+        const postsForMostRecentYear = allCommittee.filter(c => c.year === mostRecentYear);
 
         // Define display order
         const postOrder: Record<string, number> = {
@@ -77,11 +49,11 @@ const Committee: React.FC = () => {
         };
 
         const displayPosts = postsForMostRecentYear
-          .sort((a, b) => (postOrder[a.Post] ?? 999) - (postOrder[b.Post] ?? 999))
+          .sort((a, b) => (postOrder[a.post ?? ''] ?? 999) - (postOrder[b.post ?? ''] ?? 999))
           .map(c => ({
-            Post: c.Post,
-            PlayerName: playerMap.get(c.PlayerId) || 'Unknown',
-            PlayerImageId: c.PlayerId
+            post: c.post ?? '',
+            playerName: playerMap.get(c.playerId ?? 0) || 'Unknown',
+            playerImageId: c.playerId ?? 0
           }));
 
         setCommitteePosts(displayPosts);
@@ -123,16 +95,16 @@ const Committee: React.FC = () => {
                   <div key={idx} className="flex-fill">
                     <div className="text-center">
                       <img 
-                        src={`Images/player_profiles/${post.PlayerImageId}.png`} 
-                        alt={post.PlayerName}
+                        src={`Images/player_profiles/${post.playerImageId}.png`} 
+                        alt={post.playerName}
                         onError={(e) => {
                           // Fallback to a default image if player image doesn't exist
                           e.currentTarget.src = '/images/vcc_cricle_small.png';
                         }}
                       />
                     </div>
-                    <div className="fw-bold mx-auto text-center">{post.Post}</div>
-                    <div className="fst-italic mx-auto text-center">{post.PlayerName}</div>
+                    <div className="fw-bold mx-auto text-center">{post.post}</div>
+                    <div className="fst-italic mx-auto text-center">{post.playerName}</div>
                   </div>
                 ))
               ) : (
