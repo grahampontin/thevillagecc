@@ -26,10 +26,10 @@ interface MatchReport {
   // Extra fields for richer rendering
   WinningTeam: string;
   LosingTeam: string;
-  OurScore: number;
-  OurWickets: number;
-  TheirScore: number;
-  TheirWickets: number;
+  OurScore: number | null;
+  OurWickets: number | null;
+  TheirScore: number | null;
+  TheirWickets: number | null;
   VenueName: string;
 }
 
@@ -46,16 +46,16 @@ const mapResultV1ToMatchReport = (r: ResultV1): MatchReport => ({
   Report: r.matchReportText ?? '',
   ReportImage: r.matchReportImage ?? '',
   isWinner: r.isWinner ?? null,
-  isTied: r.isTied,
-  isDrawn: r.isDrawn,
-  isAbandoned: r.isAbandoned,
+  isTied: r.isTied ?? false,
+  isDrawn: r.isDrawn ?? false,
+  isAbandoned: r.isAbandoned ?? false,
 
   WinningTeam: r.winningTeam ?? '',
   LosingTeam: r.losingTeam ?? '',
-  OurScore: r.ourScore,
-  OurWickets: r.ourWickets,
-  TheirScore: r.theirScore,
-  TheirWickets: r.theirWickets,
+  OurScore: r.ourScore ?? null,
+  OurWickets: r.ourWickets ?? null,
+  TheirScore: r.theirScore ?? null,
+  TheirWickets: r.theirWickets ?? null,
   // Handle potential venueName variations (backend inconsistency)
   VenueName: r.venueName ?? (r as any).venue ?? (r as any).VenueName ?? '',
 });
@@ -110,7 +110,7 @@ const Results: React.FC = () => {
     });
   };
 
-  const formatInnings = (teamName: string, score?: number, wickets?: number, scoreString?: string): string => {
+  const formatInnings = (teamName: string, score?: number | null, wickets?: number | null, scoreString?: string): string => {
     // Prefer numeric score/wickets if present
     if (typeof score === 'number' && typeof wickets === 'number') {
       return `${teamName} ${score} for ${wickets}`;

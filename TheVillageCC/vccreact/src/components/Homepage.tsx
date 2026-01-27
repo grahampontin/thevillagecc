@@ -92,9 +92,9 @@ const Homepage: React.FC = () => {
             matchDate: item.matchDate ?? '',
             resultText: item.resultText ?? '',
             isWinner: item.isWinner ?? null,
-            isTied: item.isTied,
-            isDrawn: item.isDrawn,
-            isAbandoned: item.isAbandoned,
+            isTied: item.isTied ?? false,
+            isDrawn: item.isDrawn ?? false,
+            isAbandoned: item.isAbandoned ?? false,
           };
         });
 

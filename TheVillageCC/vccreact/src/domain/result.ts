@@ -2,7 +2,8 @@
  * ResultV1 type matching components.schemas.ResultV1 in cricketclub.json OpenAPI spec.
  * 
  * Fields marked with `| null` or `?` indicate nullable: true in the spec.
- * Required fields (isTied, isDrawn, isAbandoned, score fields) are non-optional.
+ * Score-related fields are non-nullable in the spec but optional (no required array),
+ * so we mark them as optional (?) to handle cases where they may be missing.
  */
 export interface ResultV1 {
   matchId: number;
@@ -16,15 +17,15 @@ export interface ResultV1 {
   winningTeam?: string | null;
   losingTeam?: string | null;
   margin?: string | null;
-  theirOversFaced: number;
-  theirWickets: number;
-  theirScore: number;
-  ourOversFaced: number;
-  ourWickets: number;
-  ourScore: number;
-  isTied: boolean;
-  isDrawn: boolean;
-  isAbandoned: boolean;
+  theirOversFaced?: number;
+  theirWickets?: number;
+  theirScore?: number;
+  ourOversFaced?: number;
+  ourWickets?: number;
+  ourScore?: number;
+  isTied?: boolean;
+  isDrawn?: boolean;
+  isAbandoned?: boolean;
   venueName?: string | null;
   matchReportConditions?: string | null;
   matchReportText?: string | null;
