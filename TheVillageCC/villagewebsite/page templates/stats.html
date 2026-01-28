@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stats — The Village Cricket Club</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            villageGreen: '#1d7a4b',
+            villageGreenLight: '#e6f4ee',
+            villageText: '#1f2933'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body class="font-sans text-villageText bg-gray-50">
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-md border-2 border-villageGreen flex items-center justify-center">
+          <div class="w-4 h-4 border-l-2 border-b-2 border-villageGreen rotate-[-20deg]"></div>
+        </div>
+        <span class="text-lg font-semibold tracking-wide uppercase text-villageText">The Village</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="/About" class="text-gray-700 hover:text-villageGreen transition">About</a>
+        <a href="/Fixtures" class="text-gray-700 hover:text-villageGreen transition">Fixtures</a>
+        <a href="/Results" class="text-gray-700 hover:text-villageGreen transition">Results</a>
+        <a href="/Stats" class="text-villageGreen font-semibold border-b-2 border-villageGreen">Stats</a>
+        <a href="/Committee" class="text-gray-700 hover:text-villageGreen transition">Committee</a>
+        <a href="/Tours" class="text-gray-700 hover:text-villageGreen transition">Tours</a>
+        <a href="/Awards" class="text-gray-700 hover:text-villageGreen transition">Awards</a>
+      </nav>
+
+      <button class="md:hidden text-sm font-medium text-villageGreen">Menu</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <!-- Page Title -->
+      <h1 class="text-3xl sm:text-4xl font-semibold text-villageText">Stats</h1>
+      <p class="mt-2 text-gray-600 text-base">
+        Dive into the numbers. Filter, refine, obsess — it’s what the Village does best.
+      </p>
+
+      <!-- CATEGORY TABS -->
+      <div class="mt-8 overflow-x-auto">
+        <div class="flex gap-2 whitespace-nowrap pb-1">
+
+          <!-- Active tab -->
+          <button class="px-4 py-2 rounded-full bg-villageGreen text-white text-sm font-medium">
+            Batting
+          </button>
+
+          <!-- Inactive tabs -->
+          <button class="px-4 py-2 rounded-full border border-villageGreen text-villageGreen text-sm font-medium hover:bg-villageGreenLight">
+            Bowling
+          </button>
+
+          <button class="px-4 py-2 rounded-full border border-villageGreen text-villageGreen text-sm font-medium hover:bg-villageGreenLight">
+            Keeping
+          </button>
+
+          <button class="px-4 py-2 rounded-full border border-villageGreen text-villageGreen text-sm font-medium hover:bg-villageGreenLight">
+            Captains
+          </button>
+
+          <button class="px-4 py-2 rounded-full border border-villageGreen text-villageGreen text-sm font-medium hover:bg-villageGreenLight">
+            Venues
+          </button>
+
+          <button class="px-4 py-2 rounded-full border border-villageGreen text-villageGreen text-sm font-medium hover:bg-villageGreenLight">
+            Teams
+          </button>
+
+          <button class="px-4 py-2 rounded-full border border-villageGreen text-villageGreen text-sm font-medium hover:bg-villageGreenLight">
+            Matches
+          </button>
+
+          <button class="px-4 py-2 rounded-full border border-villageGreen text-villageGreen text-sm font-medium hover:bg-villageGreenLight">
+            Innings
+          </button>
+
+        </div>
+      </div>
+
+      <!-- FILTER CARD -->
+      <div class="mt-8 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+
+        <h2 class="text-lg font-semibold text-villageText mb-4">Filters</h2>
+
+        <div class="grid md:grid-cols-3 gap-6">
+
+          <!-- Start Date -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+            <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
+          </div>
+
+          <!-- End Date -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+            <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
+          </div>
+
+          <!-- Venue -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Venue</label>
+            <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+              <option value="">All Venues</option>
+            </select>
+          </div>
+
+          <!-- Match Type -->
+          <div class="md:col-span-3">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Match Type</label>
+
+            <div class="flex flex-wrap gap-2">
+
+              <button class="px-3 py-1.5 rounded-full border border-villageGreen text-villageGreen text-xs font-medium hover:bg-villageGreenLight">
+                League
+              </button>
+
+              <button class="px-3 py-1.5 rounded-full border border-villageGreen text-villageGreen text-xs font-medium hover:bg-villageGreenLight">
+                Friendly
+              </button>
+
+              <button class="px-3 py-1.5 rounded-full border border-villageGreen text-villageGreen text-xs font-medium hover:bg-villageGreenLight">
+                Tour
+              </button>
+
+              <button class="px-3 py-1.5 rounded-full border border-villageGreen text-villageGreen text-xs font-medium hover:bg-villageGreenLight">
+                T20
+              </button>
+
+              <button class="px-3 py-1.5 rounded-full border border-villageGreen text-villageGreen text-xs font-medium hover:bg-villageGreenLight">
+                Declaration
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Buttons -->
+        <div class="mt-6 flex gap-3">
+          <button class="px-4 py-2 bg-villageGreen text-white rounded-md text-sm font-medium">
+            Apply Filters
+          </button>
+          <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md text-sm font-medium">
+            Reset
+          </button>
+        </div>
+
+      </div>
+
+      <!-- GRID CONTAINER -->
+      <div class="mt-10 bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+
+        <h2 class="text-lg font-semibold text-villageText mb-4">Results</h2>
+
+        <!-- Placeholder for AG Grid -->
+        <div id="stats-grid" class="w-full h-[600px] border border-gray-200 rounded-md">
+          <!-- AG Grid mounts here -->
+        </div>
+
+      </div>
+
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-gray-400 text-xs">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© 2024 The Village Cricket Club</p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:text-white transition">Twitter</a>
+        <a href="#" class="hover:text-white transition">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
