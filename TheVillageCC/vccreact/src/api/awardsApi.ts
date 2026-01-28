@@ -18,6 +18,16 @@ export async function getAwardsBySeason(season: number): Promise<AwardV1[]> {
 }
 
 /**
+ * Fetches all awards across all seasons.
+ * Uses GET /api/Awards (no season parameter)
+ * 
+ * @returns Promise resolving to array of AwardV1 objects
+ */
+export async function getAllAwards(): Promise<AwardV1[]> {
+  return getJson<AwardV1[]>('/api/Awards');
+}
+
+/**
  * Fetches a specific award by ID.
  * Uses GET /api/Awards/{id}
  * 
