@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import { getAwardsBySeason } from '../api/awardsApi';
+import { getAllAwards, getAwardsBySeason } from '../api/awardsApi';
 import { AwardV1 } from '../domain/award';
 
 const SKELETON_ITEMS_COUNT = 6;
@@ -169,15 +169,55 @@ const Awards: React.FC = () => {
 
   const currentYear = useMemo(() => {
     const seasonParam = searchParams.get('season');
-    return seasonParam ? parseInt(seasonParam) : new Date().getFullYear();
+    return seasonParam ? parseInt(seasonParam) : null;
   }, [searchParams]);
 
-  const navigateToSeason = (year: number) => {
+  const navigateToSeason = useCallback((year: number) => {
     setSearchParams({ season: year.toString() });
-  };
+  }, [setSearchParams]);
+
+  // Effect to determine and set the default year if no season param exists
+  useEffect(() => {
+    const initializeDefaultYear = async () => {
+      if (currentYear === null) {
+        try {
+          const allAwards = await getAllAwards();
+          
+          if (allAwards.length === 0) {
+            // No awards exist, default to current year
+            navigateToSeason(new Date().getFullYear());
+          } else {
+            // Find the latest year with awards
+            const years = allAwards
+              .map(award => award.year)
+              .filter((year): year is number => year !== undefined && year !== null);
+            
+            if (years.length > 0) {
+              const latestYear = Math.max(...years);
+              navigateToSeason(latestYear);
+            } else {
+              // Awards exist but no year data, default to current year
+              navigateToSeason(new Date().getFullYear());
+            }
+          }
+        } catch (error) {
+          console.error('Error initializing default year:', error);
+          // On error, default to current year
+          navigateToSeason(new Date().getFullYear());
+        }
+      }
+    };
+
+    initializeDefaultYear();
+  }, [currentYear, navigateToSeason]);
 
   useEffect(() => {
     const fetchAwards = async () => {
+      // Only fetch awards if we have a year to fetch for
+      if (currentYear === null) {
+        return;
+      }
+
       try {
         setIsLoading(true);
         const data = await getAwardsBySeason(currentYear);
@@ -223,21 +263,23 @@ const Awards: React.FC = () => {
           <p className="mt-2 text-gray-600 text-base">Celebrating excellence, effort, and the occasional fluke.</p>
 
           {/* Season Navigation (match Results page style) */}
-          <div className="mt-6 flex items-center justify-between">
-            <button
-              onClick={() => navigateToSeason(currentYear - 1)}
-              className="text-sm font-medium text-villageGreen hover:underline"
-            >
-              ← Previous season
-            </button>
-            <span className="text-sm text-gray-500">{currentYear} Awards</span>
-            <button
-              onClick={() => navigateToSeason(currentYear + 1)}
-              className="text-sm font-medium text-villageGreen hover:underline"
-            >
-              Next season →
-            </button>
-          </div>
+          {currentYear !== null && (
+            <div className="mt-6 flex items-center justify-between">
+              <button
+                onClick={() => navigateToSeason(currentYear - 1)}
+                className="text-sm font-medium text-villageGreen hover:underline"
+              >
+                ← Previous season
+              </button>
+              <span className="text-sm text-gray-500">{currentYear} Awards</span>
+              <button
+                onClick={() => navigateToSeason(currentYear + 1)}
+                className="text-sm font-medium text-villageGreen hover:underline"
+              >
+                Next season →
+              </button>
+            </div>
+          )}
 
           {isLoading ? (
             <div className="mt-8 grid gap-6 md:grid-cols-3 sm:grid-cols-2">
@@ -250,7 +292,7 @@ const Awards: React.FC = () => {
             </div>
           ) : awards.length === 0 ? (
             <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-              <p className="text-blue-700">No awards available for the {currentYear} season.</p>
+              <p className="text-blue-700">No awards available for the {currentYear ?? 'selected'} season.</p>
             </div>
           ) : (
             <>
