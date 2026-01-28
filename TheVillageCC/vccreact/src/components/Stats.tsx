@@ -183,7 +183,7 @@ const Stats: React.FC = () => {
     { id: 'innings', label: 'Innings' },
   ];
 
-  const handleResetFilters = () => {
+  const handleResetFilters = async () => {
     // Reset to default values
     const currentYear = new Date().getFullYear();
     setFromDate(`${currentYear - 30}-01-01`);
@@ -199,7 +199,7 @@ const Stats: React.FC = () => {
     // Clear all cached stats data to force reload
     setStatsData({});
     // Reload current tab
-    loadStats(activeTab);
+    await loadStats(activeTab);
   };
 
   return (
@@ -286,6 +286,7 @@ const Stats: React.FC = () => {
 
                 <div className="flex flex-wrap gap-2">
                   <button
+                    type="button"
                     className={`px-3 py-1.5 rounded-full text-xs font-medium ${
                       matchTypes.League
                         ? 'bg-villageGreen text-white'
@@ -297,6 +298,7 @@ const Stats: React.FC = () => {
                   </button>
 
                   <button
+                    type="button"
                     className={`px-3 py-1.5 rounded-full text-xs font-medium ${
                       matchTypes.Friendly
                         ? 'bg-villageGreen text-white'
@@ -308,6 +310,7 @@ const Stats: React.FC = () => {
                   </button>
 
                   <button
+                    type="button"
                     className={`px-3 py-1.5 rounded-full text-xs font-medium ${
                       matchTypes.Tour
                         ? 'bg-villageGreen text-white'
@@ -319,6 +322,7 @@ const Stats: React.FC = () => {
                   </button>
 
                   <button
+                    type="button"
                     className={`px-3 py-1.5 rounded-full text-xs font-medium ${
                       matchTypes.T20
                         ? 'bg-villageGreen text-white'
@@ -330,6 +334,7 @@ const Stats: React.FC = () => {
                   </button>
 
                   <button
+                    type="button"
                     className={`px-3 py-1.5 rounded-full text-xs font-medium ${
                       matchTypes.Declaration
                         ? 'bg-villageGreen text-white'
@@ -347,6 +352,7 @@ const Stats: React.FC = () => {
             <div className="mt-6 flex gap-3">
               {!isLoading && (
                 <button
+                  type="button"
                   className="px-4 py-2 bg-villageGreen text-white rounded-md text-sm font-medium"
                   onClick={handleFilterClick}
                 >
@@ -355,6 +361,7 @@ const Stats: React.FC = () => {
               )}
               {isLoading && (
                 <button
+                  type="button"
                   className="px-4 py-2 bg-villageGreen text-white rounded-md text-sm font-medium opacity-50 cursor-not-allowed"
                   disabled
                 >
@@ -369,6 +376,7 @@ const Stats: React.FC = () => {
                 </button>
               )}
               <button
+                type="button"
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md text-sm font-medium"
                 onClick={handleResetFilters}
               >
