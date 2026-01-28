@@ -181,7 +181,6 @@ const Awards: React.FC = () => {
     const initializeDefaultYear = async () => {
       if (currentYear === null) {
         try {
-          setIsLoading(true);
           const allAwards = await getAllAwards();
           
           if (allAwards.length === 0) {
@@ -205,8 +204,6 @@ const Awards: React.FC = () => {
           console.error('Error initializing default year:', error);
           // On error, default to current year
           navigateToSeason(new Date().getFullYear());
-        } finally {
-          setIsLoading(false);
         }
       }
     };
