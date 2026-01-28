@@ -392,8 +392,12 @@ const Stats: React.FC = () => {
             {/* Grid */}
             <div className="w-full h-[600px] border border-gray-200 rounded-md">
               {isLoading && !statsData[activeTab] && (
-                <div className="flex items-center justify-center h-full">
-                  <span className="text-gray-500">Loading...</span>
+                <div className="skeleton-grid p-4">
+                  <span className="visually-hidden">Loading...</span>
+                  <div className="skeleton skeleton-grid-header h-10 bg-gray-200 rounded mb-2 animate-pulse" aria-hidden="true"></div>
+                  {Array.from({ length: 10 }).map((_, index) => (
+                    <div key={index} className="skeleton skeleton-grid-row h-8 bg-gray-100 rounded mb-1 animate-pulse" aria-hidden="true"></div>
+                  ))}
                 </div>
               )}
               {statsData[activeTab] && (
