@@ -45,7 +45,6 @@ const Stats: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [statsData, setStatsData] = useState<{ [key: string]: StatsData }>({});
-  const [showFilterPanel, setShowFilterPanel] = useState(true);
 
   // Initialize dates
   useEffect(() => {
@@ -184,258 +183,249 @@ const Stats: React.FC = () => {
     { id: 'innings', label: 'Innings' },
   ];
 
+  const handleResetFilters = () => {
+    // Reset to default values
+    const currentYear = new Date().getFullYear();
+    setFromDate(`${currentYear - 30}-01-01`);
+    setToDate(`${currentYear}-12-31`);
+    setSelectedVenue('');
+    setMatchTypes({
+      League: true,
+      Friendly: true,
+      Tour: true,
+      Declaration: true,
+      T20: true,
+    });
+    // Clear all cached stats data to force reload
+    setStatsData({});
+    // Reload current tab
+    loadStats(activeTab);
+  };
+
   return (
     <>
       <Header />
-      <main className="container">
-        <h1>Club Statistics</h1>
+      <main>
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          {/* Page Title */}
+          <h1 className="text-3xl sm:text-4xl font-semibold text-villageText">Stats</h1>
+          <p className="mt-2 text-gray-600 text-base">
+            Dive into the numbers. Filter, refine, obsess — it's what the Village does best.
+          </p>
 
-        <div className="accordion" id="accordionExample">
-          <div className="accordion-item">
-            <h2 className="accordion-header" id="headingOne">
-              <button
-                className={`accordion-button ${showFilterPanel ? '' : 'collapsed'}`}
-                type="button"
-                onClick={() => setShowFilterPanel(!showFilterPanel)}
-                aria-expanded={showFilterPanel}
-                aria-controls="collapseOne"
-              >
-                Filter Statistics
-              </button>
-            </h2>
-            <div
-              id="collapseOne"
-              className={`accordion-collapse collapse ${showFilterPanel ? 'show' : ''}`}
-              aria-labelledby="headingOne"
-            >
-              <div className="accordion-body">
-                <div className="d-flex flex-wrap">
-                  <div className="form-group flex-grow-1 me-2 mt-2">
-                    <div className="input-group">
-                      <span className="input-group-text">Start date:</span>
-                      <input
-                        type="date"
-                        className="form-control"
-                        id="fromDate"
-                        value={fromDate}
-                        onChange={(e) => setFromDate(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group flex-grow-1 me-2 mt-2">
-                    <div className="input-group">
-                      <span className="input-group-text">End date:</span>
-                      <input
-                        type="date"
-                        className="form-control"
-                        id="toDate"
-                        value={toDate}
-                        onChange={(e) => setToDate(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group flex-grow-1 me-2 mt-2">
-                    <div className="input-group">
-                      <span className="input-group-text">At:</span>
-                      <select
-                        className="form-select"
-                        id="VenuesDropDown"
-                        value={selectedVenue}
-                        onChange={(e) => setSelectedVenue(e.target.value)}
-                      >
-                        <option value=""></option>
-                        {venues.map(venue => (
-                          <option key={venue.id} value={venue.name ?? ''}>
-                            {venue.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div className="d-flex flex-fill me-2">
-                  <div className="input-group mt-2">
-                    <div className="form-check form-switch form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="leagueCB"
-                        checked={matchTypes.League}
-                        onChange={() => handleMatchTypeChange('League')}
-                      />
-                      <label className="form-check-label" htmlFor="leagueCB">
-                        League
-                      </label>
-                    </div>
-                    <div className="form-check form-switch form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="friendlyCB"
-                        checked={matchTypes.Friendly}
-                        onChange={() => handleMatchTypeChange('Friendly')}
-                      />
-                      <label className="form-check-label" htmlFor="friendlyCB">
-                        Friendly
-                      </label>
-                    </div>
-                    <div className="form-check form-switch form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="tourCB"
-                        checked={matchTypes.Tour}
-                        onChange={() => handleMatchTypeChange('Tour')}
-                      />
-                      <label className="form-check-label" htmlFor="tourCB">
-                        Tour
-                      </label>
-                    </div>
-                    <div className="form-check form-switch form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="declarationCB"
-                        checked={matchTypes.Declaration}
-                        onChange={() => handleMatchTypeChange('Declaration')}
-                      />
-                      <label className="form-check-label" htmlFor="declarationCB">
-                        Declaration
-                      </label>
-                    </div>
-                    <div className="form-check form-switch form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="twenty20CB"
-                        checked={matchTypes.T20}
-                        onChange={() => handleMatchTypeChange('T20')}
-                      />
-                      <label className="form-check-label" htmlFor="twenty20CB">
-                        Twenty20
-                      </label>
-                    </div>
-                  </div>
-                  <div className="mt-2 d-flex justify-content-end flex-column">
-                    {!isLoading && (
-                      <button
-                        id="filterButton"
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={handleFilterClick}
-                      >
-                        <span className="text-nowrap">Apply filter</span>
-                      </button>
-                    )}
-                    {isLoading && (
-                      <button
-                        id="loadingButton"
-                        className="btn btn-primary"
-                        type="button"
-                        disabled
-                      >
-                        <span className="text-nowrap">
-                          <span
-                            className="spinner-border spinner-border-sm"
-                            role="status"
-                            aria-hidden="true"
-                          ></span>
-                          {' '}Loading...
-                        </span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
+          {/* CATEGORY TABS */}
+          <div className="mt-8 overflow-x-auto">
+            <div className="flex gap-2 whitespace-nowrap pb-1">
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  className={`px-4 py-2 rounded-full text-sm font-medium ${
+                    activeTab === tab.id
+                      ? 'bg-villageGreen text-white'
+                      : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                  }`}
+                  type="button"
+                  onClick={() => handleTabChange(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
 
-        <div id="tabFlexContainer">
-          <nav
-            id="tabs"
-            className="nav nav-pills nav-justified p-2 mt-2 underline-nav-2"
-            role="tablist"
-          >
-            {tabs.map(tab => (
-              <button
-                key={tab.id}
-                className={`nav-link ${activeTab === tab.id ? 'active' : ''}`}
-                type="button"
-                role="tab"
-                onClick={() => handleTabChange(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-          <div className="tab-content">
-            {tabs.map(tab => (
-              <div
-                key={tab.id}
-                role="tabpanel"
-                className={`tab-pane ${activeTab === tab.id ? 'active' : ''}`}
-                id={tab.id}
-              >
-                {activeTab === tab.id && (
-                  <div
-                    className="stats-grid"
-                    style={{ height: 'calc(100vh - 400px)', width: '100%' }}
-                  >
-                    {isLoading && !statsData[tab.id] && (
-                      <div className="skeleton-grid">
-                        <span className="visually-hidden">Loading...</span>
-                        <div className="skeleton skeleton-grid-header" aria-hidden="true"></div>
-                        {Array.from({ length: 10 }).map((_, index) => (
-                          <div key={index} className="skeleton skeleton-grid-row" aria-hidden="true"></div>
-                        ))}
-                      </div>
-                    )}
-                    {statsData[tab.id] && (
-                      <AgGridReact
-                        theme={themeBalham}
-                        columnDefs={statsData[tab.id].gridOptions.columnDefs}
-                        rowData={statsData[tab.id].gridOptions.rowData}
-                        defaultColDef={defaultColDef}
-                        suppressColumnVirtualisation={true}
-                        components={{
-                          LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                          ParameterizedLinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                        }}
-                      />
-                    )}
-                  </div>
-                )}
+          {/* FILTER CARD */}
+          <div className="mt-8 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-villageText mb-4">Filters</h2>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Start Date */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <input
+                  type="date"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  id="fromDate"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                />
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Error Modal */}
-        {error && (
-          <div
-            className="modal show"
-            style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}
-            tabIndex={-1}
-          >
-            <div className="modal-dialog modal-fullscreen-md-down">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Error!</h5>
+              {/* End Date */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <input
+                  type="date"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  id="toDate"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                />
+              </div>
+
+              {/* Venue */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Venue</label>
+                <select
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  id="VenuesDropDown"
+                  value={selectedVenue}
+                  onChange={(e) => setSelectedVenue(e.target.value)}
+                >
+                  <option value="">All Venues</option>
+                  {venues.map(venue => (
+                    <option key={venue.id} value={venue.name ?? ''}>
+                      {venue.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Match Type */}
+              <div className="md:col-span-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Match Type</label>
+
+                <div className="flex flex-wrap gap-2">
                   <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => setError(null)}
-                    aria-label="Close"
-                  ></button>
-                </div>
-                <div className="modal-body">
-                  <p>{error}</p>
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+                      matchTypes.League
+                        ? 'bg-villageGreen text-white'
+                        : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                    }`}
+                    onClick={() => handleMatchTypeChange('League')}
+                  >
+                    League
+                  </button>
+
+                  <button
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+                      matchTypes.Friendly
+                        ? 'bg-villageGreen text-white'
+                        : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                    }`}
+                    onClick={() => handleMatchTypeChange('Friendly')}
+                  >
+                    Friendly
+                  </button>
+
+                  <button
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+                      matchTypes.Tour
+                        ? 'bg-villageGreen text-white'
+                        : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                    }`}
+                    onClick={() => handleMatchTypeChange('Tour')}
+                  >
+                    Tour
+                  </button>
+
+                  <button
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+                      matchTypes.T20
+                        ? 'bg-villageGreen text-white'
+                        : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                    }`}
+                    onClick={() => handleMatchTypeChange('T20')}
+                  >
+                    T20
+                  </button>
+
+                  <button
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+                      matchTypes.Declaration
+                        ? 'bg-villageGreen text-white'
+                        : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                    }`}
+                    onClick={() => handleMatchTypeChange('Declaration')}
+                  >
+                    Declaration
+                  </button>
                 </div>
               </div>
             </div>
+
+            {/* Buttons */}
+            <div className="mt-6 flex gap-3">
+              {!isLoading && (
+                <button
+                  className="px-4 py-2 bg-villageGreen text-white rounded-md text-sm font-medium"
+                  onClick={handleFilterClick}
+                >
+                  Apply Filters
+                </button>
+              )}
+              {isLoading && (
+                <button
+                  className="px-4 py-2 bg-villageGreen text-white rounded-md text-sm font-medium opacity-50 cursor-not-allowed"
+                  disabled
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <span
+                      className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Loading...
+                  </span>
+                </button>
+              )}
+              <button
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md text-sm font-medium"
+                onClick={handleResetFilters}
+              >
+                Reset
+              </button>
+            </div>
           </div>
-        )}
+
+          {/* GRID CONTAINER */}
+          <div className="mt-10 bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+            <h2 className="text-lg font-semibold text-villageText mb-4">Results</h2>
+
+            {/* Grid */}
+            <div className="w-full h-[600px] border border-gray-200 rounded-md">
+              {isLoading && !statsData[activeTab] && (
+                <div className="flex items-center justify-center h-full">
+                  <span className="text-gray-500">Loading...</span>
+                </div>
+              )}
+              {statsData[activeTab] && (
+                <AgGridReact
+                  theme={themeBalham}
+                  columnDefs={statsData[activeTab].gridOptions.columnDefs}
+                  rowData={statsData[activeTab].gridOptions.rowData}
+                  defaultColDef={defaultColDef}
+                  suppressColumnVirtualisation={true}
+                  components={{
+                    LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                    ParameterizedLinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                  }}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-red-800">Error!</h3>
+                  <p className="mt-1 text-sm text-red-700">{error}</p>
+                </div>
+                <button
+                  type="button"
+                  className="text-red-400 hover:text-red-600"
+                  onClick={() => setError(null)}
+                  aria-label="Close"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
       </main>
       <Footer />
     </>
