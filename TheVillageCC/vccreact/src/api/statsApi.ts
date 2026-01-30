@@ -5,6 +5,43 @@
 
 import { getJson } from './http';
 
+export interface PlayerV1 {
+  playerId: number;
+  matches: number;
+  name: string;
+  shortName: string;
+  nickname: string;
+  battingStyle: string;
+  bowlingStyle: string;
+  isActive: boolean;
+  firstName: string;
+  surname: string;
+  middleInitials: string;
+  debut: string;
+  isRightHandBat: boolean;
+  lastMatchDate: string;
+  playingRole: string;
+}
+
+export interface GridOptionsV1 {
+  columnDefs: any[];
+  rowData: Record<string, unknown>[];
+  footerRow?: Record<string, unknown>;
+}
+
+export interface StatsDataV1 {
+  statsType: string;
+  gridOptions: GridOptionsV1;
+}
+
+export interface PlayerDetailV1 {
+  player: PlayerV1;
+  // API returns an absolute http(s) URL
+  playerImageUrl: string | null;
+  battingStats: StatsDataV1;
+  bowlingStats: StatsDataV1;
+}
+
 /**
  * Fetches leading players data.
  * Uses GET /api/Stats/leadingplayers
@@ -22,8 +59,8 @@ export async function getLeadingPlayers(): Promise<any> {
  * @param playerId - The player ID
  * @returns Promise resolving to player detail data
  */
-export async function getPlayerDetail(playerId: number): Promise<any> {
-  return getJson<any>(`/api/Stats/player/${playerId}/detail`);
+export async function getPlayerDetail(playerId: number): Promise<PlayerDetailV1> {
+  return getJson<PlayerDetailV1>(`/api/Stats/player/${playerId}/detail`);
 }
 
 /**

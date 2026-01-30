@@ -23,6 +23,7 @@ import Footer from './Footer';
 import LinkToPlayerStatsRenderer from './cellRenderers/LinkToPlayerStatsRenderer';
 import ParameterizedLinkToMatchReportRenderer from './cellRenderers/ParameterizedLinkToMatchReportRenderer';
 import { getPlayerDetail, getPlayerChart, getPlayerStats, getPlayerMatches } from '../api/statsApi';
+import type { PlayerDetailV1, StatsDataV1 } from '../api/statsApi';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -41,49 +42,8 @@ ChartJS.register(
   Legend
 );
 
-interface LocalPlayerV1 {
-  playerId: number;
-  matches: number;
-  name: string;
-  shortName: string;
-  nickname: string;
-  battingStyle: string;
-  bowlingStyle: string;
-  isActive: boolean;
-  firstName: string;
-  surname: string;
-  middleInitials: string;
-  debut: string;
-  isRightHandBat: boolean;
-  lastMatchDate: string;
-  playingRole: string;
-}
-
-interface GridOptions {
-  columnDefs: ColDef[];
-  rowData: Record<string, unknown>[];
-  footerRow?: Record<string, unknown>;
-}
-
-interface StatsData {
-  statsType: string;
-  gridOptions: GridOptions;
-}
-
-interface PlayerDetailData {
-  player: LocalPlayerV1;
-  playerImage: string;
-  battingStats: StatsData;
-  bowlingStats: StatsData;
-}
-
-interface StatsDataArray extends Array<StatsData> {}
-
-interface ChartDataWrapper {
-  type: 'line' | 'bar' | 'pie' | 'doughnut' | 'radar';
-  data: ChartData<'line' | 'bar' | 'pie' | 'doughnut' | 'radar'>;
-  options?: ChartOptions<'line' | 'bar' | 'pie' | 'doughnut' | 'radar'>;
-}
+// Remove LocalPlayerV1 / StatsData / PlayerDetailData duplicates and reuse types from statsApi
+// (type imports moved up with the rest)
 
 // Constants
 const BACKGROUND_IMAGE_URL = '/Images/newCarousel/slide1.jpg';
@@ -113,9 +73,24 @@ const SkeletonLoader: React.FC = () => (
   </div>
 );
 
+// Local lightweight types used only for rendering
+interface GridOptions {
+  columnDefs: ColDef[];
+  rowData: Record<string, unknown>[];
+  footerRow?: Record<string, unknown>;
+}
+
+interface StatsDataArray extends Array<StatsDataV1> {}
+
+interface ChartDataWrapper {
+  type: 'line' | 'bar' | 'pie' | 'doughnut' | 'radar';
+  data: ChartData<'line' | 'bar' | 'pie' | 'doughnut' | 'radar'>;
+  options?: ChartOptions<'line' | 'bar' | 'pie' | 'doughnut' | 'radar'>;
+}
+
 const PlayerDetail: React.FC = () => {
   const { playerId } = useParams<{ playerId: string }>();
-  const [playerDetail, setPlayerDetail] = useState<PlayerDetailData | null>(null);
+  const [playerDetail, setPlayerDetail] = useState<PlayerDetailV1 | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'stats' | 'matches'>('overview');
@@ -142,7 +117,7 @@ const PlayerDetail: React.FC = () => {
       
       try {
         setIsLoading(true);
-        const data: PlayerDetailData = await getPlayerDetail(parseInt(playerId));
+        const data = await getPlayerDetail(parseInt(playerId));
         setPlayerDetail(data);
       } catch (error) {
         console.error('Error fetching player details:', error);
@@ -257,6 +232,11 @@ const PlayerDetail: React.FC = () => {
     return null;
   };
 
+  // Player images are now returned as absolute http(s) URLs.
+  const isHttpUrl = (value: string | null | undefined): value is string => {
+    return typeof value === 'string' && /^https?:\/\//i.test(value);
+  };
+
   if (isLoading) {
     return (
       <>
@@ -283,7 +263,8 @@ const PlayerDetail: React.FC = () => {
     );
   }
 
-  const { player, playerImage, battingStats, bowlingStats } = playerDetail;
+  const { player, playerImageUrl, battingStats, bowlingStats } = playerDetail;
+  const playerImageSrc = isHttpUrl(playerImageUrl) ? playerImageUrl : null;
 
   return (
     <>
@@ -305,12 +286,14 @@ const PlayerDetail: React.FC = () => {
             <div>Seasons {new Date(player.debut).getFullYear()} - {new Date(player.lastMatchDate).getFullYear()}</div>
           </div>
           <div className="justify-content-flex-end">
-            <img 
-              className="player-image" 
-              src={`data:image/png;base64,${playerImage}`}
-              alt={`${player.firstName} ${player.surname}`}
-              style={{ maxWidth: '100px' }}
-            />
+            {playerImageSrc && (
+              <img
+                className="player-image"
+                src={playerImageSrc}
+                alt={`${player.firstName} ${player.surname}`}
+                style={{ maxWidth: '100px' }}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -358,12 +341,14 @@ const PlayerDetail: React.FC = () => {
                 <h5 className="card-title">{player.firstName} {player.surname}</h5>
                 <h6>{player.isRightHandBat ? 'RHB' : 'LHB'}</h6>
                 <div className="ms-auto" style={{ textAlign: 'end' }}>
-                  <img 
-                    className="player-image" 
-                    src={`data:image/png;base64,${playerImage}`}
-                    alt={`${player.firstName} ${player.surname}`}
-                    style={{ maxWidth: '100px' }}
-                  />
+                  {playerImageSrc && (
+                    <img
+                      className="player-image"
+                      src={playerImageSrc}
+                      alt={`${player.firstName} ${player.surname}`}
+                      style={{ maxWidth: '100px' }}
+                    />
+                  )}
                 </div>
               </div>
               <div className="bg-primary p-1 ps-3" style={{
