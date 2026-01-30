@@ -42,34 +42,13 @@ ChartJS.register(
   Legend
 );
 
-// Remove LocalPlayerV1 / StatsData / PlayerDetailData duplicates and reuse types from statsApi
-// (type imports moved up with the rest)
-
-// Constants
-const BACKGROUND_IMAGE_URL = '/Images/newCarousel/slide1.jpg';
-
-// Helper function to get chart title based on chart type
-const getChartTitle = (chartType: string): string => {
-  const titles: Record<string, string> = {
-    'battingTimeline': 'Batting Timeline',
-    'modesOfDismissal': 'Modes of Dismissal',
-    'scoringZones': 'Scoring Areas',
-    'strikeRates': 'Strike Rates',
-    'wicketsBySeason': 'Wickets by Season',
-    'averageBySeason': 'Average by Season',
-    'bowlingDismissalsByType': 'Dismissal Types',
-  };
-  return titles[chartType] || 'Select Chart';
-};
-
 // Skeleton loading components
 const SkeletonLoader: React.FC = () => (
-  <div className="skeleton-container">
-    <span className="visually-hidden">Loading...</span>
-    <div className="skeleton skeleton-header" aria-hidden="true"></div>
-    <div className="skeleton skeleton-item" aria-hidden="true"></div>
-    <div className="skeleton skeleton-item" aria-hidden="true"></div>
-    <div className="skeleton skeleton-item" aria-hidden="true"></div>
+  <div className="space-y-4" role="status" aria-label="Loading" aria-live="polite">
+    <div className="h-8 bg-gray-200 rounded w-1/3 animate-pulse"></div>
+    <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse"></div>
+    <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+    <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
   </div>
 );
 
@@ -204,14 +183,6 @@ const PlayerDetail: React.FC = () => {
     fetchMatches();
   }, [playerId, activeTab]);
 
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
-  };
-
   const renderChart = (chartData: ChartDataWrapper | null) => {
     if (!chartData) return null;
 
@@ -241,7 +212,7 @@ const PlayerDetail: React.FC = () => {
     return (
       <>
         <Header />
-        <main className="container">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <SkeletonLoader />
         </main>
         <Footer />
@@ -253,8 +224,8 @@ const PlayerDetail: React.FC = () => {
     return (
       <>
         <Header />
-        <main className="container">
-          <div className="alert alert-danger mt-5" role="alert">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800" role="alert">
             {error || 'Player not found'}
           </div>
         </main>
@@ -266,445 +237,317 @@ const PlayerDetail: React.FC = () => {
   const { player, playerImageUrl, battingStats, bowlingStats } = playerDetail;
   const playerImageSrc = isHttpUrl(playerImageUrl) ? playerImageUrl : null;
 
-  return (
+    return (
     <>
       <Header />
       
-      <div className="d-lg-none" style={{
-        backgroundImage: `url('${BACKGROUND_IMAGE_URL}')`,
-        backgroundPosition: '50%',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
-      }}>
-        <div className="d-flex justify-content-between align-items-center" style={{
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)'
-        }}>
-          <div style={{ color: 'white' }} className="ps-2">
-            <h5>{player.firstName} {player.surname}</h5>
-            <div>{player.playingRole}</div>
-            <div>Seasons {new Date(player.debut).getFullYear()} - {new Date(player.lastMatchDate).getFullYear()}</div>
-          </div>
-          <div className="justify-content-flex-end">
-            {playerImageSrc && (
-              <img
-                className="player-image"
-                src={playerImageSrc}
-                alt={`${player.firstName} ${player.surname}`}
-                style={{ maxWidth: '100px' }}
-              />
-            )}
-          </div>
-        </div>
-      </div>
+      <main>
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          
+          {/* PLAYER HEADER */}
+          <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+            <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+              {playerImageSrc ? (
+                <img 
+                  src={playerImageSrc} 
+                  alt={`${player.firstName} ${player.surname}`}
+                  className="w-full h-full object-cover" 
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-300"></div>
+              )}
+            </div>
 
-      <nav className="d-block d-lg-none">
-        <div className="nav nav-pills nav-justified underline-nav" role="tablist">
-          <button 
-            className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`}
-            onClick={() => setActiveTab('overview')}
-            type="button"
-          >
-            Overview
-          </button>
-          <button 
-            className={`nav-link ${activeTab === 'stats' ? 'active' : ''}`}
-            onClick={() => setActiveTab('stats')}
-            type="button"
-          >
-            Stats
-          </button>
-          <button 
-            className={`nav-link ${activeTab === 'matches' ? 'active' : ''}`}
-            onClick={() => setActiveTab('matches')}
-            type="button"
-          >
-            Matches
-          </button>
-        </div>
-      </nav>
+            <div className="flex-1">
+              <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
+                {player.firstName} {player.surname}
+              </h1>
+              <p className="mt-1 text-sm text-gray-600">Squad · The Village Cricket Club</p>
 
-      <main className="container">
-        <div className="d-flex">
-          <div className="d-none d-lg-block me-4 mt-3" style={{ width: '230px' }}>
-            <div className="card" style={{
-              width: '230px',
-              backgroundImage: `url('${BACKGROUND_IMAGE_URL}')`,
-              backgroundPosition: '50%',
-              backgroundSize: 'cover',
-              backgroundRepeat: 'no-repeat'
-            }}>
-              <div className="card-body pb-0 pe-0" style={{
-                backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)'
-              }}>
-                <h5 className="card-title">{player.firstName} {player.surname}</h5>
-                <h6>{player.isRightHandBat ? 'RHB' : 'LHB'}</h6>
-                <div className="ms-auto" style={{ textAlign: 'end' }}>
-                  {playerImageSrc && (
-                    <img
-                      className="player-image"
-                      src={playerImageSrc}
-                      alt={`${player.firstName} ${player.surname}`}
-                      style={{ maxWidth: '100px' }}
+              <div className="mt-4 grid sm:grid-cols-4 gap-3 text-sm">
+                <div>
+                  <span className="text-gray-500">Batting Style</span>
+                  <div className="font-medium">{player.isRightHandBat ? 'Right-hand bat' : 'Left-hand bat'}</div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Bowling Style</span>
+                  <div className="font-medium">{player.bowlingStyle}</div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Debut</span>
+                  <div className="font-medium">{new Date(player.debut).getFullYear()}</div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Caps</span>
+                  <div className="font-medium">{player.matches}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* TOP-LEVEL TABS */}
+          <div className="mt-8 border-b border-gray-200">
+            <nav className="flex gap-6 text-sm font-medium" role="tablist">
+              <button 
+                className={`pb-3 ${activeTab === 'overview' ? 'border-b-2 border-green-700 text-green-700' : 'text-gray-600 hover:text-green-700'}`}
+                onClick={() => setActiveTab('overview')}
+                role="tab"
+                aria-selected={activeTab === 'overview'}
+                aria-controls="overview-panel"
+              >
+                Overview
+              </button>
+              <button 
+                className={`pb-3 ${activeTab === 'stats' ? 'border-b-2 border-green-700 text-green-700' : 'text-gray-600 hover:text-green-700'}`}
+                onClick={() => setActiveTab('stats')}
+                role="tab"
+                aria-selected={activeTab === 'stats'}
+                aria-controls="stats-panel"
+              >
+                Stats
+              </button>
+              <button 
+                className={`pb-3 ${activeTab === 'matches' ? 'border-b-2 border-green-700 text-green-700' : 'text-gray-600 hover:text-green-700'}`}
+                onClick={() => setActiveTab('matches')}
+                role="tab"
+                aria-selected={activeTab === 'matches'}
+                aria-controls="matches-panel"
+              >
+                Matches
+              </button>
+            </nav>
+          </div>
+
+          {/* OVERVIEW TAB */}
+          {activeTab === 'overview' && (
+            <section id="overview-panel" className="mt-8 space-y-8" role="tabpanel" aria-labelledby="overview-tab">
+              
+              {/* Summary cards */}
+              <div className="grid sm:grid-cols-4 gap-4">
+                <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                  <div className="text-xs text-gray-500 uppercase tracking-wide">Matches</div>
+                  <div className="mt-1 text-2xl font-semibold">{player.matches}</div>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                  <div className="text-xs text-gray-500 uppercase tracking-wide">Runs</div>
+                  <div className="mt-1 text-2xl font-semibold">
+                    {(battingStats.gridOptions.rowData?.[0]?.runs as number) || 0}
+                  </div>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                  <div className="text-xs text-gray-500 uppercase tracking-wide">Wickets</div>
+                  <div className="mt-1 text-2xl font-semibold">
+                    {(bowlingStats.gridOptions.rowData?.[0]?.wickets as number) || 0}
+                  </div>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                  <div className="text-xs text-gray-500 uppercase tracking-wide">Catches</div>
+                  <div className="mt-1 text-2xl font-semibold">
+                    {(battingStats.gridOptions.rowData?.[0]?.catches as number) || 0}
+                  </div>
+                </div>
+              </div>
+
+              {/* Career batting & bowling tables */}
+              <div className="grid lg:grid-cols-2 gap-8">
+                
+                {/* Batting summary */}
+                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                  <h2 className="text-lg font-semibold mb-4">Career Batting</h2>
+                  <div className="overflow-x-auto">
+                    <AgGridReact
+                      theme={themeMaterial}
+                      columnDefs={battingStats.gridOptions.columnDefs}
+                      rowData={battingStats.gridOptions.rowData}
+                      pinnedBottomRowData={battingStats.gridOptions.footerRow ? [battingStats.gridOptions.footerRow] : undefined}
+                      domLayout="autoHeight"
+                      headerHeight={40}
+                      components={{
+                        LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                        LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                      }}
+                      defaultColDef={{
+                        resizable: false,
+                        sortable: true,
+                        flex: 1,
+                        filter: false
+                      }}
                     />
+                  </div>
+                  
+                  {battingChartData && (
+                    <div className="mt-4">
+                      <div className="mb-2">
+                        <select
+                          className="text-sm border border-gray-300 rounded px-3 py-1.5"
+                          value={battingChartType}
+                          onChange={(e) => setBattingChartType(e.target.value)}
+                          aria-label="Select batting chart type"
+                        >
+                          <option value="battingTimeline">Batting Timeline</option>
+                          <option value="modesOfDismissal">Modes of Dismissal</option>
+                          <option value="scoringZones">Scoring Areas</option>
+                          <option value="strikeRates">Strike Rates</option>
+                        </select>
+                      </div>
+                      <div key={battingChartType} className="h-64">
+                        {renderChart(battingChartData)}
+                      </div>
+                    </div>
                   )}
                 </div>
-              </div>
-              <div className="bg-primary p-1 ps-3" style={{
-                borderBottomLeftRadius: 'var(--bs-card-border-radius)',
-                borderBottomRightRadius: 'var(--bs-card-border-radius)'
-              }}>
-                <h5 className="text-white">
-                  Seasons {new Date(player.debut).getFullYear()} - {new Date(player.lastMatchDate).getFullYear()}
-                </h5>
-              </div>
-            </div>
-          </div>
 
-          <div className="flex-fill">
-            <div className="card mt-3 d-none d-lg-block">
-              <div className="card-body pt-0 pb-0">
-                <nav>
-                  <div className="nav nav-pills nav-justified underline-nav-2" role="tablist">
-                    <button 
-                      className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('overview')}
-                      type="button"
-                    >
-                      Overview
-                    </button>
-                    <button 
-                      className={`nav-link ${activeTab === 'stats' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('stats')}
-                      type="button"
-                    >
-                      Stats
-                    </button>
-                    <button 
-                      className={`nav-link ${activeTab === 'matches' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('matches')}
-                      type="button"
-                    >
-                      Matches
-                    </button>
+                {/* Bowling summary */}
+                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                  <h2 className="text-lg font-semibold mb-4">Career Bowling</h2>
+                  <div className="overflow-x-auto">
+                    <AgGridReact
+                      theme={themeMaterial}
+                      columnDefs={bowlingStats.gridOptions.columnDefs}
+                      rowData={bowlingStats.gridOptions.rowData}
+                      pinnedBottomRowData={bowlingStats.gridOptions.footerRow ? [bowlingStats.gridOptions.footerRow] : undefined}
+                      domLayout="autoHeight"
+                      headerHeight={40}
+                      components={{
+                        LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                        LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                      }}
+                      defaultColDef={{
+                        resizable: false,
+                        sortable: true,
+                        flex: 1,
+                        filter: false
+                      }}
+                    />
                   </div>
-                </nav>
-              </div>
-            </div>
-
-            <div className="tab-content">
-              {activeTab === 'overview' && (
-                <div role="tabpanel" className="tab-pane active">
-                  <div className="card mt-3">
-                    <div className="card-body">
-                      <div className="row row-cols-md-2 row-cols-lg-3">
-                        <div className="col">
-                          <div className="text-nowrap">
-                            <strong>Batting Style: </strong>
-                            <span>{player.isRightHandBat ? 'RHB' : 'LHB'}</span>
-                          </div>
-                        </div>
-                        <div className="col">
-                          <div className="text-nowrap">
-                            <strong>Bowling Style: </strong>
-                            <span>{player.bowlingStyle}</span>
-                          </div>
-                        </div>
-                        <div className="col">
-                          <div className="text-nowrap">
-                            <strong>Debut: </strong>
-                            <span>{formatDate(player.debut)}</span>
-                          </div>
-                        </div>
-                        <div className="col">
-                          <div className="text-nowrap">
-                            <strong>Caps: </strong>
-                            <span>{player.matches}</span>
-                          </div>
-                        </div>
+                  
+                  {bowlingChartData && (
+                    <div className="mt-4">
+                      <div className="mb-2">
+                        <select
+                          className="text-sm border border-gray-300 rounded px-3 py-1.5"
+                          value={bowlingChartType}
+                          onChange={(e) => setBowlingChartType(e.target.value)}
+                          aria-label="Select bowling chart type"
+                        >
+                          <option value="wicketsBySeason">Wickets by Season</option>
+                          <option value="averageBySeason">Average by Season</option>
+                          <option value="bowlingDismissalsByType">Dismissal Types</option>
+                        </select>
+                      </div>
+                      <div key={bowlingChartType} className="h-64">
+                        {renderChart(bowlingChartData)}
                       </div>
                     </div>
-                  </div>
-
-                  <div className="card mt-3">
-                    <div className="card-body">
-                      <h5 className="card-title">Career Stats</h5>
-                      <div>
-                        <hr />
-                        Batting and Fielding
-                      </div>
-                      <div className="mb-3" style={{ width: '100%' }}>
-                        <AgGridReact
-                          theme={themeMaterial}
-                          columnDefs={battingStats.gridOptions.columnDefs}
-                          rowData={battingStats.gridOptions.rowData}
-                          pinnedBottomRowData={battingStats.gridOptions.footerRow ? [battingStats.gridOptions.footerRow] : undefined}
-                          domLayout="autoHeight"
-                          headerHeight={40}
-                          components={{
-                            LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                            LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                          }}
-                          defaultColDef={{
-                            resizable: false,
-                            sortable: true,
-                            flex: 1,
-                            filter: false
-                          }}
-                        />
-                      </div>
-                      
-                      {battingChartData && (
-                        <div className="stats-chart">
-                          <div className="btn-group dropend mb-2">
-                            <button 
-                              type="button" 
-                              className="btn btn-secondary dropdown-toggle" 
-                              data-bs-toggle="dropdown" 
-                              aria-expanded="false"
-                            >
-                              {getChartTitle(battingChartType)}
-                            </button>
-                            <ul className="dropdown-menu">
-                              <li>
-                                <button 
-                                  className="dropdown-item" 
-                                  onClick={() => setBattingChartType('battingTimeline')}
-                                >
-                                  Batting Timeline
-                                </button>
-                              </li>
-                              <li>
-                                <button 
-                                  className="dropdown-item" 
-                                  onClick={() => setBattingChartType('modesOfDismissal')}
-                                >
-                                  Modes of Dismissal
-                                </button>
-                              </li>
-                              <li>
-                                <button 
-                                  className="dropdown-item" 
-                                  onClick={() => setBattingChartType('scoringZones')}
-                                >
-                                  Scoring Areas
-                                </button>
-                              </li>
-                              <li>
-                                <button 
-                                  className="dropdown-item" 
-                                  onClick={() => setBattingChartType('strikeRates')}
-                                >
-                                  Strike Rates
-                                </button>
-                              </li>
-                            </ul>
-                          </div>
-                          <div key={battingChartType} style={{ maxWidth: '600px', margin: '0 auto' }}>
-                            {renderChart(battingChartData)}
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="mt-3">
-                        <hr />
-                        Bowling
-                      </div>
-                      <div className="mb-3" style={{ width: '100%' }}>
-                        <AgGridReact
-                          theme={themeMaterial}
-                          columnDefs={bowlingStats.gridOptions.columnDefs}
-                          rowData={bowlingStats.gridOptions.rowData}
-                          pinnedBottomRowData={bowlingStats.gridOptions.footerRow ? [bowlingStats.gridOptions.footerRow] : undefined}
-                          domLayout="autoHeight"
-                          headerHeight={40}
-                          components={{
-                            LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                            LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                          }}
-                          defaultColDef={{
-                            resizable: false,
-                            sortable: true,
-                            flex: 1,
-                            filter: false
-                          }}
-                        />
-                      </div>
-
-                      {bowlingChartData && (
-                        <div className="stats-chart">
-                          <div className="btn-group dropend mb-2">
-                            <button 
-                              type="button" 
-                              className="btn btn-secondary dropdown-toggle" 
-                              data-bs-toggle="dropdown" 
-                              aria-expanded="false"
-                            >
-                              {getChartTitle(bowlingChartType)}
-                            </button>
-                            <ul className="dropdown-menu">
-                              <li>
-                                <button 
-                                  className="dropdown-item" 
-                                  onClick={() => setBowlingChartType('wicketsBySeason')}
-                                >
-                                  Wickets by Season
-                                </button>
-                              </li>
-                              <li>
-                                <button 
-                                  className="dropdown-item" 
-                                  onClick={() => setBowlingChartType('averageBySeason')}
-                                >
-                                  Average by Season
-                                </button>
-                              </li>
-                              <li>
-                                <button 
-                                  className="dropdown-item" 
-                                  onClick={() => setBowlingChartType('bowlingDismissalsByType')}
-                                >
-                                  Dismissal Types
-                                </button>
-                              </li>
-                            </ul>
-                          </div>
-                          <div key={bowlingChartType} style={{ maxWidth: '600px', margin: '0 auto' }}>
-                            {renderChart(bowlingChartData)}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  )}
                 </div>
-              )}
+                
+              </div>
+            </section>
+          )}
 
-              {activeTab === 'stats' && (
-                <div role="tabpanel" className="tab-pane active">
-                  <div className="card mt-3">
-                    <div className="card-body px-0">
-                      <div className="card-title border-bottom px-3">
-                        <div className="d-flex justify-content-between pb-2">
-                          <h5 className="my-auto">Career Stats</h5>
-                          <div className="btn-group dropend">
-                            <button 
-                              type="button" 
-                              className="btn btn-secondary dropdown-toggle" 
-                              data-bs-toggle="dropdown" 
-                              aria-expanded="false"
-                            >
-                              {statsType}
-                            </button>
-                            <ul className="dropdown-menu">
-                              <li>
-                                <button 
-                                  className="dropdown-item" 
-                                  onClick={() => setStatsType('Batting')}
-                                >
-                                  Batting
-                                </button>
-                              </li>
-                              <li>
-                                <button 
-                                  className="dropdown-item" 
-                                  onClick={() => setStatsType('Bowling')}
-                                >
-                                  Bowling
-                                </button>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {statsLoading ? (
-                        <div className="px-3 mt-3">
-                          <SkeletonLoader />
-                        </div>
-                      ) : (
-                        statsData && statsData.map((stats, index) => (
-                          <div key={index}>
-                            <div className="stats-grid-divider">{stats.statsType}</div>
-                            <div style={{ width: '100%' }}>
-                              <AgGridReact
-                                theme={themeMaterial}
-                                columnDefs={stats.gridOptions.columnDefs}
-                                rowData={stats.gridOptions.rowData}
-                                domLayout="autoHeight"
-                                headerHeight={40}
-                                components={{
-                                  LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                                  LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                                }}
-                                defaultColDef={{
-                                  resizable: false,
-                                  sortable: true,
-                                  flex: 1,
-                                  filter: false
-                                }}
-                              />
-                            </div>
-                          </div>
-                        ))
-                      )}
+          {/* STATS TAB */}
+          {activeTab === 'stats' && (
+            <section id="stats-panel" className="mt-8 space-y-8" role="tabpanel" aria-labelledby="stats-tab">
+              <div className="flex flex-wrap gap-4 items-center justify-between">
+                <h2 className="text-xl font-semibold">Detailed Stats</h2>
+                
+                <div className="flex gap-2 text-sm" role="group" aria-label="Select stats type">
+                  <button
+                    className={`px-3 py-1.5 rounded-full font-medium ${statsType === 'Batting' ? 'bg-green-700 text-white' : 'border border-green-700 text-green-700'}`}
+                    onClick={() => setStatsType('Batting')}
+                    aria-pressed={statsType === 'Batting'}
+                  >
+                    Batting
+                  </button>
+                  <button
+                    className={`px-3 py-1.5 rounded-full font-medium ${statsType === 'Bowling' ? 'bg-green-700 text-white' : 'border border-green-700 text-green-700'}`}
+                    onClick={() => setStatsType('Bowling')}
+                    aria-pressed={statsType === 'Bowling'}
+                  >
+                    Bowling
+                  </button>
+                </div>
+              </div>
+              
+              {statsLoading ? (
+                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                  <SkeletonLoader />
+                </div>
+              ) : (
+                statsData && statsData.map((stats, index) => (
+                  <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold mb-4">{stats.statsType}</h3>
+                    <div className="overflow-x-auto">
+                      <AgGridReact
+                        theme={themeMaterial}
+                        columnDefs={stats.gridOptions.columnDefs}
+                        rowData={stats.gridOptions.rowData}
+                        domLayout="autoHeight"
+                        headerHeight={40}
+                        components={{
+                          LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                          LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                        }}
+                        defaultColDef={{
+                          resizable: false,
+                          sortable: true,
+                          flex: 1,
+                          filter: false
+                        }}
+                      />
                     </div>
                   </div>
-                </div>
+                ))
               )}
+            </section>
+          )}
 
-              {activeTab === 'matches' && (
-                <div role="tabpanel" className="tab-pane active">
-                  <div className="card mt-3">
-                    <div className="card-body px-0">
-                      <div className="card-title border-bottom px-3">
-                        <div className="d-flex justify-content-between pb-2">
-                          <h5 className="my-auto">Matches</h5>
-                        </div>
-                      </div>
-                      
-                      {matchesLoading ? (
-                        <div className="px-3 mt-3">
-                          <SkeletonLoader />
-                        </div>
-                      ) : (
-                        matchesData && (
-                          <>
-                            <div className="stats-grid-divider">All Matches</div>
-                            <div style={{ width: '100%' }}>
-                              <AgGridReact
-                                theme={themeMaterial}
-                                columnDefs={matchesData.columnDefs}
-                                rowData={matchesData.rowData}
-                                domLayout="autoHeight"
-                                headerHeight={40}
-                                components={{
-                                  LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                                  LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                                }}
-                                defaultColDef={{
-                                  resizable: false,
-                                  sortable: true,
-                                  flex: 1,
-                                  filter: false
-                                }}
-                              />
-                            </div>
-                          </>
-                        )
-                      )}
+          {/* MATCHES TAB */}
+          {activeTab === 'matches' && (
+            <section id="matches-panel" className="mt-8" role="tabpanel" aria-labelledby="matches-tab">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold">Matches</h2>
+                <span className="text-xs text-gray-500">All matches for this player</span>
+              </div>
+              
+              <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+                {matchesLoading ? (
+                  <SkeletonLoader />
+                ) : (
+                  matchesData && (
+                    <div className="w-full">
+                      <AgGridReact
+                        theme={themeMaterial}
+                        columnDefs={matchesData.columnDefs}
+                        rowData={matchesData.rowData}
+                        domLayout="autoHeight"
+                        headerHeight={40}
+                        components={{
+                          LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                          LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                        }}
+                        defaultColDef={{
+                          resizable: false,
+                          sortable: true,
+                          flex: 1,
+                          filter: false
+                        }}
+                      />
                     </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+                  )
+                )}
+              </div>
+            </section>
+          )}
+
+        </section>
       </main>
       
       <Footer />
     </>
   );
+
 };
 
 export default PlayerDetail;
