@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Player Detail — The Village Cricket Club</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            villageGreen: '#1d7a4b',
+            villageGreenLight: '#e6f4ee',
+            villageText: '#1f2933'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body class="font-sans text-villageText bg-gray-50">
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-md border-2 border-villageGreen flex items-center justify-center">
+          <div class="w-4 h-4 border-l-2 border-b-2 border-villageGreen rotate-[-20deg]"></div>
+        </div>
+        <span class="text-lg font-semibold tracking-wide uppercase text-villageText">The Village</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="/About" class="text-gray-700 hover:text-villageGreen transition">About</a>
+        <a href="/Fixtures" class="text-gray-700 hover:text-villageGreen transition">Fixtures</a>
+        <a href="/Results" class="text-gray-700 hover:text-villageGreen transition">Results</a>
+        <a href="/Stats" class="text-gray-700 hover:text-villageGreen transition">Stats</a>
+        <a href="/Committee" class="text-gray-700 hover:text-villageGreen transition">Committee</a>
+        <a href="/Tours" class="text-gray-700 hover:text-villageGreen transition">Tours</a>
+        <a href="/Awards" class="text-gray-700 hover:text-villageGreen transition">Awards</a>
+      </nav>
+
+      <button class="md:hidden text-sm font-medium text-villageGreen">Menu</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <!-- PLAYER HEADER -->
+      <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+        <div class="w-24 h-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+          <!-- Player image -->
+          <img src="https://thevillagecc.org.uk/Images/player_profiles/0.png" alt="Player photo" class="w-full h-full object-cover" />
+        </div>
+
+        <div class="flex-1">
+          <h1 class="text-2xl sm:text-3xl font-semibold text-villageText">Graham Pontin</h1>
+          <p class="mt-1 text-sm text-gray-600">Squad · The Village Cricket Club</p>
+
+          <div class="mt-4 grid sm:grid-cols-4 gap-3 text-sm">
+            <div>
+              <span class="text-gray-500">Batting Style</span>
+              <div class="font-medium">Right-hand bat</div>
+            </div>
+            <div>
+              <span class="text-gray-500">Bowling Style</span>
+              <div class="font-medium">Right-arm medium</div>
+            </div>
+            <div>
+              <span class="text-gray-500">Debut</span>
+              <div class="font-medium">2004</div>
+            </div>
+            <div>
+              <span class="text-gray-500">Caps</span>
+              <div class="font-medium">123</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP-LEVEL TABS: Overview / Stats / Matches -->
+      <div class="mt-8 border-b border-gray-200">
+        <nav class="flex gap-6 text-sm font-medium">
+          <button class="pb-3 border-b-2 border-villageGreen text-villageGreen">
+            Overview
+          </button>
+          <button class="pb-3 text-gray-600 hover:text-villageGreen">
+            Stats
+          </button>
+          <button class="pb-3 text-gray-600 hover:text-villageGreen">
+            Matches
+          </button>
+        </nav>
+      </div>
+
+      <!-- OVERVIEW TAB -->
+      <section class="mt-8 space-y-8">
+
+        <!-- Summary cards -->
+        <div class="grid sm:grid-cols-4 gap-4">
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div class="text-xs text-gray-500 uppercase tracking-wide">Matches</div>
+            <div class="mt-1 text-2xl font-semibold">123</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div class="text-xs text-gray-500 uppercase tracking-wide">Runs</div>
+            <div class="mt-1 text-2xl font-semibold">3,456</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div class="text-xs text-gray-500 uppercase tracking-wide">Wickets</div>
+            <div class="mt-1 text-2xl font-semibold">87</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div class="text-xs text-gray-500 uppercase tracking-wide">Catches</div>
+            <div class="mt-1 text-2xl font-semibold">42</div>
+          </div>
+        </div>
+
+        <!-- Career batting & bowling tables (high-level) -->
+        <div class="grid lg:grid-cols-2 gap-8">
+
+          <!-- Batting summary -->
+          <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <h2 class="text-lg font-semibold mb-4">Career Batting</h2>
+            <div class="overflow-x-auto">
+              <table class="min-w-full text-sm">
+                <thead class="bg-gray-50 text-gray-600">
+                  <tr>
+                    <th class="px-3 py-2 text-left font-semibold">Matches</th>
+                    <th class="px-3 py-2 text-left font-semibold">Innings</th>
+                    <th class="px-3 py-2 text-left font-semibold">Runs</th>
+                    <th class="px-3 py-2 text-left font-semibold">Average</th>
+                    <th class="px-3 py-2 text-left font-semibold">HS</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  <tr>
+                    <td class="px-3 py-2">123</td>
+                    <td class="px-3 py-2">115</td>
+                    <td class="px-3 py-2">3,456</td>
+                    <td class="px-3 py-2">32.1</td>
+                    <td class="px-3 py-2">104*</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Bowling summary -->
+          <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <h2 class="text-lg font-semibold mb-4">Career Bowling</h2>
+            <div class="overflow-x-auto">
+              <table class="min-w-full text-sm">
+                <thead class="bg-gray-50 text-gray-600">
+                  <tr>
+                    <th class="px-3 py-2 text-left font-semibold">Overs</th>
+                    <th class="px-3 py-2 text-left font-semibold">Wickets</th>
+                    <th class="px-3 py-2 text-left font-semibold">Average</th>
+                    <th class="px-3 py-2 text-left font-semibold">Economy</th>
+                    <th class="px-3 py-2 text-left font-semibold">BBI</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  <tr>
+                    <td class="px-3 py-2">450</td>
+                    <td class="px-3 py-2">87</td>
+                    <td class="px-3 py-2">21.4</td>
+                    <td class="px-3 py-2">4.2</td>
+                    <td class="px-3 py-2">6/24</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- STATS TAB (conceptual structure) -->
+      <!-- In practice you’d toggle visibility with JS -->
+      <section class="mt-12 space-y-8">
+
+        <div class="flex flex-wrap gap-4 items-center justify-between">
+          <h2 class="text-xl font-semibold">Detailed Stats</h2>
+
+          <!-- Sub-tabs: Batting / Bowling -->
+          <div class="flex gap-2 text-sm">
+            <button class="px-3 py-1.5 rounded-full bg-villageGreen text-white font-medium">
+              Batting
+            </button>
+            <button class="px-3 py-1.5 rounded-full border border-villageGreen text-villageGreen font-medium">
+              Bowling
+            </button>
+          </div>
+        </div>
+
+        <!-- Batting charts row -->
+        <div class="grid lg:grid-cols-2 gap-8">
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-64">
+            <h3 class="text-sm font-semibold mb-2">Batting Timeline</h3>
+            <div class="w-full h-full bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
+              Chart placeholder
+            </div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-64">
+            <h3 class="text-sm font-semibold mb-2">Modes of Dismissal</h3>
+            <div class="w-full h-full bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
+              Chart placeholder
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-64">
+            <h3 class="text-sm font-semibold mb-2">Scoring Areas</h3>
+            <div class="w-full h-full bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
+              Wagon wheel / heatmap placeholder
+            </div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-64">
+            <h3 class="text-sm font-semibold mb-2">Strike Rates</h3>
+            <div class="w-full h-full bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
+              Chart placeholder
+            </div>
+          </div>
+        </div>
+
+        <!-- Bowling charts row -->
+        <div class="grid lg:grid-cols-3 gap-8">
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-64">
+            <h3 class="text-sm font-semibold mb-2">Wickets by Season</h3>
+            <div class="w-full h-full bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
+              Chart placeholder
+            </div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-64">
+            <h3 class="text-sm font-semibold mb-2">Average by Season</h3>
+            <div class="w-full h-full bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
+              Chart placeholder
+            </div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-64">
+            <h3 class="text-sm font-semibold mb-2">Dismissal Types</h3>
+            <div class="w-full h-full bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
+              Chart placeholder
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- MATCHES TAB (grid placeholder) -->
+      <section class="mt-12">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Matches</h2>
+          <span class="text-xs text-gray-500">All matches for this player</span>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+          <div id="player-matches-grid" class="w-full h-[500px] border border-gray-200 rounded-md">
+            <!-- AG Grid or table of matches mounts here -->
+          </div>
+        </div>
+      </section>
+
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-gray-400 text-xs mt-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© 2024 The Village Cricket Club</p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:text-white transition">Twitter</a>
+        <a href="#" class="hover:text-white transition">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
