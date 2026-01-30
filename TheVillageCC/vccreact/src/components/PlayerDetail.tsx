@@ -44,7 +44,7 @@ ChartJS.register(
 
 // Skeleton loading components
 const SkeletonLoader: React.FC = () => (
-  <div className="space-y-4" role="status" aria-label="Loading">
+  <div className="space-y-4" role="status" aria-label="Loading" aria-live="polite">
     <div className="h-8 bg-gray-200 rounded w-1/3 animate-pulse"></div>
     <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse"></div>
     <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse"></div>
@@ -210,27 +210,27 @@ const PlayerDetail: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="font-sans text-villageText bg-gray-50">
+      <>
         <Header />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <SkeletonLoader />
         </main>
         <Footer />
-      </div>
+      </>
     );
   }
 
   if (error || !playerDetail) {
     return (
-      <div className="font-sans text-villageText bg-gray-50">
+      <>
         <Header />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800" role="alert">
             {error || 'Player not found'}
           </div>
         </main>
         <Footer />
-      </div>
+      </>
     );
   }
 
@@ -287,22 +287,31 @@ const PlayerDetail: React.FC = () => {
 
           {/* TOP-LEVEL TABS */}
           <div className="mt-8 border-b border-gray-200">
-            <nav className="flex gap-6 text-sm font-medium">
+            <nav className="flex gap-6 text-sm font-medium" role="tablist">
               <button 
                 className={`pb-3 ${activeTab === 'overview' ? 'border-b-2 border-green-700 text-green-700' : 'text-gray-600 hover:text-green-700'}`}
                 onClick={() => setActiveTab('overview')}
+                role="tab"
+                aria-selected={activeTab === 'overview'}
+                aria-controls="overview-panel"
               >
                 Overview
               </button>
               <button 
                 className={`pb-3 ${activeTab === 'stats' ? 'border-b-2 border-green-700 text-green-700' : 'text-gray-600 hover:text-green-700'}`}
                 onClick={() => setActiveTab('stats')}
+                role="tab"
+                aria-selected={activeTab === 'stats'}
+                aria-controls="stats-panel"
               >
                 Stats
               </button>
               <button 
                 className={`pb-3 ${activeTab === 'matches' ? 'border-b-2 border-green-700 text-green-700' : 'text-gray-600 hover:text-green-700'}`}
                 onClick={() => setActiveTab('matches')}
+                role="tab"
+                aria-selected={activeTab === 'matches'}
+                aria-controls="matches-panel"
               >
                 Matches
               </button>
@@ -311,7 +320,7 @@ const PlayerDetail: React.FC = () => {
 
           {/* OVERVIEW TAB */}
           {activeTab === 'overview' && (
-            <section className="mt-8 space-y-8">
+            <section id="overview-panel" className="mt-8 space-y-8" role="tabpanel" aria-labelledby="overview-tab">
               
               {/* Summary cards */}
               <div className="grid sm:grid-cols-4 gap-4">
@@ -322,19 +331,19 @@ const PlayerDetail: React.FC = () => {
                 <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                   <div className="text-xs text-gray-500 uppercase tracking-wide">Runs</div>
                   <div className="mt-1 text-2xl font-semibold">
-                    {(battingStats.gridOptions.rowData[0]?.runs as number) || 0}
+                    {(battingStats.gridOptions.rowData?.[0]?.runs as number) || 0}
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                   <div className="text-xs text-gray-500 uppercase tracking-wide">Wickets</div>
                   <div className="mt-1 text-2xl font-semibold">
-                    {(bowlingStats.gridOptions.rowData[0]?.wickets as number) || 0}
+                    {(bowlingStats.gridOptions.rowData?.[0]?.wickets as number) || 0}
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                   <div className="text-xs text-gray-500 uppercase tracking-wide">Catches</div>
                   <div className="mt-1 text-2xl font-semibold">
-                    {(battingStats.gridOptions.rowData[0]?.catches as number) || 0}
+                    {(battingStats.gridOptions.rowData?.[0]?.catches as number) || 0}
                   </div>
                 </div>
               </div>
@@ -373,6 +382,7 @@ const PlayerDetail: React.FC = () => {
                           className="text-sm border border-gray-300 rounded px-3 py-1.5"
                           value={battingChartType}
                           onChange={(e) => setBattingChartType(e.target.value)}
+                          aria-label="Select batting chart type"
                         >
                           <option value="battingTimeline">Batting Timeline</option>
                           <option value="modesOfDismissal">Modes of Dismissal</option>
@@ -418,6 +428,7 @@ const PlayerDetail: React.FC = () => {
                           className="text-sm border border-gray-300 rounded px-3 py-1.5"
                           value={bowlingChartType}
                           onChange={(e) => setBowlingChartType(e.target.value)}
+                          aria-label="Select bowling chart type"
                         >
                           <option value="wicketsBySeason">Wickets by Season</option>
                           <option value="averageBySeason">Average by Season</option>
@@ -437,20 +448,22 @@ const PlayerDetail: React.FC = () => {
 
           {/* STATS TAB */}
           {activeTab === 'stats' && (
-            <section className="mt-8 space-y-8">
+            <section id="stats-panel" className="mt-8 space-y-8" role="tabpanel" aria-labelledby="stats-tab">
               <div className="flex flex-wrap gap-4 items-center justify-between">
                 <h2 className="text-xl font-semibold">Detailed Stats</h2>
                 
-                <div className="flex gap-2 text-sm">
+                <div className="flex gap-2 text-sm" role="group" aria-label="Select stats type">
                   <button
                     className={`px-3 py-1.5 rounded-full font-medium ${statsType === 'Batting' ? 'bg-green-700 text-white' : 'border border-green-700 text-green-700'}`}
                     onClick={() => setStatsType('Batting')}
+                    aria-pressed={statsType === 'Batting'}
                   >
                     Batting
                   </button>
                   <button
                     className={`px-3 py-1.5 rounded-full font-medium ${statsType === 'Bowling' ? 'bg-green-700 text-white' : 'border border-green-700 text-green-700'}`}
                     onClick={() => setStatsType('Bowling')}
+                    aria-pressed={statsType === 'Bowling'}
                   >
                     Bowling
                   </button>
@@ -492,7 +505,7 @@ const PlayerDetail: React.FC = () => {
 
           {/* MATCHES TAB */}
           {activeTab === 'matches' && (
-            <section className="mt-8">
+            <section id="matches-panel" className="mt-8" role="tabpanel" aria-labelledby="matches-tab">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold">Matches</h2>
                 <span className="text-xs text-gray-500">All matches for this player</span>
