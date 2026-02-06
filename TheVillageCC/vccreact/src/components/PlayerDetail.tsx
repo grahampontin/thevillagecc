@@ -74,11 +74,18 @@ const PlayerDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'stats' | 'matches'>('overview');
   
-  // Chart states
-  const [battingChartType, setBattingChartType] = useState<string>('battingTimeline');
-  const [bowlingChartType, setBowlingChartType] = useState<string>('wicketsBySeason');
-  const [battingChartData, setBattingChartData] = useState<ChartDataWrapper | null>(null);
-  const [bowlingChartData, setBowlingChartData] = useState<ChartDataWrapper | null>(null);
+  // Career stats toggle (Batting or Bowling)
+  const [careerStatsType, setCareerStatsType] = useState<'Batting' | 'Bowling'>('Batting');
+  
+  // Chart data for all chart types
+  const [battingTimelineData, setBattingTimelineData] = useState<ChartDataWrapper | null>(null);
+  const [modesOfDismissalData, setModesOfDismissalData] = useState<ChartDataWrapper | null>(null);
+  const [scoringZonesData, setScoringZonesData] = useState<ChartDataWrapper | null>(null);
+  const [strikeRatesData, setStrikeRatesData] = useState<ChartDataWrapper | null>(null);
+  
+  const [wicketsBySeasonData, setWicketsBySeasonData] = useState<ChartDataWrapper | null>(null);
+  const [averageBySeasonData, setAverageBySeasonData] = useState<ChartDataWrapper | null>(null);
+  const [dismissalTypesData, setDismissalTypesData] = useState<ChartDataWrapper | null>(null);
   
   // Stats tab states
   const [statsType, setStatsType] = useState<'Batting' | 'Bowling'>('Batting');
@@ -109,41 +116,42 @@ const PlayerDetail: React.FC = () => {
     fetchPlayerDetail();
   }, [playerId]);
 
-  // Fetch batting chart
+  // Fetch all charts when overview tab is active
   useEffect(() => {
-    const fetchBattingChart = async () => {
-      if (!playerId) return;
+    const fetchAllCharts = async () => {
+      if (!playerId || activeTab !== 'overview') return;
       
       try {
-        const data = await getPlayerChart(parseInt(playerId), battingChartType);
-        setBattingChartData(data);
+        // Fetch all batting charts
+        const [battingTimeline, modesOfDismissal, scoringZones, strikeRates] = await Promise.all([
+          getPlayerChart(parseInt(playerId), 'battingTimeline'),
+          getPlayerChart(parseInt(playerId), 'modesOfDismissal'),
+          getPlayerChart(parseInt(playerId), 'scoringZones'),
+          getPlayerChart(parseInt(playerId), 'strikeRates'),
+        ]);
+        
+        setBattingTimelineData(battingTimeline);
+        setModesOfDismissalData(modesOfDismissal);
+        setScoringZonesData(scoringZones);
+        setStrikeRatesData(strikeRates);
+        
+        // Fetch all bowling charts
+        const [wicketsBySeason, averageBySeason, dismissalTypes] = await Promise.all([
+          getPlayerChart(parseInt(playerId), 'wicketsBySeason'),
+          getPlayerChart(parseInt(playerId), 'averageBySeason'),
+          getPlayerChart(parseInt(playerId), 'bowlingDismissalsByType'),
+        ]);
+        
+        setWicketsBySeasonData(wicketsBySeason);
+        setAverageBySeasonData(averageBySeason);
+        setDismissalTypesData(dismissalTypes);
       } catch (error) {
-        console.error('Error fetching batting chart:', error);
+        console.error('Error fetching charts:', error);
       }
     };
 
-    if (activeTab === 'overview') {
-      fetchBattingChart();
-    }
-  }, [playerId, battingChartType, activeTab]);
-
-  // Fetch bowling chart
-  useEffect(() => {
-    const fetchBowlingChart = async () => {
-      if (!playerId) return;
-      
-      try {
-        const data = await getPlayerChart(parseInt(playerId), bowlingChartType);
-        setBowlingChartData(data);
-      } catch (error) {
-        console.error('Error fetching bowling chart:', error);
-      }
-    };
-
-    if (activeTab === 'overview') {
-      fetchBowlingChart();
-    }
-  }, [playerId, bowlingChartType, activeTab]);
+    fetchAllCharts();
+  }, [playerId, activeTab]);
 
   // Fetch stats when stats tab is active
   useEffect(() => {
@@ -348,101 +356,134 @@ const PlayerDetail: React.FC = () => {
                 </div>
               </div>
 
-              {/* Career batting & bowling tables */}
-              <div className="grid lg:grid-cols-2 gap-8">
-                
-                {/* Batting summary */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                  <h2 className="text-lg font-semibold mb-4">Career Batting</h2>
-                  <div className="overflow-x-auto">
-                    <AgGridReact
-                      theme={themeMaterial}
-                      columnDefs={battingStats.gridOptions.columnDefs}
-                      rowData={battingStats.gridOptions.rowData}
-                      pinnedBottomRowData={battingStats.gridOptions.footerRow ? [battingStats.gridOptions.footerRow] : undefined}
-                      domLayout="autoHeight"
-                      headerHeight={40}
-                      components={{
-                        LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                        LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                      }}
-                      defaultColDef={{
-                        resizable: false,
-                        sortable: true,
-                        flex: 1,
-                        filter: false
-                      }}
-                    />
-                  </div>
+              {/* Career Stats Toggle and Table */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                <div className="flex flex-wrap gap-4 items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold">Career Stats</h2>
                   
-                  {battingChartData && (
-                    <div className="mt-4">
-                      <div className="mb-2">
-                        <select
-                          className="text-sm border border-gray-300 rounded px-3 py-1.5"
-                          value={battingChartType}
-                          onChange={(e) => setBattingChartType(e.target.value)}
-                          aria-label="Select batting chart type"
-                        >
-                          <option value="battingTimeline">Batting Timeline</option>
-                          <option value="modesOfDismissal">Modes of Dismissal</option>
-                          <option value="scoringZones">Scoring Areas</option>
-                          <option value="strikeRates">Strike Rates</option>
-                        </select>
-                      </div>
-                      <div key={battingChartType} className="h-64">
-                        {renderChart(battingChartData)}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Bowling summary */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                  <h2 className="text-lg font-semibold mb-4">Career Bowling</h2>
-                  <div className="overflow-x-auto">
-                    <AgGridReact
-                      theme={themeMaterial}
-                      columnDefs={bowlingStats.gridOptions.columnDefs}
-                      rowData={bowlingStats.gridOptions.rowData}
-                      pinnedBottomRowData={bowlingStats.gridOptions.footerRow ? [bowlingStats.gridOptions.footerRow] : undefined}
-                      domLayout="autoHeight"
-                      headerHeight={40}
-                      components={{
-                        LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                        LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                      }}
-                      defaultColDef={{
-                        resizable: false,
-                        sortable: true,
-                        flex: 1,
-                        filter: false
-                      }}
-                    />
+                  <div className="flex gap-2 text-sm" role="group" aria-label="Select career stats type">
+                    <button
+                      className={`px-4 py-2 rounded-full font-medium ${
+                        careerStatsType === 'Batting' 
+                          ? 'bg-villageGreen text-white' 
+                          : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                      }`}
+                      onClick={() => setCareerStatsType('Batting')}
+                      aria-pressed={careerStatsType === 'Batting'}
+                    >
+                      Batting
+                    </button>
+                    <button
+                      className={`px-4 py-2 rounded-full font-medium ${
+                        careerStatsType === 'Bowling' 
+                          ? 'bg-villageGreen text-white' 
+                          : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                      }`}
+                      onClick={() => setCareerStatsType('Bowling')}
+                      aria-pressed={careerStatsType === 'Bowling'}
+                    >
+                      Bowling
+                    </button>
                   </div>
-                  
-                  {bowlingChartData && (
-                    <div className="mt-4">
-                      <div className="mb-2">
-                        <select
-                          className="text-sm border border-gray-300 rounded px-3 py-1.5"
-                          value={bowlingChartType}
-                          onChange={(e) => setBowlingChartType(e.target.value)}
-                          aria-label="Select bowling chart type"
-                        >
-                          <option value="wicketsBySeason">Wickets by Season</option>
-                          <option value="averageBySeason">Average by Season</option>
-                          <option value="bowlingDismissalsByType">Dismissal Types</option>
-                        </select>
-                      </div>
-                      <div key={bowlingChartType} className="h-64">
-                        {renderChart(bowlingChartData)}
-                      </div>
-                    </div>
-                  )}
                 </div>
                 
+                <div className="overflow-x-auto">
+                  <AgGridReact
+                    theme={themeMaterial}
+                    columnDefs={careerStatsType === 'Batting' ? battingStats.gridOptions.columnDefs : bowlingStats.gridOptions.columnDefs}
+                    rowData={careerStatsType === 'Batting' ? battingStats.gridOptions.rowData : bowlingStats.gridOptions.rowData}
+                    pinnedBottomRowData={
+                      careerStatsType === 'Batting' 
+                        ? (battingStats.gridOptions.footerRow ? [battingStats.gridOptions.footerRow] : undefined)
+                        : (bowlingStats.gridOptions.footerRow ? [bowlingStats.gridOptions.footerRow] : undefined)
+                    }
+                    domLayout="autoHeight"
+                    headerHeight={40}
+                    components={{
+                      LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                      LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                    }}
+                    defaultColDef={{
+                      resizable: false,
+                      sortable: true,
+                      flex: 1,
+                      filter: false
+                    }}
+                  />
+                </div>
               </div>
+
+              {/* Charts Grid */}
+              {careerStatsType === 'Batting' && (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {battingTimelineData && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h3 className="text-base font-semibold mb-4">Batting Timeline</h3>
+                      <div className="h-64">
+                        {renderChart(battingTimelineData)}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {modesOfDismissalData && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h3 className="text-base font-semibold mb-4">Modes of Dismissal</h3>
+                      <div className="h-64">
+                        {renderChart(modesOfDismissalData)}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {scoringZonesData && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h3 className="text-base font-semibold mb-4">Scoring Areas</h3>
+                      <div className="h-64">
+                        {renderChart(scoringZonesData)}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {strikeRatesData && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h3 className="text-base font-semibold mb-4">Strike Rates</h3>
+                      <div className="h-64">
+                        {renderChart(strikeRatesData)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {careerStatsType === 'Bowling' && (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {wicketsBySeasonData && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h3 className="text-base font-semibold mb-4">Wickets by Season</h3>
+                      <div className="h-64">
+                        {renderChart(wicketsBySeasonData)}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {averageBySeasonData && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h3 className="text-base font-semibold mb-4">Average by Season</h3>
+                      <div className="h-64">
+                        {renderChart(averageBySeasonData)}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {dismissalTypesData && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h3 className="text-base font-semibold mb-4">Dismissal Types</h3>
+                      <div className="h-64">
+                        {renderChart(dismissalTypesData)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </section>
           )}
 
