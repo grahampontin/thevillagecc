@@ -122,26 +122,29 @@ const PlayerDetail: React.FC = () => {
       if (!playerId || activeTab !== 'overview') return;
       
       try {
-        // Fetch all batting charts
-        const [battingTimeline, modesOfDismissal, scoringZones, strikeRates] = await Promise.all([
+        // Fetch all charts in parallel for better performance
+        const [
+          battingTimeline, 
+          modesOfDismissal, 
+          scoringZones, 
+          strikeRates,
+          wicketsBySeason, 
+          averageBySeason, 
+          dismissalTypes
+        ] = await Promise.all([
           getPlayerChart(parseInt(playerId), 'battingTimeline'),
           getPlayerChart(parseInt(playerId), 'modesOfDismissal'),
           getPlayerChart(parseInt(playerId), 'scoringZones'),
           getPlayerChart(parseInt(playerId), 'strikeRates'),
+          getPlayerChart(parseInt(playerId), 'wicketsBySeason'),
+          getPlayerChart(parseInt(playerId), 'averageBySeason'),
+          getPlayerChart(parseInt(playerId), 'bowlingDismissalsByType'),
         ]);
         
         setBattingTimelineData(battingTimeline);
         setModesOfDismissalData(modesOfDismissal);
         setScoringZonesData(scoringZones);
         setStrikeRatesData(strikeRates);
-        
-        // Fetch all bowling charts
-        const [wicketsBySeason, averageBySeason, dismissalTypes] = await Promise.all([
-          getPlayerChart(parseInt(playerId), 'wicketsBySeason'),
-          getPlayerChart(parseInt(playerId), 'averageBySeason'),
-          getPlayerChart(parseInt(playerId), 'bowlingDismissalsByType'),
-        ]);
-        
         setWicketsBySeasonData(wicketsBySeason);
         setAverageBySeasonData(averageBySeason);
         setDismissalTypesData(dismissalTypes);
