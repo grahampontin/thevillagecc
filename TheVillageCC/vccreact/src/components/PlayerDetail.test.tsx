@@ -29,8 +29,8 @@ const mockPlayerDetailData = {
     statsType: 'Batting',
     gridOptions: {
       columnDefs: [{ field: 'matches', headerName: 'Matches' }],
-      rowData: [{ matches: 50 }],
-      footerRow: { matches: 50 }
+      rowData: [{ matches: 50, runs: 1500, catches: 15 }],
+      footerRow: { matches: 50, runs: 1500, catches: 15 }
     }
   },
   bowlingStats: {
@@ -178,8 +178,10 @@ describe('PlayerDetail', () => {
       expect(screen.getAllByText(/John Doe/i).length).toBeGreaterThan(0);
     });
 
-    expect(screen.getByText(/All-rounder/i)).toBeInTheDocument();
-    expect(screen.getByText(/Caps:/i)).toBeInTheDocument();
+    // Check for elements that are actually displayed
+    expect(screen.getByText(/Batting Style/i)).toBeInTheDocument();
+    expect(screen.getByText(/Bowling Style/i)).toBeInTheDocument();
+    expect(screen.getByText(/Caps/i)).toBeInTheDocument();
   });
 
   test('handles network error gracefully', async () => {
@@ -193,15 +195,37 @@ describe('PlayerDetail', () => {
   });
 
   test('chart data includes color properties', async () => {
-    // Mock all the API calls
+    // Mock all the API calls - now we fetch ALL charts at once
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({
         ok: true,
         json: async () => mockPlayerDetailData,
       })
+      // Batting charts
       .mockResolvedValueOnce({
         ok: true,
         json: async () => mockBattingChartData,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockBattingChartData,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockBattingChartData,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockBattingChartData,
+      })
+      // Bowling charts
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockBowlingChartData,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockBowlingChartData,
       })
       .mockResolvedValueOnce({
         ok: true,
@@ -214,7 +238,7 @@ describe('PlayerDetail', () => {
       expect(screen.getAllByText(/John Doe/i).length).toBeGreaterThan(0);
     });
 
-    // Verify the chart API was called
+    // Verify the chart APIs were called for all chart types
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/Stats/chart/1/battingTimeline',
@@ -225,7 +249,47 @@ describe('PlayerDetail', () => {
         })
       );
       expect(global.fetch).toHaveBeenCalledWith(
+        '/api/Stats/chart/1/modesOfDismissal',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Accept': 'application/json'
+          })
+        })
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/Stats/chart/1/scoringZones',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Accept': 'application/json'
+          })
+        })
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/Stats/chart/1/strikeRates',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Accept': 'application/json'
+          })
+        })
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
         '/api/Stats/chart/1/wicketsBySeason',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Accept': 'application/json'
+          })
+        })
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/Stats/chart/1/averageBySeason',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Accept': 'application/json'
+          })
+        })
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/Stats/chart/1/bowlingDismissalsByType',
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
