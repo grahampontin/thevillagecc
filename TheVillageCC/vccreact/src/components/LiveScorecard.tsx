@@ -136,7 +136,7 @@ const LiveScorecard: React.FC = () => {
     </div>
   );
 
-  const renderExtras = (extras: any) => (
+  const renderExtras = (extras: { wides: number; noBalls: number; byes: number; legByes: number; penalties: number; total: number }) => (
     <div className="mt-8">
       <h3 className="font-semibold text-gray-900 mb-2">Extras</h3>
       <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 text-sm text-gray-700">
