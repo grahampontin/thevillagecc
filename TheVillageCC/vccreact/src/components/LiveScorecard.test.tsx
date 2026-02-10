@@ -191,7 +191,7 @@ describe('LiveScorecard', () => {
     renderWithRouter('123');
 
     await waitFor(() => {
-      expect(screen.getByText(/The Village CC/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/The Village CC/i).length).toBeGreaterThan(0);
     });
 
     expect(global.fetch).toHaveBeenCalledWith('/api/livescoring/123/scorecard', expect.objectContaining({
@@ -200,8 +200,8 @@ describe('LiveScorecard', () => {
       })
     }));
 
-    // Check for match details
-    expect(screen.getByText(/Dulwich Lawnmower/i)).toBeInTheDocument();
+    // Check for match details - multiple instances are expected so check length
+    expect(screen.getAllByText(/Dulwich Lawnmower/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/COMPLETED/i)).toBeInTheDocument();
     expect(screen.getByText(/Lyndhurst Park/i)).toBeInTheDocument();
     
