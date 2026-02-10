@@ -8,19 +8,24 @@ import { getJson } from './http';
 export interface PlayerV1 {
   playerId: number;
   matches: number;
-  name: string;
-  shortName: string;
-  nickname: string;
-  battingStyle: string;
-  bowlingStyle: string;
+  name: string | null;
+  shortName: string | null;
+  nickname: string | null;
+  battingStyle: string | null;
+  bowlingStyle: string | null;
   isActive: boolean;
-  firstName: string;
-  surname: string;
-  middleInitials: string;
-  debut: string;
+  firstName: string | null;
+  surname: string | null;
+  middleInitials: string | null;
+  debut: string | null;
   isRightHandBat: boolean;
-  lastMatchDate: string;
-  playingRole: string;
+  lastMatchDate: string | null;
+  playingRole: string | null;
+
+  // Aggregate career totals
+  runs: number;
+  wickets: number;
+  catches: number;
 }
 
 export interface GridOptionsV1 {

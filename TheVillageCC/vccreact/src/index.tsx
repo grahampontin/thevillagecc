@@ -1,5 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
+// Remove legacy AG Grid CSS imports: we use the v35+ Theming API via `theme={themeMaterial}`
+
 import './tailwind.css';
 import './index.css';
 import App from './App';

@@ -286,7 +286,9 @@ const PlayerDetail: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-gray-500">Debut</span>
-                  <div className="font-medium">{new Date(player.debut).getFullYear()}</div>
+                  <div className="font-medium">
+                    {player.debut ? new Date(player.debut).getFullYear() : '—'}
+                  </div>
                 </div>
                 <div>
                   <span className="text-gray-500">Caps</span>
@@ -391,28 +393,31 @@ const PlayerDetail: React.FC = () => {
                 </div>
                 
                 <div className="overflow-x-auto">
-                  <AgGridReact
-                    theme={themeMaterial}
-                    columnDefs={careerStatsType === 'Batting' ? battingStats.gridOptions.columnDefs : bowlingStats.gridOptions.columnDefs}
-                    rowData={careerStatsType === 'Batting' ? battingStats.gridOptions.rowData : bowlingStats.gridOptions.rowData}
-                    pinnedBottomRowData={
-                      careerStatsType === 'Batting' 
-                        ? (battingStats.gridOptions.footerRow ? [battingStats.gridOptions.footerRow] : undefined)
-                        : (bowlingStats.gridOptions.footerRow ? [bowlingStats.gridOptions.footerRow] : undefined)
-                    }
-                    domLayout="autoHeight"
-                    headerHeight={40}
-                    components={{
-                      LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                      LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                    }}
-                    defaultColDef={{
-                      resizable: false,
-                      sortable: true,
-                      flex: 1,
-                      filter: false
-                    }}
-                  />
+                  <div className="vcc-ag-grid-compact">
+                    <AgGridReact
+                      theme={themeMaterial}
+                      columnDefs={careerStatsType === 'Batting' ? battingStats.gridOptions.columnDefs : bowlingStats.gridOptions.columnDefs}
+                      rowData={careerStatsType === 'Batting' ? battingStats.gridOptions.rowData : bowlingStats.gridOptions.rowData}
+                      pinnedBottomRowData={
+                        careerStatsType === 'Batting'
+                          ? (battingStats.gridOptions.footerRow ? [battingStats.gridOptions.footerRow] : undefined)
+                          : (bowlingStats.gridOptions.footerRow ? [bowlingStats.gridOptions.footerRow] : undefined)
+                      }
+                      domLayout="autoHeight"
+                      headerHeight={32}
+                      rowHeight={30}
+                      components={{
+                        LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                        LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                      }}
+                      defaultColDef={{
+                        resizable: false,
+                        sortable: true,
+                        flex: 1,
+                        filter: false
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -523,23 +528,26 @@ const PlayerDetail: React.FC = () => {
                   <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                     <h3 className="text-lg font-semibold mb-4">{stats.statsType}</h3>
                     <div className="overflow-x-auto">
-                      <AgGridReact
-                        theme={themeMaterial}
-                        columnDefs={stats.gridOptions.columnDefs}
-                        rowData={stats.gridOptions.rowData}
-                        domLayout="autoHeight"
-                        headerHeight={40}
-                        components={{
-                          LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                          LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                        }}
-                        defaultColDef={{
-                          resizable: false,
-                          sortable: true,
-                          flex: 1,
-                          filter: false
-                        }}
-                      />
+                      <div className="vcc-ag-grid-compact">
+                        <AgGridReact
+                          theme={themeMaterial}
+                          columnDefs={stats.gridOptions.columnDefs}
+                          rowData={stats.gridOptions.rowData}
+                          domLayout="autoHeight"
+                          headerHeight={32}
+                          rowHeight={30}
+                          components={{
+                            LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                            LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                          }}
+                          defaultColDef={{
+                            resizable: false,
+                            sortable: true,
+                            flex: 1,
+                            filter: false
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 ))
@@ -561,23 +569,26 @@ const PlayerDetail: React.FC = () => {
                 ) : (
                   matchesData && (
                     <div className="w-full">
-                      <AgGridReact
-                        theme={themeMaterial}
-                        columnDefs={matchesData.columnDefs}
-                        rowData={matchesData.rowData}
-                        domLayout="autoHeight"
-                        headerHeight={40}
-                        components={{
-                          LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                          LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                        }}
-                        defaultColDef={{
-                          resizable: false,
-                          sortable: true,
-                          flex: 1,
-                          filter: false
-                        }}
-                      />
+                      <div className="vcc-ag-grid-compact">
+                        <AgGridReact
+                          theme={themeMaterial}
+                          columnDefs={matchesData.columnDefs}
+                          rowData={matchesData.rowData}
+                          domLayout="autoHeight"
+                          headerHeight={32}
+                          rowHeight={30}
+                          components={{
+                            LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                            LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                          }}
+                          defaultColDef={{
+                            resizable: false,
+                            sortable: true,
+                            flex: 1,
+                            filter: false
+                          }}
+                        />
+                      </div>
                     </div>
                   )
                 )}

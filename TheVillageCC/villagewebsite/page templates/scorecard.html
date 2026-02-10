@@ -1,0 +1,440 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <title>Live Scorecard — Village Cricket Club</title> <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Tailwind v4 CDN --> <script src="https://cdn.tailwindcss.com"></script> </head>
+<body class="bg-gray-50">
+<!-- HEADER -->
+<header class="bg-white border-b border-gray-200">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <img src="/images/village-badge.png" alt="Village Badge" class="h-10 w-10">
+      <span class="font-semibold text-lg tracking-wide">VILLAGE CRICKET CLUB</span>
+    </div>
+
+    <nav class="flex items-center gap-6 text-sm font-medium text-gray-700">
+      <a href="/fixtures" class="hover:text-green-700">Fixtures</a>
+      <a href="/results" class="hover:text-green-700">Results</a>
+      <a href="/stats" class="hover:text-green-700">Stats</a>
+      <a href="/awards" class="hover:text-green-700">Awards</a>
+      <a href="/about" class="hover:text-green-700">About</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO MATCH CARD -->
+<section class="bg-white border border-gray-200 rounded-xl shadow-sm max-w-6xl mx-auto mt-6 px-6 py-6">
+  <div class="flex items-center justify-between">
+    <!-- Left: Village badge + name -->
+    <div class="flex items-center gap-4">
+      <img src="/images/village-badge.png" class="h-14 w-14" alt="Village Badge">
+      <h1 class="text-2xl font-semibold">Village</h1>
+    </div>
+
+    <!-- Centre: LIVE badge -->
+    <div class="flex items-center gap-2">
+      <span class="bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+        LIVE
+      </span>
+      <span class="h-2 w-2 bg-green-600 rounded-full animate-pulse"></span>
+    </div>
+
+    <!-- Right: Opposition placeholder badge -->
+    <div class="flex items-center gap-4">
+      <div class="h-14 w-14 rounded-full border-2 border-gray-400 flex items-center justify-center">
+        <span class="text-gray-600 font-semibold text-xl">DM</span>
+      </div>
+      <h1 class="text-2xl font-semibold">Dulwich Lawnmower</h1>
+    </div>
+  </div>
+
+  <!-- Match details -->
+  <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
+    <div>
+      <p><span class="font-medium">Venue:</span> Lyndhurst Park</p>
+      <p><span class="font-medium">Date:</span> 20 April 2024</p>
+    </div>
+    <div>
+      <p><span class="font-medium">Match Type:</span> Friendly</p>
+      <p><span class="font-medium">Toss:</span> Village won and elected to field</p>
+    </div>
+  </div>
+
+  <p class="text-xs text-gray-500 mt-4">Last updated 20s ago</p>
+</section>
+
+<!-- STICKY LIVE STATUS BAR -->
+<div class="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+  <div class="max-w-6xl mx-auto px-4 py-3">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+      <div class="font-semibold text-gray-900">
+        Dulwich Lawnmower 198/7 (40 ov)
+      </div>
+
+      <div class="text-sm text-gray-700">
+        Run rate 4.95 • Last wicket: Patel b Misra 0(2)
+      </div>
+    </div>
+  </div>
+</div>
+<!-- VILLAGE INNINGS (EXPANDED) -->
+<section class="max-w-6xl mx-auto mt-6 bg-white border border-gray-200 rounded-xl shadow-sm">
+
+  <!-- Header -->
+  <button class="w-full flex items-center justify-between px-6 py-4">
+    <div class="flex items-center gap-4">
+      <img src="/images/village-badge.png" class="h-10 w-10" alt="Village Badge">
+      <h2 class="text-xl font-semibold">Village Innings</h2>
+    </div>
+    <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+         viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+
+  <div class="px-6 pb-6">
+
+    <!-- Score summary -->
+    <p class="text-lg font-semibold text-gray-900 mb-4">
+      142/6 (28.4 ov) — Need 8 from 12 balls • Target 150
+    </p>
+
+    <!-- Batting Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-200 text-left text-gray-600">
+            <th class="py-2">Batter</th>
+            <th class="py-2">How Out</th>
+            <th class="py-2 text-right">R</th>
+            <th class="py-2 text-right">B</th>
+            <th class="py-2 text-right">4s</th>
+            <th class="py-2 text-right">6s</th>
+            <th class="py-2 text-right">SR</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-800">
+
+          <tr class="border-b border-gray-100">
+            <td class="py-2 font-medium">Bowman</td>
+            <td class="py-2">c Smith b Jones</td>
+            <td class="py-2 text-right">22</td>
+            <td class="py-2 text-right">31</td>
+            <td class="py-2 text-right">4</td>
+            <td class="py-2 text-right">0</td>
+            <td class="py-2 text-right">70.96</td>
+          </tr>
+
+          <tr class="border-b border-gray-100">
+            <td class="py-2 font-medium">Fruit</td>
+            <td class="py-2">lbw b Misra</td>
+            <td class="py-2 text-right">28</td>
+            <td class="py-2 text-right">24</td>
+            <td class="py-2 text-right">3</td>
+            <td class="py-2 text-right">1</td>
+            <td class="py-2 text-right">116.67</td>
+          </tr>
+
+          <tr class="border-b border-gray-100">
+            <td class="py-2 font-medium">Pontin</td>
+            <td class="py-2">b Smith</td>
+            <td class="py-2 text-right">12</td>
+            <td class="py-2 text-right">18</td>
+            <td class="py-2 text-right">1</td>
+            <td class="py-2 text-right">0</td>
+            <td class="py-2 text-right">66.67</td>
+          </tr>
+
+          <!-- Add remaining batters as needed -->
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Fall of Wickets -->
+    <div class="mt-6">
+      <h3 class="font-semibold text-gray-900 mb-2">Fall of Wickets</h3>
+      <p class="text-sm text-gray-700">
+        1-12 (Bowman, 4.2 ov),  
+        2-45 (Pontin, 9.1 ov),  
+        3-85 (Peach, 18.2 ov),  
+        4-110 (Smith, 23.1 ov),  
+        5-154 (Cameron, 32.4 ov),  
+        6-162 (Jemison, 34.5 ov)
+      </p>
+    </div>
+
+    <!-- Bowling Table -->
+    <div class="mt-8 overflow-x-auto">
+      <h3 class="font-semibold text-gray-900 mb-2">Bowling</h3>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-200 text-left text-gray-600">
+            <th class="py-2">Bowler</th>
+            <th class="py-2 text-right">O</th>
+            <th class="py-2 text-right">M</th>
+            <th class="py-2 text-right">R</th>
+            <th class="py-2 text-right">W</th>
+            <th class="py-2 text-right">Econ</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-800">
+
+          <tr class="border-b border-gray-100">
+            <td class="py-2 font-medium">Jones</td>
+            <td class="py-2 text-right">9</td>
+            <td class="py-2 text-right">1</td>
+            <td class="py-2 text-right">32</td>
+            <td class="py-2 text-right">1</td>
+            <td class="py-2 text-right">3.56</td>
+          </tr>
+
+          <tr class="border-b border-gray-100">
+            <td class="py-2 font-medium">Smith</td>
+            <td class="py-2 text-right">8</td>
+            <td class="py-2 text-right">1</td>
+            <td class="py-2 text-right">32</td>
+            <td class="py-2 text-right">2</td>
+            <td class="py-2 text-right">4.00</td>
+          </tr>
+
+          <!-- Add remaining bowlers as needed -->
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Extras -->
+    <div class="mt-8">
+      <h3 class="font-semibold text-gray-900 mb-2">Extras</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-6 gap-4 text-sm text-gray-700">
+        <p><span class="font-medium">Wides:</span> 6</p>
+        <p><span class="font-medium">No Balls:</span> 4</p>
+        <p><span class="font-medium">Byes:</span> 4</p>
+        <p><span class="font-medium">Leg Byes:</span> 2</p>
+        <p><span class="font-medium">Penalty:</span> 0</p>
+        <p><span class="font-medium">Total:</span> 16</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- MATCH TIMELINE -->
+<section class="max-w-6xl mx-auto mt-6 mb-6 bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-6">
+
+  <h2 class="text-xl font-semibold mb-6">Match Timeline</h2>
+
+  <div class="relative border-l-2 border-gray-200 pl-6">
+
+    <!-- Toss -->
+    <div class="mb-8 relative">
+      <div class="absolute -left-3 top-1 h-6 w-6 rounded-full bg-green-600 flex items-center justify-center">
+        <span class="text-white text-xs font-bold">T</span>
+      </div>
+      <p class="text-sm text-gray-500">11:00</p>
+      <p class="font-medium text-gray-900">Toss — Village won and elected to field</p>
+    </div>
+
+    <!-- Opposition Innings Start -->
+    <div class="mb-8 relative">
+      <div class="absolute -left-3 top-1 h-6 w-6 rounded-full border-2 border-gray-400 flex items-center justify-center">
+        <span class="text-gray-600 text-xs font-bold">DM</span>
+      </div>
+      <p class="text-sm text-gray-500">11:05</p>
+      <p class="font-medium text-gray-900">Dulwich Lawnmower Innings began</p>
+    </div>
+
+    <!-- Wicket Events -->
+    <div class="mb-8 relative">
+      <div class="absolute -left-3 top-1 h-6 w-6 rounded-full bg-red-600 flex items-center justify-center">
+        <span class="text-white text-xs font-bold">W</span>
+      </div>
+      <p class="text-sm text-gray-500">4.2 ov</p>
+      <p class="font-medium text-gray-900">Bowman c Smith b Jones — 12/1</p>
+    </div>
+
+    <div class="mb-8 relative">
+      <div class="absolute -left-3 top-1 h-6 w-6 rounded-full bg-red-600 flex items-center justify-center">
+        <span class="text-white text-xs font-bold">W</span>
+      </div>
+      <p class="text-sm text-gray-500">9.1 ov</p>
+      <p class="font-medium text-gray-900">Pontin b Smith — 45/2</p>
+    </div>
+
+    <div class="mb-8 relative">
+      <div class="absolute -left-3 top-1 h-6 w-6 rounded-full bg-red-600 flex items-center justify-center">
+        <span class="text-white text-xs font-bold">W</span>
+      </div>
+      <p class="text-sm text-gray-500">18.2 ov</p>
+      <p class="font-medium text-gray-900">Peach c Kao b Misra — 85/3</p>
+    </div>
+
+    <!-- Milestone -->
+    <div class="mb-8 relative">
+      <div class="absolute -left-3 top-1 h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center">
+        <span class="text-white text-xs font-bold">50</span>
+      </div>
+      <p class="text-sm text-gray-500">Overs 12</p>
+      <p class="font-medium text-gray-900">Dulwich Lawnmower reached 50</p>
+    </div>
+
+    <!-- Final Wicket -->
+    <div class="mb-8 relative">
+      <div class="absolute -left-3 top-1 h-6 w-6 rounded-full bg-red-600 flex items-center justify-center">
+        <span class="text-white text-xs font-bold">W</span>
+      </div>
+      <p class="text-sm text-gray-500">39.3 ov</p>
+      <p class="font-medium text-gray-900">Patel b Misra — 198/7</p>
+    </div>
+
+    <!-- Innings End -->
+    <div class="mb-2 relative">
+      <div class="absolute -left-3 top-1 h-6 w-6 rounded-full border-2 border-gray-400 flex items-center justify-center">
+        <span class="text-gray-600 text-xs font-bold">DM</span>
+      </div>
+      <p class="text-sm text-gray-500">40.0 ov</p>
+      <p class="font-medium text-gray-900">Dulwich Lawnmower Innings ended — 198/7</p>
+    </div>
+
+  </div>
+</section>
+<!-- OPPOSITION INNINGS (COLLAPSED) -->
+<section class="max-w-6xl mx-auto mt-6 mb-10 bg-white border border-gray-200 rounded-xl shadow-sm">
+
+  <!-- Header (collapsed by default) -->
+  <button class="w-full flex items-center justify-between px-6 py-4">
+    <div class="flex items-center gap-4">
+      <div class="h-10 w-10 rounded-full border-2 border-gray-400 flex items-center justify-center">
+        <span class="text-gray-600 font-semibold">DM</span>
+      </div>
+      <h2 class="text-xl font-semibold">Dulwich Lawnmower Innings</h2>
+    </div>
+    <svg class="h-5 w-5 text-gray-600 rotate-180" fill="none" stroke="currentColor" stroke-width="2"
+         viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="px-6 pb-6 hidden">
+
+    <!-- Score summary -->
+    <p class="text-lg font-semibold text-gray-900 mb-4">
+      198/7 (40 ov)
+    </p>
+
+    <!-- Batting Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-200 text-left text-gray-600">
+            <th class="py-2">Batter</th>
+            <th class="py-2">How Out</th>
+            <th class="py-2 text-right">R</th>
+            <th class="py-2 text-right">B</th>
+            <th class="py-2 text-right">4s</th>
+            <th class="py-2 text-right">6s</th>
+            <th class="py-2 text-right">SR</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-800">
+
+          <tr class="border-b border-gray-100">
+            <td class="py-2 font-medium">Bowman</td>
+            <td class="py-2">c Smith b Jones</td>
+            <td class="py-2 text-right">22</td>
+            <td class="py-2 text-right">31</td>
+            <td class="py-2 text-right">4</td>
+            <td class="py-2 text-right">0</td>
+            <td class="py-2 text-right">70.96</td>
+          </tr>
+
+          <tr class="border-b border-gray-100">
+            <td class="py-2 font-medium">Fruit</td>
+            <td class="py-2">lbw b Misra</td>
+            <td class="py-2 text-right">28</td>
+            <td class="py-2 text-right">24</td>
+            <td class="py-2 text-right">3</td>
+            <td class="py-2 text-right">1</td>
+            <td class="py-2 text-right">116.67</td>
+          </tr>
+
+          <!-- Add remaining batters as needed -->
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Fall of Wickets -->
+    <div class="mt-6">
+      <h3 class="font-semibold text-gray-900 mb-2">Fall of Wickets</h3>
+      <p class="text-sm text-gray-700">
+        1-12 (Bowman, 4.2 ov),  
+        2-45 (Pontin, 9.1 ov),  
+        3-85 (Peach, 18.2 ov),  
+        4-110 (Smith, 23.1 ov),  
+        5-154 (Cameron, 32.4 ov),  
+        6-162 (Jemison, 34.5 ov),  
+        7-198 (Patel, 39.3 ov)
+      </p>
+    </div>
+
+    <!-- Bowling Table -->
+    <div class="mt-8 overflow-x-auto">
+      <h3 class="font-semibold text-gray-900 mb-2">Bowling</h3>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-200 text-left text-gray-600">
+            <th class="py-2">Bowler</th>
+            <th class="py-2 text-right">O</th>
+            <th class="py-2 text-right">M</th>
+            <th class="py-2 text-right">R</th>
+            <th class="py-2 text-right">W</th>
+            <th class="py-2 text-right">Econ</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-800">
+
+          <tr class="border-b border-gray-100">
+            <td class="py-2 font-medium">Jones</td>
+            <td class="py-2 text-right">9</td>
+            <td class="py-2 text-right">1</td>
+            <td class="py-2 text-right">32</td>
+            <td class="py-2 text-right">1</td>
+            <td class="py-2 text-right">3.56</td>
+          </tr>
+
+          <tr class="border-b border-gray-100">
+            <td class="py-2 font-medium">Smith</td>
+            <td class="py-2 text-right">8</td>
+            <td class="py-2 text-right">1</td>
+            <td class="py-2 text-right">32</td>
+            <td class="py-2 text-right">2</td>
+            <td class="py-2 text-right">4.00</td>
+          </tr>
+
+          <!-- Add remaining bowlers as needed -->
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Extras -->
+    <div class="mt-8">
+      <h3 class="font-semibold text-gray-900 mb-2">Extras</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-6 gap-4 text-sm text-gray-700">
+        <p><span class="font-medium">Wides:</span> 6</p>
+        <p><span class="font-medium">No Balls:</span> 4</p>
+        <p><span class="font-medium">Byes:</span> 4</p>
+        <p><span class="font-medium">Leg Byes:</span> 2</p>
+        <p><span class="font-medium">Penalty:</span> 0</p>
+        <p><span class="font-medium">Total:</span> 16</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- FOOTER -->
+<footer class="mt-12 border-t border-gray-200 bg-white">
+  <div class="max-w-6xl mx-auto px-4 py-6 flex items-center justify-between text-sm text-gray-600">
+    <p>© 2024 Village Cricket Club</p>
+    <a href="/privacy" class="hover:text-green-700">Privacy Policy</a>
+  </div>
+</footer>
+</body>

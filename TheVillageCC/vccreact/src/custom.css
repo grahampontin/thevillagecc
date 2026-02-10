@@ -111,3 +111,25 @@ body {
   white-space: nowrap !important;
   border: 0 !important;
 }
+
+/* AG Grid density overrides (opt-in via wrapper class) */
+.vcc-ag-grid-compact {
+  /* Reduce overall vertical whitespace */
+  --ag-header-height: 32px;
+  --ag-row-height: 30px;
+  --ag-list-item-height: 26px;
+  --ag-grid-size: 3px;
+  --ag-cell-horizontal-padding: 8px;
+  font-size: 13px;
+}
+
+.vcc-ag-grid-compact .ag-header-cell-label {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.vcc-ag-grid-compact .ag-cell {
+  line-height: 1.2;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}

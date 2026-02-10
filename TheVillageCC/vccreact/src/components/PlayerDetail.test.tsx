@@ -24,7 +24,7 @@ const mockPlayerDetailData = {
     lastMatchDate: '2024-09-15T00:00:00Z',
     playingRole: 'All-rounder'
   },
-  playerImage: 'base64ImageString',
+  playerImageUrl: 'http://example.com/player.jpg',
   battingStats: {
     statsType: 'Batting',
     gridOptions: {
