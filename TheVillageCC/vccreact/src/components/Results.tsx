@@ -224,7 +224,7 @@ const Results: React.FC = () => {
                 return (
                   <a
                     key={result.MatchId}
-                    href={`/LiveScorecard.aspx?matchId=${result.MatchId}`}
+                    href={`/scorecard/${result.MatchId}`}
                     className="block"
                   >
                     <article className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:border-villageGreen transition">

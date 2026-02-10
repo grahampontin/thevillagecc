@@ -306,7 +306,7 @@ const Homepage: React.FC = () => {
                         {report.text}
                       </p>
                       <a
-                        href={`/LiveScorecard.aspx?matchId=${report.matchId}`}
+                        href={`/scorecard/${report.matchId}`}
                         className="text-sm font-medium text-villageGreen hover:underline mt-2"
                       >
                         Read full report →
