@@ -30,20 +30,15 @@ steps:
     inputs:
       versionSpec: '$(NODE_VERSION)'
 
-  - script: | 
-      echo "Sources directory: $(Build.SourcesDirectory)" 
-      ls -R $(Build.SourcesDirectory) 
-      displayName: 'Debug workspace'
-
   - script: |
       npm ci
     displayName: 'Install dependencies'
-    workingDirectory: 'thevillagecc/vccreact'
+    workingDirectory: 'TheVillageCC/vccreact'
 
   - script: |
       npm run build
     displayName: 'Build'
-    workingDirectory: 'thevillagecc/vccreact'
+    workingDirectory: 'TheVillageCC/vccreact'
 
   # Deploy to Azure Static Web Apps
   # Note: This uses the SWA deployment token (no Azure service connection needed)
@@ -52,7 +47,7 @@ steps:
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     inputs:
       azure_static_web_apps_api_token: '$(AZURE_STATIC_WEB_APPS_API_TOKEN)'
-      app_location: 'thevillagecc/vccreact'
-      output_location: 'thevillagecc/build'
+      app_location: 'TheVillageCC/vccreact'
+      output_location: 'TheVillageCC/build'
       api_location: ''
 
