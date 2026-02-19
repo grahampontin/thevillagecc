@@ -48,6 +48,6 @@ steps:
     inputs:
       azure_static_web_apps_api_token: '$(AZURE_STATIC_WEB_APPS_API_TOKEN)'
       app_location: 'TheVillageCC/vccreact'
-      output_location: 'TheVillageCC/build'
+      output_location: 'build'
       api_location: ''
 
