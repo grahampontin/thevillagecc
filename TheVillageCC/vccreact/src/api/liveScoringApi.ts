@@ -1,5 +1,6 @@
 import { getJson } from './http';
 import { LiveScorecardData } from '../domain/liveScorecard';
+import { apiUrl } from './config';
 
 /**
  * Fetches live scorecard data for a specific match
@@ -7,5 +8,5 @@ import { LiveScorecardData } from '../domain/liveScorecard';
  * @returns Promise resolving to LiveScorecardData
  */
 export async function getLiveScorecardData(matchId: string | number): Promise<LiveScorecardData> {
-  return getJson<LiveScorecardData>(`/api/livescoring/${matchId}/scorecard`);
+  return getJson<LiveScorecardData>(apiUrl(`/api/livescoring/${matchId}/scorecard`));
 }

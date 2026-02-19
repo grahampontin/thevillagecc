@@ -5,6 +5,7 @@
 
 import { getJson } from './http';
 import { AwardV1 } from '../domain/award';
+import { apiUrl } from './config';
 
 /**
  * Fetches awards for a specific season.
@@ -14,7 +15,7 @@ import { AwardV1 } from '../domain/award';
  * @returns Promise resolving to array of AwardV1 objects
  */
 export async function getAwardsBySeason(season: number): Promise<AwardV1[]> {
-  return getJson<AwardV1[]>(`/api/Awards?season=${season}`);
+  return getJson<AwardV1[]>(apiUrl(`/api/Awards?season=${season}`));
 }
 
 /**
@@ -24,7 +25,7 @@ export async function getAwardsBySeason(season: number): Promise<AwardV1[]> {
  * @returns Promise resolving to array of AwardV1 objects
  */
 export async function getAllAwards(): Promise<AwardV1[]> {
-  return getJson<AwardV1[]>('/api/Awards');
+  return getJson<AwardV1[]>(apiUrl('/api/Awards'));
 }
 
 /**
@@ -35,5 +36,5 @@ export async function getAllAwards(): Promise<AwardV1[]> {
  * @returns Promise resolving to AwardV1 object
  */
 export async function getAwardById(id: number): Promise<AwardV1> {
-  return getJson<AwardV1>(`/api/Awards/${id}`);
+  return getJson<AwardV1>(apiUrl(`/api/Awards/${id}`));
 }

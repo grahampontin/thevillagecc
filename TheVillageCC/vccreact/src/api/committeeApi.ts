@@ -5,6 +5,7 @@
 
 import { getJson } from './http';
 import { CommitteePostV1 } from '../domain/committee';
+import { apiUrl } from './config';
 
 /**
  * Fetches all committee posts.
@@ -13,7 +14,7 @@ import { CommitteePostV1 } from '../domain/committee';
  * @returns Promise resolving to array of CommitteePostV1 objects
  */
 export async function getAllCommitteePosts(): Promise<CommitteePostV1[]> {
-  return getJson<CommitteePostV1[]>('/api/Committee');
+  return getJson<CommitteePostV1[]>(apiUrl('/api/Committee'));
 }
 
 /**
@@ -24,5 +25,5 @@ export async function getAllCommitteePosts(): Promise<CommitteePostV1[]> {
  * @returns Promise resolving to CommitteePostV1 object
  */
 export async function getCommitteePostById(id: number): Promise<CommitteePostV1> {
-  return getJson<CommitteePostV1>(`/api/Committee/${id}`);
+  return getJson<CommitteePostV1>(apiUrl(`/api/Committee/${id}`));
 }

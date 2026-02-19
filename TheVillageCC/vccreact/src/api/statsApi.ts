@@ -4,6 +4,7 @@
  */
 
 import { getJson } from './http';
+import { apiUrl } from './config';
 
 export interface PlayerV1 {
   playerId: number;
@@ -54,7 +55,7 @@ export interface PlayerDetailV1 {
  * @returns Promise resolving to leading players data
  */
 export async function getLeadingPlayers(): Promise<any> {
-  return getJson<any>('/api/Stats/leadingplayers');
+  return getJson<any>(apiUrl('/api/Stats/leadingplayers'));
 }
 
 /**
@@ -65,7 +66,7 @@ export async function getLeadingPlayers(): Promise<any> {
  * @returns Promise resolving to player detail data
  */
 export async function getPlayerDetail(playerId: number): Promise<PlayerDetailV1> {
-  return getJson<PlayerDetailV1>(`/api/Stats/player/${playerId}/detail`);
+  return getJson<PlayerDetailV1>(apiUrl(`/api/Stats/player/${playerId}/detail`));
 }
 
 /**
@@ -77,7 +78,7 @@ export async function getPlayerDetail(playerId: number): Promise<PlayerDetailV1>
  * @returns Promise resolving to chart data
  */
 export async function getPlayerChart(playerId: number, chartType: string): Promise<any> {
-  return getJson<any>(`/api/Stats/chart/${playerId}/${chartType}`);
+  return getJson<any>(apiUrl(`/api/Stats/chart/${playerId}/${chartType}`));
 }
 
 /**
@@ -89,7 +90,7 @@ export async function getPlayerChart(playerId: number, chartType: string): Promi
  * @returns Promise resolving to player stats data
  */
 export async function getPlayerStats(playerId: number, statsType: string): Promise<any> {
-  return getJson<any>(`/api/Stats/player/${playerId}/${statsType}`);
+  return getJson<any>(apiUrl(`/api/Stats/player/${playerId}/${statsType}`));
 }
 
 /**
@@ -100,7 +101,7 @@ export async function getPlayerStats(playerId: number, statsType: string): Promi
  * @returns Promise resolving to player matches data
  */
 export async function getPlayerMatches(playerId: number): Promise<any> {
-  return getJson<any>(`/api/Stats/playermatches/${playerId}`);
+  return getJson<any>(apiUrl(`/api/Stats/playermatches/${playerId}`));
 }
 
 /**
@@ -110,7 +111,7 @@ export async function getPlayerMatches(playerId: number): Promise<any> {
  * @returns Promise resolving to family tree data
  */
 export async function getFamilyTree(): Promise<any> {
-  return getJson<any>('/api/Stats/familytree');
+  return getJson<any>(apiUrl('/api/Stats/familytree'));
 }
 
 /**
@@ -121,7 +122,7 @@ export async function getFamilyTree(): Promise<any> {
  * @returns Promise resolving to stats query results
  */
 export async function queryStats(query: any): Promise<any> {
-  const response = await fetch('/api/Stats/query', {
+  const response = await fetch(apiUrl('/api/Stats/query'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

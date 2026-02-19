@@ -5,6 +5,7 @@
 
 import { getJson } from './http';
 import { PlayerV1 } from '../domain/player';
+import { apiUrl } from './config';
 
 /**
  * Fetches all players.
@@ -13,7 +14,7 @@ import { PlayerV1 } from '../domain/player';
  * @returns Promise resolving to array of PlayerV1 objects
  */
 export async function getAllPlayers(): Promise<PlayerV1[]> {
-  return getJson<PlayerV1[]>('/api/Players');
+  return getJson<PlayerV1[]>(apiUrl('/api/Players'));
 }
 
 /**
@@ -24,5 +25,5 @@ export async function getAllPlayers(): Promise<PlayerV1[]> {
  * @returns Promise resolving to PlayerV1 object
  */
 export async function getPlayerById(id: number): Promise<PlayerV1> {
-  return getJson<PlayerV1>(`/api/Players/${id}`);
+  return getJson<PlayerV1>(apiUrl(`/api/Players/${id}`));
 }

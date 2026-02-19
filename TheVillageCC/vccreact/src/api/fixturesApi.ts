@@ -5,6 +5,7 @@
 
 import { getJson } from './http';
 import { MatchV1 } from '../domain/match';
+import { apiUrl } from './config';
 
 /**
  * Fetches fixtures for a specific season.
@@ -14,7 +15,7 @@ import { MatchV1 } from '../domain/match';
  * @returns Promise resolving to array of MatchV1 objects
  */
 export async function getFixturesBySeason(season: number): Promise<MatchV1[]> {
-  return getJson<MatchV1[]>(`/api/Fixtures?season=${season}`);
+  return getJson<MatchV1[]>(apiUrl(`/api/Fixtures?season=${season}`));
 }
 
 /**
@@ -24,7 +25,7 @@ export async function getFixturesBySeason(season: number): Promise<MatchV1[]> {
  * @returns Promise resolving to array of MatchV1 objects
  */
 export async function getAllMatches(): Promise<MatchV1[]> {
-  return getJson<MatchV1[]>('/api/Matches');
+  return getJson<MatchV1[]>(apiUrl('/api/Matches'));
 }
 
 /**
@@ -35,5 +36,5 @@ export async function getAllMatches(): Promise<MatchV1[]> {
  * @returns Promise resolving to MatchV1 object
  */
 export async function getMatchById(id: number): Promise<MatchV1> {
-  return getJson<MatchV1>(`/api/Matches/${id}`);
+  return getJson<MatchV1>(apiUrl(`/api/Matches/${id}`));
 }

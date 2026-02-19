@@ -5,6 +5,7 @@
 
 import { getJson } from './http';
 import { VenueV1 } from '../domain/venue';
+import { apiUrl } from './config';
 
 /**
  * Fetches all venues.
@@ -13,7 +14,7 @@ import { VenueV1 } from '../domain/venue';
  * @returns Promise resolving to array of VenueV1 objects
  */
 export async function getAllVenues(): Promise<VenueV1[]> {
-  return getJson<VenueV1[]>('/api/Venues');
+  return getJson<VenueV1[]>(apiUrl('/api/Venues'));
 }
 
 /**
@@ -24,5 +25,5 @@ export async function getAllVenues(): Promise<VenueV1[]> {
  * @returns Promise resolving to VenueV1 object
  */
 export async function getVenueById(id: number): Promise<VenueV1> {
-  return getJson<VenueV1>(`/api/Venues/${id}`);
+  return getJson<VenueV1>(apiUrl(`/api/Venues/${id}`));
 }

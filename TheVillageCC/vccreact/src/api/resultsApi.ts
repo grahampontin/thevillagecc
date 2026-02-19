@@ -5,6 +5,7 @@
 
 import { getJson } from './http';
 import { ResultV1 } from '../domain/result';
+import { apiUrl } from './config';
 
 /**
  * Fetches the most recent N results.
@@ -14,7 +15,7 @@ import { ResultV1 } from '../domain/result';
  * @returns Promise resolving to array of ResultV1 objects
  */
 export async function getRecentResults(count: number = 10): Promise<ResultV1[]> {
-  return getJson<ResultV1[]>(`/api/Results/recent?count=${count}`);
+  return getJson<ResultV1[]>(apiUrl(`/api/Results/recent?count=${count}`));
 }
 
 /**
@@ -25,5 +26,5 @@ export async function getRecentResults(count: number = 10): Promise<ResultV1[]> 
  * @returns Promise resolving to array of ResultV1 objects
  */
 export async function getResultsBySeason(season: number): Promise<ResultV1[]> {
-  return getJson<ResultV1[]>(`/api/Results?season=${season}`);
+  return getJson<ResultV1[]>(apiUrl(`/api/Results?season=${season}`));
 }
