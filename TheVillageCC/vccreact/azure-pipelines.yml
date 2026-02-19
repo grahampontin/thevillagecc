@@ -1,4 +1,4 @@
-﻿# Azure DevOps pipeline for deploying the React (CRA) app to Azure Static Web Apps
+# Azure DevOps pipeline for deploying the React (CRA) app to Azure Static Web Apps
 # Repo: GitHub
 # Deploys only from: master
 #
