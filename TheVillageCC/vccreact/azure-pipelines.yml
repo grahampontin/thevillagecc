@@ -30,6 +30,11 @@ steps:
     inputs:
       versionSpec: '$(NODE_VERSION)'
 
+  - script: | 
+      echo "Sources directory: $(Build.SourcesDirectory)" 
+      ls -R $(Build.SourcesDirectory) 
+      displayName: 'Debug workspace'
+
   - script: |
       npm ci
     displayName: 'Install dependencies'
