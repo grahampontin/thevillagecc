@@ -4,7 +4,7 @@
  */
 
 import { getJson } from './http';
-import { PlayerV1 } from '../domain/player';
+import { PlayerV1 } from './swaggerTypes';
 import { apiUrl } from './config';
 
 /**

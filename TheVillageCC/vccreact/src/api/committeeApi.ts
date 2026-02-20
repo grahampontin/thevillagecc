@@ -4,7 +4,7 @@
  */
 
 import { getJson } from './http';
-import { CommitteePostV1 } from '../domain/committee';
+import { CommitteePostV1 } from './swaggerTypes';
 import { apiUrl } from './config';
 
 /**

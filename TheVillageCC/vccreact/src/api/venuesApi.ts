@@ -4,7 +4,7 @@
  */
 
 import { getJson } from './http';
-import { VenueV1 } from '../domain/venue';
+import { VenueV1 } from './swaggerTypes';
 import { apiUrl } from './config';
 
 /**

@@ -28,6 +28,30 @@ Common IIS ports:
 
 **Note:** In production, the React build and REST endpoints are hosted on the same IIS instance, so API calls to `/api/...` work directly without proxy configuration.
 
+## OpenAPI / Swagger types
+
+This repo includes the backend OpenAPI definition in `cricketclub.json`.
+
+The UI should use **Swagger-generated DTO types** (not handwritten duplicates). We generate TypeScript types to `src/api/generated/openapi.ts`.
+
+- Generate / refresh types:
+  ```sh
+  npm run generate:openapi
+  ```
+
+- Import DTO types from:
+  - `src/api/swaggerTypes.ts` (a small alias wrapper around the generated OpenAPI `components.schemas.*` types)
+
+## API base URL configuration
+
+In development, the app can call relative `/api/...` and use the CRA proxy (`src/setupProxy.js`).
+
+In production (Static Web Apps), set an absolute base URL using:
+
+- `REACT_APP_API_BASE_URL=https://<your-api-host>`
+
+(See `src/api/config.ts`.)
+
 ## Available Scripts
 
 In the project directory, you can run:

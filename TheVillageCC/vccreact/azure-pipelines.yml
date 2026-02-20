@@ -36,7 +36,7 @@ steps:
     workingDirectory: 'TheVillageCC/vccreact'
 
   - script: |
-      npm run build
+      npm run verify
     displayName: 'Build'
     workingDirectory: 'TheVillageCC/vccreact'
 

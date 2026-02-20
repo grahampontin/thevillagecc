@@ -4,7 +4,7 @@
  */
 
 import { getJson } from './http';
-import { ResultV1 } from '../domain/result';
+import { ResultV1 } from './swaggerTypes';
 import { apiUrl } from './config';
 
 /**

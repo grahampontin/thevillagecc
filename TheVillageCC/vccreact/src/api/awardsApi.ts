@@ -4,7 +4,7 @@
  */
 
 import { getJson } from './http';
-import { AwardV1 } from '../domain/award';
+import { AwardV1 } from './swaggerTypes';
 import { apiUrl } from './config';
 
 /**

@@ -2,50 +2,66 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import LiveScorecard from './LiveScorecard';
+import { getLiveScorecardData } from '../api/liveScoringApi';
 
-// Mock fetch globally
-global.fetch = jest.fn();
+jest.mock('../api/liveScoringApi', () => ({
+  getLiveScorecardData: jest.fn(),
+}));
 
-// Mock data for completed match
-const mockCompletedScorecardData = {
-  InPlayData: {
-    Opposition: 'Dulwich Lawnmower',
-    Score: 198,
-    Wickets: 7,
-    TheirScore: 150,
-    TheirWickets: 10,
-    RunRate: 4.95,
-    TheirRunRate: 3.75,
-    OurInningsStatus: 'Completed' as const,
-    TheirInningsStatus: 'Completed' as const,
-    Overs: 40,
-    Declaration: false,
-    WonToss: true,
-    TossWinnerBatted: false,
-    OurLastCompletedOver: 40,
-    TheirOver: 40,
+// Mock data for completed match (Swagger-aligned LiveScorecardV1)
+const mockCompletedScorecardData: any = {
+  inPlayData: {
+    opposition: 'Dulwich Lawnmower',
+    score: 198,
+    wickets: 7,
+    theirScore: 150,
+    theirWickets: 10,
+    runRate: 4.95,
+    theirRunRate: 3.75,
+    ourInningsStatus: 'Completed',
+    theirInningsStatus: 'Completed',
+    overs: 40,
+    declarationGame: false,
+    wonToss: true,
+    tossWinnerBatted: false,
+    ourLastCompletedOver: 40,
+    theirOver: 40,
   },
-  FinalScorecard: {
+  finalScorecard: {
     ourInnings: {
       batting: {
         entries: [
           {
+            playerId: 1,
             playerName: 'Bowman',
             runs: 45,
-            balls: 32,
+            modeOfDismissal: 'c Smith b Jones',
+            bowlerId: 0,
+            bowlerName: 'Jones',
+            fielderId: 0,
+            fielderName: 'Smith',
             fours: 6,
             sixes: 1,
-            strikeRate: 140.62,
-            howOut: 'c Smith b Jones',
-          },
-          {
-            playerName: 'Fruit',
-            runs: 28,
-            balls: 24,
-            fours: 3,
-            sixes: 1,
-            strikeRate: 116.67,
-            howOut: 'lbw b Misra',
+            battingAt: 1,
+            ballsFaced: 32,
+            dotBalls: 0,
+            wicket: {
+              bowler: 'Jones',
+              fielder: 'Smith',
+              player: 1,
+              playerName: 'Bowman',
+              description: null,
+              modeOfDismissal: 4,
+              isRunOut: false,
+              isCaught: true,
+              isCaughtAndBowled: false,
+              isBowled: false,
+              isLbw: false,
+              isStumped: false,
+              isHitWicket: false,
+              isRetired: false,
+              isRetiredHurt: false,
+            },
           },
         ],
         extras: {
@@ -56,112 +72,100 @@ const mockCompletedScorecardData = {
           penalties: 0,
           total: 16,
         },
-        fallOfWickets: '1-12 (Bowman, 4.2 ov), 2-45 (Fruit, 9.1 ov)',
+        score: 198,
+        wickets: 7,
       },
       bowling: {
         entries: [
           {
             playerName: 'Jones',
+            playerId: 0,
             overs: 9,
             maidens: 1,
             runs: 32,
             wickets: 1,
-            economy: 3.56,
           },
         ],
       },
+      fow: { entries: [] },
+      inningsLength: 0,
     },
     theirInnings: {
       batting: {
-        entries: [
-          {
-            playerName: 'Smith',
-            runs: 35,
-            balls: 40,
-            fours: 4,
-            sixes: 0,
-            strikeRate: 87.5,
-            howOut: 'b Pontin',
-          },
-        ],
+        entries: [],
         extras: {
-          wides: 3,
-          noBalls: 2,
-          byes: 2,
-          legByes: 1,
+          wides: 0,
+          noBalls: 0,
+          byes: 0,
+          legByes: 0,
           penalties: 0,
-          total: 8,
+          total: 0,
         },
-        fallOfWickets: '1-35 (Smith, 10.2 ov)',
+        score: 150,
+        wickets: 10,
       },
       bowling: {
-        entries: [
-          {
-            playerName: 'Pontin',
-            overs: 8,
-            maidens: 2,
-            runs: 25,
-            wickets: 3,
-            economy: 3.12,
-          },
-        ],
+        entries: [],
       },
+      fow: { entries: [] },
+      inningsLength: 0,
+    },
+    matchConditions: {
+      abandoned: false,
+      captainId: 0,
+      wicketKeeperId: 0,
+      overs: 40,
+      declaration: false,
+      weWonTheToss: true,
+      tossWinnerBatted: false,
     },
   },
-  MatchReport: {
-    Conditions: 'Sunny day, good batting conditions',
-    Report: 'An excellent match with great performances from both teams.',
+  matchReport: {
+    conditions: 'Sunny day, good batting conditions',
+    report: 'An excellent match with great performances from both teams.',
+    base64EncodedImage: '',
   },
-  Result: {
-    IsAbandoned: false,
-    Margin: 'by 48 runs',
-    ResultText: 'The Village CC won by 48 runs',
+  matchData: {
+    isHome: true,
+    type: 'Friendly',
+    date: '2024-06-15',
+    opposition: { id: 1, name: 'Dulwich Lawnmower' },
+    venue: { id: 1, name: 'Lyndhurst Park', mapUrl: '', description: '', latitude: null, longitude: null },
+    id: 123,
   },
-  MatchDate: '2024-06-15',
-  VenueName: 'Lyndhurst Park',
-  MatchType: 'Friendly',
+  result: {
+    matchId: 123,
+    venueName: 'Lyndhurst Park',
+    matchDate: '2024-06-15',
+    isAbandoned: false,
+    margin: 'by 48 runs',
+    resultText: 'The Village CC won by 48 runs',
+  },
 };
 
 // Mock data for live match
-const mockLiveScorecardData = {
-  InPlayData: {
-    Opposition: 'Dulwich Lawnmower',
-    Score: 142,
-    Wickets: 6,
-    TheirScore: 198,
-    TheirWickets: 7,
-    RunRate: 4.95,
-    TheirRunRate: 4.95,
-    OurInningsStatus: 'InProgress' as const,
-    TheirInningsStatus: 'Completed' as const,
-    Overs: 40,
-    Declaration: false,
-    WonToss: true,
-    TossWinnerBatted: false,
-    OurLastCompletedOver: 28.4,
-    TheirOver: 40,
+const mockLiveScorecardData: any = {
+  ...mockCompletedScorecardData,
+  inPlayData: {
+    ...mockCompletedScorecardData.inPlayData,
+    ourInningsStatus: 'InProgress',
+    theirInningsStatus: 'Completed',
   },
-  FinalScorecard: {
+  finalScorecard: {
+    ...mockCompletedScorecardData.finalScorecard,
     ourInnings: null,
     theirInnings: null,
   },
-  MatchReport: {
-    Conditions: '',
-    Report: '',
+  result: {
+    ...mockCompletedScorecardData.result,
+    resultText: '',
+    margin: '',
   },
-  Result: {
-    IsAbandoned: false,
-    Margin: '',
-    ResultText: '',
-  },
-  MatchDate: '2024-06-15',
-  VenueName: 'Lyndhurst Park',
-  MatchType: 'Friendly',
 };
 
 describe('LiveScorecard', () => {
   beforeEach(() => {
-    (global.fetch as jest.Mock).mockClear();
+    (getLiveScorecardData as jest.Mock).mockReset();
   });
 
   const renderWithRouter = (matchId: string) => {
@@ -175,18 +179,15 @@ describe('LiveScorecard', () => {
   };
 
   test('renders loading state initially', () => {
-    (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
-    
+    (getLiveScorecardData as jest.Mock).mockImplementation(() => new Promise(() => {}));
+
     renderWithRouter('123');
-    
-    expect(screen.getByText(/Village Cricket Club/i)).toBeInTheDocument();
+
+    expect(screen.getByAltText(/The Village CC/i)).toBeInTheDocument();
   });
 
   test('fetches and displays completed match scorecard', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockCompletedScorecardData,
-    });
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
 
     renderWithRouter('123');
 
@@ -194,26 +195,19 @@ describe('LiveScorecard', () => {
       expect(screen.getAllByText(/The Village CC/i).length).toBeGreaterThan(0);
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/livescoring/123/scorecard', expect.objectContaining({
-      headers: expect.objectContaining({
-        'Accept': 'application/json'
-      })
-    }));
+    expect(getLiveScorecardData).toHaveBeenCalledWith('123');
 
     // Check for match details - multiple instances are expected so check length
     expect(screen.getAllByText(/Dulwich Lawnmower/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/COMPLETED/i)).toBeInTheDocument();
     expect(screen.getByText(/Lyndhurst Park/i)).toBeInTheDocument();
-    
+
     // Check for result text
     expect(screen.getByText(/The Village CC won by 48 runs/i)).toBeInTheDocument();
   });
 
   test('displays live match with LIVE badge', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockLiveScorecardData,
-    });
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockLiveScorecardData);
 
     renderWithRouter('456');
 
@@ -227,17 +221,14 @@ describe('LiveScorecard', () => {
   test('displays abandoned match message', async () => {
     const abandonedData = {
       ...mockCompletedScorecardData,
-      Result: {
-        IsAbandoned: true,
-        Margin: '',
-        ResultText: '',
+      result: {
+        isAbandoned: true,
+        margin: '',
+        resultText: '',
       },
     };
 
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => abandonedData,
-    });
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(abandonedData);
 
     renderWithRouter('789');
 
@@ -249,12 +240,7 @@ describe('LiveScorecard', () => {
   });
 
   test('displays error message when API call fails', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: false,
-      status: 404,
-      statusText: 'Not Found',
-      text: async () => 'Match not found',
-    });
+    (getLiveScorecardData as jest.Mock).mockRejectedValueOnce(new Error('HTTP 404 Not Found: Match not found'));
 
     renderWithRouter('999');
 
@@ -280,10 +266,7 @@ describe('LiveScorecard', () => {
   });
 
   test('displays batting and bowling tables for completed match', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockCompletedScorecardData,
-    });
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
 
     renderWithRouter('123');
 
@@ -291,19 +274,13 @@ describe('LiveScorecard', () => {
       expect(screen.getByText(/The Village CC Innings/i)).toBeInTheDocument();
     });
 
-    // Initially, innings should be collapsed or one expanded
-    // The component auto-expands the most recent/relevant innings
     await waitFor(() => {
-      // Check for batting table headers
       expect(screen.getAllByText(/Batter/i).length).toBeGreaterThan(0);
     });
   });
 
   test('displays match report for completed match', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockCompletedScorecardData,
-    });
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
 
     renderWithRouter('123');
 
@@ -316,12 +293,72 @@ describe('LiveScorecard', () => {
   });
 
   test('handles fetch exception gracefully', async () => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+    (getLiveScorecardData as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 
     renderWithRouter('123');
 
     await waitFor(() => {
       expect(screen.getByText(/Network error/i)).toBeInTheDocument();
     });
+  });
+
+  test('renders with real API response shape (camelCase) without crashing', async () => {
+    const realApiShape: any = {
+      inPlayData: {
+        opposition: 'Cookham Dean Cricket Club',
+        ourLastCompletedOver: 0,
+        oversRemaining: 40,
+        declarationGame: false,
+        score: 0,
+        wickets: 0,
+        runRate: 0,
+        overs: 40,
+        tossWinnerBatted: true,
+        wonToss: false,
+        ourInningsStatus: 'NotStarted',
+        theirInningsStatus: 'NotStarted',
+        theirScore: 0,
+        theirWickets: 0,
+        theirOver: 0,
+        theirRunRate: 0,
+        isFirstInnings: true,
+        isMatchComplete: false,
+        resultText: null,
+        ourInningsCommentary: '',
+        theirInningsCommentary: '',
+      },
+      finalScorecard: mockCompletedScorecardData.finalScorecard,
+      matchReport: {
+        conditions: 'Not recorded',
+        report: 'No report',
+        base64EncodedImage: '',
+      },
+      matchData: {
+        isHome: false,
+        type: 'Friendly',
+        date: '2023-09-16T00:00:00',
+        opposition: { id: 115, name: 'Cookham Dean Cricket Club' },
+        venue: { id: 97, name: 'Cookham', mapUrl: '', description: '', latitude: null, longitude: null },
+        id: 509,
+      },
+      result: {
+        matchId: 509,
+        isAbandoned: false,
+        margin: 'by 128 runs',
+        resultText: 'beat',
+        venueName: 'Cookham',
+        matchDate: '2023-09-16',
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(realApiShape);
+
+    renderWithRouter('509');
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/Cookham Dean Cricket Club/i).length).toBeGreaterThan(0);
+    });
+
+    expect(screen.getByText(/SCHEDULED/i)).toBeInTheDocument();
   });
 });
