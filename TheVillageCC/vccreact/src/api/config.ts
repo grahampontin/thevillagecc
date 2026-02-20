@@ -1,4 +1,4 @@
-﻿/**
+/**
  * API configuration.
  *
  * In development (CRA dev server), we typically call relative `/api/...` and let
