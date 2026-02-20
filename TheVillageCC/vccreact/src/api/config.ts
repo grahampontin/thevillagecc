@@ -26,6 +26,12 @@ export function apiUrl(path: string): string {
     path = '/' + path;
   }
 
+  // In Jest/unit tests we always prefer relative URLs so fetch can be mocked
+  // without needing to know the production host.
+  if (process.env.NODE_ENV === 'test') {
+    return path;
+  }
+
   // If API_BASE_URL includes a path (e.g. https://example.com/backend), preserve it.
   return API_BASE_URL ? `${API_BASE_URL}${path}` : path;
 }

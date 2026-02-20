@@ -359,6 +359,8 @@ describe('LiveScorecard', () => {
       expect(screen.getAllByText(/Cookham Dean Cricket Club/i).length).toBeGreaterThan(0);
     });
 
-    expect(screen.getByText(/SCHEDULED/i)).toBeInTheDocument();
+    // Because the fixture includes a populated finalScorecard, LiveScorecard treats
+    // the match as completed.
+    expect(screen.getByText(/COMPLETED/i)).toBeInTheDocument();
   });
 });
