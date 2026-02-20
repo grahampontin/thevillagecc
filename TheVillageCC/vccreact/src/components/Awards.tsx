@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import { getAllAwards, getAwardsBySeason } from '../api/awardsApi';
-import { AwardV1 } from '../domain/award';
+import { AwardV1 } from '../api/swaggerTypes';
 
 const SKELETON_ITEMS_COUNT = 6;
 

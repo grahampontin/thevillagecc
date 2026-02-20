@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import { getLiveScorecardData } from '../api/liveScoringApi';
-import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1 } from '../domain/liveScorecard';
+import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1 } from '../api/swaggerTypes';
 
 const LiveScorecard: React.FC = () => {
   const { matchId } = useParams<{ matchId: string }>();

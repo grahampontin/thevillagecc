@@ -8,7 +8,7 @@ import LinkToPlayerStatsRenderer from './cellRenderers/LinkToPlayerStatsRenderer
 import ParameterizedLinkToMatchReportRenderer from './cellRenderers/ParameterizedLinkToMatchReportRenderer';
 import { getAllVenues } from '../api/venuesApi';
 import { queryStats } from '../api/statsApi';
-import { VenueV1 } from '../domain/venue';
+import { VenueV1 } from '../api/swaggerTypes';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);

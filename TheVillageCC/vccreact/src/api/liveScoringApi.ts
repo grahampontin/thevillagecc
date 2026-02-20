@@ -1,5 +1,5 @@
 import { getJson } from './http';
-import { LiveScorecardV1 } from '../domain/liveScorecard';
+import { LiveScorecardV1 } from './swaggerTypes';
 import { apiUrl } from './config';
 
 /**

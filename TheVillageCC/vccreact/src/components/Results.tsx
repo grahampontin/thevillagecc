@@ -4,7 +4,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { getResultBadge } from '../utils/matchResultUtils';
 import { getResultsBySeason } from '../api/resultsApi';
-import { ResultV1 } from '../domain/result';
+import { ResultV1 } from '../api/swaggerTypes';
 
 interface MatchReport {
   MatchId: number;
@@ -34,7 +34,7 @@ interface MatchReport {
 }
 
 const mapResultV1ToMatchReport = (r: ResultV1): MatchReport => ({
-  MatchId: r.matchId,
+  MatchId: r.matchId ?? 0,
   HomeTeamName: r.homeTeamName ?? '',
   HomeTeamScore: r.homeTeamScore ?? '',
   AwayTeamName: r.awayTeamName ?? '',
