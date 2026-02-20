@@ -36,6 +36,8 @@ steps:
     workingDirectory: 'TheVillageCC/vccreact'
 
   - script: |
+      npm config set fund false
+      npm config set audit false
       npm run verify
     displayName: 'Build'
     workingDirectory: 'TheVillageCC/vccreact'
@@ -50,4 +52,3 @@ steps:
       app_location: 'TheVillageCC/vccreact'
       output_location: 'build'
       api_location: ''
-
