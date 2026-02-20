@@ -30,7 +30,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "generate:openapi": "openapi-typescript ./cricketclub.json -o ./src/api/generated/openapi.ts",
+    "generate:openapi": "node ./scripts/strip-bom.js ./cricketclub.json && openapi-typescript ./cricketclub.json -o ./src/api/generated/openapi.ts",
     "check:no-domain-dto-imports": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-no-domain-dto-imports.ps1",
     "verify": "npm run generate:openapi && npm run check:no-domain-dto-imports && npm test -- --watchAll=false && npm run build",
     "eject": "react-scripts eject"
