@@ -27,14 +27,16 @@ const LiveScorecard: React.FC = () => {
 
         const inPlay = data.inPlayData;
         // Auto-expand the innings that's in progress or most recent
-        if (inPlay.ourInningsStatus === 'InProgress') {
-          setExpandedInnings('our');
-        } else if (inPlay.theirInningsStatus === 'InProgress') {
-          setExpandedInnings('their');
-        } else if (inPlay.ourInningsStatus === 'Completed') {
-          setExpandedInnings('our');
-        } else if (inPlay.theirInningsStatus === 'Completed') {
-          setExpandedInnings('their');
+        if (inPlay) {
+          if (inPlay.ourInningsStatus === 'InProgress') {
+            setExpandedInnings('our');
+          } else if (inPlay.theirInningsStatus === 'InProgress') {
+            setExpandedInnings('their');
+          } else if (inPlay.ourInningsStatus === 'Completed') {
+            setExpandedInnings('our');
+          } else if (inPlay.theirInningsStatus === 'Completed') {
+            setExpandedInnings('their');
+          }
         }
 
         setError(null);
@@ -61,15 +63,15 @@ const LiveScorecard: React.FC = () => {
   };
 
   const isLive = (data: LiveScorecardV1): boolean => {
-    return data.inPlayData.ourInningsStatus === 'InProgress' ||
-           data.inPlayData.theirInningsStatus === 'InProgress';
+    return data.inPlayData?.ourInningsStatus === 'InProgress' ||
+           data.inPlayData?.theirInningsStatus === 'InProgress';
   };
 
   const isCompleted = (data: LiveScorecardV1): boolean => {
     const inPlay = data.inPlayData;
     const final = data.finalScorecard;
 
-    return (inPlay.ourInningsStatus === 'Completed' && inPlay.theirInningsStatus === 'Completed') ||
+    return (!!inPlay && inPlay.ourInningsStatus === 'Completed' && inPlay.theirInningsStatus === 'Completed') ||
       ((final?.ourInnings?.batting?.entries?.length || 0) > 0);
   };
 
@@ -134,7 +136,7 @@ const LiveScorecard: React.FC = () => {
     </div>
   );
 
-  const renderExtras = (extras: { wides: number; noBalls: number; byes: number; legByes: number; penalties: number; total: number }) => (
+  const renderExtras = (extras: { wides?: number; noBalls?: number; byes?: number; legByes?: number; penalties?: number; total?: number }) => (
     <div className="mt-8">
       <h3 className="font-semibold text-gray-900 mb-2">Extras</h3>
       <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 text-sm text-gray-700">
@@ -195,7 +197,22 @@ const LiveScorecard: React.FC = () => {
 
   const live = isLive(scorecardData);
   const completed = isCompleted(scorecardData);
-  const data = scorecardData.inPlayData;
+
+  if (!scorecardData.inPlayData && !completed) {
+    return (
+      <div className="font-sans text-villageText bg-gray-50 min-h-screen">
+        <Header />
+        <main className="max-w-6xl mx-auto px-4 py-10">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <p className="text-blue-700">Match data is not yet available.</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const data = scorecardData.inPlayData!;
 
   return (
     <div className="font-sans text-villageText bg-gray-50 min-h-screen">
@@ -283,10 +300,10 @@ const LiveScorecard: React.FC = () => {
                 </div>
                 <div className="text-sm text-gray-700">
                   {data.ourInningsStatus === 'InProgress' && (
-                    <>Run rate {data.runRate.toFixed(2)}</>
+                    <>Run rate {(data.runRate ?? 0).toFixed(2)}</>
                   )}
                   {data.theirInningsStatus === 'InProgress' && (
-                    <>Run rate {data.theirRunRate.toFixed(2)}</>
+                    <>Run rate {(data.theirRunRate ?? 0).toFixed(2)}</>
                   )}
                 </div>
               </div>
@@ -320,14 +337,15 @@ const LiveScorecard: React.FC = () => {
             {expandedInnings === 'our' && (
               <div className="px-6 pb-6">
                 <p className="text-lg font-semibold text-gray-900 mb-4">
-                  {scorecardData.finalScorecard.ourInnings.batting.score}/{scorecardData.finalScorecard.ourInnings.batting.wickets}
+                  {scorecardData.finalScorecard.ourInnings.batting?.score ?? 0}/{scorecardData.finalScorecard.ourInnings.batting?.wickets ?? 0}
                 </p>
-                {renderBattingTable(scorecardData.finalScorecard.ourInnings.batting.entries || [])}
+                {renderBattingTable(scorecardData.finalScorecard.ourInnings.batting?.entries || [])}
 
-                {scorecardData.finalScorecard.ourInnings.bowling.entries && scorecardData.finalScorecard.ourInnings.bowling.entries.length > 0 &&
+                {scorecardData.finalScorecard.ourInnings.bowling?.entries && scorecardData.finalScorecard.ourInnings.bowling.entries.length > 0 &&
                   renderBowlingTable(scorecardData.finalScorecard.ourInnings.bowling.entries)}
 
-                {renderExtras(scorecardData.finalScorecard.ourInnings.batting.extras)}
+                {scorecardData.finalScorecard.ourInnings.batting?.extras &&
+                  renderExtras(scorecardData.finalScorecard.ourInnings.batting.extras)}
               </div>
             )}
           </section>
@@ -363,14 +381,15 @@ const LiveScorecard: React.FC = () => {
             {expandedInnings === 'their' && (
               <div className="px-6 pb-6">
                 <p className="text-lg font-semibold text-gray-900 mb-4">
-                  {scorecardData.finalScorecard.theirInnings.batting.score}/{scorecardData.finalScorecard.theirInnings.batting.wickets}
+                  {scorecardData.finalScorecard.theirInnings.batting?.score ?? 0}/{scorecardData.finalScorecard.theirInnings.batting?.wickets ?? 0}
                 </p>
-                {renderBattingTable(scorecardData.finalScorecard.theirInnings.batting.entries || [])}
+                {renderBattingTable(scorecardData.finalScorecard.theirInnings.batting?.entries || [])}
 
-                {scorecardData.finalScorecard.theirInnings.bowling.entries && scorecardData.finalScorecard.theirInnings.bowling.entries.length > 0 &&
+                {scorecardData.finalScorecard.theirInnings.bowling?.entries && scorecardData.finalScorecard.theirInnings.bowling.entries.length > 0 &&
                   renderBowlingTable(scorecardData.finalScorecard.theirInnings.bowling.entries)}
 
-                {renderExtras(scorecardData.finalScorecard.theirInnings.batting.extras)}
+                {scorecardData.finalScorecard.theirInnings.batting?.extras &&
+                  renderExtras(scorecardData.finalScorecard.theirInnings.batting.extras)}
               </div>
             )}
           </section>
