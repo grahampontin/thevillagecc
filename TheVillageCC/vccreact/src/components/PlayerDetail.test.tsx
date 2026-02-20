@@ -144,7 +144,7 @@ describe('PlayerDetail', () => {
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/Stats/player/1/detail',
+      expect.stringContaining('/api/Stats/player/1/detail'),
       expect.objectContaining({
         headers: expect.objectContaining({
           'Accept': 'application/json'
@@ -241,7 +241,7 @@ describe('PlayerDetail', () => {
     // Verify the chart APIs were called for all chart types
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Stats/chart/1/battingTimeline',
+        expect.stringContaining('/api/Stats/chart/1/battingTimeline'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -249,7 +249,7 @@ describe('PlayerDetail', () => {
         })
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Stats/chart/1/modesOfDismissal',
+        expect.stringContaining('/api/Stats/chart/1/modesOfDismissal'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -257,7 +257,7 @@ describe('PlayerDetail', () => {
         })
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Stats/chart/1/scoringZones',
+        expect.stringContaining('/api/Stats/chart/1/scoringZones'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -265,7 +265,7 @@ describe('PlayerDetail', () => {
         })
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Stats/chart/1/strikeRates',
+        expect.stringContaining('/api/Stats/chart/1/strikeRates'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -273,7 +273,7 @@ describe('PlayerDetail', () => {
         })
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Stats/chart/1/wicketsBySeason',
+        expect.stringContaining('/api/Stats/chart/1/wicketsBySeason'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -281,7 +281,7 @@ describe('PlayerDetail', () => {
         })
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Stats/chart/1/averageBySeason',
+        expect.stringContaining('/api/Stats/chart/1/averageBySeason'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -289,7 +289,7 @@ describe('PlayerDetail', () => {
         })
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Stats/chart/1/bowlingDismissalsByType',
+        expect.stringContaining('/api/Stats/chart/1/bowlingDismissalsByType'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'

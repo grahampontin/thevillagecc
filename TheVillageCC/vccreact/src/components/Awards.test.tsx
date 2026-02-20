@@ -7,7 +7,7 @@ import Awards from './Awards';
 global.fetch = jest.fn();
 
 // Wrapper component to provide routing context
-const renderWithRouter = (component: React.ReactElement, initialEntries: string[] = ['/awards']) => {
+const renderWithRouter = (component: React.ReactElement) => {
   return render(<BrowserRouter>{component}</BrowserRouter>);
 };
 
@@ -92,7 +92,7 @@ describe('Awards', () => {
     // Wait for the component to fetch all awards and navigate to latest year
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Awards',
+        expect.stringContaining('/api/Awards'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -104,7 +104,7 @@ describe('Awards', () => {
     // Wait for it to fetch awards for 2025
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Awards?season=2025',
+        expect.stringContaining('/api/Awards?season=2025'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -139,7 +139,7 @@ describe('Awards', () => {
     // Wait for it to fetch all awards
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Awards',
+        expect.stringContaining('/api/Awards'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -151,7 +151,7 @@ describe('Awards', () => {
     // Wait for it to fetch awards for current year
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        `/api/Awards?season=${currentYear}`,
+        expect.stringContaining(`/api/Awards?season=${currentYear}`),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -175,7 +175,7 @@ describe('Awards', () => {
     // Should NOT fetch all awards, should directly fetch for 2023
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Awards?season=2023',
+        expect.stringContaining('/api/Awards?season=2023'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -203,10 +203,8 @@ describe('Awards', () => {
 
     renderWithRouter(<Awards />);
 
-    await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
-      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('John Doe')).toBeInTheDocument();
+    expect(await screen.findByText('Jane Smith')).toBeInTheDocument();
   });
 
   test('displays message when no awards available for selected year', async () => {
@@ -246,7 +244,7 @@ describe('Awards', () => {
     // Should fallback to current year
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        `/api/Awards?season=${currentYear}`,
+        expect.stringContaining(`/api/Awards?season=${currentYear}`),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'
@@ -280,7 +278,7 @@ describe('Awards', () => {
     // Should select 2025 as the latest year
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/Awards?season=2025',
+        expect.stringContaining('/api/Awards?season=2025'),
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/json'

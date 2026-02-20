@@ -9,7 +9,7 @@ interface MatchReport {
   heading: string;
   subText: string;
   text: string;
-  matchId: string;
+  matchId?: string;
   imageSrc: string;
   matchDate: string;
   resultText: string;
@@ -87,7 +87,7 @@ const Homepage: React.FC = () => {
             heading,
             subText,
             text,
-            matchId: item.matchId.toString(),
+            matchId: item.matchId != null ? item.matchId.toString() : undefined,
             imageSrc,
             matchDate: item.matchDate ?? '',
             resultText: item.resultText ?? '',
@@ -305,12 +305,14 @@ const Homepage: React.FC = () => {
                       <p className="text-sm text-gray-600">
                         {report.text}
                       </p>
-                      <a
-                        href={`/scorecard/${report.matchId}`}
-                        className="text-sm font-medium text-villageGreen hover:underline mt-2"
-                      >
-                        Read full report →
-                      </a>
+                      {report.matchId && (
+                        <a
+                          href={`/scorecard/${report.matchId}`}
+                          className="text-sm font-medium text-villageGreen hover:underline mt-2"
+                        >
+                          Read full report →
+                        </a>
+                      )}
                     </article>
                   );
                 })}

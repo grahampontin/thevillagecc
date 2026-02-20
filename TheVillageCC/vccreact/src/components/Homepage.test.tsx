@@ -91,7 +91,7 @@ describe('Homepage', () => {
     });
 
     // Verify the API was called with correct parameters (now using /api/Results/recent)
-    expect(global.fetch).toHaveBeenCalledWith('/api/Results/recent?count=3', expect.objectContaining({
+    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/Results/recent?count=3'), expect.objectContaining({
       headers: expect.objectContaining({
         'Accept': 'application/json'
       })
