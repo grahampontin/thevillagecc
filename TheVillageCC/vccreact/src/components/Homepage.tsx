@@ -87,7 +87,7 @@ const Homepage: React.FC = () => {
             heading,
             subText,
             text,
-            matchId: item.matchId != null ? item.matchId.toString() : undefined,
+            matchId: item.matchId == null ? undefined : String(item.matchId),
             imageSrc,
             matchDate: item.matchDate ?? '',
             resultText: item.resultText ?? '',
