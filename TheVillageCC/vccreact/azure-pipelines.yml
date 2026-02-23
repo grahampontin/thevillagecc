@@ -19,7 +19,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  NODE_VERSION: '20.x'
+  NODE_VERSION: '22.x'
 
 steps:
   - checkout: self
@@ -29,9 +29,6 @@ steps:
     displayName: 'Use Node $(NODE_VERSION)'
     inputs:
       versionSpec: '$(NODE_VERSION)'
-
-  - script: npm install -g npm@11
-    displayName: 'Upgrade npm to v11'
 
   - script: |
       npm ci
