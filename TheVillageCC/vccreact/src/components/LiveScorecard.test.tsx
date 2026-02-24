@@ -278,6 +278,85 @@ describe('LiveScorecard', () => {
     });
   });
 
+  test('formats caught dismissal as ct. [Fielder] b. [Bowler]', async () => {
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
+
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText('ct. Smith b. Jones')).toBeInTheDocument();
+    });
+  });
+
+  test('formats dismissal types correctly', async () => {
+    const multiDismissalData: any = {
+      ...mockCompletedScorecardData,
+      finalScorecard: {
+        ...mockCompletedScorecardData.finalScorecard,
+        ourInnings: {
+          ...mockCompletedScorecardData.finalScorecard.ourInnings,
+          batting: {
+            entries: [
+              {
+                playerName: 'Player1', runs: 10, fours: 1, sixes: 0, ballsFaced: 15,
+                wicket: { bowler: 'Bowler1', fielder: null, isBowled: true },
+              },
+              {
+                playerName: 'Player2', runs: 5, fours: 0, sixes: 0, ballsFaced: 8,
+                wicket: { bowler: 'Bowler2', fielder: null, isLbw: true },
+              },
+              {
+                playerName: 'Player3', runs: 20, fours: 2, sixes: 0, ballsFaced: 22,
+                wicket: { bowler: 'Bowler3', fielder: null, isCaughtAndBowled: true },
+              },
+              {
+                playerName: 'Player4', runs: 0, fours: 0, sixes: 0, ballsFaced: 3,
+                wicket: { bowler: 'Bowler4', fielder: 'Keeper1', isStumped: true },
+              },
+              {
+                playerName: 'Player5', runs: 8, fours: 0, sixes: 0, ballsFaced: 10,
+                wicket: { bowler: null, fielder: 'Fielder1', isRunOut: true },
+              },
+              {
+                playerName: 'Player6', runs: 30, fours: 3, sixes: 1, ballsFaced: 28,
+                wicket: { bowler: 'Bowler6', fielder: null, isHitWicket: true },
+              },
+              {
+                playerName: 'Player7', runs: 15, fours: 1, sixes: 0, ballsFaced: 20,
+                wicket: { isRetiredHurt: true },
+              },
+              {
+                playerName: 'Player8', runs: 22, fours: 2, sixes: 0, ballsFaced: 25,
+                wicket: { isRetired: true },
+              },
+              {
+                playerName: 'Player9', runs: 5, fours: 0, sixes: 0, ballsFaced: 7,
+              },
+            ],
+            extras: { wides: 0, noBalls: 0, byes: 0, legByes: 0, penalties: 0, total: 0 },
+            score: 115,
+            wickets: 8,
+          },
+        },
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(multiDismissalData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText('b. Bowler1')).toBeInTheDocument();
+    });
+    expect(screen.getByText('lbw b. Bowler2')).toBeInTheDocument();
+    expect(screen.getByText('c&b Bowler3')).toBeInTheDocument();
+    expect(screen.getByText('st. Keeper1 b. Bowler4')).toBeInTheDocument();
+    expect(screen.getByText('run out (Fielder1)')).toBeInTheDocument();
+    expect(screen.getByText('hit wicket')).toBeInTheDocument();
+    expect(screen.getByText('retired hurt')).toBeInTheDocument();
+    expect(screen.getByText('retired')).toBeInTheDocument();
+    expect(screen.getByText('not out')).toBeInTheDocument();
+  });
+
   test('displays match report for completed match', async () => {
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
 
