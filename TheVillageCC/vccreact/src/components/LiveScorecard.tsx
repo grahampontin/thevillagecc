@@ -197,6 +197,8 @@ const LiveScorecard: React.FC = () => {
 
   const live = isLive(scorecardData);
   const completed = isCompleted(scorecardData);
+  const villageIsHome = scorecardData.matchData?.isHome !== false;
+  const oppositionIsHomeTeam = completed && !villageIsHome;
 
   if (!scorecardData.inPlayData && !completed) {
     return (
@@ -221,53 +223,71 @@ const LiveScorecard: React.FC = () => {
       <main>
         {/* Hero Match Card */}
         <section className="bg-white border border-gray-200 rounded-xl shadow-sm max-w-6xl mx-auto mt-6 px-6 py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            {/* Left: Village badge + name */}
-            <div className="flex items-center gap-4">
-              <img src="/images/vcc_cricle_small.png" className="h-14 w-14" alt="The Village CC" />
-              <h1 className="text-2xl font-semibold">The Village CC</h1>
-            </div>
+          <div className="flex flex-row items-center justify-between gap-1 sm:gap-4">
+            {/* Left team: home team for completed matches, Village otherwise */}
+            {oppositionIsHomeTeam ? (
+              <div className="flex items-center gap-1 sm:gap-4 min-w-0">
+                <div className="h-8 w-8 sm:h-14 sm:w-14 rounded-full border-2 border-gray-400 flex items-center justify-center flex-shrink-0">
+                  <span className="text-gray-600 font-semibold text-xs sm:text-xl">
+                    {(data.opposition || '').substring(0, 2).toUpperCase()}
+                  </span>
+                </div>
+                <h1 className="text-xs sm:text-2xl font-semibold truncate">{data.opposition}</h1>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 sm:gap-4 min-w-0">
+                <img src="/images/vcc_cricle_small.png" className="h-8 w-8 sm:h-14 sm:w-14 flex-shrink-0" alt="The Village CC" />
+                <h1 className="text-xs sm:text-2xl font-semibold truncate">The Village CC</h1>
+              </div>
+            )}
 
-            {/* Centre: Status badge */}
-            <div className="flex items-center gap-2">
+            {/* Centre: Status */}
+            <div className="flex flex-col items-center gap-0.5 flex-shrink-0 px-1 text-center">
               {live ? (
                 <>
-                  <span className="bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  <span className="bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
                     LIVE
                   </span>
                   <span className="h-2 w-2 bg-green-600 rounded-full animate-pulse"></span>
                 </>
               ) : completed ? (
-                <div className="flex flex-col items-center gap-1">
-                  <span className="bg-gray-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                <>
+                  <span className="text-xs sm:text-sm font-semibold text-gray-700 whitespace-nowrap">
                     {scorecardData.result?.resultText?.trim() || 'COMPLETED'}
                   </span>
                   {scorecardData.result?.margin &&
                     scorecardData.result.margin.trim() !== '' &&
                     scorecardData.result.margin !== 'result not yet in' && (
-                    <span className="text-xs text-gray-600">{scorecardData.result.margin}</span>
+                    <span className="text-xs text-gray-500 whitespace-nowrap">{scorecardData.result.margin}</span>
                   )}
-                </div>
+                </>
               ) : scorecardData.result?.isAbandoned ? (
-                <span className="bg-yellow-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                <span className="bg-yellow-600 text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
                   ABANDONED
                 </span>
               ) : (
-                <span className="bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                <span className="bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
                   SCHEDULED
                 </span>
               )}
             </div>
 
-            {/* Right: Opposition */}
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-full border-2 border-gray-400 flex items-center justify-center">
-                <span className="text-gray-600 font-semibold text-xl">
-                  {(data.opposition || '').substring(0, 2).toUpperCase()}
-                </span>
+            {/* Right team: away team for completed matches, Opposition otherwise */}
+            {oppositionIsHomeTeam ? (
+              <div className="flex items-center gap-1 sm:gap-4 min-w-0">
+                <img src="/images/vcc_cricle_small.png" className="h-8 w-8 sm:h-14 sm:w-14 flex-shrink-0" alt="The Village CC" />
+                <h1 className="text-xs sm:text-2xl font-semibold truncate">The Village CC</h1>
               </div>
-              <h1 className="text-2xl font-semibold">{data.opposition}</h1>
-            </div>
+            ) : (
+              <div className="flex items-center gap-1 sm:gap-4 min-w-0">
+                <div className="h-8 w-8 sm:h-14 sm:w-14 rounded-full border-2 border-gray-400 flex items-center justify-center flex-shrink-0">
+                  <span className="text-gray-600 font-semibold text-xs sm:text-xl">
+                    {(data.opposition || '').substring(0, 2).toUpperCase()}
+                  </span>
+                </div>
+                <h1 className="text-xs sm:text-2xl font-semibold truncate">{data.opposition}</h1>
+              </div>
+            )}
           </div>
 
           {/* Match details */}
