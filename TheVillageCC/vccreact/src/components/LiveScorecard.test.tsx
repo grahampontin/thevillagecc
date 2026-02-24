@@ -364,6 +364,51 @@ describe('LiveScorecard', () => {
     expect(screen.getByText(/by 128 runs/i)).toBeInTheDocument();
   });
 
+  test('places opposition (home team) on left when village is the away team', async () => {
+    const awayMatchData = {
+      ...mockCompletedScorecardData,
+      matchData: {
+        ...mockCompletedScorecardData.matchData,
+        isHome: false,
+      },
+      result: {
+        ...mockCompletedScorecardData.result,
+        resultText: 'beat',
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(awayMatchData);
+
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/Dulwich Lawnmower/i).length).toBeGreaterThan(0);
+    });
+
+    // When Village is the away team, the opposition (home team) should appear first in the hero card
+    const headings = screen.getAllByRole('heading', { level: 1 });
+    // First h1 in hero card should be the home team (Dulwich Lawnmower)
+    expect(headings[0].textContent).toBe('Dulwich Lawnmower');
+    // Second h1 in hero card should be the away team (The Village CC)
+    expect(headings[1].textContent).toBe('The Village CC');
+  });
+
+  test('places village on left when village is the home team', async () => {
+    // mockCompletedScorecardData has isHome: true
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
+
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/The Village CC/i).length).toBeGreaterThan(0);
+    });
+
+    const headings = screen.getAllByRole('heading', { level: 1 });
+    // First h1 in hero card should be Village CC (home team on left)
+    expect(headings[0].textContent).toBe('The Village CC');
+    expect(headings[1].textContent).toBe('Dulwich Lawnmower');
+  });
+
   test('shows COMPLETED fallback when resultText is empty', async () => {
     const noResultTextData = {
       ...mockCompletedScorecardData,
