@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import LiveScorecard from './LiveScorecard';
 import { getLiveScorecardData } from '../api/liveScoringApi';
@@ -504,6 +504,198 @@ describe('LiveScorecard', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/COMPLETED/i)).toBeInTheDocument();
+    });
+  });
+
+  test('shows SR column in batting table', async () => {
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/^SR$/i).length).toBeGreaterThan(0);
+    });
+  });
+
+  test('shows Econ column in bowling table', async () => {
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/^Econ$/i).length).toBeGreaterThan(0);
+    });
+  });
+
+  test('shows extras as inline row in batting table', async () => {
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText(/Extras/i)).toBeInTheDocument();
+    });
+    // Extras breakdown shown inline
+    expect(screen.getByText(/b 4, lb 2, w 6, nb 4/i)).toBeInTheDocument();
+  });
+
+  test('shows Total row in batting table', async () => {
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText(/^Total$/i)).toBeInTheDocument();
+    });
+  });
+
+  test('shows innings score in hero header for completed match', async () => {
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      // Our score: 198/7 should appear prominently in hero header
+      expect(screen.getAllByText('198/7').length).toBeGreaterThan(0);
+      // Their score: 150/10 should appear prominently in hero header
+      expect(screen.getAllByText('150/10').length).toBeGreaterThan(0);
+    });
+  });
+
+  test('shows tab buttons when both innings have batting entries', async () => {
+    const bothInningsData = {
+      ...mockCompletedScorecardData,
+      finalScorecard: {
+        ...mockCompletedScorecardData.finalScorecard,
+        theirInnings: {
+          ...mockCompletedScorecardData.finalScorecard.theirInnings,
+          batting: {
+            entries: [
+              { playerName: 'TheirBatter', runs: 30, fours: 3, sixes: 0, ballsFaced: 25 },
+            ],
+            extras: { wides: 0, noBalls: 0, byes: 0, legByes: 0, penalties: 0, total: 0 },
+            score: 150,
+            wickets: 10,
+          },
+        },
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(bothInningsData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /The Village CC Innings/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Dulwich Lawnmower Innings/i })).toBeInTheDocument();
+    });
+  });
+
+  test('switches innings content when tab is clicked', async () => {
+    const bothInningsData = {
+      ...mockCompletedScorecardData,
+      finalScorecard: {
+        ...mockCompletedScorecardData.finalScorecard,
+        theirInnings: {
+          ...mockCompletedScorecardData.finalScorecard.theirInnings,
+          batting: {
+            entries: [
+              { playerName: 'TheirBatter', runs: 30, fours: 3, sixes: 0, ballsFaced: 25 },
+            ],
+            extras: { wides: 0, noBalls: 0, byes: 0, legByes: 0, penalties: 0, total: 0 },
+            score: 150,
+            wickets: 10,
+          },
+        },
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(bothInningsData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText('Bowman')).toBeInTheDocument();
+    });
+
+    // Switch to their innings
+    const theirTab = screen.getByRole('button', { name: /Dulwich Lawnmower Innings/i });
+    fireEvent.click(theirTab);
+
+    await waitFor(() => {
+      expect(screen.getByText('TheirBatter')).toBeInTheDocument();
+    });
+    // Our innings player should no longer be visible
+    expect(screen.queryByText('Bowman')).not.toBeInTheDocument();
+  });
+
+  test('shows fall of wickets when fow data present', async () => {
+    const withFowData = {
+      ...mockCompletedScorecardData,
+      finalScorecard: {
+        ...mockCompletedScorecardData.finalScorecard,
+        ourInnings: {
+          ...mockCompletedScorecardData.finalScorecard.ourInnings,
+          fow: {
+            entries: [
+              { score: 45, wicket: 1, overs: 8.3, outgoingPlayer: { id: 1, name: 'Bowman', battingAt: 1, score: 45 } },
+              { score: 90, wicket: 2, overs: 15.0, outgoingPlayer: { id: 2, name: 'Smith', battingAt: 2, score: 30 } },
+            ],
+          },
+        },
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withFowData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText(/Fall of Wickets/i)).toBeInTheDocument();
+    });
+    expect(screen.getByText(/45-1/)).toBeInTheDocument();
+    expect(screen.getByText(/90-2/)).toBeInTheDocument();
+  });
+
+  test('shows current batsmen when live match has onStrikeBatsman', async () => {
+    const liveWithBatsmen = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        onStrikeBatsman: { name: 'OnStrikeBatter', score: 34, balls: 28, fours: 4, sixes: 1, strikeRate: 121.4 },
+        otherBatsman: { name: 'OtherBatter', score: 12, balls: 18, fours: 1, sixes: 0, strikeRate: 66.7 },
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithBatsmen);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText('OnStrikeBatter')).toBeInTheDocument();
+      expect(screen.getByText('OtherBatter')).toBeInTheDocument();
+    });
+    expect(screen.getByText(/At the Crease/i)).toBeInTheDocument();
+  });
+
+  test('shows current bowlers when live match has bowlerOneDetails', async () => {
+    const liveWithBowlers = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        bowlerOneDetails: {
+          name: 'FastBowler',
+          details: { overs: 5, maidens: 1, runs: 22, wickets: 2, economy: 4.4 },
+        },
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithBowlers);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText('FastBowler')).toBeInTheDocument();
+    });
+  });
+
+  test('shows match meta (venue, date, match type) in compact header line', async () => {
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText(/Friendly/i)).toBeInTheDocument();
+      expect(screen.getByText(/Lyndhurst Park/i)).toBeInTheDocument();
     });
   });
 });
