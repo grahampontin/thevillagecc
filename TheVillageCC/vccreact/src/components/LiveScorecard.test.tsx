@@ -200,6 +200,8 @@ describe('LiveScorecard', () => {
     // Check for match details - multiple instances are expected so check length
     expect(screen.getAllByText(/Dulwich Lawnmower/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/The Village CC won by 48 runs/i)).toBeInTheDocument();
+    // margin is shown as a second line below the result text badge
+    expect(screen.getAllByText(/by 48 runs/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Lyndhurst Park/i)).toBeInTheDocument();
   });
 
@@ -357,7 +359,27 @@ describe('LiveScorecard', () => {
     });
 
     // Because the fixture includes a populated finalScorecard, LiveScorecard treats
-    // the match as completed. The result text is shown in the lozenge.
-    expect(screen.getByText(/beat/i)).toBeInTheDocument();
+    // the match as completed. The result text and margin are shown vertically stacked.
+    expect(screen.getByText(/^beat$/i)).toBeInTheDocument();
+    expect(screen.getByText(/by 128 runs/i)).toBeInTheDocument();
+  });
+
+  test('shows COMPLETED fallback when resultText is empty', async () => {
+    const noResultTextData = {
+      ...mockCompletedScorecardData,
+      result: {
+        ...mockCompletedScorecardData.result,
+        resultText: '',
+        margin: '',
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(noResultTextData);
+
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText(/COMPLETED/i)).toBeInTheDocument();
+    });
   });
 });
