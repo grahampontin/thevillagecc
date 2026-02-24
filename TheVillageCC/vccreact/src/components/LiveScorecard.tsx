@@ -79,6 +79,21 @@ const LiveScorecard: React.FC = () => {
     setExpandedInnings(expandedInnings === innings ? null : innings);
   };
 
+  const formatDismissal = (entry: BattingEntryV1): string => {
+    const wicket = entry.wicket;
+    if (!wicket) return 'not out';
+    if (wicket.isCaughtAndBowled) return `c&b ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isCaught) return `ct. ${wicket.fielder ?? ''} b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isBowled) return `b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isLbw) return `lbw b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isStumped) return `st. ${wicket.fielder ?? ''} b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isRunOut) return wicket.fielder ? `run out (${wicket.fielder})` : 'run out';
+    if (wicket.isHitWicket) return 'hit wicket';
+    if (wicket.isRetiredHurt) return 'retired hurt';
+    if (wicket.isRetired) return 'retired';
+    return 'not out';
+  };
+
   const renderBattingTable = (entries: BattingEntryV1[]) => (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
@@ -96,7 +111,7 @@ const LiveScorecard: React.FC = () => {
           {entries.map((entry, index) => (
             <tr key={index} className="border-b border-gray-100">
               <td className="py-2 font-medium">{entry.playerName}</td>
-              <td className="py-2 text-sm">{entry.modeOfDismissal || 'NotOut'}</td>
+              <td className="py-2 text-sm">{formatDismissal(entry)}</td>
               <td className="py-2 text-right">{entry.runs}</td>
               <td className="py-2 text-right">{entry.ballsFaced}</td>
               <td className="py-2 text-right">{entry.fours}</td>
