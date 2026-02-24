@@ -199,11 +199,8 @@ describe('LiveScorecard', () => {
 
     // Check for match details - multiple instances are expected so check length
     expect(screen.getAllByText(/Dulwich Lawnmower/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/COMPLETED/i)).toBeInTheDocument();
-    expect(screen.getByText(/Lyndhurst Park/i)).toBeInTheDocument();
-
-    // Check for result text
     expect(screen.getByText(/The Village CC won by 48 runs/i)).toBeInTheDocument();
+    expect(screen.getByText(/Lyndhurst Park/i)).toBeInTheDocument();
   });
 
   test('displays live match with LIVE badge', async () => {
@@ -360,7 +357,7 @@ describe('LiveScorecard', () => {
     });
 
     // Because the fixture includes a populated finalScorecard, LiveScorecard treats
-    // the match as completed.
-    expect(screen.getByText(/COMPLETED/i)).toBeInTheDocument();
+    // the match as completed. The result text is shown in the lozenge.
+    expect(screen.getByText(/beat/i)).toBeInTheDocument();
   });
 });

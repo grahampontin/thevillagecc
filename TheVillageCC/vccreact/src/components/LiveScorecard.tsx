@@ -239,7 +239,7 @@ const LiveScorecard: React.FC = () => {
                 </>
               ) : completed ? (
                 <span className="bg-gray-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                  COMPLETED
+                  {scorecardData.result?.resultText || 'COMPLETED'}
                 </span>
               ) : scorecardData.result?.isAbandoned ? (
                 <span className="bg-yellow-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
@@ -275,15 +275,6 @@ const LiveScorecard: React.FC = () => {
             </div>
           </div>
 
-          {/* Result summary (if completed) */}
-          {completed && scorecardData.result?.resultText && (
-            <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <p className="font-semibold text-villageText">{scorecardData.result.resultText}</p>
-              {scorecardData.result.margin && scorecardData.result.margin !== 'result not yet in' && (
-                <p className="text-sm text-gray-600 mt-1">{scorecardData.result.margin}</p>
-              )}
-            </div>
-          )}
         </section>
 
         {/* Sticky Live Status Bar (only when live) */}
