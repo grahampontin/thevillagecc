@@ -238,9 +238,16 @@ const LiveScorecard: React.FC = () => {
                   <span className="h-2 w-2 bg-green-600 rounded-full animate-pulse"></span>
                 </>
               ) : completed ? (
-                <span className="bg-gray-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                  COMPLETED
-                </span>
+                <div className="flex flex-col items-center gap-1">
+                  <span className="bg-gray-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                    {scorecardData.result?.resultText?.trim() || 'COMPLETED'}
+                  </span>
+                  {scorecardData.result?.margin &&
+                    scorecardData.result.margin.trim() !== '' &&
+                    scorecardData.result.margin !== 'result not yet in' && (
+                    <span className="text-xs text-gray-600">{scorecardData.result.margin}</span>
+                  )}
+                </div>
               ) : scorecardData.result?.isAbandoned ? (
                 <span className="bg-yellow-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
                   ABANDONED
@@ -275,15 +282,6 @@ const LiveScorecard: React.FC = () => {
             </div>
           </div>
 
-          {/* Result summary (if completed) */}
-          {completed && scorecardData.result?.resultText && (
-            <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <p className="font-semibold text-villageText">{scorecardData.result.resultText}</p>
-              {scorecardData.result.margin && scorecardData.result.margin !== 'result not yet in' && (
-                <p className="text-sm text-gray-600 mt-1">{scorecardData.result.margin}</p>
-              )}
-            </div>
-          )}
         </section>
 
         {/* Sticky Live Status Bar (only when live) */}
