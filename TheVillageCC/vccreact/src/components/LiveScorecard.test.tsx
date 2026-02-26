@@ -726,8 +726,8 @@ describe('LiveScorecard', () => {
 
     // Shows per-over summary
     await waitFor(() => {
-      expect(screen.getByText(/End of over 2/i)).toBeInTheDocument();
-      expect(screen.getByText(/End of over 1/i)).toBeInTheDocument();
+      expect(screen.getByText(/^Over 2$/)).toBeInTheDocument();
+      expect(screen.getByText(/^Over 1$/)).toBeInTheDocument();
     });
   });
 
@@ -870,7 +870,7 @@ describe('LiveScorecard', () => {
     fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/End of over 3/i)).toBeInTheDocument();
+      expect(screen.getByText(/^Over 3$/)).toBeInTheDocument();
       expect(screen.getByText(/3\.1/)).toBeInTheDocument();
     });
   });
@@ -913,7 +913,7 @@ describe('LiveScorecard', () => {
 
     await waitFor(() => {
       const blobContainer = screen.getByLabelText(/Over 2 deliveries/i);
-      const blobs = blobContainer.querySelectorAll('span');
+      const blobs = blobContainer.querySelectorAll('[data-testid="ball-blob"]');
       // dot ball → '·'
       expect(blobs[0].textContent).toBe('·');
       // four → '4'
