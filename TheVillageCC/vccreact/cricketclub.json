@@ -3462,6 +3462,10 @@
               "$ref": "#/components/schemas/BallV1"
             },
             "nullable": true
+          },
+          "commentary": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
