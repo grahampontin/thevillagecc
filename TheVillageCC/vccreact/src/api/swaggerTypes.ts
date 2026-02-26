@@ -22,7 +22,7 @@ export type VenueV1 = components['schemas']['VenueV1'];
 
 // Live scoring
 export type LiveScorecardV1 = components['schemas']['LiveScorecardV1'];
-export type InPlayLiveScorecardV1 = components['schemas']['LiveScorecard'];
+export type InPlayLiveScorecardV1 = components['schemas']['InPlayScorecardV1'];
 export type MatchScorecardV1 = components['schemas']['MatchScorecardV1'];
 export type MatchReportV1 = components['schemas']['MatchReportV1'];
 export type BattingEntryV1 = components['schemas']['BattingEntryV1'];
