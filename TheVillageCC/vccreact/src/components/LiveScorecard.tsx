@@ -116,8 +116,21 @@ const LiveScorecard: React.FC = () => {
     return 'not out';
   };
 
+  const formatWicketDismissal = (wicket: NonNullable<BallV1['wicket']>): string => {
+    if (wicket.isCaughtAndBowled) return `c&b ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isCaught) return `ct. ${wicket.fielder ?? ''} b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isBowled) return `b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isLbw) return `lbw b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isStumped) return `st. ${wicket.fielder ?? ''} b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isRunOut) return wicket.fielder ? `run out (${wicket.fielder})` : 'run out';
+    if (wicket.isHitWicket) return 'hit wicket';
+    if (wicket.isRetiredHurt) return 'retired hurt';
+    if (wicket.isRetired) return 'retired';
+    return 'out';
+  };
+
   const getBallDescription = (ball: BallV1): string => {
-    if (ball.wicket) return `OUT! ${ball.wicket.description ?? ''}`.trim();
+    if (ball.wicket) return 'OUT!';
     const amount = ball.amount ?? 0;
     const thing = ball.thing ?? '';
     const plural = amount !== 1 ? 's' : '';
@@ -643,37 +656,54 @@ const LiveScorecard: React.FC = () => {
                           : [];
                         return (
                           <div key={i} className={`py-4 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                            <div className="flex flex-wrap items-center justify-between gap-2 bg-gray-50 rounded-lg px-3 py-2 mb-3">
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold text-gray-900">{`Over ${overNum}`}</span>
-                                {over.over?.bowler && (
-                                  <span className="text-gray-500">· {over.over.bowler}</span>
-                                )}
+                            <div className="bg-gray-50 rounded-lg px-3 py-2 mb-3">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-gray-900">{`Over ${overNum}`}</span>
+                                  {over.over?.bowler && (
+                                    <span className="text-gray-500">· {over.over.bowler}</span>
+                                  )}
+                                </div>
+                                <span className="text-gray-600 text-xs">
+                                  Village {over.scoreAtEndOfOver ?? 0}/{over.wicketsAtEndOfOver ?? 0}
+                                  <span className="ml-1 text-gray-400">(+{over.scoreForThisOver ?? 0})</span>
+                                </span>
                               </div>
-                              <span className="text-gray-600 text-xs">
-                                Village {over.scoreAtEndOfOver ?? 0}/{over.wicketsAtEndOfOver ?? 0}
-                                <span className="ml-1 text-gray-400">(+{over.scoreForThisOver ?? 0})</span>
-                              </span>
+                              {over.over?.commentary && (
+                                <p className="mt-1 text-xs text-gray-600 italic">{over.over.commentary}</p>
+                              )}
                             </div>
                             {balls.length > 0 && (
                               <div className="space-y-2 pl-1" aria-label={`Over ${overNum} deliveries`}>
                                 {balls.map((ball, bi) => {
                                   const blob = getBallBlob(ball);
                                   return (
-                                    <div key={bi} className="flex items-center gap-2">
-                                      <span
-                                        data-testid="ball-blob"
-                                        className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 ${blob.className}`}
-                                      >
-                                        {blob.label}
-                                      </span>
-                                      <div className={ball.wicket ? 'font-semibold text-red-700' : 'text-gray-600'}>
-                                        <span className="font-mono text-xs text-gray-400 mr-1">{overNum}.{ball.ballNumber}</span>
-                                        {ball.bowler && ball.batsmanName
-                                          ? `${ball.bowler} to ${ball.batsmanName}, ${getBallDescription(ball)}`
-                                          : getBallDescription(ball)
-                                        }
+                                    <div key={bi}>
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          data-testid="ball-blob"
+                                          className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 ${blob.className}`}
+                                        >
+                                          {blob.label}
+                                        </span>
+                                        <div className={ball.wicket ? 'font-semibold text-red-700' : 'text-gray-600'}>
+                                          <span className="font-mono text-xs text-gray-400 mr-1">{overNum}.{ball.ballNumber}</span>
+                                          {ball.bowler && ball.batsmanName
+                                            ? `${ball.bowler} to ${ball.batsmanName}, ${getBallDescription(ball)}`
+                                            : getBallDescription(ball)
+                                          }
+                                        </div>
                                       </div>
+                                      {ball.wicket && (
+                                        <div className="ml-9 mt-0.5 text-sm text-red-700">
+                                          {ball.wicket.playerName && (
+                                            <div>{ball.wicket.playerName} {formatWicketDismissal(ball.wicket)}</div>
+                                          )}
+                                          {ball.wicket.description && (
+                                            <div className="text-gray-500 italic">{ball.wicket.description}</div>
+                                          )}
+                                        </div>
+                                      )}
                                     </div>
                                   );
                                 })}

@@ -969,4 +969,148 @@ describe('LiveScorecard', () => {
       expect(screen.getByRole('button', { name: /^Partnerships$/i })).toBeInTheDocument();
     });
   });
+
+  test('shows over-level commentary in over header when commentary field is present', async () => {
+    const withOverCommentary = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 12,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 12,
+            over: {
+              overNumber: 5,
+              bowler: 'T. Bowler',
+              runsConceded: 12,
+              wicketsTaken: 0,
+              commentary: 'A productive over with two boundaries.',
+              balls: [
+                { ballNumber: 1, amount: 4, thing: '', bowler: 'T. Bowler', batsmanName: 'A. Batter' },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withOverCommentary);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/A productive over with two boundaries/i)).toBeInTheDocument();
+    });
+  });
+
+  test('shows wicket details under ball line when ball has wicket data', async () => {
+    const withWicketBall = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 45,
+            wicketsAtEndOfOver: 1,
+            scoreForThisOver: 5,
+            over: {
+              overNumber: 8,
+              bowler: 'J. Bowler',
+              runsConceded: 5,
+              wicketsTaken: 1,
+              balls: [
+                { ballNumber: 1, amount: 1, thing: '', bowler: 'J. Bowler', batsmanName: 'S. Batter' },
+                {
+                  ballNumber: 2,
+                  amount: 0,
+                  thing: '',
+                  bowler: 'J. Bowler',
+                  batsmanName: 'G. Pontin',
+                  wicket: {
+                    playerName: 'GC Pontin',
+                    bowler: 'Jeff',
+                    fielder: 'Steve',
+                    isCaught: true,
+                    description: 'Excellent delivery that got the edge.',
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withWicketBall);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
+    await waitFor(() => {
+      // Wicket ball line
+      expect(screen.getByText(/J\. Bowler to G\. Pontin, OUT!/i)).toBeInTheDocument();
+      // Wicket details sub-row: player name + dismissal
+      expect(screen.getByText(/GC Pontin ct\. Steve b\. Jeff/i)).toBeInTheDocument();
+      // Wicket commentary
+      expect(screen.getByText(/Excellent delivery that got the edge/i)).toBeInTheDocument();
+    });
+  });
+
+  test('shows wicket details without description when description is absent', async () => {
+    const withWicketNoDesc = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 30,
+            wicketsAtEndOfOver: 1,
+            scoreForThisOver: 3,
+            over: {
+              overNumber: 6,
+              bowler: 'K. Bowler',
+              runsConceded: 3,
+              wicketsTaken: 1,
+              balls: [
+                {
+                  ballNumber: 3,
+                  amount: 0,
+                  thing: '',
+                  bowler: 'K. Bowler',
+                  batsmanName: 'H. Batter',
+                  wicket: {
+                    playerName: 'H. Batter',
+                    bowler: 'K. Bowler',
+                    isBowled: true,
+                    description: null,
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withWicketNoDesc);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
+    await waitFor(() => {
+      // Wicket details sub-row: player name + dismissal without description
+      expect(screen.getByText(/H\. Batter b\. K\. Bowler/i)).toBeInTheDocument();
+    });
+  });
 });
