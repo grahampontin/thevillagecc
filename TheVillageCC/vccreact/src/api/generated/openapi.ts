@@ -1434,31 +1434,7 @@ export interface components {
     FoWV1: {
       entries?: components["schemas"]["FoWEntryV1"][] | null;
     };
-    InningsEndDetailsV1: {
-      commentary?: string | null;
-      inningsType?: string | null;
-      wasDeclared?: boolean;
-    };
-    InningsScoreCardV1: {
-      batting?: components["schemas"]["BattingCardV1"];
-      bowling?: components["schemas"]["BowlingCardV1"];
-      fow?: components["schemas"]["FoWV1"];
-      /** Format: double */
-      inningsLength?: number;
-    };
-    LeadingPlayerCategoryV1: {
-      category?: string | null;
-      players?: components["schemas"]["LeadingPlayerEntryV1"][] | null;
-    };
-    LeadingPlayerEntryV1: {
-      /** Format: int32 */
-      playerId?: number;
-      playerName?: string | null;
-      /** Format: int32 */
-      value?: number;
-    };
-    LiveBattingCard: Record<string, never>;
-    LiveScorecard: {
+    InPlayScorecardV1: {
       onStrikeBatsman?: components["schemas"]["BatsmanInningsDetails"];
       otherBatsman?: components["schemas"]["BatsmanInningsDetails"];
       lastBatsmanOut?: components["schemas"]["BatsmanInningsDetails"];
@@ -1478,7 +1454,7 @@ export interface components {
       previousPartnership?: components["schemas"]["Partnership"];
       lastManOut?: components["schemas"]["FallOfWicket"];
       fallOfWickets?: components["schemas"]["FallOfWicket"][] | null;
-      completedOvers?: components["schemas"]["OverSummary"][] | null;
+      completedOvers?: components["schemas"]["OverSummaryV1"][] | null;
       bowlerOneDetails?: components["schemas"]["BowlerInningsDetails"];
       bowlerTwoDetails?: components["schemas"]["BowlerInningsDetails"];
       liveBattingCard?: components["schemas"]["LiveBattingCard"];
@@ -1505,8 +1481,32 @@ export interface components {
       liveBowlingCard?: components["schemas"]["BowlerInningsDetails"][] | null;
       partnerships?: components["schemas"]["Partnership"][] | null;
     };
+    InningsEndDetailsV1: {
+      commentary?: string | null;
+      inningsType?: string | null;
+      wasDeclared?: boolean;
+    };
+    InningsScoreCardV1: {
+      batting?: components["schemas"]["BattingCardV1"];
+      bowling?: components["schemas"]["BowlingCardV1"];
+      fow?: components["schemas"]["FoWV1"];
+      /** Format: double */
+      inningsLength?: number;
+    };
+    LeadingPlayerCategoryV1: {
+      category?: string | null;
+      players?: components["schemas"]["LeadingPlayerEntryV1"][] | null;
+    };
+    LeadingPlayerEntryV1: {
+      /** Format: int32 */
+      playerId?: number;
+      playerName?: string | null;
+      /** Format: int32 */
+      value?: number;
+    };
+    LiveBattingCard: Record<string, never>;
     LiveScorecardV1: {
-      inPlayData?: components["schemas"]["LiveScorecard"];
+      inPlayData?: components["schemas"]["InPlayScorecardV1"];
       finalScorecard?: components["schemas"]["MatchScorecardV1"];
       matchReport?: components["schemas"]["MatchReportV1"];
       matchData?: components["schemas"]["MatchV1"];
@@ -1634,9 +1634,8 @@ export interface components {
       wickets?: number;
       commentary?: string | null;
     };
-    Over: Record<string, never>;
-    OverSummary: {
-      over?: components["schemas"]["Over"];
+    OverSummaryV1: {
+      over?: components["schemas"]["OverV1"];
       /** Format: int32 */
       scoreAtEndOfOver?: number;
       /** Format: int32 */

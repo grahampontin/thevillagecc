@@ -15,7 +15,7 @@ import { Line, Bar } from 'react-chartjs-2';
 import Header from './Header';
 import Footer from './Footer';
 import { getLiveScorecardData } from '../api/liveScoringApi';
-import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1 } from '../api/swaggerTypes';
+import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1, BallV1 } from '../api/swaggerTypes';
 
 ChartJS.register(
   CategoryScale,
@@ -113,6 +113,28 @@ const LiveScorecard: React.FC = () => {
     if (wicket.isRetiredHurt) return 'retired hurt';
     if (wicket.isRetired) return 'retired';
     return 'not out';
+  };
+
+  const getBallDescription = (ball: BallV1): string => {
+    if (ball.wicket) return `OUT! ${ball.wicket.description ?? ''}`.trim();
+    const amount = ball.amount ?? 0;
+    const thing = ball.thing ?? '';
+    const plural = amount !== 1 ? 's' : '';
+    switch (thing) {
+      case '':
+        switch (amount) {
+          case 0: return 'no run';
+          case 1: return 'single';
+          case 4: return 'FOUR';
+          case 6: return 'SIX!';
+          default: return `${amount} runs`;
+        }
+      case 'wd': return `${amount} wide${plural}`;
+      case 'nb': return `${amount} no ball${plural}`;
+      case 'b': return `${amount} bye${plural}`;
+      case 'lb': return `${amount} leg bye${plural}`;
+      default: return `${amount} ${thing}`;
+    }
   };
 
   const renderBattingTable = (
@@ -584,14 +606,38 @@ const LiveScorecard: React.FC = () => {
                   {data.ourInningsCommentary && (
                     <p className="mb-3 text-sm text-gray-600 italic">{data.ourInningsCommentary}</p>
                   )}
-                  {[...(data.completedOvers ?? [])].reverse().map((over, i, arr) => (
-                    <div key={i} className={`py-2 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                      <span className="font-medium">{`End of over ${arr.length - i}`}</span>
-                      <span className="ml-2 text-gray-500">
-                        {`(+${over.scoreForThisOver ?? 0}) Village ${over.scoreAtEndOfOver ?? 0}/${over.wicketsAtEndOfOver ?? 0}`}
-                      </span>
-                    </div>
-                  ))}
+                  {[...(data.completedOvers ?? [])].reverse().map((over, i, arr) => {
+                    const overNum = over.over?.overNumber ?? (arr.length - i);
+                    const balls = over.over?.balls
+                      ? [...over.over.balls].sort((a, b) => (a.ballNumber ?? 0) - (b.ballNumber ?? 0))
+                      : [];
+                    return (
+                      <div key={i} className={`py-2 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                        <div>
+                          <span className="font-medium">{`End of over ${overNum}`}</span>
+                          {over.over?.bowler && (
+                            <span className="ml-1 text-gray-400">({over.over.bowler})</span>
+                          )}
+                          <span className="ml-2 text-gray-500">
+                            {`(+${over.scoreForThisOver ?? 0}) Village ${over.scoreAtEndOfOver ?? 0}/${over.wicketsAtEndOfOver ?? 0}`}
+                          </span>
+                        </div>
+                        {balls.length > 0 && (
+                          <div className="mt-1 space-y-0.5">
+                            {balls.map((ball, bi) => (
+                              <div key={bi} className={`pl-2 ${ball.wicket ? 'font-semibold text-red-700' : 'text-gray-600'}`}>
+                                <span className="font-mono text-xs mr-1">{overNum}.{ball.ballNumber}</span>
+                                {ball.bowler && ball.batsmanName
+                                  ? `${ball.bowler} to ${ball.batsmanName}, ${getBallDescription(ball)}`
+                                  : getBallDescription(ball)
+                                }
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
               {activeCommentaryTab === 'oppo' && (data.theirCompletedOvers?.length ?? 0) > 0 && (
