@@ -36,6 +36,7 @@ const LiveScorecard: React.FC = () => {
   const [activeInnings, setActiveInnings] = useState<'our' | 'their'>('our');
   const [activeCommentaryTab, setActiveCommentaryTab] = useState<'vcc' | 'oppo'>('vcc');
   const [activeAnalysisTab, setActiveAnalysisTab] = useState<'worm' | 'manhattan' | 'partnerships'>('worm');
+  const [commentaryExpanded, setCommentaryExpanded] = useState(false);
 
   useEffect(() => {
     const fetchScorecardData = async () => {
@@ -135,6 +136,19 @@ const LiveScorecard: React.FC = () => {
       case 'lb': return `${amount} leg bye${plural}`;
       default: return `${amount} ${thing}`;
     }
+  };
+
+  const getBallBlob = (ball: BallV1): { label: string; className: string } => {
+    if (ball.wicket) return { label: 'W', className: 'bg-red-600 text-white' };
+    const thing = ball.thing ?? '';
+    const amount = ball.amount ?? 0;
+    if (thing === 'wd') return { label: 'Wd', className: 'bg-yellow-400 text-gray-800' };
+    if (thing === 'nb') return { label: 'Nb', className: 'bg-yellow-400 text-gray-800' };
+    if (thing === 'b' || thing === 'lb') return { label: String(amount), className: 'bg-gray-200 text-gray-600' };
+    if (amount === 0) return { label: '·', className: 'bg-gray-300 text-gray-600' };
+    if (amount === 4) return { label: '4', className: 'bg-blue-500 text-white' };
+    if (amount === 6) return { label: '6', className: 'bg-orange-500 text-white' };
+    return { label: String(amount), className: 'bg-gray-200 text-gray-700' };
   };
 
   const renderBattingTable = (
@@ -572,93 +586,130 @@ const LiveScorecard: React.FC = () => {
         {/* Commentary section */}
         {((data.completedOvers?.length ?? 0) > 0 || (data.theirCompletedOvers?.length ?? 0) > 0) && (
           <section className="max-w-6xl mx-auto mt-6">
-            <div className="flex gap-2 mb-3 flex-wrap">
-              {(data.completedOvers?.length ?? 0) > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setActiveCommentaryTab('vcc')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium ${
-                    activeCommentaryTab === 'vcc'
-                      ? 'bg-villageGreen text-white'
-                      : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
-                  }`}
-                >
-                  VCC Commentary
-                </button>
-              )}
-              {(data.theirCompletedOvers?.length ?? 0) > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setActiveCommentaryTab('oppo')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium ${
-                    activeCommentaryTab === 'oppo'
-                      ? 'bg-villageGreen text-white'
-                      : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
-                  }`}
-                >
-                  Oppo Commentary
-                </button>
-              )}
-            </div>
-            <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
-              {activeCommentaryTab === 'vcc' && (data.completedOvers?.length ?? 0) > 0 && (
-                <div>
-                  {data.ourInningsCommentary && (
-                    <p className="mb-3 text-sm text-gray-600 italic">{data.ourInningsCommentary}</p>
+            <button
+              type="button"
+              className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
+              onClick={() => setCommentaryExpanded(prev => !prev)}
+              aria-expanded={commentaryExpanded}
+            >
+              <span className="text-base font-semibold text-gray-800">Over-by-over Commentary</span>
+              <svg
+                className={`w-5 h-5 text-gray-500 transition-transform ${commentaryExpanded ? 'rotate-180' : ''}`}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {commentaryExpanded && (
+              <>
+                <div className="flex gap-2 mt-3 mb-3 flex-wrap">
+                  {(data.completedOvers?.length ?? 0) > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveCommentaryTab('vcc')}
+                      className={`px-4 py-2 rounded-full text-sm font-medium ${
+                        activeCommentaryTab === 'vcc'
+                          ? 'bg-villageGreen text-white'
+                          : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                      }`}
+                    >
+                      VCC Commentary
+                    </button>
                   )}
-                  {[...(data.completedOvers ?? [])].reverse().map((over, i, arr) => {
-                    const overNum = over.over?.overNumber ?? (arr.length - i);
-                    const balls = over.over?.balls
-                      ? [...over.over.balls].sort((a, b) => (a.ballNumber ?? 0) - (b.ballNumber ?? 0))
-                      : [];
-                    return (
-                      <div key={i} className={`py-2 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                        <div>
-                          <span className="font-medium">{`End of over ${overNum}`}</span>
-                          {over.over?.bowler && (
-                            <span className="ml-1 text-gray-400">({over.over.bowler})</span>
-                          )}
-                          <span className="ml-2 text-gray-500">
-                            {`(+${over.scoreForThisOver ?? 0}) Village ${over.scoreAtEndOfOver ?? 0}/${over.wicketsAtEndOfOver ?? 0}`}
-                          </span>
-                        </div>
-                        {balls.length > 0 && (
-                          <div className="mt-1 space-y-0.5">
-                            {balls.map((ball, bi) => (
-                              <div key={bi} className={`pl-2 ${ball.wicket ? 'font-semibold text-red-700' : 'text-gray-600'}`}>
-                                <span className="font-mono text-xs mr-1">{overNum}.{ball.ballNumber}</span>
-                                {ball.bowler && ball.batsmanName
-                                  ? `${ball.bowler} to ${ball.batsmanName}, ${getBallDescription(ball)}`
-                                  : getBallDescription(ball)
-                                }
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                  {(data.theirCompletedOvers?.length ?? 0) > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveCommentaryTab('oppo')}
+                      className={`px-4 py-2 rounded-full text-sm font-medium ${
+                        activeCommentaryTab === 'oppo'
+                          ? 'bg-villageGreen text-white'
+                          : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                      }`}
+                    >
+                      Oppo Commentary
+                    </button>
+                  )}
                 </div>
-              )}
-              {activeCommentaryTab === 'oppo' && (data.theirCompletedOvers?.length ?? 0) > 0 && (
-                <div>
-                  {data.theirInningsCommentary && (
-                    <p className="mb-3 text-sm text-gray-600 italic">{data.theirInningsCommentary}</p>
-                  )}
-                  {[...(data.theirCompletedOvers ?? [])].reverse().map((over, i, arr) => (
-                    <div key={i} className={`py-2 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                      <span className="font-medium">{`Over ${over.over ?? (arr.length - i)}`}</span>
-                      <span className="ml-2 text-gray-500">
-                        {data.opposition} {over.score ?? 0}/{over.wickets ?? 0}
-                      </span>
-                      {over.commentary && (
-                        <p className="mt-1 text-gray-600">{over.commentary}</p>
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
+                  {activeCommentaryTab === 'vcc' && (data.completedOvers?.length ?? 0) > 0 && (
+                    <div>
+                      {data.ourInningsCommentary && (
+                        <p className="mb-3 text-sm text-gray-600 italic">{data.ourInningsCommentary}</p>
                       )}
+                      {[...(data.completedOvers ?? [])].reverse().map((over, i, arr) => {
+                        const overNum = over.over?.overNumber ?? (arr.length - i);
+                        const balls = over.over?.balls
+                          ? [...over.over.balls].sort((a, b) => (a.ballNumber ?? 0) - (b.ballNumber ?? 0))
+                          : [];
+                        return (
+                          <div key={i} className={`py-3 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                              <span className="font-medium">{`End of over ${overNum}`}</span>
+                              {over.over?.bowler && (
+                                <span className="text-gray-400">({over.over.bowler})</span>
+                              )}
+                              <span className="text-gray-500">
+                                {`(+${over.scoreForThisOver ?? 0}) Village ${over.scoreAtEndOfOver ?? 0}/${over.wicketsAtEndOfOver ?? 0}`}
+                              </span>
+                            </div>
+                            {balls.length > 0 && (
+                              <>
+                                <div className="mt-2 flex flex-wrap gap-1.5" aria-label={`Over ${overNum} deliveries`}>
+                                  {balls.map((ball, bi) => {
+                                    const blob = getBallBlob(ball);
+                                    return (
+                                      <span
+                                        key={bi}
+                                        title={ball.bowler && ball.batsmanName
+                                          ? `${ball.bowler} to ${ball.batsmanName}: ${getBallDescription(ball)}`
+                                          : getBallDescription(ball)
+                                        }
+                                        className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold ${blob.className}`}
+                                      >
+                                        {blob.label}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                                <div className="mt-1.5 space-y-0.5">
+                                  {balls.map((ball, bi) => (
+                                    <div key={bi} className={`pl-2 ${ball.wicket ? 'font-semibold text-red-700' : 'text-gray-600'}`}>
+                                      <span className="font-mono text-xs mr-1">{overNum}.{ball.ballNumber}</span>
+                                      {ball.bowler && ball.batsmanName
+                                        ? `${ball.bowler} to ${ball.batsmanName}, ${getBallDescription(ball)}`
+                                        : getBallDescription(ball)
+                                      }
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                  ))}
+                  )}
+                  {activeCommentaryTab === 'oppo' && (data.theirCompletedOvers?.length ?? 0) > 0 && (
+                    <div>
+                      {data.theirInningsCommentary && (
+                        <p className="mb-3 text-sm text-gray-600 italic">{data.theirInningsCommentary}</p>
+                      )}
+                      {[...(data.theirCompletedOvers ?? [])].reverse().map((over, i, arr) => (
+                        <div key={i} className={`py-3 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                          <span className="font-medium">{`Over ${over.over ?? (arr.length - i)}`}</span>
+                          <span className="ml-2 text-gray-500">
+                            {data.opposition} {over.score ?? 0}/{over.wickets ?? 0}
+                          </span>
+                          {over.commentary && (
+                            <p className="mt-1 text-gray-600">{over.commentary}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </section>
         )}
 
