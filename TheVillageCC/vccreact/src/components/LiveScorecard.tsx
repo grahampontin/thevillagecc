@@ -642,47 +642,42 @@ const LiveScorecard: React.FC = () => {
                           ? [...over.over.balls].sort((a, b) => (a.ballNumber ?? 0) - (b.ballNumber ?? 0))
                           : [];
                         return (
-                          <div key={i} className={`py-3 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                              <span className="font-medium">{`End of over ${overNum}`}</span>
-                              {over.over?.bowler && (
-                                <span className="text-gray-400">({over.over.bowler})</span>
-                              )}
-                              <span className="text-gray-500">
-                                {`(+${over.scoreForThisOver ?? 0}) Village ${over.scoreAtEndOfOver ?? 0}/${over.wicketsAtEndOfOver ?? 0}`}
+                          <div key={i} className={`py-4 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                            <div className="flex flex-wrap items-center justify-between gap-2 bg-gray-50 rounded-lg px-3 py-2 mb-3">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-gray-900">{`Over ${overNum}`}</span>
+                                {over.over?.bowler && (
+                                  <span className="text-gray-500">· {over.over.bowler}</span>
+                                )}
+                              </div>
+                              <span className="text-gray-600 text-xs">
+                                Village {over.scoreAtEndOfOver ?? 0}/{over.wicketsAtEndOfOver ?? 0}
+                                <span className="ml-1 text-gray-400">(+{over.scoreForThisOver ?? 0})</span>
                               </span>
                             </div>
                             {balls.length > 0 && (
-                              <>
-                                <div className="mt-2 flex flex-wrap gap-1.5" aria-label={`Over ${overNum} deliveries`}>
-                                  {balls.map((ball, bi) => {
-                                    const blob = getBallBlob(ball);
-                                    return (
+                              <div className="space-y-2 pl-1" aria-label={`Over ${overNum} deliveries`}>
+                                {balls.map((ball, bi) => {
+                                  const blob = getBallBlob(ball);
+                                  return (
+                                    <div key={bi} className="flex items-center gap-2">
                                       <span
-                                        key={bi}
-                                        title={ball.bowler && ball.batsmanName
-                                          ? `${ball.bowler} to ${ball.batsmanName}: ${getBallDescription(ball)}`
-                                          : getBallDescription(ball)
-                                        }
-                                        className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold ${blob.className}`}
+                                        data-testid="ball-blob"
+                                        className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 ${blob.className}`}
                                       >
                                         {blob.label}
                                       </span>
-                                    );
-                                  })}
-                                </div>
-                                <div className="mt-1.5 space-y-0.5">
-                                  {balls.map((ball, bi) => (
-                                    <div key={bi} className={`pl-2 ${ball.wicket ? 'font-semibold text-red-700' : 'text-gray-600'}`}>
-                                      <span className="font-mono text-xs mr-1">{overNum}.{ball.ballNumber}</span>
-                                      {ball.bowler && ball.batsmanName
-                                        ? `${ball.bowler} to ${ball.batsmanName}, ${getBallDescription(ball)}`
-                                        : getBallDescription(ball)
-                                      }
+                                      <div className={ball.wicket ? 'font-semibold text-red-700' : 'text-gray-600'}>
+                                        <span className="font-mono text-xs text-gray-400 mr-1">{overNum}.{ball.ballNumber}</span>
+                                        {ball.bowler && ball.batsmanName
+                                          ? `${ball.bowler} to ${ball.batsmanName}, ${getBallDescription(ball)}`
+                                          : getBallDescription(ball)
+                                        }
+                                      </div>
                                     </div>
-                                  ))}
-                                </div>
-                              </>
+                                  );
+                                })}
+                              </div>
                             )}
                           </div>
                         );
