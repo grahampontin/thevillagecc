@@ -698,4 +698,119 @@ describe('LiveScorecard', () => {
       expect(screen.getByText(/Lyndhurst Park/i)).toBeInTheDocument();
     });
   });
+
+  test('shows VCC Commentary tab when completedOvers data is present', async () => {
+    const withCommentary = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          { over: {}, scoreAtEndOfOver: 8, wicketsAtEndOfOver: 0, scoreForThisOver: 8 },
+          { over: {}, scoreAtEndOfOver: 15, wicketsAtEndOfOver: 1, scoreForThisOver: 7 },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withCommentary);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /VCC Commentary/i })).toBeInTheDocument();
+    });
+
+    // Shows per-over summary
+    await waitFor(() => {
+      expect(screen.getByText(/End of over 2/i)).toBeInTheDocument();
+      expect(screen.getByText(/End of over 1/i)).toBeInTheDocument();
+    });
+  });
+
+  test('shows Oppo Commentary tab when theirCompletedOvers data is present', async () => {
+    const withOppoCommentary = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        theirCompletedOvers: [
+          { over: 1, score: 10, wickets: 0, commentary: 'Solid start for the opposition.' },
+          { over: 2, score: 18, wickets: 1, commentary: 'Wicket falls in the second over.' },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withOppoCommentary);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Oppo Commentary/i })).toBeInTheDocument();
+    });
+
+    // Click Oppo Commentary tab
+    fireEvent.click(screen.getByRole('button', { name: /Oppo Commentary/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Solid start for the opposition/i)).toBeInTheDocument();
+      expect(screen.getByText(/Wicket falls in the second over/i)).toBeInTheDocument();
+    });
+  });
+
+  test('shows innings commentary text when ourInningsCommentary is provided', async () => {
+    const withInningsCommentary = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          { over: {}, scoreAtEndOfOver: 12, wicketsAtEndOfOver: 0, scoreForThisOver: 12 },
+        ],
+        ourInningsCommentary: 'A fine innings total from The Village CC.',
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withInningsCommentary);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText(/A fine innings total from The Village CC/i)).toBeInTheDocument();
+    });
+  });
+
+  test('shows Worm chart tab when completedOvers data is present', async () => {
+    const withChartData = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          { over: {}, scoreAtEndOfOver: 8, wicketsAtEndOfOver: 0, scoreForThisOver: 8 },
+          { over: {}, scoreAtEndOfOver: 15, wicketsAtEndOfOver: 1, scoreForThisOver: 7 },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withChartData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Worm$/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^Manhattan$/i })).toBeInTheDocument();
+    });
+  });
+
+  test('shows Partnerships chart tab when partnerships data is present', async () => {
+    const withPartnerships = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        partnerships: [
+          { player1Name: 'Smith', player2Name: 'Jones', score: 45, ballCount: 48 },
+          { player1Name: 'Brown', player2Name: 'Davis', score: 30, ballCount: 35 },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withPartnerships);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Partnerships$/i })).toBeInTheDocument();
+    });
+  });
 });

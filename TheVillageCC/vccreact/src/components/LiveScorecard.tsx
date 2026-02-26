@@ -1,9 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line, Bar } from 'react-chartjs-2';
 import Header from './Header';
 import Footer from './Footer';
 import { getLiveScorecardData } from '../api/liveScoringApi';
 import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1 } from '../api/swaggerTypes';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+);
 
 const LiveScorecard: React.FC = () => {
   const { matchId } = useParams<{ matchId: string }>();
@@ -11,6 +34,8 @@ const LiveScorecard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeInnings, setActiveInnings] = useState<'our' | 'their'>('our');
+  const [activeCommentaryTab, setActiveCommentaryTab] = useState<'vcc' | 'oppo'>('vcc');
+  const [activeAnalysisTab, setActiveAnalysisTab] = useState<'worm' | 'manhattan' | 'partnerships'>('worm');
 
   useEffect(() => {
     const fetchScorecardData = async () => {
@@ -521,6 +546,203 @@ const LiveScorecard: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Commentary section */}
+        {((data.completedOvers?.length ?? 0) > 0 || (data.theirCompletedOvers?.length ?? 0) > 0) && (
+          <section className="max-w-6xl mx-auto mt-6">
+            <div className="flex gap-2 mb-3 flex-wrap">
+              {(data.completedOvers?.length ?? 0) > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setActiveCommentaryTab('vcc')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium ${
+                    activeCommentaryTab === 'vcc'
+                      ? 'bg-villageGreen text-white'
+                      : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                  }`}
+                >
+                  VCC Commentary
+                </button>
+              )}
+              {(data.theirCompletedOvers?.length ?? 0) > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setActiveCommentaryTab('oppo')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium ${
+                    activeCommentaryTab === 'oppo'
+                      ? 'bg-villageGreen text-white'
+                      : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                  }`}
+                >
+                  Oppo Commentary
+                </button>
+              )}
+            </div>
+            <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
+              {activeCommentaryTab === 'vcc' && (data.completedOvers?.length ?? 0) > 0 && (
+                <div>
+                  {data.ourInningsCommentary && (
+                    <p className="mb-3 text-sm text-gray-600 italic">{data.ourInningsCommentary}</p>
+                  )}
+                  {[...(data.completedOvers ?? [])].reverse().map((over, i, arr) => (
+                    <div key={i} className={`py-2 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                      <span className="font-medium">{`End of over ${arr.length - i}`}</span>
+                      <span className="ml-2 text-gray-500">
+                        {`(+${over.scoreForThisOver ?? 0}) Village ${over.scoreAtEndOfOver ?? 0}/${over.wicketsAtEndOfOver ?? 0}`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {activeCommentaryTab === 'oppo' && (data.theirCompletedOvers?.length ?? 0) > 0 && (
+                <div>
+                  {data.theirInningsCommentary && (
+                    <p className="mb-3 text-sm text-gray-600 italic">{data.theirInningsCommentary}</p>
+                  )}
+                  {[...(data.theirCompletedOvers ?? [])].reverse().map((over, i, arr) => (
+                    <div key={i} className={`py-2 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                      <span className="font-medium">{`Over ${over.over ?? (arr.length - i)}`}</span>
+                      <span className="ml-2 text-gray-500">
+                        {data.opposition} {over.score ?? 0}/{over.wickets ?? 0}
+                      </span>
+                      {over.commentary && (
+                        <p className="mt-1 text-gray-600">{over.commentary}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Analysis / Charts section */}
+        {((data.completedOvers?.length ?? 0) > 0 || (data.partnerships?.length ?? 0) > 0) && (() => {
+          const ourOvers = data.completedOvers ?? [];
+          const theirOvers = data.theirCompletedOvers ?? [];
+          const partnerships = data.partnerships ?? [];
+
+          const ourCumulative = ourOvers.map(o => o.scoreAtEndOfOver ?? 0);
+          const ourPerOver = ourOvers.map(o => o.scoreForThisOver ?? 0);
+
+          const theirByOver: number[] = [];
+          const theirCumulative: number[] = [];
+          if (theirOvers.length > 0) {
+            const maxOver = Math.max(...theirOvers.map(o => o.over ?? 0));
+            let prev = 0;
+            for (let ov = 1; ov <= maxOver; ov++) {
+              const entry = theirOvers.find(o => (o.over ?? 0) === ov);
+              const cumul = entry?.score ?? prev;
+              theirByOver.push(cumul - prev);
+              theirCumulative.push(cumul);
+              prev = cumul;
+            }
+          }
+
+          const tabBtn = (tab: 'worm' | 'manhattan' | 'partnerships', label: string) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveAnalysisTab(tab)}
+              className={`px-4 py-2 rounded-full text-sm font-medium ${
+                activeAnalysisTab === tab
+                  ? 'bg-villageGreen text-white'
+                  : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+              }`}
+            >
+              {label}
+            </button>
+          );
+
+          const wormData = {
+            labels: Array.from(
+              { length: Math.max(ourCumulative.length, theirCumulative.length) },
+              (_, i) => String(i + 1)
+            ),
+            datasets: [
+              {
+                label: 'The Village CC',
+                data: ourCumulative,
+                borderColor: '#1d7a4b',
+                backgroundColor: 'transparent',
+                tension: 0.1,
+                pointRadius: 2,
+              },
+              ...(theirCumulative.length > 0 ? [{
+                label: data.opposition ?? 'Opposition',
+                data: theirCumulative,
+                borderColor: '#d4a017',
+                backgroundColor: 'transparent',
+                tension: 0.1,
+                pointRadius: 2,
+              }] : []),
+            ],
+          };
+
+          const allManhattanLabels = (() => {
+            const maxLen = Math.max(ourPerOver.length, theirByOver.length);
+            return Array.from({ length: maxLen }, (_, i) => String(i + 1));
+          })();
+
+          const manhattanData = {
+            labels: allManhattanLabels,
+            datasets: [
+              {
+                label: 'The Village CC',
+                data: ourPerOver,
+                backgroundColor: '#1d7a4b',
+              },
+              ...(theirByOver.length > 0 ? [{
+                label: data.opposition ?? 'Opposition',
+                data: theirByOver,
+                backgroundColor: '#d4a017',
+              }] : []),
+            ],
+          };
+
+          const chartOptions = {
+            responsive: true,
+            plugins: { legend: { position: 'top' as const } },
+          };
+
+          return (
+            <section className="max-w-6xl mx-auto mt-6">
+              <div className="flex gap-2 mb-3 flex-wrap">
+                {ourOvers.length > 0 && tabBtn('worm', 'Worm')}
+                {ourOvers.length > 0 && tabBtn('manhattan', 'Manhattan')}
+                {partnerships.length > 0 && tabBtn('partnerships', 'Partnerships')}
+              </div>
+              <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
+                {activeAnalysisTab === 'worm' && ourOvers.length > 0 && (
+                  <Line data={wormData} options={chartOptions} />
+                )}
+                {activeAnalysisTab === 'manhattan' && ourOvers.length > 0 && (
+                  <Bar data={manhattanData} options={chartOptions} />
+                )}
+                {activeAnalysisTab === 'partnerships' && partnerships.length > 0 && (
+                  <Bar
+                    data={{
+                      labels: partnerships.map((p, i) =>
+                        p.player1Name && p.player2Name
+                          ? `${p.player1Name} & ${p.player2Name}`
+                          : `Partnership ${i + 1}`
+                      ),
+                      datasets: [{
+                        label: 'Partnership runs',
+                        data: partnerships.map(p => p.score ?? 0),
+                        backgroundColor: '#1d7a4b',
+                      }],
+                    }}
+                    options={{
+                      ...chartOptions,
+                      indexAxis: 'y' as const,
+                    }}
+                  />
+                )}
+              </div>
+            </section>
+          );
+        })()}
 
         {/* Innings section (completed matches) */}
         {completed && (hasOurInnings || hasTheirInnings) && (
