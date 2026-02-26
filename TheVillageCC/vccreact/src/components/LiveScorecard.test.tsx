@@ -714,6 +714,12 @@ describe('LiveScorecard', () => {
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withCommentary);
     renderWithRouter('123');
 
+    // Expand the commentary section first
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /VCC Commentary/i })).toBeInTheDocument();
     });
@@ -739,6 +745,12 @@ describe('LiveScorecard', () => {
 
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withOppoCommentary);
     renderWithRouter('123');
+
+    // Expand the commentary section first
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /Oppo Commentary/i })).toBeInTheDocument();
@@ -767,6 +779,12 @@ describe('LiveScorecard', () => {
 
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withInningsCommentary);
     renderWithRouter('123');
+
+    // Expand the commentary section first
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/A fine innings total from The Village CC/i)).toBeInTheDocument();
@@ -802,6 +820,12 @@ describe('LiveScorecard', () => {
 
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withBalls);
     renderWithRouter('123');
+
+    // Expand the commentary section first
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
 
     await waitFor(() => {
       // Shows bowler name in over header
@@ -839,9 +863,69 @@ describe('LiveScorecard', () => {
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withBalls);
     renderWithRouter('123');
 
+    // Expand the commentary section first
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
     await waitFor(() => {
       expect(screen.getByText(/End of over 3/i)).toBeInTheDocument();
       expect(screen.getByText(/3\.1/)).toBeInTheDocument();
+    });
+  });
+
+  test('shows coloured ball blobs when over has balls data', async () => {
+    const withBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 12,
+            wicketsAtEndOfOver: 1,
+            scoreForThisOver: 12,
+            over: {
+              overNumber: 2,
+              bowler: 'P. Bowler',
+              balls: [
+                { ballNumber: 1, amount: 0, thing: '', bowler: 'P. Bowler', batsmanName: 'Q. Batsman' },
+                { ballNumber: 2, amount: 4, thing: '', bowler: 'P. Bowler', batsmanName: 'Q. Batsman' },
+                { ballNumber: 3, amount: 6, thing: '', bowler: 'P. Bowler', batsmanName: 'Q. Batsman' },
+                { ballNumber: 4, amount: 1, thing: 'wd', bowler: 'P. Bowler', batsmanName: 'Q. Batsman' },
+                { ballNumber: 5, amount: 1, thing: 'nb', bowler: 'P. Bowler', batsmanName: 'Q. Batsman' },
+                { ballNumber: 6, amount: 0, thing: '', bowler: 'P. Bowler', batsmanName: 'Q. Batsman', wicket: { description: 'caught' } },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withBalls);
+    renderWithRouter('123');
+
+    // Expand the commentary section first
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
+    await waitFor(() => {
+      const blobContainer = screen.getByLabelText(/Over 2 deliveries/i);
+      const blobs = blobContainer.querySelectorAll('span');
+      // dot ball → '·'
+      expect(blobs[0].textContent).toBe('·');
+      // four → '4'
+      expect(blobs[1].textContent).toBe('4');
+      // six → '6'
+      expect(blobs[2].textContent).toBe('6');
+      // wide → 'Wd'
+      expect(blobs[3].textContent).toBe('Wd');
+      // no ball → 'Nb'
+      expect(blobs[4].textContent).toBe('Nb');
+      // wicket → 'W'
+      expect(blobs[5].textContent).toBe('W');
     });
   });
 
