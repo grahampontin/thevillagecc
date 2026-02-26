@@ -773,6 +773,78 @@ describe('LiveScorecard', () => {
     });
   });
 
+  test('shows ball-by-ball commentary when over has balls data', async () => {
+    const withBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 9,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 9,
+            over: {
+              overNumber: 1,
+              bowler: 'A. Bowler',
+              runsConceded: 9,
+              wicketsTaken: 0,
+              balls: [
+                { ballNumber: 1, amount: 0, thing: '', bowler: 'A. Bowler', batsmanName: 'B. Batsman' },
+                { ballNumber: 2, amount: 4, thing: '', bowler: 'A. Bowler', batsmanName: 'B. Batsman' },
+                { ballNumber: 3, amount: 1, thing: 'wd', bowler: 'A. Bowler', batsmanName: 'B. Batsman' },
+                { ballNumber: 4, amount: 6, thing: '', bowler: 'A. Bowler', batsmanName: 'C. Batsman' },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      // Shows bowler name in over header
+      expect(screen.getAllByText(/A\. Bowler/).length).toBeGreaterThan(0);
+      // Shows ball entries with bowler-to-batsman format
+      expect(screen.getByText(/A\. Bowler to B\. Batsman, no run/)).toBeInTheDocument();
+      expect(screen.getByText(/A\. Bowler to B\. Batsman, FOUR/)).toBeInTheDocument();
+      expect(screen.getByText(/A\. Bowler to B\. Batsman, 1 wide/)).toBeInTheDocument();
+      expect(screen.getByText(/A\. Bowler to C\. Batsman, SIX!/)).toBeInTheDocument();
+    });
+  });
+
+  test('shows ball-by-ball commentary with over number from OverV1 overNumber field', async () => {
+    const withBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 5,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 5,
+            over: {
+              overNumber: 3,
+              bowler: 'X. Bowler',
+              balls: [
+                { ballNumber: 1, amount: 1, thing: '', bowler: 'X. Bowler', batsmanName: 'Y. Batsman' },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByText(/End of over 3/i)).toBeInTheDocument();
+      expect(screen.getByText(/3\.1/)).toBeInTheDocument();
+    });
+  });
+
   test('shows Worm chart tab when completedOvers data is present', async () => {
     const withChartData = {
       ...mockCompletedScorecardData,

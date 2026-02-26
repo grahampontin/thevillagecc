@@ -32,3 +32,6 @@ export type WicketV1 = components['schemas']['WicketV1'];
 export type BowlerInningsDetailsV1 = components['schemas']['BowlerInningsDetails'];
 export type BatsmanInningsDetailsV1 = components['schemas']['BatsmanInningsDetails'];
 export type FoWEntryV1 = components['schemas']['FoWEntryV1'];
+export type OverSummaryV1 = components['schemas']['OverSummaryV1'];
+export type OverV1 = components['schemas']['OverV1'];
+export type BallV1 = components['schemas']['BallV1'];
