@@ -919,8 +919,8 @@ const LiveScorecard: React.FC = () => {
                           legend: { position: 'top' as const },
                           tooltip: {
                             callbacks: {
-                              label: (ctx: { dataset: { label?: string }; parsed: { x: number } }) =>
-                                `${ctx.dataset.label ?? ''}: ${Math.abs(ctx.parsed.x)}`,
+                              label: (ctx: { dataset: { label?: string }; parsed: { x: number | null } }) =>
+                                `${ctx.dataset.label ?? ''}: ${Math.abs(ctx.parsed.x ?? 0)}`,
                             },
                           },
                         },
