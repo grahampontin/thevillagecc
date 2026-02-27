@@ -164,6 +164,15 @@ const LiveScorecard: React.FC = () => {
     return { label: String(amount), className: 'bg-gray-200 text-gray-700' };
   };
 
+  const formatBattingStats = (
+    score: number | undefined,
+    details: { ballsFaced?: number; fours?: number; sixes?: number; strikeRate?: number } | null | undefined
+  ): string => {
+    if (score == null) return '';
+    if (!details) return ` ${score}`;
+    return ` ${score} (${details.ballsFaced ?? 0}b ${details.fours ?? 0}x4 ${details.sixes ?? 0}x6) SR: ${(details.strikeRate ?? 0).toFixed(2)}`;
+  };
+
   const renderBattingTable = (
     entries: BattingEntryV1[],
     extras?: { wides?: number; noBalls?: number; byes?: number; legByes?: number; penalties?: number; total?: number },
@@ -368,6 +377,10 @@ const LiveScorecard: React.FC = () => {
   }
 
   const data = scorecardData.inPlayData!;
+
+  const fowByPlayerId = new Map(
+    (data.fallOfWickets ?? []).map(f => [f.outGoingPlayerId, f])
+  );
 
   // Scores to show in the hero header
   const ourScoreDisplay = completed
@@ -677,6 +690,8 @@ const LiveScorecard: React.FC = () => {
                               <div className="space-y-2 pl-1" aria-label={`Over ${overNum} deliveries`}>
                                 {balls.map((ball, bi) => {
                                   const blob = getBallBlob(ball);
+                                  const fow = ball.wicket ? fowByPlayerId.get(ball.wicket.player) : undefined;
+                                  const statsText = formatBattingStats(fow?.outGoingPlayerScore, fow?.outgoingBatsmanInningsDetails);
                                   return (
                                     <div key={bi}>
                                       <div className="flex items-center gap-2">
@@ -686,21 +701,27 @@ const LiveScorecard: React.FC = () => {
                                         >
                                           {blob.label}
                                         </span>
-                                        <div className={ball.wicket ? 'font-semibold text-red-700' : 'text-gray-600'}>
+                                        <div className="text-gray-600">
                                           <span className="font-mono text-xs text-gray-400 mr-1">{overNum}.{ball.ballNumber}</span>
-                                          {ball.bowler && ball.batsmanName
-                                            ? `${ball.bowler} to ${ball.batsmanName}, ${getBallDescription(ball)}`
-                                            : getBallDescription(ball)
-                                          }
+                                          {ball.bowler && ball.batsmanName ? (
+                                            <>
+                                              {`${ball.bowler} to ${ball.batsmanName}, `}
+                                              {ball.wicket ? <span className="font-bold text-red-700">OUT!</span> : getBallDescription(ball)}
+                                            </>
+                                          ) : (
+                                            ball.wicket ? <span className="font-bold text-red-700">OUT!</span> : getBallDescription(ball)
+                                          )}
                                         </div>
                                       </div>
                                       {ball.wicket && (
-                                        <div className="ml-9 mt-0.5 text-sm text-red-700">
+                                        <div className="ml-9 mt-1 bg-red-50 border border-red-100 rounded px-2 py-1 text-sm">
                                           {ball.wicket.playerName && (
-                                            <div>{ball.wicket.playerName} {formatWicketDismissal(ball.wicket)}</div>
+                                            <div className="font-semibold text-gray-800">
+                                              {ball.wicket.playerName} {formatWicketDismissal(ball.wicket)}{statsText}
+                                            </div>
                                           )}
                                           {ball.wicket.description && (
-                                            <div className="text-gray-500 italic">{ball.wicket.description}</div>
+                                            <div className="text-gray-500 italic text-xs mt-0.5">{ball.wicket.description}</div>
                                           )}
                                         </div>
                                       )}

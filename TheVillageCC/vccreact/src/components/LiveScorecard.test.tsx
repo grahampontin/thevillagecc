@@ -1055,8 +1055,10 @@ describe('LiveScorecard', () => {
     fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
 
     await waitFor(() => {
-      // Wicket ball line
-      expect(screen.getByText(/J\. Bowler to G\. Pontin, OUT!/i)).toBeInTheDocument();
+      // Wicket ball line shows bowler to batsman context
+      expect(screen.getByText(/J\. Bowler to G\. Pontin,/i)).toBeInTheDocument();
+      // Only "OUT!" is shown in red (as a separate element)
+      expect(screen.getByText('OUT!')).toBeInTheDocument();
       // Wicket details sub-row: player name + dismissal
       expect(screen.getByText(/GC Pontin ct\. Steve b\. Jeff/i)).toBeInTheDocument();
       // Wicket commentary
@@ -1111,6 +1113,70 @@ describe('LiveScorecard', () => {
     await waitFor(() => {
       // Wicket details sub-row: player name + dismissal without description
       expect(screen.getByText(/H\. Batter b\. K\. Bowler/i)).toBeInTheDocument();
+    });
+  });
+
+  test('shows batting stats in wicket sub-row when fallOfWickets data is available', async () => {
+    const withWicketAndStats = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        fallOfWickets: [
+          {
+            outGoingPlayerId: 5,
+            outGoingPlayerScore: 20,
+            outgoingBatsmanInningsDetails: {
+              ballsFaced: 21,
+              fours: 4,
+              sixes: 0,
+              strikeRate: 95.24,
+            },
+          },
+        ],
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 45,
+            wicketsAtEndOfOver: 1,
+            scoreForThisOver: 5,
+            over: {
+              overNumber: 8,
+              bowler: 'T. Bull',
+              runsConceded: 5,
+              wicketsTaken: 1,
+              balls: [
+                {
+                  ballNumber: 2,
+                  amount: 0,
+                  thing: '',
+                  bowler: 'T. Bull',
+                  batsmanName: 'P. Misra',
+                  wicket: {
+                    player: 5,
+                    playerName: 'P. Misra',
+                    bowler: 'T. Bull',
+                    fielder: 'Fielder',
+                    isCaught: true,
+                    description: null,
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withWicketAndStats);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
+    await waitFor(() => {
+      // Wicket sub-row should include player name, dismissal type, and batting stats
+      expect(screen.getByText(/P\. Misra ct\. Fielder b\. T\. Bull 20 \(21b 4x4 0x6\) SR: 95\.24/i)).toBeInTheDocument();
     });
   });
 });
