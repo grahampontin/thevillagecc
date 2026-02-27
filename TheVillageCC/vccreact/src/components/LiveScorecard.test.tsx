@@ -363,11 +363,15 @@ describe('LiveScorecard', () => {
     renderWithRouter('123');
 
     await waitFor(() => {
-      expect(screen.getByText(/Match Report/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Match Report/i })).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/Sunny day, good batting conditions/i)).toBeInTheDocument();
-    expect(screen.getByText(/An excellent match with great performances from both teams/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Match Report/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Sunny day, good batting conditions/i)).toBeInTheDocument();
+      expect(screen.getByText(/An excellent match with great performances from both teams/i)).toBeInTheDocument();
+    });
   });
 
   test('handles fetch exception gracefully', async () => {
@@ -945,6 +949,11 @@ describe('LiveScorecard', () => {
     renderWithRouter('123');
 
     await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Team Analysis$/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^Team Analysis$/i }));
+
+    await waitFor(() => {
       expect(screen.getByRole('button', { name: /^Worm$/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /^Manhattan$/i })).toBeInTheDocument();
     });
@@ -964,6 +973,11 @@ describe('LiveScorecard', () => {
 
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withPartnerships);
     renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Team Analysis$/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^Team Analysis$/i }));
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /^Partnerships$/i })).toBeInTheDocument();
@@ -1206,6 +1220,11 @@ describe('LiveScorecard', () => {
     renderWithRouter('123');
 
     await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Team Analysis$/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^Team Analysis$/i }));
+
+    await waitFor(() => {
       expect(screen.getByRole('button', { name: /^Wagon Wheel$/i })).toBeInTheDocument();
     });
   });
@@ -1234,6 +1253,11 @@ describe('LiveScorecard', () => {
 
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withNoAngleBalls);
     renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Team Analysis$/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^Team Analysis$/i }));
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /^Worm$/i })).toBeInTheDocument();
@@ -1266,6 +1290,11 @@ describe('LiveScorecard', () => {
 
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withAngleBalls);
     renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Team Analysis$/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^Team Analysis$/i }));
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /^Wagon Wheel$/i })).toBeInTheDocument();
@@ -1307,7 +1336,143 @@ describe('LiveScorecard', () => {
     renderWithRouter('123');
 
     await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Team Analysis$/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^Team Analysis$/i }));
+
+    await waitFor(() => {
       expect(screen.getByRole('button', { name: /^Manhattan$/i })).toBeInTheDocument();
     });
+  });
+
+  test('shows Player Analysis section when completedOvers have ball-by-ball data with batsman info', async () => {
+    const withPlayerBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 12,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 12,
+            over: {
+              overNumber: 1,
+              balls: [
+                { ballNumber: 1, amount: 4, thing: '', batsman: 1, batsmanName: 'A. Batter' },
+                { ballNumber: 2, amount: 2, thing: '', batsman: 1, batsmanName: 'A. Batter' },
+                { ballNumber: 3, amount: 6, thing: '', batsman: 2, batsmanName: 'B. Player' },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withPlayerBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Player Analysis$/i })).toBeInTheDocument();
+    });
+  });
+
+  test('shows player icon buttons and Player Worm tab when Player Analysis section is expanded', async () => {
+    const withPlayerBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 12,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 12,
+            over: {
+              overNumber: 1,
+              balls: [
+                { ballNumber: 1, amount: 4, thing: '', batsman: 1, batsmanName: 'Alan Batting' },
+                { ballNumber: 2, amount: 2, thing: '', batsman: 2, batsmanName: 'Bob Player' },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withPlayerBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Player Analysis$/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^Player Analysis$/i }));
+
+    await waitFor(() => {
+      // Player icons use the aria-label of the player name
+      expect(screen.getByRole('button', { name: /Alan Batting/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Bob Player/i })).toBeInTheDocument();
+      // Player Worm tab should be visible
+      expect(screen.getByRole('button', { name: /^Player Worm$/i })).toBeInTheDocument();
+    });
+  });
+
+  test('shows player wagon wheel SVG when Wagon Wheel tab selected in player analysis', async () => {
+    const withAnglePlayerBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 10,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 10,
+            over: {
+              overNumber: 1,
+              balls: [
+                { ballNumber: 1, amount: 4, thing: '', batsman: 1, batsmanName: 'A. Batter', angle: Math.PI / 2 },
+                { ballNumber: 2, amount: 6, thing: '', batsman: 1, batsmanName: 'A. Batter', angle: Math.PI },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withAnglePlayerBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Player Analysis$/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^Player Analysis$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Wagon Wheel$/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^Wagon Wheel$/i }));
+
+    await waitFor(() => {
+      const svg = document.querySelector('[data-testid="player-wagon-wheel"]');
+      expect(svg).toBeInTheDocument();
+    });
+  });
+
+  test('does not show Player Analysis section when no ball-by-ball data is available', async () => {
+    const withNoPlayerBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          { over: {}, scoreAtEndOfOver: 8, wicketsAtEndOfOver: 0, scoreForThisOver: 8 },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withNoPlayerBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Team Analysis$/i })).toBeInTheDocument();
+    });
+    expect(screen.queryByRole('button', { name: /^Player Analysis$/i })).not.toBeInTheDocument();
   });
 });
