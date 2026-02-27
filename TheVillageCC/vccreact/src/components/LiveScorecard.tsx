@@ -35,7 +35,7 @@ const LiveScorecard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeInnings, setActiveInnings] = useState<'our' | 'their'>('our');
   const [activeCommentaryTab, setActiveCommentaryTab] = useState<'vcc' | 'oppo'>('vcc');
-  const [activeAnalysisTab, setActiveAnalysisTab] = useState<'worm' | 'manhattan' | 'partnerships'>('worm');
+  const [activeAnalysisTab, setActiveAnalysisTab] = useState<'worm' | 'manhattan' | 'partnerships' | 'wagon'>('worm');
   const [commentaryExpanded, setCommentaryExpanded] = useState(false);
 
   useEffect(() => {
@@ -771,18 +771,32 @@ const LiveScorecard: React.FC = () => {
           const theirByOver: number[] = [];
           const theirCumulative: number[] = [];
           if (theirOvers.length > 0) {
-            const maxOver = Math.max(...theirOvers.map(o => o.over ?? 0));
-            let prev = 0;
-            for (let ov = 1; ov <= maxOver; ov++) {
-              const entry = theirOvers.find(o => (o.over ?? 0) === ov);
-              const cumul = entry?.score ?? prev;
-              theirByOver.push(cumul - prev);
-              theirCumulative.push(cumul);
-              prev = cumul;
+            const sortedTheirOvers = [...theirOvers]
+              .filter(o => (o.over ?? 0) > 0)
+              .sort((a, b) => (a.over ?? 0) - (b.over ?? 0));
+            let prevOver = 0;
+            let prevScore = 0;
+            for (const point of sortedTheirOvers) {
+              const currentOver = point.over ?? 0;
+              const currentScore = point.score ?? prevScore;
+              const runsInSegment = currentScore - prevScore;
+              const oversInSegment = currentOver - prevOver;
+              const runsPerOver = oversInSegment > 0 ? runsInSegment / oversInSegment : 0;
+              for (let ov = prevOver + 1; ov <= currentOver; ov++) {
+                theirByOver.push(runsPerOver);
+                theirCumulative.push(prevScore + runsPerOver * (ov - prevOver));
+              }
+              prevOver = currentOver;
+              prevScore = currentScore;
             }
           }
 
-          const tabBtn = (tab: 'worm' | 'manhattan' | 'partnerships', label: string) => (
+          // Wagon wheel: collect balls that have angle data (legal deliveries or no-balls with runs)
+          const wagonWheelBalls = ourOvers
+            .flatMap(o => o.over?.balls ?? [])
+            .filter(b => b.angle != null && (b.thing === '' || b.thing === null || b.thing === undefined || (b.thing === 'nb' && (b.amount ?? 0) > 1)));
+
+          const tabBtn = (tab: 'worm' | 'manhattan' | 'partnerships' | 'wagon', label: string) => (
             <button
               key={tab}
               type="button"
@@ -854,6 +868,7 @@ const LiveScorecard: React.FC = () => {
                 {ourOvers.length > 0 && tabBtn('worm', 'Worm')}
                 {ourOvers.length > 0 && tabBtn('manhattan', 'Manhattan')}
                 {partnerships.length > 0 && tabBtn('partnerships', 'Partnerships')}
+                {wagonWheelBalls.length > 0 && tabBtn('wagon', 'Wagon Wheel')}
               </div>
               <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
                 {activeAnalysisTab === 'worm' && ourOvers.length > 0 && (
@@ -862,26 +877,138 @@ const LiveScorecard: React.FC = () => {
                 {activeAnalysisTab === 'manhattan' && ourOvers.length > 0 && (
                   <Bar data={manhattanData} options={chartOptions} />
                 )}
-                {activeAnalysisTab === 'partnerships' && partnerships.length > 0 && (
-                  <Bar
-                    data={{
-                      labels: partnerships.map((p, i) =>
-                        p.player1Name && p.player2Name
-                          ? `${p.player1Name} & ${p.player2Name}`
-                          : `Partnership ${i + 1}`
-                      ),
-                      datasets: [{
-                        label: 'Partnership runs',
-                        data: partnerships.map(p => p.score ?? 0),
-                        backgroundColor: '#1d7a4b',
-                      }],
-                    }}
-                    options={{
-                      ...chartOptions,
-                      indexAxis: 'y' as const,
-                    }}
-                  />
-                )}
+                {activeAnalysisTab === 'partnerships' && partnerships.length > 0 && (() => {
+                  const highScore = Math.max(
+                    ...partnerships.map(p => Math.max(p.player1Score ?? 0, p.player2Score ?? 0)),
+                    1
+                  );
+                  return (
+                    <Bar
+                      data={{
+                        labels: partnerships.map((p, i) =>
+                          p.player1Name && p.player2Name
+                            ? `${p.player1Name} / ${p.player2Name}`
+                            : `Partnership ${i + 1}`
+                        ),
+                        datasets: [
+                          {
+                            label: 'Bat 1 (left)',
+                            data: partnerships.map(p => -(p.player1Score ?? 0)),
+                            backgroundColor: '#1d7a4b',
+                          },
+                          {
+                            label: 'Bat 2 (right)',
+                            data: partnerships.map(p => p.player2Score ?? 0),
+                            backgroundColor: '#d4a017',
+                          },
+                        ],
+                      }}
+                      options={{
+                        responsive: true,
+                        indexAxis: 'y' as const,
+                        scales: {
+                          x: {
+                            stacked: true,
+                            min: -highScore,
+                            max: highScore,
+                            ticks: { callback: (v: unknown) => Math.abs(v as number) },
+                          },
+                          y: { stacked: true },
+                        },
+                        plugins: {
+                          legend: { position: 'top' as const },
+                          tooltip: {
+                            callbacks: {
+                              label: (ctx: { dataset: { label?: string }; parsed: { x: number } }) =>
+                                `${ctx.dataset.label ?? ''}: ${Math.abs(ctx.parsed.x)}`,
+                            },
+                          },
+                        },
+                      }}
+                    />
+                  );
+                })()}
+                {activeAnalysisTab === 'wagon' && wagonWheelBalls.length > 0 && (() => {
+                  const svgW = 500;
+                  const svgH = 420;
+                  const fieldCx = svgW / 2;
+                  const fieldCy = 200;
+                  const fieldRx = 190;
+                  const fieldRy = 160;
+                  const stumpsX = fieldCx;
+                  const stumpsY = 180;
+                  const radius = fieldRx;
+
+                  const wheelDistance = (score: number, angle: number, r: number): number => {
+                    let scale = r / 4;
+                    if (score === 6) scale *= 0.75;
+                    let dist = score * scale;
+                    const halfPi = Math.PI / 2;
+                    if (angle <= halfPi) {
+                      dist -= score * 5 * ((halfPi - angle) / halfPi);
+                    } else if (angle <= Math.PI) {
+                      dist += score * 5 * ((angle - halfPi) / halfPi);
+                    } else if (angle <= Math.PI * 1.5) {
+                      dist += score * 5 * ((Math.PI * 1.5 - angle) / halfPi);
+                    } else {
+                      dist -= score * 5 * ((angle - Math.PI * 1.5) / halfPi);
+                    }
+                    return dist;
+                  };
+
+                  const ballEndPoint = (angle: number, dist: number) => ({
+                    x: Math.round(Math.cos(angle - Math.PI / 2) * dist + stumpsX),
+                    y: Math.round(Math.sin(angle - Math.PI / 2) * dist + stumpsY),
+                  });
+
+                  const ballColor = (score: number) =>
+                    score >= 6 ? '#ff0000' : score >= 4 ? '#0000ff' : '#ffdd00';
+
+                  const keyY = svgH - 30;
+
+                  return (
+                    <svg data-testid="wagon-wheel" viewBox={`0 0 ${svgW} ${svgH}`} className="w-full" style={{ maxHeight: 480 }}>
+                      {/* Field boundary */}
+                      <ellipse cx={fieldCx} cy={fieldCy} rx={fieldRx} ry={fieldRy} fill="#4a8f3f" />
+                      {/* 30-yard circle */}
+                      <ellipse cx={fieldCx} cy={fieldCy} rx={fieldRx * 0.5} ry={fieldRy * 0.5}
+                        fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
+                      {/* Pitch */}
+                      <rect x={stumpsX - 7} y={stumpsY - 45} width={14} height={90}
+                        fill="#c8a96e" rx="2" />
+                      {/* Off Side / Leg Side labels */}
+                      <text x={fieldCx - fieldRx * 0.55} y={fieldCy + 6} textAnchor="middle"
+                        fill="rgba(255,255,255,0.7)" fontSize="14">Off Side</text>
+                      <text x={fieldCx + fieldRx * 0.55} y={fieldCy + 6} textAnchor="middle"
+                        fill="rgba(255,255,255,0.7)" fontSize="14">Leg Side</text>
+                      {/* Ball lines */}
+                      {wagonWheelBalls.map((ball, idx) => {
+                        const angle = ball.angle!;
+                        const rawScore = ball.amount ?? 0;
+                        const score = ball.thing === 'nb' ? rawScore - 1 : rawScore;
+                        if (score <= 0) return null;
+                        const dist = wheelDistance(score, angle, radius);
+                        const end = ballEndPoint(angle, dist);
+                        return (
+                          <line key={idx}
+                            x1={stumpsX} y1={stumpsY}
+                            x2={end.x} y2={end.y}
+                            stroke={ballColor(score)}
+                            strokeWidth={2}
+                            strokeOpacity={0.85}
+                          />
+                        );
+                      })}
+                      {/* Key */}
+                      <line x1={10} y1={keyY} x2={50} y2={keyY} stroke="#ffdd00" strokeWidth={4} />
+                      <text x={55} y={keyY + 4} fontSize={13} fill="#333">Runs</text>
+                      <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#0000ff" strokeWidth={4} />
+                      <text x={155} y={keyY + 4} fontSize={13} fill="#333">Fours</text>
+                      <line x1={215} y1={keyY} x2={255} y2={keyY} stroke="#ff0000" strokeWidth={4} />
+                      <text x={260} y={keyY + 4} fontSize={13} fill="#333">Sixes</text>
+                    </svg>
+                  );
+                })()}
               </div>
             </section>
           );
