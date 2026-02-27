@@ -1179,4 +1179,135 @@ describe('LiveScorecard', () => {
       expect(screen.getByText(/P\. Misra ct\. Fielder b\. T\. Bull 20 \(21b 4x4 0x6\) SR: 95\.24/i)).toBeInTheDocument();
     });
   });
+
+  test('shows Wagon Wheel tab when completedOvers have balls with angle data', async () => {
+    const withAngleBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 10,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 10,
+            over: {
+              overNumber: 1,
+              balls: [
+                { ballNumber: 1, amount: 4, thing: '', angle: 1.0 },
+                { ballNumber: 2, amount: 0, thing: '', angle: null },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withAngleBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Wagon Wheel$/i })).toBeInTheDocument();
+    });
+  });
+
+  test('does not show Wagon Wheel tab when no balls have angle data', async () => {
+    const withNoAngleBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 8,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 8,
+            over: {
+              overNumber: 1,
+              balls: [
+                { ballNumber: 1, amount: 4, thing: '', angle: null },
+                { ballNumber: 2, amount: 4, thing: '', angle: null },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withNoAngleBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Worm$/i })).toBeInTheDocument();
+    });
+    expect(screen.queryByRole('button', { name: /^Wagon Wheel$/i })).not.toBeInTheDocument();
+  });
+
+  test('renders wagon wheel SVG with ball lines when wagon wheel tab is active', async () => {
+    const withAngleBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 10,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 10,
+            over: {
+              overNumber: 1,
+              balls: [
+                { ballNumber: 1, amount: 4, thing: '', angle: Math.PI / 2 },
+                { ballNumber: 2, amount: 6, thing: '', angle: Math.PI },
+                { ballNumber: 3, amount: 0, thing: '', angle: 1.0 }, // dot ball - no line
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withAngleBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Wagon Wheel$/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /^Wagon Wheel$/i }));
+
+    await waitFor(() => {
+      const svg = document.querySelector('[data-testid="wagon-wheel"]');
+      expect(svg).toBeInTheDocument();
+      // Two scoring balls → two ball <line> elements (dot ball is skipped)
+      // Key has 3 lines; total lines = 2 (balls) + 3 (key) = 5
+      const lines = svg!.querySelectorAll('line');
+      expect(lines.length).toBe(5);
+    });
+  });
+
+  test('opposition Manhattan runs are distributed linearly across missing overs', async () => {
+    // Only over 5 has score=10 - the Manhattan tab should appear and render
+    const withSpottyOppo = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          { over: {}, scoreAtEndOfOver: 8, wicketsAtEndOfOver: 0, scoreForThisOver: 8 },
+          { over: {}, scoreAtEndOfOver: 15, wicketsAtEndOfOver: 0, scoreForThisOver: 7 },
+          { over: {}, scoreAtEndOfOver: 22, wicketsAtEndOfOver: 0, scoreForThisOver: 7 },
+          { over: {}, scoreAtEndOfOver: 28, wicketsAtEndOfOver: 0, scoreForThisOver: 6 },
+          { over: {}, scoreAtEndOfOver: 35, wicketsAtEndOfOver: 0, scoreForThisOver: 7 },
+        ],
+        theirCompletedOvers: [
+          // Only data for over 5 (cumulative score 10), overs 1-4 missing
+          { over: 5, score: 10, wickets: 0 },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withSpottyOppo);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Manhattan$/i })).toBeInTheDocument();
+    });
+  });
 });
