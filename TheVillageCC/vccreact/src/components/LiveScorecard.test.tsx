@@ -1126,7 +1126,7 @@ describe('LiveScorecard', () => {
             outGoingPlayerId: 5,
             outGoingPlayerScore: 20,
             outgoingBatsmanInningsDetails: {
-              ballsFaced: 21,
+              balls: 21,
               fours: 4,
               sixes: 0,
               strikeRate: 95.24,
