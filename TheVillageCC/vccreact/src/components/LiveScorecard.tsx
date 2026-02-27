@@ -37,6 +37,11 @@ const LiveScorecard: React.FC = () => {
   const [activeCommentaryTab, setActiveCommentaryTab] = useState<'vcc' | 'oppo'>('vcc');
   const [activeAnalysisTab, setActiveAnalysisTab] = useState<'worm' | 'manhattan' | 'partnerships' | 'wagon'>('worm');
   const [commentaryExpanded, setCommentaryExpanded] = useState(false);
+  const [analysisExpanded, setAnalysisExpanded] = useState(false);
+  const [matchReportExpanded, setMatchReportExpanded] = useState(false);
+  const [playerAnalysisExpanded, setPlayerAnalysisExpanded] = useState(false);
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
+  const [activePlayerAnalysisTab, setActivePlayerAnalysisTab] = useState<'worm' | 'wagon'>('worm');
 
   useEffect(() => {
     const fetchScorecardData = async () => {
@@ -864,13 +869,29 @@ const LiveScorecard: React.FC = () => {
 
           return (
             <section className="max-w-6xl mx-auto mt-6">
-              <div className="flex gap-2 mb-3 flex-wrap">
-                {ourOvers.length > 0 && tabBtn('worm', 'Worm')}
-                {ourOvers.length > 0 && tabBtn('manhattan', 'Manhattan')}
-                {partnerships.length > 0 && tabBtn('partnerships', 'Partnerships')}
-                {wagonWheelBalls.length > 0 && tabBtn('wagon', 'Wagon Wheel')}
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
+              <button
+                type="button"
+                className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
+                onClick={() => setAnalysisExpanded(prev => !prev)}
+                aria-expanded={analysisExpanded}
+              >
+                <span className="text-base font-semibold text-gray-800">Team Analysis</span>
+                <svg
+                  className={`w-5 h-5 text-gray-500 transition-transform ${analysisExpanded ? 'rotate-180' : ''}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {analysisExpanded && (
+                <>
+                  <div className="flex gap-2 mt-3 mb-3 flex-wrap">
+                    {ourOvers.length > 0 && tabBtn('worm', 'Worm')}
+                    {ourOvers.length > 0 && tabBtn('manhattan', 'Manhattan')}
+                    {partnerships.length > 0 && tabBtn('partnerships', 'Partnerships')}
+                    {wagonWheelBalls.length > 0 && tabBtn('wagon', 'Wagon Wheel')}
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
                 {activeAnalysisTab === 'worm' && ourOvers.length > 0 && (
                   <Line data={wormData} options={chartOptions} />
                 )}
@@ -1054,6 +1075,248 @@ const LiveScorecard: React.FC = () => {
                   );
                 })()}
               </div>
+                </>
+              )}
+            </section>
+          );
+        })()}
+
+        {/* Player Analysis section */}
+        {(data.completedOvers?.length ?? 0) > 0 && (() => {
+          const allBalls = (data.completedOvers ?? []).flatMap(o => o.over?.balls ?? []);
+          const isLegalDelivery = (ball: BallV1) => {
+            const thing = ball.thing ?? '';
+            return thing === '' || (thing === 'nb' && (ball.amount ?? 0) > 1);
+          };
+          const playerBallMap = new Map<number, { name: string; legalBalls: BallV1[]; allBalls: BallV1[] }>();
+          allBalls.forEach(ball => {
+            if (ball.batsman != null && ball.batsmanName) {
+              if (!playerBallMap.has(ball.batsman)) {
+                playerBallMap.set(ball.batsman, { name: ball.batsmanName, legalBalls: [], allBalls: [] });
+              }
+              const entry = playerBallMap.get(ball.batsman)!;
+              entry.allBalls.push(ball);
+              if (isLegalDelivery(ball)) {
+                entry.legalBalls.push(ball);
+              }
+            }
+          });
+          const players = Array.from(playerBallMap.entries())
+            .map(([id, { name, legalBalls, allBalls: pBalls }]) => ({ id, name, legalBalls, allBalls: pBalls }))
+            .filter(p => p.legalBalls.length > 0);
+
+          if (players.length === 0) return null;
+
+          const getShortName = (name: string): string => {
+            const parts = name.split(' ');
+            // Build initials from each word; if more than 3 use first two + last (e.g. "J D Smith" → "JDS", "J A B C" → "JAC")
+            let short = parts.map(p => p.charAt(0)).join('');
+            if (short.length > 3) {
+              short = short.charAt(0) + short.charAt(1) + short.charAt(short.length - 1);
+            }
+            return short;
+          };
+
+          const effectivePlayerId = selectedPlayerId ?? players[0].id;
+          const selectedPlayer = players.find(p => p.id === effectivePlayerId) ?? players[0];
+
+          // Player Worm: cumulative score vs balls faced, with normalised strike rate
+          const playerWormPoints: { ball: number; score: number; sr: number }[] = [];
+          let cumScore = 0;
+          selectedPlayer.legalBalls.forEach((ball, idx) => {
+            cumScore += ball.amount ?? 0;
+            const ballNum = idx + 1;
+            playerWormPoints.push({ ball: ballNum, score: cumScore, sr: (cumScore / ballNum) * 100 });
+          });
+          const maxSR = Math.max(...playerWormPoints.map(p => p.sr), 1);
+          const finalScore = Math.max(cumScore, 1);
+          const playerWormData = {
+            labels: playerWormPoints.map(p => String(p.ball)),
+            datasets: [
+              {
+                label: 'Score',
+                data: playerWormPoints.map(p => p.score),
+                borderColor: '#1d7a4b',
+                backgroundColor: 'transparent',
+                tension: 0.1,
+                pointRadius: 2,
+              },
+              {
+                label: 'Strike Rate (scaled)',
+                data: playerWormPoints.map(p => (p.sr / maxSR) * finalScore),
+                borderColor: '#d4a017',
+                backgroundColor: 'transparent',
+                tension: 0.1,
+                pointRadius: 2,
+              },
+            ],
+          };
+          const playerWormOptions = {
+            responsive: true,
+            plugins: { legend: { position: 'top' as const } },
+            scales: { x: { title: { display: true, text: 'Balls Faced' } } },
+          };
+
+          // Player Wagon Wheel: same as team wagon wheel but filtered to selected player
+          const playerWagonBalls = selectedPlayer.allBalls.filter(
+            b => b.angle != null && isLegalDelivery(b)
+          );
+
+          return (
+            <section className="max-w-6xl mx-auto mt-6">
+              <button
+                type="button"
+                className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
+                onClick={() => setPlayerAnalysisExpanded(prev => !prev)}
+                aria-expanded={playerAnalysisExpanded}
+              >
+                <span className="text-base font-semibold text-gray-800">Player Analysis</span>
+                <svg
+                  className={`w-5 h-5 text-gray-500 transition-transform ${playerAnalysisExpanded ? 'rotate-180' : ''}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {playerAnalysisExpanded && (
+                <>
+                  {/* Player selection icons */}
+                  <div className="flex gap-2 mt-3 mb-3 flex-wrap items-center">
+                    {players.map(player => (
+                      <button
+                        key={player.id}
+                        type="button"
+                        onClick={() => setSelectedPlayerId(player.id)}
+                        title={player.name}
+                        aria-label={player.name}
+                        className={`w-10 h-10 rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0 border-2 ${
+                          player.id === effectivePlayerId
+                            ? 'bg-villageGreen text-white border-villageGreen'
+                            : 'bg-white text-villageGreen border-villageGreen hover:bg-villageGreenLight'
+                        }`}
+                      >
+                        {getShortName(player.name)}
+                      </button>
+                    ))}
+                  </div>
+                  {/* Chart type tabs */}
+                  <div className="flex gap-2 mb-3 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => setActivePlayerAnalysisTab('worm')}
+                      className={`px-4 py-2 rounded-full text-sm font-medium ${
+                        activePlayerAnalysisTab === 'worm'
+                          ? 'bg-villageGreen text-white'
+                          : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                      }`}
+                    >
+                      Player Worm
+                    </button>
+                    {playerWagonBalls.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setActivePlayerAnalysisTab('wagon')}
+                        className={`px-4 py-2 rounded-full text-sm font-medium ${
+                          activePlayerAnalysisTab === 'wagon'
+                            ? 'bg-villageGreen text-white'
+                            : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                        }`}
+                      >
+                        Wagon Wheel
+                      </button>
+                    )}
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
+                    <p className="text-sm font-semibold text-gray-700 mb-3">{selectedPlayer.name}</p>
+                    {activePlayerAnalysisTab === 'worm' && playerWormPoints.length > 0 && (
+                      <Line data={playerWormData} options={playerWormOptions} />
+                    )}
+                    {activePlayerAnalysisTab === 'worm' && playerWormPoints.length === 0 && (
+                      <p className="text-sm text-gray-500">No ball-by-ball data available for this player.</p>
+                    )}
+                    {activePlayerAnalysisTab === 'wagon' && (() => {
+                      const svgW = 500;
+                      const svgH = 420;
+                      const fieldCx = svgW / 2;
+                      const fieldCy = 200;
+                      const fieldRx = 190;
+                      const fieldRy = 160;
+                      const stumpsX = fieldCx;
+                      const stumpsY = 180;
+                      const radius = fieldRx;
+
+                      const wheelDistance = (score: number, angle: number, r: number): number => {
+                        // Base scale: r/4 maps a score of 4 (boundary) roughly to the boundary ring.
+                        // Sixes are scaled down (×0.75) so they don't overshoot the boundary ellipse.
+                        let scale = r / 4;
+                        if (score === 6) scale *= 0.75;
+                        let dist = score * scale;
+                        // Adjust distance by field quadrant so balls hit square/behind appear shorter
+                        // and balls hit straight/through the covers appear longer, matching visual field conventions.
+                        const halfPi = Math.PI / 2;
+                        if (angle <= halfPi) {
+                          dist -= score * 5 * ((halfPi - angle) / halfPi);
+                        } else if (angle <= Math.PI) {
+                          dist += score * 5 * ((angle - halfPi) / halfPi);
+                        } else if (angle <= Math.PI * 1.5) {
+                          dist += score * 5 * ((Math.PI * 1.5 - angle) / halfPi);
+                        } else {
+                          dist -= score * 5 * ((angle - Math.PI * 1.5) / halfPi);
+                        }
+                        return dist;
+                      };
+
+                      const ballEndPoint = (angle: number, dist: number) => ({
+                        x: Math.round(Math.cos(angle - Math.PI / 2) * dist + stumpsX),
+                        y: Math.round(Math.sin(angle - Math.PI / 2) * dist + stumpsY),
+                      });
+
+                      const ballColor = (score: number) =>
+                        score >= 6 ? '#ff0000' : score >= 4 ? '#0000ff' : '#ffdd00';
+
+                      const keyY = svgH - 30;
+
+                      return (
+                        <svg data-testid="player-wagon-wheel" viewBox={`0 0 ${svgW} ${svgH}`} className="w-full" style={{ maxHeight: 480 }}>
+                          <ellipse cx={fieldCx} cy={fieldCy} rx={fieldRx} ry={fieldRy} fill="#4a8f3f" />
+                          <ellipse cx={fieldCx} cy={fieldCy} rx={fieldRx * 0.5} ry={fieldRy * 0.5}
+                            fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
+                          <rect x={stumpsX - 7} y={stumpsY - 45} width={14} height={90}
+                            fill="#c8a96e" rx="2" />
+                          <text x={fieldCx - fieldRx * 0.55} y={fieldCy + 6} textAnchor="middle"
+                            fill="rgba(255,255,255,0.7)" fontSize="14">Off Side</text>
+                          <text x={fieldCx + fieldRx * 0.55} y={fieldCy + 6} textAnchor="middle"
+                            fill="rgba(255,255,255,0.7)" fontSize="14">Leg Side</text>
+                          {playerWagonBalls.map((ball, idx) => {
+                            const angle = ball.angle!;
+                            const rawScore = ball.amount ?? 0;
+                            // For a no-ball the amount includes the penalty run; subtract it to get batter's contribution only.
+                            const score = ball.thing === 'nb' ? rawScore - 1 : rawScore;
+                            if (score <= 0) return null;
+                            const dist = wheelDistance(score, angle, radius);
+                            const end = ballEndPoint(angle, dist);
+                            return (
+                              <line key={idx}
+                                x1={stumpsX} y1={stumpsY}
+                                x2={end.x} y2={end.y}
+                                stroke={ballColor(score)}
+                                strokeWidth={2}
+                                strokeOpacity={0.85}
+                              />
+                            );
+                          })}
+                          <line x1={10} y1={keyY} x2={50} y2={keyY} stroke="#ffdd00" strokeWidth={4} />
+                          <text x={55} y={keyY + 4} fontSize={13} fill="#333">Runs</text>
+                          <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#0000ff" strokeWidth={4} />
+                          <text x={155} y={keyY + 4} fontSize={13} fill="#333">Fours</text>
+                          <line x1={215} y1={keyY} x2={255} y2={keyY} stroke="#ff0000" strokeWidth={4} />
+                          <text x={260} y={keyY + 4} fontSize={13} fill="#333">Sixes</text>
+                        </svg>
+                      );
+                    })()}
+                  </div>
+                </>
+              )}
             </section>
           );
         })()}
@@ -1111,19 +1374,36 @@ const LiveScorecard: React.FC = () => {
 
         {/* Match Report (if completed) */}
         {completed && scorecardData.matchReport && (scorecardData.matchReport.conditions || scorecardData.matchReport.report) && (
-          <section className="max-w-6xl mx-auto mt-6 mb-10 bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-6">
-            <h2 className="text-xl font-semibold mb-4">Match Report</h2>
-            {scorecardData.matchReport.conditions && (
-              <div className="mb-4">
-                <h3 className="font-semibold text-gray-900 mb-2">Conditions</h3>
-                <p className="text-sm text-gray-700">{scorecardData.matchReport.conditions}</p>
-              </div>
-            )}
-            {scorecardData.matchReport.report && (
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Report</h3>
-                <div className="text-sm text-gray-700 prose prose-sm max-w-none"
-                     dangerouslySetInnerHTML={{ __html: scorecardData.matchReport.report }} />
+          <section className="max-w-6xl mx-auto mt-6 mb-10">
+            <button
+              type="button"
+              className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
+              onClick={() => setMatchReportExpanded(prev => !prev)}
+              aria-expanded={matchReportExpanded}
+            >
+              <span className="text-base font-semibold text-gray-800">Match Report</span>
+              <svg
+                className={`w-5 h-5 text-gray-500 transition-transform ${matchReportExpanded ? 'rotate-180' : ''}`}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {matchReportExpanded && (
+              <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-6 mt-3">
+                {scorecardData.matchReport.conditions && (
+                  <div className="mb-4">
+                    <h3 className="font-semibold text-gray-900 mb-2">Conditions</h3>
+                    <p className="text-sm text-gray-700">{scorecardData.matchReport.conditions}</p>
+                  </div>
+                )}
+                {scorecardData.matchReport.report && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Report</h3>
+                    <div className="text-sm text-gray-700 prose prose-sm max-w-none"
+                         dangerouslySetInnerHTML={{ __html: scorecardData.matchReport.report }} />
+                  </div>
+                )}
               </div>
             )}
           </section>
