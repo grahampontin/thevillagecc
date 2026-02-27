@@ -166,11 +166,11 @@ const LiveScorecard: React.FC = () => {
 
   const formatBattingStats = (
     score: number | undefined,
-    details: { ballsFaced?: number; fours?: number; sixes?: number; strikeRate?: number } | null | undefined
+    details: { balls?: number; fours?: number; sixes?: number; strikeRate?: number } | null | undefined
   ): string => {
     if (score == null) return '';
     if (!details) return ` ${score}`;
-    return ` ${score} (${details.ballsFaced ?? 0}b ${details.fours ?? 0}x4 ${details.sixes ?? 0}x6) SR: ${(details.strikeRate ?? 0).toFixed(2)}`;
+    return ` ${score} (${details.balls ?? 0}b ${details.fours ?? 0}x4 ${details.sixes ?? 0}x6) SR: ${(details.strikeRate ?? 0).toFixed(2)}`;
   };
 
   const renderBattingTable = (
