@@ -878,54 +878,98 @@ const LiveScorecard: React.FC = () => {
                   <Bar data={manhattanData} options={chartOptions} />
                 )}
                 {activeAnalysisTab === 'partnerships' && partnerships.length > 0 && (() => {
+                  const svgW = 600;
+                  const rowH = 40;
+                  const rowGap = 8;
+                  const centerX = svgW / 2;
+                  const halfW = centerX - 4; // usable half-width per side
                   const highScore = Math.max(
                     ...partnerships.map(p => Math.max(p.player1Score ?? 0, p.player2Score ?? 0)),
                     1
                   );
+                  const svgH = partnerships.length * (rowH + rowGap) + rowGap + 20;
+                  const barSize = (score: number) => (score / Math.max(highScore, 1)) * halfW;
+                  const textPad = 6;
+                  const minBarWidthForInsideLabel = 60;
                   return (
-                    <Bar
-                      data={{
-                        labels: partnerships.map((p, i) =>
-                          p.player1Name && p.player2Name
-                            ? `${p.player1Name} / ${p.player2Name}`
-                            : `Partnership ${i + 1}`
-                        ),
-                        datasets: [
-                          {
-                            label: 'Bat 1 (left)',
-                            data: partnerships.map(p => -(p.player1Score ?? 0)),
-                            backgroundColor: '#1d7a4b',
-                          },
-                          {
-                            label: 'Bat 2 (right)',
-                            data: partnerships.map(p => p.player2Score ?? 0),
-                            backgroundColor: '#d4a017',
-                          },
-                        ],
-                      }}
-                      options={{
-                        responsive: true,
-                        indexAxis: 'y' as const,
-                        scales: {
-                          x: {
-                            stacked: true,
-                            min: -highScore,
-                            max: highScore,
-                            ticks: { callback: (v: unknown) => Math.abs(v as number) },
-                          },
-                          y: { stacked: true },
-                        },
-                        plugins: {
-                          legend: { position: 'top' as const },
-                          tooltip: {
-                            callbacks: {
-                              label: (ctx: { dataset: { label?: string }; parsed: { x: number | null } }) =>
-                                `${ctx.dataset.label ?? ''}: ${Math.abs(ctx.parsed.x ?? 0)}`,
-                            },
-                          },
-                        },
-                      }}
-                    />
+                    <svg
+                      data-testid="partnerships-chart"
+                      viewBox={`0 0 ${svgW} ${svgH}`}
+                      className="w-full"
+                      style={{ maxHeight: 600 }}
+                    >
+                      {partnerships.map((p, i) => {
+                        const y = rowGap + i * (rowH + rowGap);
+                        const p1Score = p.player1Score ?? 0;
+                        const p2Score = p.player2Score ?? 0;
+                        const leftW = barSize(p1Score);
+                        const rightW = barSize(p2Score);
+                        const p1Label = p1Score > 0 ? `${p.player1Name ?? 'Bat 1'} (${p1Score})` : (p.player1Name ?? 'Bat 1');
+                        const p2Label = p2Score > 0 ? `${p.player2Name ?? 'Bat 2'} (${p2Score})` : (p.player2Name ?? 'Bat 2');
+                        return (
+                          <g key={i}>
+                            {/* Left bar (player 1) */}
+                            <rect
+                              x={centerX - leftW}
+                              y={y}
+                              width={leftW}
+                              height={rowH}
+                              fill="#1d7a4b"
+                            />
+                            {/* Right bar (player 2) */}
+                            <rect
+                              x={centerX}
+                              y={y}
+                              width={rightW}
+                              height={rowH}
+                              fill="#d4a017"
+                            />
+                            {/* Player 1 label – inside bar if wide enough, else outside */}
+                            {leftW > minBarWidthForInsideLabel ? (
+                              <text
+                                x={centerX - leftW + textPad}
+                                y={y + rowH / 2}
+                                dominantBaseline="middle"
+                                textAnchor="start"
+                                fontSize={12}
+                                fill="#fff"
+                              >{p1Label}</text>
+                            ) : (
+                              <text
+                                x={centerX - leftW - textPad}
+                                y={y + rowH / 2}
+                                dominantBaseline="middle"
+                                textAnchor="end"
+                                fontSize={12}
+                                fill="#333"
+                              >{p1Label}</text>
+                            )}
+                            {/* Player 2 label – inside bar if wide enough, else outside */}
+                            {rightW > minBarWidthForInsideLabel ? (
+                              <text
+                                x={centerX + rightW - textPad}
+                                y={y + rowH / 2}
+                                dominantBaseline="middle"
+                                textAnchor="end"
+                                fontSize={12}
+                                fill="#fff"
+                              >{p2Label}</text>
+                            ) : (
+                              <text
+                                x={centerX + rightW + textPad}
+                                y={y + rowH / 2}
+                                dominantBaseline="middle"
+                                textAnchor="start"
+                                fontSize={12}
+                                fill="#333"
+                              >{p2Label}</text>
+                            )}
+                          </g>
+                        );
+                      })}
+                      {/* Center dividing line */}
+                      <line x1={centerX} y1={0} x2={centerX} y2={svgH} stroke="#999" strokeWidth={1} />
+                    </svg>
                   );
                 })()}
                 {activeAnalysisTab === 'wagon' && wagonWheelBalls.length > 0 && (() => {
