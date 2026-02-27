@@ -40,6 +40,7 @@ const LiveScorecard: React.FC = () => {
   const [analysisExpanded, setAnalysisExpanded] = useState(false);
   const [matchReportExpanded, setMatchReportExpanded] = useState(false);
   const [playerAnalysisExpanded, setPlayerAnalysisExpanded] = useState(false);
+  const [scorecardExpanded, setScorecardExpanded] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [activePlayerAnalysisTab, setActivePlayerAnalysisTab] = useState<'worm' | 'wagon'>('worm');
 
@@ -419,6 +420,192 @@ const LiveScorecard: React.FC = () => {
     </div>
   );
 
+  // Section variables for conditional ordering
+  const commentarySection = ((data.completedOvers?.length ?? 0) > 0 || (data.theirCompletedOvers?.length ?? 0) > 0) ? (
+    <section className="max-w-6xl mx-auto mt-6">
+      <button
+        type="button"
+        className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
+        onClick={() => setCommentaryExpanded(prev => !prev)}
+        aria-expanded={commentaryExpanded}
+      >
+        <span className="text-base font-semibold text-gray-800">Over-by-over Commentary</span>
+        <svg
+          className={`w-5 h-5 text-gray-500 transition-transform ${commentaryExpanded ? 'rotate-180' : ''}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {commentaryExpanded && (
+        <>
+          <div className="flex gap-2 mt-3 mb-3 flex-wrap">
+            {(data.completedOvers?.length ?? 0) > 0 && (
+              <button
+                type="button"
+                onClick={() => setActiveCommentaryTab('vcc')}
+                className={`px-4 py-2 rounded-full text-sm font-medium ${
+                  activeCommentaryTab === 'vcc'
+                    ? 'bg-villageGreen text-white'
+                    : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                }`}
+              >
+                VCC Commentary
+              </button>
+            )}
+            {(data.theirCompletedOvers?.length ?? 0) > 0 && (
+              <button
+                type="button"
+                onClick={() => setActiveCommentaryTab('oppo')}
+                className={`px-4 py-2 rounded-full text-sm font-medium ${
+                  activeCommentaryTab === 'oppo'
+                    ? 'bg-villageGreen text-white'
+                    : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                }`}
+              >
+                Oppo Commentary
+              </button>
+            )}
+          </div>
+          <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
+            {activeCommentaryTab === 'vcc' && (data.completedOvers?.length ?? 0) > 0 && (
+              <div>
+                {data.ourInningsCommentary && (
+                  <p className="mb-3 text-sm text-gray-600 italic">{data.ourInningsCommentary}</p>
+                )}
+                {[...(data.completedOvers ?? [])].reverse().map((over, i, arr) => {
+                  const overNum = over.over?.overNumber ?? (arr.length - i);
+                  const balls = over.over?.balls
+                    ? [...over.over.balls].sort((a, b) => (a.ballNumber ?? 0) - (b.ballNumber ?? 0))
+                    : [];
+                  return (
+                    <div key={i} className={`py-4 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                      <div className="bg-gray-50 rounded-lg px-3 py-2 mb-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-gray-900">{`Over ${overNum}`}</span>
+                            {over.over?.bowler && (
+                              <span className="text-gray-500">· {over.over.bowler}</span>
+                            )}
+                          </div>
+                          <span className="text-gray-600 text-xs">
+                            Village {over.scoreAtEndOfOver ?? 0}/{over.wicketsAtEndOfOver ?? 0}
+                            <span className="ml-1 text-gray-400">(+{over.scoreForThisOver ?? 0})</span>
+                          </span>
+                        </div>
+                        {over.over?.commentary && (
+                          <p className="mt-1 text-xs text-gray-600 italic">{over.over.commentary}</p>
+                        )}
+                      </div>
+                      {balls.length > 0 && (
+                        <div className="space-y-2 pl-1" aria-label={`Over ${overNum} deliveries`}>
+                          {balls.map((ball, bi) => {
+                            const blob = getBallBlob(ball);
+                            const fow = ball.wicket ? fowByPlayerId.get(ball.wicket.player) : undefined;
+                            const statsText = formatBattingStats(fow?.outGoingPlayerScore, fow?.outgoingBatsmanInningsDetails);
+                            return (
+                              <div key={bi}>
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    data-testid="ball-blob"
+                                    className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 ${blob.className}`}
+                                  >
+                                    {blob.label}
+                                  </span>
+                                  <div className="text-gray-600">
+                                    <span className="font-mono text-xs text-gray-400 mr-1">{overNum}.{ball.ballNumber}</span>
+                                    {ball.bowler && ball.batsmanName ? (
+                                      <>
+                                        {`${ball.bowler} to ${ball.batsmanName}, `}
+                                        {ball.wicket ? <span className="font-bold text-red-700">OUT!</span> : getBallDescription(ball)}
+                                      </>
+                                    ) : (
+                                      ball.wicket ? <span className="font-bold text-red-700">OUT!</span> : getBallDescription(ball)
+                                    )}
+                                  </div>
+                                </div>
+                                {ball.wicket && (
+                                  <div className="ml-9 mt-1 bg-red-50 border border-red-100 rounded px-2 py-1 text-sm">
+                                    {ball.wicket.playerName && (
+                                      <div className="font-semibold text-gray-800">
+                                        {ball.wicket.playerName} {formatWicketDismissal(ball.wicket)}{statsText}
+                                      </div>
+                                    )}
+                                    {ball.wicket.description && (
+                                      <div className="text-gray-500 italic text-xs mt-0.5">{ball.wicket.description}</div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {activeCommentaryTab === 'oppo' && (data.theirCompletedOvers?.length ?? 0) > 0 && (
+              <div>
+                {data.theirInningsCommentary && (
+                  <p className="mb-3 text-sm text-gray-600 italic">{data.theirInningsCommentary}</p>
+                )}
+                {[...(data.theirCompletedOvers ?? [])].reverse().map((over, i, arr) => (
+                  <div key={i} className={`py-3 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                    <span className="font-medium">{`Over ${over.over ?? (arr.length - i)}`}</span>
+                    <span className="ml-2 text-gray-500">
+                      {data.opposition} {over.score ?? 0}/{over.wickets ?? 0}
+                    </span>
+                    {over.commentary && (
+                      <p className="mt-1 text-gray-600">{over.commentary}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </section>
+  ) : null;
+
+  const matchReportSection = (completed && scorecardData.matchReport && (scorecardData.matchReport.conditions || scorecardData.matchReport.report)) ? (
+    <section className="max-w-6xl mx-auto mt-6 mb-10">
+      <button
+        type="button"
+        className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
+        onClick={() => setMatchReportExpanded(prev => !prev)}
+        aria-expanded={matchReportExpanded}
+      >
+        <span className="text-base font-semibold text-gray-800">Match Report</span>
+        <svg
+          className={`w-5 h-5 text-gray-500 transition-transform ${matchReportExpanded ? 'rotate-180' : ''}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {matchReportExpanded && (
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-6 mt-3">
+          {scorecardData.matchReport.conditions && (
+            <div className="mb-4">
+              <h3 className="font-semibold text-gray-900 mb-2">Conditions</h3>
+              <p className="text-sm text-gray-700">{scorecardData.matchReport.conditions}</p>
+            </div>
+          )}
+          {scorecardData.matchReport.report && (
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Report</h3>
+              <div className="text-sm text-gray-700 prose prose-sm max-w-none"
+                   dangerouslySetInnerHTML={{ __html: scorecardData.matchReport.report }} />
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  ) : null;
+
   return (
     <div className="font-sans text-villageText bg-gray-50 min-h-screen">
       <Header />
@@ -504,264 +691,208 @@ const LiveScorecard: React.FC = () => {
           </p>
         </section>
 
-        {/* Live: current batsmen and bowlers */}
-        {live && (data.onStrikeBatsman || data.otherBatsman || data.bowlerOneDetails || data.bowlerTwoDetails) && (
-          <div className="max-w-6xl mx-auto mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {(data.onStrikeBatsman || data.otherBatsman) && (
-              <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">At the Crease</h3>
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-xs text-gray-500 border-b border-gray-100">
-                      <th className="pb-1.5 text-left font-normal">Batter</th>
-                      <th className="pb-1.5 text-right font-normal">R</th>
-                      <th className="pb-1.5 text-right font-normal">B</th>
-                      <th className="pb-1.5 text-right font-normal">4s</th>
-                      <th className="pb-1.5 text-right font-normal">6s</th>
-                      <th className="pb-1.5 text-right font-normal">SR</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.onStrikeBatsman && (
-                      <tr className="border-b border-gray-50">
-                        <td className="py-1.5 font-medium">
-                          {data.onStrikeBatsman.name}
-                          <span className="ml-1 text-villageGreen text-xs font-bold">*</span>
-                        </td>
-                        <td className="py-1.5 text-right font-medium">{data.onStrikeBatsman.score ?? 0}</td>
-                        <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.balls ?? 0}</td>
-                        <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.fours ?? 0}</td>
-                        <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.sixes ?? 0}</td>
-                        <td className="py-1.5 text-right text-gray-600">
-                          {data.onStrikeBatsman.strikeRate != null ? data.onStrikeBatsman.strikeRate.toFixed(1) : '-'}
-                        </td>
-                      </tr>
-                    )}
-                    {data.otherBatsman && (
-                      <tr>
-                        <td className="py-1.5 font-medium">{data.otherBatsman.name}</td>
-                        <td className="py-1.5 text-right font-medium">{data.otherBatsman.score ?? 0}</td>
-                        <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.balls ?? 0}</td>
-                        <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.fours ?? 0}</td>
-                        <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.sixes ?? 0}</td>
-                        <td className="py-1.5 text-right text-gray-600">
-                          {data.otherBatsman.strikeRate != null ? data.otherBatsman.strikeRate.toFixed(1) : '-'}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-                {data.currentPartnership && (
-                  <p className="mt-2 text-xs text-gray-500">
-                    Partnership: {data.currentPartnership.score ?? 0} runs
-                    {data.currentPartnership.oversAsString && ` (${data.currentPartnership.oversAsString} ov)`}
-                  </p>
-                )}
-              </div>
-            )}
+        {/* Ordered sections: different arrangement for live vs completed */}
+        {live ? (
+          <>
+            {/* Live order: 1. Commentary, 2. Scorecards, 3. Analysis */}
+            {commentarySection}
 
-            {(data.bowlerOneDetails || data.bowlerTwoDetails) && (
-              <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowling</h3>
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-xs text-gray-500 border-b border-gray-100">
-                      <th className="pb-1.5 text-left font-normal">Bowler</th>
-                      <th className="pb-1.5 text-right font-normal">O</th>
-                      <th className="pb-1.5 text-right font-normal">M</th>
-                      <th className="pb-1.5 text-right font-normal">R</th>
-                      <th className="pb-1.5 text-right font-normal">W</th>
-                      <th className="pb-1.5 text-right font-normal">Econ</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[data.bowlerOneDetails, data.bowlerTwoDetails].filter(Boolean).map((bowler, i, arr) => (
-                      <tr key={i} className={i < arr.length - 1 ? 'border-b border-gray-50' : ''}>
-                        <td className="py-1.5 font-medium">{bowler!.name}</td>
-                        <td className="py-1.5 text-right text-gray-600">{bowler!.details?.overs ?? '-'}</td>
-                        <td className="py-1.5 text-right text-gray-600">{bowler!.details?.maidens ?? 0}</td>
-                        <td className="py-1.5 text-right text-gray-600">{bowler!.details?.runs ?? 0}</td>
-                        <td className="py-1.5 text-right font-medium">{bowler!.details?.wickets ?? 0}</td>
-                        <td className="py-1.5 text-right text-gray-600">
-                          {bowler!.details?.economy != null ? bowler!.details.economy.toFixed(2) : '-'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Live: score status bar */}
-        {live && (
-          <div className="max-w-6xl mx-auto mt-4 bg-white border border-gray-200 rounded-xl shadow-sm px-4 py-3">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-sm">
-              <div className="font-semibold text-gray-900">
-                {data.ourInningsStatus === 'InProgress' ? (
-                  <>The Village CC <span className="text-villageGreen">{data.score}/{data.wickets}</span> ({data.ourLastCompletedOver} ov) · CRR {(data.runRate ?? 0).toFixed(2)}</>
-                ) : data.theirInningsStatus === 'InProgress' ? (
-                  <>{data.opposition} <span className="text-villageGreen">{data.theirScore}/{data.theirWickets}</span> ({data.theirOver} ov) · CRR {(data.theirRunRate ?? 0).toFixed(2)}</>
-                ) : null}
-              </div>
-              {data.ourInningsStatus === 'Completed' && data.theirInningsStatus === 'InProgress' && (
-                <div className="text-gray-500 text-xs">
-                  Target: {(data.score ?? 0) + 1} runs
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Commentary section */}
-        {((data.completedOvers?.length ?? 0) > 0 || (data.theirCompletedOvers?.length ?? 0) > 0) && (
-          <section className="max-w-6xl mx-auto mt-6">
-            <button
-              type="button"
-              className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
-              onClick={() => setCommentaryExpanded(prev => !prev)}
-              aria-expanded={commentaryExpanded}
-            >
-              <span className="text-base font-semibold text-gray-800">Over-by-over Commentary</span>
-              <svg
-                className={`w-5 h-5 text-gray-500 transition-transform ${commentaryExpanded ? 'rotate-180' : ''}`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+            {/* Scorecards collapsible (wraps live panels) */}
+            <section className="max-w-6xl mx-auto mt-6">
+              <button
+                type="button"
+                className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
+                onClick={() => setScorecardExpanded(prev => !prev)}
+                aria-expanded={scorecardExpanded}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            {commentaryExpanded && (
-              <>
-                <div className="flex gap-2 mt-3 mb-3 flex-wrap">
-                  {(data.completedOvers?.length ?? 0) > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setActiveCommentaryTab('vcc')}
-                      className={`px-4 py-2 rounded-full text-sm font-medium ${
-                        activeCommentaryTab === 'vcc'
-                          ? 'bg-villageGreen text-white'
-                          : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
-                      }`}
-                    >
-                      VCC Commentary
-                    </button>
-                  )}
-                  {(data.theirCompletedOvers?.length ?? 0) > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setActiveCommentaryTab('oppo')}
-                      className={`px-4 py-2 rounded-full text-sm font-medium ${
-                        activeCommentaryTab === 'oppo'
-                          ? 'bg-villageGreen text-white'
-                          : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
-                      }`}
-                    >
-                      Oppo Commentary
-                    </button>
-                  )}
-                </div>
-                <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
-                  {activeCommentaryTab === 'vcc' && (data.completedOvers?.length ?? 0) > 0 && (
-                    <div>
-                      {data.ourInningsCommentary && (
-                        <p className="mb-3 text-sm text-gray-600 italic">{data.ourInningsCommentary}</p>
-                      )}
-                      {[...(data.completedOvers ?? [])].reverse().map((over, i, arr) => {
-                        const overNum = over.over?.overNumber ?? (arr.length - i);
-                        const balls = over.over?.balls
-                          ? [...over.over.balls].sort((a, b) => (a.ballNumber ?? 0) - (b.ballNumber ?? 0))
-                          : [];
-                        return (
-                          <div key={i} className={`py-4 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                            <div className="bg-gray-50 rounded-lg px-3 py-2 mb-3">
-                              <div className="flex flex-wrap items-center justify-between gap-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-semibold text-gray-900">{`Over ${overNum}`}</span>
-                                  {over.over?.bowler && (
-                                    <span className="text-gray-500">· {over.over.bowler}</span>
-                                  )}
-                                </div>
-                                <span className="text-gray-600 text-xs">
-                                  Village {over.scoreAtEndOfOver ?? 0}/{over.wicketsAtEndOfOver ?? 0}
-                                  <span className="ml-1 text-gray-400">(+{over.scoreForThisOver ?? 0})</span>
-                                </span>
-                              </div>
-                              {over.over?.commentary && (
-                                <p className="mt-1 text-xs text-gray-600 italic">{over.over.commentary}</p>
+                <span className="text-base font-semibold text-gray-800">Scorecards</span>
+                <svg
+                  className={`w-5 h-5 text-gray-500 transition-transform ${scorecardExpanded ? 'rotate-180' : ''}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {scorecardExpanded && (
+                <div className="mt-3 space-y-4">
+                  {(data.onStrikeBatsman || data.otherBatsman || data.bowlerOneDetails || data.bowlerTwoDetails) && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {(data.onStrikeBatsman || data.otherBatsman) && (
+                        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
+                          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">At the Crease</h3>
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="text-xs text-gray-500 border-b border-gray-100">
+                                <th className="pb-1.5 text-left font-normal">Batter</th>
+                                <th className="pb-1.5 text-right font-normal">R</th>
+                                <th className="pb-1.5 text-right font-normal">B</th>
+                                <th className="pb-1.5 text-right font-normal">4s</th>
+                                <th className="pb-1.5 text-right font-normal">6s</th>
+                                <th className="pb-1.5 text-right font-normal">SR</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {data.onStrikeBatsman && (
+                                <tr className="border-b border-gray-50">
+                                  <td className="py-1.5 font-medium">
+                                    {data.onStrikeBatsman.name}
+                                    <span className="ml-1 text-villageGreen text-xs font-bold">*</span>
+                                  </td>
+                                  <td className="py-1.5 text-right font-medium">{data.onStrikeBatsman.score ?? 0}</td>
+                                  <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.balls ?? 0}</td>
+                                  <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.fours ?? 0}</td>
+                                  <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.sixes ?? 0}</td>
+                                  <td className="py-1.5 text-right text-gray-600">
+                                    {data.onStrikeBatsman.strikeRate != null ? data.onStrikeBatsman.strikeRate.toFixed(1) : '-'}
+                                  </td>
+                                </tr>
                               )}
-                            </div>
-                            {balls.length > 0 && (
-                              <div className="space-y-2 pl-1" aria-label={`Over ${overNum} deliveries`}>
-                                {balls.map((ball, bi) => {
-                                  const blob = getBallBlob(ball);
-                                  const fow = ball.wicket ? fowByPlayerId.get(ball.wicket.player) : undefined;
-                                  const statsText = formatBattingStats(fow?.outGoingPlayerScore, fow?.outgoingBatsmanInningsDetails);
-                                  return (
-                                    <div key={bi}>
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          data-testid="ball-blob"
-                                          className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 ${blob.className}`}
-                                        >
-                                          {blob.label}
-                                        </span>
-                                        <div className="text-gray-600">
-                                          <span className="font-mono text-xs text-gray-400 mr-1">{overNum}.{ball.ballNumber}</span>
-                                          {ball.bowler && ball.batsmanName ? (
-                                            <>
-                                              {`${ball.bowler} to ${ball.batsmanName}, `}
-                                              {ball.wicket ? <span className="font-bold text-red-700">OUT!</span> : getBallDescription(ball)}
-                                            </>
-                                          ) : (
-                                            ball.wicket ? <span className="font-bold text-red-700">OUT!</span> : getBallDescription(ball)
-                                          )}
-                                        </div>
-                                      </div>
-                                      {ball.wicket && (
-                                        <div className="ml-9 mt-1 bg-red-50 border border-red-100 rounded px-2 py-1 text-sm">
-                                          {ball.wicket.playerName && (
-                                            <div className="font-semibold text-gray-800">
-                                              {ball.wicket.playerName} {formatWicketDismissal(ball.wicket)}{statsText}
-                                            </div>
-                                          )}
-                                          {ball.wicket.description && (
-                                            <div className="text-gray-500 italic text-xs mt-0.5">{ball.wicket.description}</div>
-                                          )}
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                  {activeCommentaryTab === 'oppo' && (data.theirCompletedOvers?.length ?? 0) > 0 && (
-                    <div>
-                      {data.theirInningsCommentary && (
-                        <p className="mb-3 text-sm text-gray-600 italic">{data.theirInningsCommentary}</p>
-                      )}
-                      {[...(data.theirCompletedOvers ?? [])].reverse().map((over, i, arr) => (
-                        <div key={i} className={`py-3 text-sm ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                          <span className="font-medium">{`Over ${over.over ?? (arr.length - i)}`}</span>
-                          <span className="ml-2 text-gray-500">
-                            {data.opposition} {over.score ?? 0}/{over.wickets ?? 0}
-                          </span>
-                          {over.commentary && (
-                            <p className="mt-1 text-gray-600">{over.commentary}</p>
+                              {data.otherBatsman && (
+                                <tr>
+                                  <td className="py-1.5 font-medium">{data.otherBatsman.name}</td>
+                                  <td className="py-1.5 text-right font-medium">{data.otherBatsman.score ?? 0}</td>
+                                  <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.balls ?? 0}</td>
+                                  <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.fours ?? 0}</td>
+                                  <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.sixes ?? 0}</td>
+                                  <td className="py-1.5 text-right text-gray-600">
+                                    {data.otherBatsman.strikeRate != null ? data.otherBatsman.strikeRate.toFixed(1) : '-'}
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                          {data.currentPartnership && (
+                            <p className="mt-2 text-xs text-gray-500">
+                              Partnership: {data.currentPartnership.score ?? 0} runs
+                              {data.currentPartnership.oversAsString && ` (${data.currentPartnership.oversAsString} ov)`}
+                            </p>
                           )}
                         </div>
-                      ))}
+                      )}
+                      {(data.bowlerOneDetails || data.bowlerTwoDetails) && (
+                        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
+                          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowling</h3>
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="text-xs text-gray-500 border-b border-gray-100">
+                                <th className="pb-1.5 text-left font-normal">Bowler</th>
+                                <th className="pb-1.5 text-right font-normal">O</th>
+                                <th className="pb-1.5 text-right font-normal">M</th>
+                                <th className="pb-1.5 text-right font-normal">R</th>
+                                <th className="pb-1.5 text-right font-normal">W</th>
+                                <th className="pb-1.5 text-right font-normal">Econ</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {[data.bowlerOneDetails, data.bowlerTwoDetails].filter(Boolean).map((bowler, i, arr) => (
+                                <tr key={i} className={i < arr.length - 1 ? 'border-b border-gray-50' : ''}>
+                                  <td className="py-1.5 font-medium">{bowler!.name}</td>
+                                  <td className="py-1.5 text-right text-gray-600">{bowler!.details?.overs ?? '-'}</td>
+                                  <td className="py-1.5 text-right text-gray-600">{bowler!.details?.maidens ?? 0}</td>
+                                  <td className="py-1.5 text-right text-gray-600">{bowler!.details?.runs ?? 0}</td>
+                                  <td className="py-1.5 text-right font-medium">{bowler!.details?.wickets ?? 0}</td>
+                                  <td className="py-1.5 text-right text-gray-600">
+                                    {bowler!.details?.economy != null ? bowler!.details.economy.toFixed(2) : '-'}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
                     </div>
                   )}
+                  <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-4 py-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-sm">
+                      <div className="font-semibold text-gray-900">
+                        {data.ourInningsStatus === 'InProgress' ? (
+                          <>The Village CC <span className="text-villageGreen">{data.score}/{data.wickets}</span> ({data.ourLastCompletedOver} ov) · CRR {(data.runRate ?? 0).toFixed(2)}</>
+                        ) : data.theirInningsStatus === 'InProgress' ? (
+                          <>{data.opposition} <span className="text-villageGreen">{data.theirScore}/{data.theirWickets}</span> ({data.theirOver} ov) · CRR {(data.theirRunRate ?? 0).toFixed(2)}</>
+                        ) : null}
+                      </div>
+                      {data.ourInningsStatus === 'Completed' && data.theirInningsStatus === 'InProgress' && (
+                        <div className="text-gray-500 text-xs">
+                          Target: {(data.score ?? 0) + 1} runs
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </>
+              )}
+            </section>
+          </>
+        ) : (
+          <>
+            {/* Completed order: 1. Match Report, 2. Scorecards, 3. Commentary, 4. Analysis */}
+            {matchReportSection}
+
+            {/* Scorecards collapsible (wraps innings for completed matches) */}
+            {completed && (hasOurInnings || hasTheirInnings) && (
+              <section className="max-w-6xl mx-auto mt-6">
+                <button
+                  type="button"
+                  className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
+                  onClick={() => setScorecardExpanded(prev => !prev)}
+                  aria-expanded={scorecardExpanded}
+                >
+                  <span className="text-base font-semibold text-gray-800">Scorecards</span>
+                  <svg
+                    className={`w-5 h-5 text-gray-500 transition-transform ${scorecardExpanded ? 'rotate-180' : ''}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {scorecardExpanded && (
+                  <div className="mt-3 mb-10">
+                    {hasBothInnings && (
+                      <div className="flex gap-2 mb-4 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={() => setActiveInnings('our')}
+                          className={`px-4 py-2 rounded-full text-sm font-medium ${
+                            activeInnings === 'our'
+                              ? 'bg-villageGreen text-white'
+                              : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                          }`}
+                        >
+                          The Village CC Innings
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setActiveInnings('their')}
+                          className={`px-4 py-2 rounded-full text-sm font-medium ${
+                            activeInnings === 'their'
+                              ? 'bg-villageGreen text-white'
+                              : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                          }`}
+                        >
+                          {data.opposition} Innings
+                        </button>
+                      </div>
+                    )}
+                    {hasOurInnings && scorecardData.finalScorecard?.ourInnings &&
+                      (!hasBothInnings || activeInnings === 'our') &&
+                      renderInningsContent(
+                        scorecardData.finalScorecard.ourInnings,
+                        'The Village CC',
+                        villageIcon('h-8 w-8')
+                      )}
+                    {hasTheirInnings && scorecardData.finalScorecard?.theirInnings &&
+                      (!hasBothInnings || activeInnings === 'their') &&
+                      renderInningsContent(
+                        scorecardData.finalScorecard.theirInnings,
+                        data.opposition ?? 'Opposition',
+                        oppositionIcon('h-8 w-8')
+                      )}
+                  </div>
+                )}
+              </section>
             )}
-          </section>
+
+            {commentarySection}
+          </>
         )}
 
         {/* Analysis / Charts section */}
@@ -1320,94 +1451,6 @@ const LiveScorecard: React.FC = () => {
             </section>
           );
         })()}
-
-        {/* Innings section (completed matches) */}
-        {completed && (hasOurInnings || hasTheirInnings) && (
-          <section className="max-w-6xl mx-auto mt-6 mb-10">
-            {/* Innings tab selector */}
-            {hasBothInnings && (
-              <div className="flex gap-2 mb-4 flex-wrap">
-                <button
-                  type="button"
-                  onClick={() => setActiveInnings('our')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium ${
-                    activeInnings === 'our'
-                      ? 'bg-villageGreen text-white'
-                      : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
-                  }`}
-                >
-                  The Village CC Innings
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveInnings('their')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium ${
-                    activeInnings === 'their'
-                      ? 'bg-villageGreen text-white'
-                      : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
-                  }`}
-                >
-                  {data.opposition} Innings
-                </button>
-              </div>
-            )}
-
-            {/* Our innings */}
-            {hasOurInnings && scorecardData.finalScorecard?.ourInnings &&
-              (!hasBothInnings || activeInnings === 'our') &&
-              renderInningsContent(
-                scorecardData.finalScorecard.ourInnings,
-                'The Village CC',
-                villageIcon('h-8 w-8')
-              )}
-
-            {/* Their innings */}
-            {hasTheirInnings && scorecardData.finalScorecard?.theirInnings &&
-              (!hasBothInnings || activeInnings === 'their') &&
-              renderInningsContent(
-                scorecardData.finalScorecard.theirInnings,
-                data.opposition ?? 'Opposition',
-                oppositionIcon('h-8 w-8')
-              )}
-          </section>
-        )}
-
-        {/* Match Report (if completed) */}
-        {completed && scorecardData.matchReport && (scorecardData.matchReport.conditions || scorecardData.matchReport.report) && (
-          <section className="max-w-6xl mx-auto mt-6 mb-10">
-            <button
-              type="button"
-              className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
-              onClick={() => setMatchReportExpanded(prev => !prev)}
-              aria-expanded={matchReportExpanded}
-            >
-              <span className="text-base font-semibold text-gray-800">Match Report</span>
-              <svg
-                className={`w-5 h-5 text-gray-500 transition-transform ${matchReportExpanded ? 'rotate-180' : ''}`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            {matchReportExpanded && (
-              <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-6 mt-3">
-                {scorecardData.matchReport.conditions && (
-                  <div className="mb-4">
-                    <h3 className="font-semibold text-gray-900 mb-2">Conditions</h3>
-                    <p className="text-sm text-gray-700">{scorecardData.matchReport.conditions}</p>
-                  </div>
-                )}
-                {scorecardData.matchReport.report && (
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Report</h3>
-                    <div className="text-sm text-gray-700 prose prose-sm max-w-none"
-                         dangerouslySetInnerHTML={{ __html: scorecardData.matchReport.report }} />
-                  </div>
-                )}
-              </div>
-            )}
-          </section>
-        )}
 
         {/* No result message */}
         {!completed && !live && !scorecardData.result?.isAbandoned && (
