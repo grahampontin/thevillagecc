@@ -68,10 +68,17 @@ interface GridOptions {
 
 interface StatsDataArray extends Array<StatsDataV1> {}
 
+interface ChartOptionsPluginTitle {
+  display?: boolean;
+  text?: string | string[];
+}
+
 interface ChartDataWrapper {
   type: 'line' | 'bar' | 'pie' | 'doughnut' | 'radar';
   data: ChartData<'line' | 'bar' | 'pie' | 'doughnut' | 'radar'>;
-  options?: ChartOptions<'line' | 'bar' | 'pie' | 'doughnut' | 'radar'>;
+  options?: ChartOptions<'line' | 'bar' | 'pie' | 'doughnut' | 'radar'> & {
+    plugins?: { title?: ChartOptionsPluginTitle; [key: string]: unknown };
+  };
 }
 
 const PlayerDetail: React.FC = () => {
@@ -205,21 +212,43 @@ const PlayerDetail: React.FC = () => {
     fetchMatches();
   }, [playerId, activeTab]);
 
+  const getChartTitleText = (chartData: ChartDataWrapper | null): string | null => {
+    const titlePlugin = chartData?.options?.plugins?.title;
+    if (titlePlugin?.text) {
+      return typeof titlePlugin.text === 'string' ? titlePlugin.text : null;
+    }
+    return null;
+  };
+
   const renderChart = (chartData: ChartDataWrapper | null) => {
     if (!chartData) return null;
 
     const chartType = chartData.type;
+    const isBarOrLine = chartType === 'bar' || chartType === 'line';
+
+    const mergedOptions = {
+      ...chartData.options,
+      responsive: true,
+      ...(isBarOrLine ? { maintainAspectRatio: false } : {}),
+      plugins: {
+        ...chartData.options?.plugins,
+        title: {
+          ...chartData.options?.plugins?.title,
+          display: false,
+        },
+      },
+    };
     
     if (chartType === 'line') {
-      return <Line data={chartData.data as ChartData<'line'>} options={chartData.options as ChartOptions<'line'>} />;
+      return <Line data={chartData.data as ChartData<'line'>} options={mergedOptions as ChartOptions<'line'>} />;
     } else if (chartType === 'bar') {
-      return <Bar data={chartData.data as ChartData<'bar'>} options={chartData.options as ChartOptions<'bar'>} />;
+      return <Bar data={chartData.data as ChartData<'bar'>} options={mergedOptions as ChartOptions<'bar'>} />;
     } else if (chartType === 'pie') {
-      return <Pie data={chartData.data as ChartData<'pie'>} options={chartData.options as ChartOptions<'pie'>} />;
+      return <Pie data={chartData.data as ChartData<'pie'>} options={mergedOptions as ChartOptions<'pie'>} />;
     } else if (chartType === 'doughnut') {
-      return <Doughnut data={chartData.data as ChartData<'doughnut'>} options={chartData.options as ChartOptions<'doughnut'>} />;
+      return <Doughnut data={chartData.data as ChartData<'doughnut'>} options={mergedOptions as ChartOptions<'doughnut'>} />;
     } else if (chartType === 'radar') {
-      return <Radar data={chartData.data as ChartData<'radar'>} options={chartData.options as ChartOptions<'radar'>} />;
+      return <Radar data={chartData.data as ChartData<'radar'>} options={mergedOptions as ChartOptions<'radar'>} />;
     }
     
     return null;
@@ -349,7 +378,7 @@ const PlayerDetail: React.FC = () => {
             <section id="overview-panel" className="mt-8 space-y-8" role="tabpanel" aria-labelledby="overview-tab">
               
               {/* Summary cards */}
-              <div className="grid sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                   <div className="text-xs text-gray-500 uppercase tracking-wide">Matches</div>
                   <div className="mt-1 text-2xl font-semibold">{player.matches}</div>
@@ -442,16 +471,16 @@ const PlayerDetail: React.FC = () => {
                   ) : (
                     <>
                       {battingTimelineData && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm overflow-hidden vcc-chart-container">
                           <h3 className="text-base font-semibold mb-4">Batting Timeline</h3>
-                          <div className="h-64">
+                          <div className="relative h-64">
                             {renderChart(battingTimelineData)}
                           </div>
                         </div>
                       )}
                       
                       {modesOfDismissalData && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm overflow-hidden vcc-chart-container">
                           <h3 className="text-base font-semibold mb-4">Modes of Dismissal</h3>
                           <div className="h-64 flex justify-center items-center">
                             <div className="w-full max-w-xs">
@@ -462,8 +491,10 @@ const PlayerDetail: React.FC = () => {
                       )}
                       
                       {scoringZonesData && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                          <h3 className="text-base font-semibold mb-4">Scoring Areas</h3>
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm overflow-hidden vcc-chart-container">
+                          <h3 className="text-base font-semibold mb-4">
+                            {getChartTitleText(scoringZonesData) || 'Scoring Areas'}
+                          </h3>
                           <div className="h-64 flex justify-center items-center">
                             <div className="w-full max-w-xs">
                               {renderChart(scoringZonesData)}
@@ -473,9 +504,9 @@ const PlayerDetail: React.FC = () => {
                       )}
                       
                       {strikeRatesData && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm overflow-hidden vcc-chart-container">
                           <h3 className="text-base font-semibold mb-4">Strike Rates</h3>
-                          <div className="h-64">
+                          <div className="relative h-64">
                             {renderChart(strikeRatesData)}
                           </div>
                         </div>
@@ -496,27 +527,27 @@ const PlayerDetail: React.FC = () => {
                   ) : (
                     <>
                       {wicketsBySeasonData && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm overflow-hidden vcc-chart-container">
                           <h3 className="text-base font-semibold mb-4">Wickets by Season</h3>
-                          <div className="h-64">
+                          <div className="relative h-64">
                             {renderChart(wicketsBySeasonData)}
                           </div>
                         </div>
                       )}
                       
                       {averageBySeasonData && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm overflow-hidden vcc-chart-container">
                           <h3 className="text-base font-semibold mb-4">Average by Season</h3>
-                          <div className="h-64">
+                          <div className="relative h-64">
                             {renderChart(averageBySeasonData)}
                           </div>
                         </div>
                       )}
                       
                       {dismissalTypesData && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm overflow-hidden vcc-chart-container">
                           <h3 className="text-base font-semibold mb-4">Dismissal Types</h3>
-                          <div className="h-64">
+                          <div className="relative h-64">
                             {renderChart(dismissalTypesData)}
                           </div>
                         </div>
