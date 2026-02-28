@@ -52,6 +52,13 @@ const SkeletonLoader: React.FC = () => (
   </div>
 );
 
+const ChartSkeletonLoader: React.FC = () => (
+  <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm" role="status" aria-label="Loading chart" aria-live="polite">
+    <div className="h-5 bg-gray-200 rounded w-1/3 animate-pulse mb-4"></div>
+    <div className="h-64 bg-gray-100 rounded animate-pulse"></div>
+  </div>
+);
+
 // Local lightweight types used only for rendering
 interface GridOptions {
   columnDefs: ColDef[];
@@ -86,6 +93,7 @@ const PlayerDetail: React.FC = () => {
   const [wicketsBySeasonData, setWicketsBySeasonData] = useState<ChartDataWrapper | null>(null);
   const [averageBySeasonData, setAverageBySeasonData] = useState<ChartDataWrapper | null>(null);
   const [dismissalTypesData, setDismissalTypesData] = useState<ChartDataWrapper | null>(null);
+  const [chartsLoading, setChartsLoading] = useState(false);
   
   // Stats tab states
   const [statsType, setStatsType] = useState<'Batting' | 'Bowling'>('Batting');
@@ -122,6 +130,7 @@ const PlayerDetail: React.FC = () => {
       if (!playerId || activeTab !== 'overview') return;
       
       try {
+        setChartsLoading(true);
         // Fetch all charts in parallel for better performance
         const [
           battingTimeline, 
@@ -150,6 +159,8 @@ const PlayerDetail: React.FC = () => {
         setDismissalTypesData(dismissalTypes);
       } catch (error) {
         console.error('Error fetching charts:', error);
+      } finally {
+        setChartsLoading(false);
       }
     };
 
@@ -273,7 +284,9 @@ const PlayerDetail: React.FC = () => {
               <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
                 {player.firstName} {player.surname}
               </h1>
-              <p className="mt-1 text-sm text-gray-600">Squad · The Village Cricket Club</p>
+              {player.playingRole && (
+                <p className="mt-1 text-sm text-gray-600">{player.playingRole}</p>
+              )}
 
               <div className="mt-4 grid sm:grid-cols-4 gap-3 text-sm">
                 <div>
@@ -343,21 +356,15 @@ const PlayerDetail: React.FC = () => {
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                   <div className="text-xs text-gray-500 uppercase tracking-wide">Runs</div>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {(battingStats.gridOptions.rowData?.[0]?.runs as number) || 0}
-                  </div>
+                  <div className="mt-1 text-2xl font-semibold">{player.runs ?? 0}</div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                   <div className="text-xs text-gray-500 uppercase tracking-wide">Wickets</div>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {(bowlingStats.gridOptions.rowData?.[0]?.wickets as number) || 0}
-                  </div>
+                  <div className="mt-1 text-2xl font-semibold">{player.wickets ?? 0}</div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                   <div className="text-xs text-gray-500 uppercase tracking-wide">Catches</div>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {(battingStats.gridOptions.rowData?.[0]?.catches as number) || 0}
-                  </div>
+                  <div className="mt-1 text-2xl font-semibold">{player.catches ?? 0}</div>
                 </div>
               </div>
 
@@ -414,6 +421,7 @@ const PlayerDetail: React.FC = () => {
                         resizable: false,
                         sortable: true,
                         flex: 1,
+                        minWidth: 80,
                         filter: false
                       }}
                     />
@@ -424,71 +432,96 @@ const PlayerDetail: React.FC = () => {
               {/* Charts Grid */}
               {careerStatsType === 'Batting' && (
                 <div className="grid md:grid-cols-2 gap-6">
-                  {battingTimelineData && (
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                      <h3 className="text-base font-semibold mb-4">Batting Timeline</h3>
-                      <div className="h-64">
-                        {renderChart(battingTimelineData)}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {modesOfDismissalData && (
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                      <h3 className="text-base font-semibold mb-4">Modes of Dismissal</h3>
-                      <div className="h-64">
-                        {renderChart(modesOfDismissalData)}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {scoringZonesData && (
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                      <h3 className="text-base font-semibold mb-4">Scoring Areas</h3>
-                      <div className="h-64">
-                        {renderChart(scoringZonesData)}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {strikeRatesData && (
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                      <h3 className="text-base font-semibold mb-4">Strike Rates</h3>
-                      <div className="h-64">
-                        {renderChart(strikeRatesData)}
-                      </div>
-                    </div>
+                  {chartsLoading ? (
+                    <>
+                      <ChartSkeletonLoader />
+                      <ChartSkeletonLoader />
+                      <ChartSkeletonLoader />
+                      <ChartSkeletonLoader />
+                    </>
+                  ) : (
+                    <>
+                      {battingTimelineData && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                          <h3 className="text-base font-semibold mb-4">Batting Timeline</h3>
+                          <div className="h-64">
+                            {renderChart(battingTimelineData)}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {modesOfDismissalData && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                          <h3 className="text-base font-semibold mb-4">Modes of Dismissal</h3>
+                          <div className="h-64 flex justify-center items-center">
+                            <div className="w-full max-w-xs">
+                              {renderChart(modesOfDismissalData)}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {scoringZonesData && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                          <h3 className="text-base font-semibold mb-4">Scoring Areas</h3>
+                          <div className="h-64 flex justify-center items-center">
+                            <div className="w-full max-w-xs">
+                              {renderChart(scoringZonesData)}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {strikeRatesData && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                          <h3 className="text-base font-semibold mb-4">Strike Rates</h3>
+                          <div className="h-64">
+                            {renderChart(strikeRatesData)}
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )}
 
               {careerStatsType === 'Bowling' && (
                 <div className="grid md:grid-cols-2 gap-6">
-                  {wicketsBySeasonData && (
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                      <h3 className="text-base font-semibold mb-4">Wickets by Season</h3>
-                      <div className="h-64">
-                        {renderChart(wicketsBySeasonData)}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {averageBySeasonData && (
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                      <h3 className="text-base font-semibold mb-4">Average by Season</h3>
-                      <div className="h-64">
-                        {renderChart(averageBySeasonData)}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {dismissalTypesData && (
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                      <h3 className="text-base font-semibold mb-4">Dismissal Types</h3>
-                      <div className="h-64">
-                        {renderChart(dismissalTypesData)}
-                      </div>
-                    </div>
+                  {chartsLoading ? (
+                    <>
+                      <ChartSkeletonLoader />
+                      <ChartSkeletonLoader />
+                      <ChartSkeletonLoader />
+                    </>
+                  ) : (
+                    <>
+                      {wicketsBySeasonData && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                          <h3 className="text-base font-semibold mb-4">Wickets by Season</h3>
+                          <div className="h-64">
+                            {renderChart(wicketsBySeasonData)}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {averageBySeasonData && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                          <h3 className="text-base font-semibold mb-4">Average by Season</h3>
+                          <div className="h-64">
+                            {renderChart(averageBySeasonData)}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {dismissalTypesData && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                          <h3 className="text-base font-semibold mb-4">Dismissal Types</h3>
+                          <div className="h-64">
+                            {renderChart(dismissalTypesData)}
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )}
@@ -544,6 +577,7 @@ const PlayerDetail: React.FC = () => {
                             resizable: false,
                             sortable: true,
                             flex: 1,
+                            minWidth: 80,
                             filter: false
                           }}
                         />
@@ -568,7 +602,7 @@ const PlayerDetail: React.FC = () => {
                   <SkeletonLoader />
                 ) : (
                   matchesData && (
-                    <div className="w-full">
+                    <div className="w-full overflow-x-auto">
                       <div className="vcc-ag-grid-compact">
                         <AgGridReact
                           theme={themeMaterial}
@@ -585,6 +619,7 @@ const PlayerDetail: React.FC = () => {
                             resizable: false,
                             sortable: true,
                             flex: 1,
+                            minWidth: 80,
                             filter: false
                           }}
                         />
