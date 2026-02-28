@@ -112,6 +112,11 @@ body {
   border: 0 !important;
 }
 
+/* Ensure chart.js canvases can shrink with the viewport (fixes orientation-change zoom-out) */
+.vcc-chart-container canvas {
+  max-width: 100%;
+}
+
 /* AG Grid density overrides (opt-in via wrapper class) */
 .vcc-ag-grid-compact {
   /* Reduce overall vertical whitespace */
