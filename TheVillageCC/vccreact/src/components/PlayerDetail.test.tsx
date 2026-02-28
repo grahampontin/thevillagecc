@@ -22,7 +22,10 @@ const mockPlayerDetailData = {
     debut: '2010-05-15T00:00:00Z',
     isRightHandBat: true,
     lastMatchDate: '2024-09-15T00:00:00Z',
-    playingRole: 'All-rounder'
+    playingRole: 'All-rounder',
+    runs: 1500,
+    wickets: 20,
+    catches: 15
   },
   playerImageUrl: 'http://example.com/player.jpg',
   battingStats: {
@@ -303,5 +306,58 @@ describe('PlayerDetail', () => {
     expect(mockBattingChartData.data.datasets[0].borderColor).toBeDefined();
     expect(mockBowlingChartData.data.datasets[0].backgroundColor).toBeDefined();
     expect(mockBowlingChartData.data.datasets[0].borderColor).toBeDefined();
+  });
+
+  test('displays playing role instead of generic squad text', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockPlayerDetailData,
+    });
+
+    renderWithRouter('1');
+
+    await waitFor(() => {
+      expect(screen.getByText('All-rounder')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText(/Squad · The Village Cricket Club/i)).not.toBeInTheDocument();
+  });
+
+  test('displays all-time totals from player object in summary cards', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockPlayerDetailData,
+    });
+
+    renderWithRouter('1');
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/John Doe/i).length).toBeGreaterThan(0);
+    });
+
+    // runs=1500, wickets=20, catches=15 come from player object (all-time totals)
+    expect(screen.getByText('1500')).toBeInTheDocument();
+    expect(screen.getByText('20')).toBeInTheDocument();
+    expect(screen.getByText('15')).toBeInTheDocument();
+  });
+
+  test('shows chart skeleton loaders while charts are loading', async () => {
+    // Player detail resolves quickly, but chart fetches never resolve
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockPlayerDetailData,
+      })
+      .mockImplementation(() => new Promise(() => {})); // charts never resolve
+
+    renderWithRouter('1');
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/John Doe/i).length).toBeGreaterThan(0);
+    });
+
+    // Chart skeleton loaders should be visible while charts are loading
+    const chartSkeletons = screen.getAllByRole('status', { name: /Loading chart/i });
+    expect(chartSkeletons.length).toBeGreaterThan(0);
   });
 });
