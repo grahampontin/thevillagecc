@@ -3,6 +3,20 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import PlayerDetail from './PlayerDetail';
 
+// Capture the last data prop passed to the Radar component so we can inspect
+// the labels that the component would render.
+const lastRadarProps: { data?: { labels?: unknown[] } } = {};
+jest.mock('react-chartjs-2', () => ({
+  Line: () => null,
+  Bar: () => null,
+  Pie: () => null,
+  Doughnut: () => null,
+  Radar: (props: { data?: { labels?: unknown[] } }) => {
+    lastRadarProps.data = props.data;
+    return null;
+  },
+}));
+
 // Mock fetch globally
 global.fetch = jest.fn();
 
@@ -44,6 +58,16 @@ const mockPlayerDetailData = {
       footerRow: { wickets: 20 }
     }
   }
+};
+
+// Radar chart data returned by the scoringZones API endpoint (uses RHB position names)
+const mockScoringZonesChartData = {
+  type: 'radar',
+  data: {
+    labels: ['Fine Leg', 'Backward Square Leg', 'Square Leg', 'Mid Wicket', 'Mid On', 'Mid Off', 'Cover', 'Point', 'Third Man'],
+    datasets: [{ label: 'Runs', data: [10, 5, 8, 20, 15, 18, 12, 9, 3] }]
+  },
+  options: { responsive: true, plugins: { title: { display: true, text: 'Scoring Areas (100 balls)' } } }
 };
 
 const mockBattingChartData = {
@@ -112,6 +136,8 @@ const mockBowlingChartData = {
 describe('PlayerDetail', () => {
   beforeEach(() => {
     (global.fetch as jest.Mock).mockClear();
+    // Reset captured radar props so tests don't bleed into each other
+    lastRadarProps.data = undefined;
   });
 
   const renderWithRouter = (playerId: string) => {
@@ -359,5 +385,58 @@ describe('PlayerDetail', () => {
     // Chart skeleton loaders should be visible while charts are loading
     const chartSkeletons = screen.getAllByRole('status', { name: /Loading chart/i });
     expect(chartSkeletons.length).toBeGreaterThan(0);
+  });
+
+  test('inverts scoring zone labels for left-handed batsmen', async () => {
+    const lhbPlayerDetail = {
+      ...mockPlayerDetailData,
+      player: { ...mockPlayerDetailData.player, isRightHandBat: false },
+    };
+
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({ ok: true, json: async () => lhbPlayerDetail })
+      // Return the scoring zones chart as the third chart (after battingTimeline, modesOfDismissal)
+      .mockResolvedValueOnce({ ok: true, json: async () => mockBattingChartData }) // battingTimeline
+      .mockResolvedValueOnce({ ok: true, json: async () => mockBattingChartData }) // modesOfDismissal
+      .mockResolvedValueOnce({ ok: true, json: async () => mockScoringZonesChartData }) // scoringZones
+      .mockResolvedValue({ ok: true, json: async () => mockBattingChartData });   // remaining charts
+
+    renderWithRouter('1');
+
+    await waitFor(() => {
+      // The scoringZones radar chart should have been rendered with inverted labels
+      expect(lastRadarProps.data).toBeDefined();
+    });
+
+    const labels = lastRadarProps.data?.labels as string[];
+    // Verify the full label set is the correct LHB mirror of the RHB labels.
+    // Each position name should be replaced with its opposite-side equivalent.
+    expect(labels[0]).toBe('Third Man');        // Fine Leg    → Third Man
+    expect(labels[2]).toBe('Point');            // Square Leg  → Point
+    expect(labels[4]).toBe('Mid Off');          // Mid On      → Mid Off
+    expect(labels[5]).toBe('Mid On');           // Mid Off     → Mid On
+    expect(labels[7]).toBe('Square Leg');       // Point       → Square Leg
+    expect(labels[8]).toBe('Fine Leg');         // Third Man   → Fine Leg
+  });
+
+  test('keeps scoring zone labels unchanged for right-handed batsmen', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetailData }) // isRightHandBat: true
+      .mockResolvedValueOnce({ ok: true, json: async () => mockBattingChartData }) // battingTimeline
+      .mockResolvedValueOnce({ ok: true, json: async () => mockBattingChartData }) // modesOfDismissal
+      .mockResolvedValueOnce({ ok: true, json: async () => mockScoringZonesChartData }) // scoringZones
+      .mockResolvedValue({ ok: true, json: async () => mockBattingChartData });
+
+    renderWithRouter('1');
+
+    await waitFor(() => {
+      expect(lastRadarProps.data).toBeDefined();
+    });
+
+    const labels = lastRadarProps.data?.labels as string[];
+    // RHB labels should remain as returned by the API
+    expect(labels).toContain('Mid Off');
+    expect(labels).toContain('Square Leg');
+    expect(labels).toContain('Third Man');
   });
 });
