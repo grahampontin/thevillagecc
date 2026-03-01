@@ -81,6 +81,40 @@ interface ChartDataWrapper {
   };
 }
 
+// Mirror map for left-handed batsmen: off-side and leg-side positions are swapped.
+// E.g. "Mid Off" (off-side straight) becomes "Mid On" (leg-side straight) for an LHB.
+// Keys are normalised to lowercase with spaces (hyphens replaced) so both "Mid-on"
+// and "Mid On" variants returned by the API are handled identically.
+const LHB_LABEL_MIRROR: Record<string, string> = {
+  'fine leg': 'Third Man',
+  'backward square leg': 'Backward Point',
+  'square leg': 'Point',
+  'mid wicket': 'Cover',
+  'mid on': 'Mid Off',
+  'mid off': 'Mid On',
+  'cover': 'Mid Wicket',
+  'point': 'Square Leg',
+  'third man': 'Fine Leg',
+  'backward point': 'Backward Square Leg',
+};
+
+/** Returns a copy of a scoring-zones chart with position labels inverted for an LHB. */
+function invertLabelsForLHB(chartData: ChartDataWrapper): ChartDataWrapper {
+  if (!chartData.data.labels) return chartData;
+  return {
+    ...chartData,
+    data: {
+      ...chartData.data,
+      labels: chartData.data.labels.map((label) => {
+        if (typeof label !== 'string') return label;
+        // Normalise to lowercase + spaces so "Mid-on" and "Mid On" both match.
+        const key = label.toLowerCase().replace(/-/g, ' ');
+        return LHB_LABEL_MIRROR[key] ?? label;
+      }),
+    },
+  };
+}
+
 const PlayerDetail: React.FC = () => {
   const { playerId } = useParams<{ playerId: string }>();
   const [playerDetail, setPlayerDetail] = useState<PlayerDetailV1 | null>(null);
@@ -490,18 +524,26 @@ const PlayerDetail: React.FC = () => {
                         </div>
                       )}
                       
-                      {scoringZonesData && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm overflow-hidden vcc-chart-container">
-                          <h3 className="text-base font-semibold mb-4">
-                            {getChartTitleText(scoringZonesData) || 'Scoring Areas'}
-                          </h3>
-                          <div className="h-64 flex justify-center items-center">
-                            <div className="w-full max-w-xs">
-                              {renderChart(scoringZonesData)}
+                      {scoringZonesData && (() => {
+                        // Invert position labels for left-handed batsmen so that
+                        // off-side and leg-side names correctly reflect their stance.
+                        const displayData =
+                          player.isRightHandBat === false
+                            ? invertLabelsForLHB(scoringZonesData)
+                            : scoringZonesData;
+                        return (
+                          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm overflow-hidden vcc-chart-container">
+                            <h3 className="text-base font-semibold mb-4">
+                              {getChartTitleText(displayData) || 'Scoring Areas'}
+                            </h3>
+                            <div className="h-64 flex justify-center items-center">
+                              <div className="w-full max-w-xs">
+                                {renderChart(displayData)}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      )}
+                        );
+                      })()}
                       
                       {strikeRatesData && (
                         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm overflow-hidden vcc-chart-container">
