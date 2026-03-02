@@ -31,7 +31,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
 /**
  * Performs a GET request and returns JSON response.
- * 
+ *
  * @param url - The URL to fetch
  * @param init - Optional fetch init options
  * @returns Promise resolving to typed JSON response
@@ -51,9 +51,9 @@ export async function getJson<T>(url: string, init?: RequestInit): Promise<T> {
 
 /**
  * Performs a POST request with a JSON body.
- * 
+ *
  * @param url - The URL to post to
- * @param body - The request body (will be JSON-serialised)
+ * @param body - The request body (will be JSON-serialized)
  * @returns Promise resolving to typed JSON response
  */
 export async function postJson<T>(url: string, body: unknown): Promise<T> {
@@ -71,9 +71,9 @@ export async function postJson<T>(url: string, body: unknown): Promise<T> {
 
 /**
  * Performs a PUT request with a JSON body.
- * 
+ *
  * @param url - The URL to put to
- * @param body - The request body (will be JSON-serialised)
+ * @param body - The request body (will be JSON-serialized)
  * @returns Promise resolving to typed JSON response
  */
 export async function putJson<T>(url: string, body: unknown): Promise<T> {
@@ -91,7 +91,7 @@ export async function putJson<T>(url: string, body: unknown): Promise<T> {
 
 /**
  * Performs a DELETE request.
- * 
+ *
  * @param url - The URL to delete
  */
 export async function deleteRequest(url: string): Promise<void> {

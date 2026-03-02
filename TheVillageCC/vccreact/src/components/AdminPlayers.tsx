@@ -97,8 +97,8 @@ const AdminPlayers: React.FC = () => {
     setSaving(true);
     setErrorMsg(null);
     try {
-      const clubConn = form.clubConnectionPlayerId
-        ? players.find(p => String(p.playerId) === form.clubConnectionPlayerId) ?? undefined
+      const clubConn: PlayerV1 | undefined = form.clubConnectionPlayerId
+        ? { playerId: parseInt(form.clubConnectionPlayerId, 10) }
         : undefined;
 
       const payload: PlayerV1 = {
