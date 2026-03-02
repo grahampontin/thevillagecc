@@ -3,7 +3,7 @@
  * Centralizes all Awards endpoint calls.
  */
 
-import { getJson } from './http';
+import { getJson, postJson, putJson, deleteRequest } from './http';
 import { AwardV1 } from './swaggerTypes';
 import { apiUrl } from './config';
 
@@ -37,4 +37,28 @@ export async function getAllAwards(): Promise<AwardV1[]> {
  */
 export async function getAwardById(id: number): Promise<AwardV1> {
   return getJson<AwardV1>(apiUrl(`/api/Awards/${id}`));
+}
+
+/**
+ * Creates a new award.
+ * Uses POST /api/Awards
+ */
+export async function createAward(award: AwardV1): Promise<AwardV1> {
+  return postJson<AwardV1>(apiUrl('/api/Awards'), award);
+}
+
+/**
+ * Updates an existing award.
+ * Uses PUT /api/Awards
+ */
+export async function updateAward(award: AwardV1): Promise<AwardV1> {
+  return putJson<AwardV1>(apiUrl('/api/Awards'), award);
+}
+
+/**
+ * Deletes an award by ID.
+ * Uses DELETE /api/Awards/{id}
+ */
+export async function deleteAward(id: number): Promise<void> {
+  return deleteRequest(apiUrl(`/api/Awards/${id}`));
 }
