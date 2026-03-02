@@ -5,6 +5,7 @@ import Footer from './Footer';
 import { getAwardsBySeason, createAward, updateAward, deleteAward } from '../api/awardsApi';
 import { getAllPlayers } from '../api/playersApi';
 import { AwardV1, PlayerV1 } from '../api/swaggerTypes';
+import SearchableSelect from './SearchableSelect';
 
 const AWARD_TYPES: { value: string; label: string }[] = [
   { value: 'PlayerOfTheYear', label: 'Player Of The Year' },
@@ -42,6 +43,7 @@ const AdminAwards: React.FC = () => {
   const [awards, setAwards] = useState<AwardV1[]>([]);
   const [players, setPlayers] = useState<PlayerV1[]>([]);
   const [season, setSeason] = useState(new Date().getFullYear());
+  const currentYear = new Date().getFullYear();
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingAward, setEditingAward] = useState<AwardV1 | null>(null);
@@ -156,12 +158,16 @@ const AdminAwards: React.FC = () => {
               ← Previous season
             </button>
             <span className="text-sm text-gray-500">{season} season</span>
-            <button
-              onClick={() => setSeason(s => s + 1)}
-              className="text-sm font-medium text-villageGreen hover:underline"
-            >
-              Next season →
-            </button>
+            {season < currentYear ? (
+              <button
+                onClick={() => setSeason(s => s + 1)}
+                className="text-sm font-medium text-villageGreen hover:underline"
+              >
+                Next season →
+              </button>
+            ) : (
+              <span className="text-sm text-gray-300">Next season →</span>
+            )}
           </div>
 
           {isLoading ? (
@@ -234,19 +240,13 @@ const AdminAwards: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="award-recipient">Recipient</label>
-                <select
+                <SearchableSelect
                   id="award-recipient"
                   value={form.playerId}
-                  onChange={e => setForm(f => ({ ...f, playerId: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
-                >
-                  <option value="">— Please select —</option>
-                  {players.map(p => (
-                    <option key={p.playerId} value={String(p.playerId)}>
-                      {p.surname}, {p.firstName}
-                    </option>
-                  ))}
-                </select>
+                  onChange={v => setForm(f => ({ ...f, playerId: v }))}
+                  options={players.map(p => ({ value: String(p.playerId), label: `${p.surname}, ${p.firstName}` }))}
+                  placeholder="— Please select —"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="award-year">Season (Year)</label>

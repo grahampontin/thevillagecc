@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import { getAllPlayers, createPlayer, updatePlayer } from '../api/playersApi';
 import { PlayerV1 } from '../api/swaggerTypes';
+import SearchableSelect from './SearchableSelect';
 
 const BOWLING_STYLES: { value: string; label: string }[] = [
   { value: 'RF', label: 'Right-arm fast' },
@@ -50,6 +51,7 @@ const toFormState = (p: PlayerV1, players: PlayerV1[]): FormState => ({
 
 const AdminPlayers: React.FC = () => {
   const [players, setPlayers] = useState<PlayerV1[]>([]);
+  const [listFilter, setListFilter] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<PlayerV1 | null>(null);
@@ -59,6 +61,15 @@ const AdminPlayers: React.FC = () => {
   });
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const filteredPlayers = useMemo(() => {
+    if (!listFilter.trim()) return players;
+    const q = listFilter.toLowerCase();
+    return players.filter(p =>
+      (p.surname ?? '').toLowerCase().includes(q) ||
+      (p.firstName ?? '').toLowerCase().includes(q)
+    );
+  }, [players, listFilter]);
 
   const loadPlayers = useCallback(async () => {
     try {
@@ -152,26 +163,38 @@ const AdminPlayers: React.FC = () => {
               ))}
             </div>
           ) : (
-            <ul className="mt-6 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
-              {players.map((p) => {
-                const displayName = `${p.surname}, ${p.firstName}${p.isActive === false ? ' [inactive]' : ''}`;
-                return (
-                  <li key={p.playerId} className="flex items-center justify-between px-4 py-3">
-                    <span className="text-sm text-gray-800">{displayName}</span>
-                    <button
-                      onClick={() => openEdit(p)}
-                      className="text-gray-500 hover:text-villageGreen transition"
-                      aria-label={`Edit ${displayName}`}
-                    >
-                      <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
-                    </button>
-                  </li>
-                );
-              })}
-              {players.length === 0 && (
-                <li className="px-4 py-6 text-sm text-gray-500 text-center">No players found.</li>
-              )}
-            </ul>
+            <>
+              <div className="mt-4">
+                <input
+                  type="text"
+                  value={listFilter}
+                  onChange={e => setListFilter(e.target.value)}
+                  placeholder="Filter players…"
+                  aria-label="Filter players"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
+                />
+              </div>
+              <ul className="mt-3 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
+                {filteredPlayers.map((p) => {
+                  const displayName = `${p.surname}, ${p.firstName}${p.isActive === false ? ' [inactive]' : ''}`;
+                  return (
+                    <li key={p.playerId} className="flex items-center justify-between px-4 py-3">
+                      <span className="text-sm text-gray-800">{displayName}</span>
+                      <button
+                        onClick={() => openEdit(p)}
+                        className="text-gray-500 hover:text-villageGreen transition"
+                        aria-label={`Edit ${displayName}`}
+                      >
+                        <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
+                      </button>
+                    </li>
+                  );
+                })}
+                {filteredPlayers.length === 0 && (
+                  <li className="px-4 py-6 text-sm text-gray-500 text-center">No players found.</li>
+                )}
+              </ul>
+            </>
           )}
         </section>
       </main>
@@ -253,21 +276,15 @@ const AdminPlayers: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="player-club-connection">Club Connection</label>
-                <select
+                <SearchableSelect
                   id="player-club-connection"
                   value={form.clubConnectionPlayerId}
-                  onChange={e => setForm(f => ({ ...f, clubConnectionPlayerId: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
-                >
-                  <option value="">— None —</option>
-                  {players
+                  onChange={v => setForm(f => ({ ...f, clubConnectionPlayerId: v }))}
+                  options={players
                     .filter(p => p.playerId !== editingPlayer?.playerId)
-                    .map(p => (
-                      <option key={p.playerId} value={String(p.playerId)}>
-                        {p.surname}, {p.firstName}
-                      </option>
-                    ))}
-                </select>
+                    .map(p => ({ value: String(p.playerId), label: `${p.surname}, ${p.firstName}` }))}
+                  placeholder="— None —"
+                />
               </div>
               <div>
                 <label className="flex items-center gap-2 text-sm cursor-pointer">

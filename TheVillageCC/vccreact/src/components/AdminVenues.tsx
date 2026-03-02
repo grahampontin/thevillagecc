@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -27,12 +27,18 @@ const emptyForm = (): VenueFormState => ({
 
 const AdminVenues: React.FC = () => {
   const [venues, setVenues] = useState<VenueV1[]>([]);
+  const [listFilter, setListFilter] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingVenue, setEditingVenue] = useState<VenueV1 | null>(null);
   const [form, setForm] = useState<VenueFormState>(emptyForm());
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const filteredVenues = useMemo(() => {
+    if (!listFilter.trim()) return venues;
+    return venues.filter(v => (v.name ?? '').toLowerCase().includes(listFilter.toLowerCase()));
+  }, [venues, listFilter]);
 
   const loadVenues = useCallback(async () => {
     try {
@@ -131,32 +137,44 @@ const AdminVenues: React.FC = () => {
               ))}
             </div>
           ) : (
-            <ul className="mt-6 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
-              {venues.map((v) => (
-                <li key={v.id} className="flex items-center justify-between px-4 py-3">
-                  <span className="text-sm text-gray-800">{v.name}</span>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => openEdit(v)}
-                      className="text-gray-500 hover:text-villageGreen transition"
-                      aria-label={`Edit ${v.name}`}
-                    >
-                      <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
-                    </button>
-                    <button
-                      onClick={() => handleDelete(v)}
-                      className="text-gray-400 hover:text-red-600 transition"
-                      aria-label={`Delete ${v.name}`}
-                    >
-                      <span className="material-symbols-outlined text-[20px] leading-none">delete</span>
-                    </button>
-                  </div>
-                </li>
-              ))}
-              {venues.length === 0 && (
-                <li className="px-4 py-6 text-sm text-gray-500 text-center">No venues found.</li>
-              )}
-            </ul>
+            <>
+              <div className="mt-4">
+                <input
+                  type="text"
+                  value={listFilter}
+                  onChange={e => setListFilter(e.target.value)}
+                  placeholder="Filter venues…"
+                  aria-label="Filter venues"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
+                />
+              </div>
+              <ul className="mt-3 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
+                {filteredVenues.map((v) => (
+                  <li key={v.id} className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm text-gray-800">{v.name}</span>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => openEdit(v)}
+                        className="text-gray-500 hover:text-villageGreen transition"
+                        aria-label={`Edit ${v.name}`}
+                      >
+                        <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(v)}
+                        className="text-gray-400 hover:text-red-600 transition"
+                        aria-label={`Delete ${v.name}`}
+                      >
+                        <span className="material-symbols-outlined text-[20px] leading-none">delete</span>
+                      </button>
+                    </div>
+                  </li>
+                ))}
+                {filteredVenues.length === 0 && (
+                  <li className="px-4 py-6 text-sm text-gray-500 text-center">No venues found.</li>
+                )}
+              </ul>
+            </>
           )}
         </section>
       </main>

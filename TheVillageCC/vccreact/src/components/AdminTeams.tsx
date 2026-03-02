@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -7,12 +7,18 @@ import { TeamV1 } from '../api/swaggerTypes';
 
 const AdminTeams: React.FC = () => {
   const [teams, setTeams] = useState<TeamV1[]>([]);
+  const [listFilter, setListFilter] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<TeamV1 | null>(null);
   const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const filteredTeams = useMemo(() => {
+    if (!listFilter.trim()) return teams;
+    return teams.filter(t => (t.name ?? '').toLowerCase().includes(listFilter.toLowerCase()));
+  }, [teams, listFilter]);
 
   const loadTeams = useCallback(async () => {
     try {
@@ -92,23 +98,35 @@ const AdminTeams: React.FC = () => {
               ))}
             </div>
           ) : (
-            <ul className="mt-6 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
-              {teams.map((t) => (
-                <li key={t.id} className="flex items-center justify-between px-4 py-3">
-                  <span className="text-sm text-gray-800">{t.name}</span>
-                  <button
-                    onClick={() => openEdit(t)}
-                    className="text-gray-500 hover:text-villageGreen transition"
-                    aria-label={`Edit ${t.name}`}
-                  >
-                    <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
-                  </button>
-                </li>
-              ))}
-              {teams.length === 0 && (
-                <li className="px-4 py-6 text-sm text-gray-500 text-center">No teams found.</li>
-              )}
-            </ul>
+            <>
+              <div className="mt-4">
+                <input
+                  type="text"
+                  value={listFilter}
+                  onChange={e => setListFilter(e.target.value)}
+                  placeholder="Filter teams…"
+                  aria-label="Filter teams"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
+                />
+              </div>
+              <ul className="mt-3 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
+                {filteredTeams.map((t) => (
+                  <li key={t.id} className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm text-gray-800">{t.name}</span>
+                    <button
+                      onClick={() => openEdit(t)}
+                      className="text-gray-500 hover:text-villageGreen transition"
+                      aria-label={`Edit ${t.name}`}
+                    >
+                      <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
+                    </button>
+                  </li>
+                ))}
+                {filteredTeams.length === 0 && (
+                  <li className="px-4 py-6 text-sm text-gray-500 text-center">No teams found.</li>
+                )}
+              </ul>
+            </>
           )}
         </section>
       </main>
