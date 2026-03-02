@@ -25,7 +25,7 @@ const Header: React.FC = () => {
           <a href="/awards" className="text-gray-700 hover:text-villageGreen transition">Awards</a>
           <a href="/Tours.aspx" className="text-gray-700 hover:text-villageGreen transition">Tours</a>
           <a
-            href="/f7/index.html"
+            href="/admin"
             className="border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition"
           >
             Admin
@@ -53,7 +53,7 @@ const Header: React.FC = () => {
           <a href="/awards" className="py-1 text-gray-700 hover:text-villageGreen transition">Awards</a>
           <a href="/Tours.aspx" className="py-1 text-gray-700 hover:text-villageGreen transition">Tours</a>
           <a
-            href="/f7/index.html"
+            href="/admin"
             className="mt-1 inline-flex items-center justify-center border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition w-max"
           >
             Admin
