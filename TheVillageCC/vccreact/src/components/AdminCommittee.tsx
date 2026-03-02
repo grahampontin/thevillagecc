@@ -5,6 +5,7 @@ import Footer from './Footer';
 import { getCommitteePostsByYear, createCommitteePost, updateCommitteePost, deleteCommitteePost } from '../api/committeeApi';
 import { getAllPlayers } from '../api/playersApi';
 import { CommitteePostV1, PlayerV1 } from '../api/swaggerTypes';
+import SearchableSelect from './SearchableSelect';
 
 const STANDARD_POSTS = [
   'Captain',
@@ -45,6 +46,7 @@ const AdminCommittee: React.FC = () => {
   const [posts, setPosts] = useState<CommitteePostV1[]>([]);
   const [players, setPlayers] = useState<PlayerV1[]>([]);
   const [year, setYear] = useState(new Date().getFullYear());
+  const currentYear = new Date().getFullYear();
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<CommitteePostV1 | null>(null);
@@ -165,12 +167,16 @@ const AdminCommittee: React.FC = () => {
               ← Previous year
             </button>
             <span className="text-sm text-gray-500">{year}</span>
-            <button
-              onClick={() => setYear(y => y + 1)}
-              className="text-sm font-medium text-villageGreen hover:underline"
-            >
-              Next year →
-            </button>
+            {year < currentYear ? (
+              <button
+                onClick={() => setYear(y => y + 1)}
+                className="text-sm font-medium text-villageGreen hover:underline"
+              >
+                Next year →
+              </button>
+            ) : (
+              <span className="text-sm text-gray-300">Next year →</span>
+            )}
           </div>
 
           {isLoading ? (
@@ -257,19 +263,13 @@ const AdminCommittee: React.FC = () => {
               )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="committee-player">Player</label>
-                <select
+                <SearchableSelect
                   id="committee-player"
                   value={form.playerId}
-                  onChange={e => setForm(f => ({ ...f, playerId: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
-                >
-                  <option value="">— Please select —</option>
-                  {players.map(p => (
-                    <option key={p.playerId} value={String(p.playerId)}>
-                      {p.surname}, {p.firstName}
-                    </option>
-                  ))}
-                </select>
+                  onChange={v => setForm(f => ({ ...f, playerId: v }))}
+                  options={players.map(p => ({ value: String(p.playerId), label: `${p.surname}, ${p.firstName}` }))}
+                  placeholder="— Please select —"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="committee-year">Year</label>

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -6,6 +6,7 @@ import { getMatchesBySeason, createMatch, updateMatch } from '../api/fixturesApi
 import { getAllTeams } from '../api/teamsApi';
 import { getAllVenues } from '../api/venuesApi';
 import { MatchV1, TeamV1, VenueV1 } from '../api/swaggerTypes';
+import SearchableSelect from './SearchableSelect';
 
 const MATCH_TYPES = ['Friendly', 'Tour', 'Twenty20'];
 
@@ -35,12 +36,22 @@ const AdminMatches: React.FC = () => {
   const [teams, setTeams] = useState<TeamV1[]>([]);
   const [venues, setVenues] = useState<VenueV1[]>([]);
   const [season, setSeason] = useState(new Date().getFullYear());
+  const [listFilter, setListFilter] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingMatch, setEditingMatch] = useState<MatchV1 | null>(null);
   const [form, setForm] = useState<MatchFormState>(emptyForm());
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const filteredMatches = useMemo(() => {
+    if (!listFilter.trim()) return matches;
+    const q = listFilter.toLowerCase();
+    return matches.filter(m =>
+      (m.opposition?.name ?? '').toLowerCase().includes(q) ||
+      (m.date ?? '').includes(q)
+    );
+  }, [matches, listFilter]);
 
   const loadRefData = useCallback(async () => {
     try {
@@ -158,25 +169,37 @@ const AdminMatches: React.FC = () => {
               ))}
             </div>
           ) : (
-            <ul className="mt-6 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
-              {matches.map((m) => (
-                <li key={m.id} className="flex items-center justify-between px-4 py-3">
-                  <span className="text-sm text-gray-800">
-                    {m.opposition?.name ?? '—'} ({m.date ? m.date.slice(0, 10) : '—'})
-                  </span>
-                  <button
-                    onClick={() => openEdit(m)}
-                    className="text-gray-500 hover:text-villageGreen transition"
-                    aria-label={`Edit match vs ${m.opposition?.name}`}
-                  >
-                    <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
-                  </button>
-                </li>
-              ))}
-              {matches.length === 0 && (
-                <li className="px-4 py-6 text-sm text-gray-500 text-center">No matches for {season}.</li>
-              )}
-            </ul>
+            <>
+              <div className="mt-4">
+                <input
+                  type="text"
+                  value={listFilter}
+                  onChange={e => setListFilter(e.target.value)}
+                  placeholder="Filter matches…"
+                  aria-label="Filter matches"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
+                />
+              </div>
+              <ul className="mt-3 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
+                {filteredMatches.map((m) => (
+                  <li key={m.id} className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm text-gray-800">
+                      {m.opposition?.name ?? '—'} ({m.date ? m.date.slice(0, 10) : '—'})
+                    </span>
+                    <button
+                      onClick={() => openEdit(m)}
+                      className="text-gray-500 hover:text-villageGreen transition"
+                      aria-label={`Edit match vs ${m.opposition?.name}`}
+                    >
+                      <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
+                    </button>
+                  </li>
+                ))}
+                {filteredMatches.length === 0 && (
+                  <li className="px-4 py-6 text-sm text-gray-500 text-center">No matches for {season}.</li>
+                )}
+              </ul>
+            </>
           )}
         </section>
       </main>
@@ -198,31 +221,23 @@ const AdminMatches: React.FC = () => {
               )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="match-opposition">The Village CC vs</label>
-                <select
+                <SearchableSelect
                   id="match-opposition"
                   value={form.oppositionId}
-                  onChange={e => setForm(f => ({ ...f, oppositionId: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
-                >
-                  <option value="">— Please select —</option>
-                  {teams.map(t => (
-                    <option key={t.id} value={String(t.id)}>{t.name}</option>
-                  ))}
-                </select>
+                  onChange={v => setForm(f => ({ ...f, oppositionId: v }))}
+                  options={teams.map(t => ({ value: String(t.id), label: t.name ?? '' }))}
+                  placeholder="— Please select —"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="match-venue">At</label>
-                <select
+                <SearchableSelect
                   id="match-venue"
                   value={form.venueId}
-                  onChange={e => setForm(f => ({ ...f, venueId: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
-                >
-                  <option value="">— Please select —</option>
-                  {venues.map(v => (
-                    <option key={v.id} value={String(v.id)}>{v.name}</option>
-                  ))}
-                </select>
+                  onChange={v => setForm(f => ({ ...f, venueId: v }))}
+                  options={venues.map(v => ({ value: String(v.id), label: v.name ?? '' }))}
+                  placeholder="— Please select —"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="match-date">Date</label>
