@@ -330,7 +330,7 @@ const PlayerDetail: React.FC = () => {
         <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           
           {/* PLAYER HEADER */}
-          <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+          <div className="flex flex-row flex-wrap gap-6 items-center">
             <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
               {playerImageSrc ? (
                 <img 
@@ -351,7 +351,7 @@ const PlayerDetail: React.FC = () => {
                 <p className="mt-1 text-sm text-gray-600">{player.playingRole}</p>
               )}
 
-              <div className="mt-4 grid sm:grid-cols-4 gap-3 text-sm">
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                 <div>
                   <span className="text-gray-500">Batting Style</span>
                   <div className="font-medium">{player.isRightHandBat ? 'Right-hand bat' : 'Left-hand bat'}</div>
@@ -476,6 +476,7 @@ const PlayerDetail: React.FC = () => {
                       domLayout="autoHeight"
                       headerHeight={32}
                       rowHeight={30}
+                      suppressDragLeaveHidesColumns={true}
                       components={{
                         LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
                         LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
@@ -485,7 +486,8 @@ const PlayerDetail: React.FC = () => {
                         sortable: true,
                         flex: 1,
                         minWidth: 80,
-                        filter: false
+                        filter: false,
+                        suppressMovable: true,
                       }}
                     />
                   </div>
@@ -642,6 +644,7 @@ const PlayerDetail: React.FC = () => {
                           domLayout="autoHeight"
                           headerHeight={32}
                           rowHeight={30}
+                          suppressDragLeaveHidesColumns={true}
                           components={{
                             LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
                             LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
@@ -651,7 +654,8 @@ const PlayerDetail: React.FC = () => {
                             sortable: true,
                             flex: 1,
                             minWidth: 80,
-                            filter: false
+                            filter: false,
+                            suppressMovable: true,
                           }}
                         />
                       </div>
@@ -684,6 +688,7 @@ const PlayerDetail: React.FC = () => {
                           domLayout="autoHeight"
                           headerHeight={32}
                           rowHeight={30}
+                          suppressDragLeaveHidesColumns={true}
                           components={{
                             LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
                             LinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
@@ -693,7 +698,8 @@ const PlayerDetail: React.FC = () => {
                             sortable: true,
                             flex: 1,
                             minWidth: 80,
-                            filter: false
+                            filter: false,
+                            suppressMovable: true,
                           }}
                         />
                       </div>
