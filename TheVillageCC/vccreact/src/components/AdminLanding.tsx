@@ -17,6 +17,7 @@ const NAV_ITEMS: AdminNavItem[] = [
   { to: '/admin/venues', icon: 'stadium', label: 'Venues', description: 'Add and edit venues' },
   { to: '/admin/awards', icon: 'social_leaderboard', label: 'Awards', description: 'Manage season awards' },
   { to: '/admin/committee', icon: 'diversity_3', label: 'Committee', description: 'Manage committee posts' },
+  { to: '/admin/scorecards', icon: 'table_chart', label: 'Scorecards', description: 'Add and edit match scorecards' },
 ];
 
 const AdminLanding: React.FC = () => {

@@ -18,6 +18,8 @@ import AdminMatches from './components/AdminMatches';
 import AdminVenues from './components/AdminVenues';
 import AdminAwards from './components/AdminAwards';
 import AdminCommittee from './components/AdminCommittee';
+import AdminScorecards from './components/AdminScorecards';
+import AdminEditScorecard from './components/AdminEditScorecard';
 
 function App() {
   return (
@@ -39,6 +41,8 @@ function App() {
         <Route path="/admin/venues" element={<AdminVenues />} />
         <Route path="/admin/awards" element={<AdminAwards />} />
         <Route path="/admin/committee" element={<AdminCommittee />} />
+        <Route path="/admin/scorecards" element={<AdminScorecards />} />
+        <Route path="/admin/scorecards/:matchId" element={<AdminEditScorecard />} />
       </Routes>
     </Router>
   );

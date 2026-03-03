@@ -385,7 +385,7 @@ const EditExtrasModal: React.FC<EditExtrasModalProps> = ({ extras, onClose, onSa
         ))}
         <div>
           <label className={labelCls()}>Total (auto)</label>
-          <input type="number" value={total} readOnly className={inputCls() + ' bg-gray-50'} />
+          <input type="number" value={total} readOnly className={`${inputCls()} bg-gray-50`} />
         </div>
       </div>
     </ModalWrapper>
