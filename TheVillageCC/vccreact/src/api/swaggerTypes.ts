@@ -35,3 +35,11 @@ export type FoWEntryV1 = components['schemas']['FoWEntryV1'];
 export type OverSummaryV1 = components['schemas']['OverSummaryV1'];
 export type OverV1 = components['schemas']['OverV1'];
 export type BallV1 = components['schemas']['BallV1'];
+
+// Scorecard editing types
+export type InningsScoreCardV1 = components['schemas']['InningsScoreCardV1'];
+export type BattingCardV1 = components['schemas']['BattingCardV1'];
+export type BowlingCardV1 = components['schemas']['BowlingCardV1'];
+export type FoWV1 = components['schemas']['FoWV1'];
+export type FoWPlayerV1 = components['schemas']['FoWPlayerV1'];
+export type MatchConditionsV1 = components['schemas']['MatchConditionsV1'];
