@@ -68,7 +68,8 @@ describe('AdminEditScorecard', () => {
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({ ok: true, json: async () => mockMatch })      // getMatchById
       .mockResolvedValueOnce({ ok: true, json: async () => mockPlayers })    // getAllPlayers
-      .mockResolvedValueOnce({ ok: true, json: async () => mockScorecard }); // getScorecardByMatchId
+      .mockResolvedValueOnce({ ok: true, json: async () => mockScorecard })  // getScorecardByMatchId
+      .mockResolvedValueOnce({ ok: true, json: async () => ({}) });          // getMatchReport
   };
 
   test('renders loading skeleton initially', () => {
@@ -154,6 +155,45 @@ describe('AdminEditScorecard', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/HTTP 500/)).toBeInTheDocument();
+    });
+  });
+
+  test('conditions tab shows toss fields with correct labels', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    expect(screen.getByLabelText('Toss Winner')).toBeInTheDocument();
+    expect(screen.getByLabelText('Decided To')).toBeInTheDocument();
+  });
+
+  test('match report modal opens and saves', async () => {
+    setupMocks();
+    // Mock the save match report call
+    (global.fetch as jest.Mock).mockResolvedValueOnce({ ok: true, status: 204, json: async () => undefined });
+
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    // Open match report modal
+    await userEvent.click(screen.getByRole('button', { name: /match report/i }));
+
+    expect(await screen.findByRole('dialog', { name: /Match Report/i })).toBeInTheDocument();
+    expect(screen.getByLabelText('Conditions')).toBeInTheDocument();
+    expect(screen.getByLabelText('Report')).toBeInTheDocument();
+
+    // Fill in conditions
+    await userEvent.type(screen.getByLabelText('Conditions'), 'Sunny day');
+
+    // Save
+    await userEvent.click(screen.getByRole('button', { name: /^Save$/i }));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/api/matchreports/1'),
+        expect.objectContaining({ method: 'POST' })
+      );
     });
   });
 });
