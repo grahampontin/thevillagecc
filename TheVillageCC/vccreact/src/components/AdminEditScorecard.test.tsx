@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import AdminEditScorecard from './AdminEditScorecard';
@@ -352,5 +352,75 @@ describe('AdminEditScorecard', () => {
 
     expect(screen.getByText('Captain')).toBeInTheDocument();
     expect(screen.getByText('Wicket Keeper')).toBeInTheDocument();
+  });
+
+  test('photo upload opens cropper dialog and applies crop', async () => {
+    setupMocks();
+    // Mock canvas so toDataURL returns a predictable value
+    const mockDataUrl = 'data:image/jpeg;base64,CROPPED';
+    const mockCtx = { drawImage: jest.fn() };
+    jest.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(mockCtx as any);
+    jest.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue(mockDataUrl);
+    // Mock image naturalWidth/naturalHeight
+    Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', { get: () => 400, configurable: true });
+    Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', { get: () => 300, configurable: true });
+
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    // Open match report modal
+    await userEvent.click(screen.getByRole('button', { name: /match report/i }));
+    await screen.findByRole('dialog', { name: /Match Report/i });
+
+    // Simulate file selection
+    const file = new File(['(image data)'], 'photo.jpg', { type: 'image/jpeg' });
+    const fileInput = screen.getByLabelText('Photo (optional)');
+    await userEvent.upload(fileInput, file);
+
+    // Cropper dialog should appear
+    const cropperDialog = await screen.findByRole('dialog', { name: /Crop photo/i });
+    expect(cropperDialog).toBeInTheDocument();
+    expect(screen.getByLabelText('Zoom')).toBeInTheDocument();
+
+    // Fire the image onLoad so naturalSize is set, then click Crop
+    const cropImg = cropperDialog.querySelector('img');
+    if (cropImg) fireEvent.load(cropImg);
+
+    await userEvent.click(screen.getByRole('button', { name: /^Crop$/i }));
+
+    // Cropper should close and image preview should appear in match report modal
+    expect(screen.queryByRole('dialog', { name: /Crop photo/i })).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByAltText('Match report')).toHaveAttribute('src', mockDataUrl);
+    });
+
+    jest.restoreAllMocks();
+  });
+
+  test('cropper cancel button dismisses the cropper without updating the image', async () => {
+    setupMocks();
+    Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', { get: () => 400, configurable: true });
+    Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', { get: () => 300, configurable: true });
+
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /match report/i }));
+    await screen.findByRole('dialog', { name: /Match Report/i });
+
+    const file = new File(['(image data)'], 'photo.jpg', { type: 'image/jpeg' });
+    const fileInput = screen.getByLabelText('Photo (optional)');
+    await userEvent.upload(fileInput, file);
+
+    const cropperDialog = await screen.findByRole('dialog', { name: /Crop photo/i });
+
+    const cancelBtn = within(cropperDialog).getByRole('button', { name: /^Cancel$/i });
+    await userEvent.click(cancelBtn);
+
+    // Cropper closed, no preview image
+    expect(screen.queryByRole('dialog', { name: /Crop photo/i })).not.toBeInTheDocument();
+    expect(screen.queryByAltText('Match report')).not.toBeInTheDocument();
+
+    jest.restoreAllMocks();
   });
 });
