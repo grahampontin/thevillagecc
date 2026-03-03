@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SearchableSelect from './SearchableSelect';
-import { getScorecardByMatchId, saveScorecard } from '../api/scorecardsApi';
+import { getScorecardByMatchId, saveScorecard, getMatchReport, saveMatchReport } from '../api/scorecardsApi';
 import { getMatchById } from '../api/fixturesApi';
 import { getAllPlayers } from '../api/playersApi';
 import {
   MatchScorecardV1,
+  MatchReportV1,
   MatchV1,
   PlayerV1,
   BattingEntryV1,
@@ -621,7 +622,8 @@ type ModalState =
   | { kind: 'bowler'; innings: 'home' | 'away'; idx: number | null }
   | { kind: 'fow'; innings: 'home' | 'away'; idx: number | null }
   | { kind: 'extras'; innings: 'home' | 'away' }
-  | { kind: 'overs'; innings: 'home' | 'away' };
+  | { kind: 'overs'; innings: 'home' | 'away' }
+  | { kind: 'matchReport' };
 
 // ---------------------------------------------------------------------------
 // Main component
@@ -634,6 +636,8 @@ const AdminEditScorecard: React.FC = () => {
   const [scorecard, setScorecard] = useState<MatchScorecardV1 | null>(null);
   const [match, setMatch] = useState<MatchV1 | null>(null);
   const [players, setPlayers] = useState<PlayerV1[]>([]);
+  const [matchReport, setMatchReport] = useState<MatchReportV1>({});
+  const [savingReport, setSavingReport] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -647,15 +651,17 @@ const AdminEditScorecard: React.FC = () => {
     if (!numericMatchId) return;
     try {
       setIsLoading(true);
-      const [matchData, playersData, sc] = await Promise.all([
+      const [matchData, playersData, sc, report] = await Promise.all([
         getMatchById(numericMatchId),
         getAllPlayers(),
         getScorecardByMatchId(numericMatchId).catch(() => emptyScorecard()),
+        getMatchReport(numericMatchId).catch(() => ({})),
       ]);
       playersData.sort((a, b) => (a.surname ?? '').localeCompare(b.surname ?? ''));
       setMatch(matchData);
       setPlayers(playersData);
       setScorecard(sc ?? emptyScorecard());
+      setMatchReport(report ?? {});
     } catch (err) {
       console.error('Failed to load scorecard data', err);
       setErrorMsg('Failed to load match data.');
@@ -683,6 +689,21 @@ const AdminEditScorecard: React.FC = () => {
       setErrorMsg(err instanceof Error ? err.message : 'Save failed.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveMatchReport = async () => {
+    setSavingReport(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    try {
+      await saveMatchReport(numericMatchId, matchReport);
+      setSuccessMsg('Match report saved successfully.');
+      setModal({ kind: 'none' });
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'Save failed.');
+    } finally {
+      setSavingReport(false);
     }
   };
 
@@ -878,6 +899,70 @@ const AdminEditScorecard: React.FC = () => {
       );
     }
 
+    if (modal.kind === 'matchReport') {
+      return (
+        <ModalWrapper
+          title="Match Report"
+          onClose={() => setModal({ kind: 'none' })}
+          onSave={handleSaveMatchReport}
+          saving={savingReport}
+        >
+          <div>
+            <label className={labelCls()} htmlFor="report-conditions">Conditions</label>
+            <textarea
+              id="report-conditions"
+              rows={3}
+              placeholder="Weather, pitch, you know…"
+              value={matchReport.conditions ?? ''}
+              onChange={e => setMatchReport(r => ({ ...r, conditions: e.target.value }))}
+              className={inputCls()}
+            />
+          </div>
+          <div>
+            <label className={labelCls()} htmlFor="report-text">Report</label>
+            <textarea
+              id="report-text"
+              rows={8}
+              placeholder="Prey tell, what did happen?"
+              value={matchReport.report ?? ''}
+              onChange={e => setMatchReport(r => ({ ...r, report: e.target.value }))}
+              className={inputCls()}
+            />
+          </div>
+          <div>
+            <label className={labelCls()} htmlFor="report-image">Photo (optional)</label>
+            <input
+              id="report-image"
+              type="file"
+              accept="image/*"
+              className="text-sm text-gray-600"
+              onChange={e => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = ev => {
+                  const result = ev.target?.result;
+                  if (typeof result === 'string') {
+                    setMatchReport(r => ({ ...r, base64EncodedImage: result }));
+                  }
+                };
+                reader.onerror = () => setErrorMsg('Failed to read image file.');
+                reader.readAsDataURL(file);
+              }}
+            />
+            {matchReport.base64EncodedImage && (
+              <img
+                src={matchReport.base64EncodedImage}
+                alt="Match report"
+                className="mt-2 max-w-full rounded"
+                style={{ maxHeight: 200 }}
+              />
+            )}
+          </div>
+        </ModalWrapper>
+      );
+    }
+
     return null;
   };
 
@@ -966,14 +1051,14 @@ const AdminEditScorecard: React.FC = () => {
           <label htmlFor="cond-declaration" className="text-sm font-medium text-gray-700">Declaration</label>
         </div>
         <div>
-          <label className={labelCls()} htmlFor="cond-toss">We Won the Toss</label>
+          <label className={labelCls()} htmlFor="cond-toss">Toss Winner</label>
           <select id="cond-toss" value={c.weWonTheToss ? 'we' : 'they'} onChange={e => setConditions({ weWonTheToss: e.target.value === 'we' })} className={inputCls()}>
             <option value="we">We</option>
             <option value="they">They</option>
           </select>
         </div>
         <div>
-          <label className={labelCls()} htmlFor="cond-toss-bat">Toss Winner Batted First</label>
+          <label className={labelCls()} htmlFor="cond-toss-bat">Decided To</label>
           <select id="cond-toss-bat" value={c.tossWinnerBatted ? 'bat' : 'bowl'} onChange={e => setConditions({ tossWinnerBatted: e.target.value === 'bat' })} className={inputCls()}>
             <option value="bat">Bat</option>
             <option value="bowl">Bowl</option>
@@ -998,6 +1083,16 @@ const AdminEditScorecard: React.FC = () => {
             options={opts}
             placeholder="— Select wicket keeper —"
           />
+        </div>
+        <div className="pt-2 border-t border-gray-200">
+          <button
+            type="button"
+            onClick={() => setModal({ kind: 'matchReport' })}
+            className="flex items-center gap-2 text-sm text-villageGreen hover:underline font-medium"
+          >
+            <span className="material-symbols-outlined text-[18px] leading-none">description</span>
+            Create / Edit Match Report
+          </button>
         </div>
       </div>
     );
