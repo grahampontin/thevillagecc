@@ -20,6 +20,13 @@ const mockCommittee = [
   { id: 2, year: 2024, post: 'Treasurer', playerId: 2 },
 ];
 
+const mockPlayerDetail = (imageUrl: string | null) => ({
+  player: {},
+  playerImageUrl: imageUrl,
+  battingStats: {},
+  bowlingStats: {},
+});
+
 describe('Committee', () => {
   beforeEach(() => {
     (global.fetch as jest.Mock).mockClear();
@@ -37,7 +44,9 @@ describe('Committee', () => {
   test('fetches and displays committee members', async () => {
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({ ok: true, json: async () => mockPlayers })
-      .mockResolvedValueOnce({ ok: true, json: async () => mockCommittee });
+      .mockResolvedValueOnce({ ok: true, json: async () => mockCommittee })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail('https://example.com/1.png') })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail('https://example.com/2.png') });
 
     renderWithRouter(<Committee />);
 
@@ -48,7 +57,9 @@ describe('Committee', () => {
   test('humanizes post titles', async () => {
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({ ok: true, json: async () => mockPlayers })
-      .mockResolvedValueOnce({ ok: true, json: async () => mockCommittee });
+      .mockResolvedValueOnce({ ok: true, json: async () => mockCommittee })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail(null) })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail(null) });
 
     renderWithRouter(<Committee />);
 
@@ -63,7 +74,8 @@ describe('Committee', () => {
 
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({ ok: true, json: async () => players })
-      .mockResolvedValueOnce({ ok: true, json: async () => committee });
+      .mockResolvedValueOnce({ ok: true, json: async () => committee })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail(null) });
 
     renderWithRouter(<Committee />);
 
@@ -91,7 +103,9 @@ describe('Committee', () => {
   test('displays Documents & Minutes section', async () => {
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({ ok: true, json: async () => mockPlayers })
-      .mockResolvedValueOnce({ ok: true, json: async () => mockCommittee });
+      .mockResolvedValueOnce({ ok: true, json: async () => mockCommittee })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail(null) })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail(null) });
 
     renderWithRouter(<Committee />);
 
@@ -109,12 +123,41 @@ describe('Committee', () => {
 
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({ ok: true, json: async () => mockPlayers })
-      .mockResolvedValueOnce({ ok: true, json: async () => multiYearCommittee });
+      .mockResolvedValueOnce({ ok: true, json: async () => multiYearCommittee })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail(null) });
 
     renderWithRouter(<Committee />);
 
     // 2024 captain (Bob Jones) should appear, not 2023 captain (Alice Smith)
     expect(await screen.findByText('Bob Jones')).toBeInTheDocument();
     expect(screen.queryByText('Alice Smith')).not.toBeInTheDocument();
+  });
+
+  test('displays player image when playerImageUrl is provided', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayers })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockCommittee })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail('https://example.com/alice.png') })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail('https://example.com/bob.png') });
+
+    renderWithRouter(<Committee />);
+
+    const aliceImg = await screen.findByRole('img', { name: /Alice Smith/i });
+    expect(aliceImg).toHaveAttribute('src', 'https://example.com/alice.png');
+  });
+
+  test('shows placeholder when playerImageUrl is null', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayers })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockCommittee })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail(null) })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail(null) });
+
+    renderWithRouter(<Committee />);
+
+    await screen.findByText('Alice Smith');
+    // No player img elements rendered when image URL is null
+    expect(screen.queryByRole('img', { name: /Alice Smith/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('img', { name: /Bob Jones/i })).not.toBeInTheDocument();
   });
 });

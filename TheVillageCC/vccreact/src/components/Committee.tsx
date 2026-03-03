@@ -3,11 +3,12 @@ import Header from './Header';
 import Footer from './Footer';
 import { getAllPlayers } from '../api/playersApi';
 import { getAllCommitteePosts } from '../api/committeeApi';
+import { getPlayerDetail } from '../api/statsApi';
 
 interface CommitteeDisplay {
   post: string;
   playerName: string;
-  playerImageId: number;
+  playerImageUrl: string | null;
 }
 
 const SKELETON_COUNT = 6;
@@ -113,13 +114,23 @@ const Committee: React.FC = () => {
         const mostRecentYear = Math.max(...allCommittee.map(c => c.year ?? 0));
         const postsForMostRecentYear = allCommittee.filter(c => c.year === mostRecentYear);
 
-        const displayPosts = postsForMostRecentYear
-          .sort((a, b) => (POST_ORDER[a.post ?? ''] ?? 999) - (POST_ORDER[b.post ?? ''] ?? 999))
-          .map(c => ({
-            post: c.post ?? '',
-            playerName: playerMap.get(c.playerId ?? 0) || 'Unknown',
-            playerImageId: c.playerId ?? 0
-          }));
+        const sortedPosts = postsForMostRecentYear
+          .sort((a, b) => (POST_ORDER[a.post ?? ''] ?? 999) - (POST_ORDER[b.post ?? ''] ?? 999));
+
+        // Fetch player image URLs in parallel, same approach as PlayerDetail page
+        const imageResults = await Promise.all(
+          sortedPosts.map(c =>
+            getPlayerDetail(c.playerId ?? 0)
+              .then(d => d.playerImageUrl ?? null)
+              .catch(() => null)
+          )
+        );
+
+        const displayPosts = sortedPosts.map((c, i) => ({
+          post: c.post ?? '',
+          playerName: playerMap.get(c.playerId ?? 0) || 'Unknown',
+          playerImageUrl: imageResults[i],
+        }));
 
         setCommitteePosts(displayPosts);
       } catch (error) {
@@ -161,14 +172,15 @@ const Committee: React.FC = () => {
               {committeePosts.map((post, idx) => (
                 <div key={idx} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col items-center text-center">
                   <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-100 bg-gray-100 mb-4 flex-shrink-0">
-                    <img
-                      src={`Images/player_profiles/${post.playerImageId}.png`}
-                      alt={post.playerName}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = '/images/vcc_cricle_small.png';
-                      }}
-                    />
+                    {post.playerImageUrl ? (
+                      <img
+                        src={post.playerImageUrl}
+                        alt={post.playerName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-300" />
+                    )}
                   </div>
                   <div className="flex items-center gap-1 justify-center mb-1">
                     <span className="material-symbols-outlined text-[16px] leading-none text-villageGreen" aria-hidden="true">
