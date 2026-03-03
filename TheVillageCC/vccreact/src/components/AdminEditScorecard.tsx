@@ -455,7 +455,7 @@ const BattingTable: React.FC<BattingTableProps> = ({
           <tbody className="divide-y divide-gray-100">
             {entries.map((e, idx) => (
               <tr key={idx} className="hover:bg-gray-50">
-                <td className="px-2 py-2">{e.playerName ?? (isVcc ? '—' : '—')}</td>
+                <td className="px-2 py-2">{e.playerName ?? '—'}</td>
                 <td className="px-2 py-2 text-gray-500">{formatDismissal(e)}</td>
                 <td className="px-2 py-2 text-right">{e.runs ?? 0}</td>
                 <td className="px-2 py-2 text-right">{e.ballsFaced ?? 0}</td>
