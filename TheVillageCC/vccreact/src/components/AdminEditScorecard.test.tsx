@@ -47,15 +47,34 @@ const mockScorecard = {
       score: 120,
       wickets: 5,
     },
-    bowling: { entries: [] },
-    fow: { entries: [] },
+    bowling: {
+      entries: [
+        { playerId: 0, playerName: 'Opp Bowler', overs: 10, maidens: 2, runs: 45, wickets: 3 },
+      ],
+    },
+    fow: {
+      entries: [
+        { wicket: 1, score: 55, overs: 15.2, partnership: 55, outgoingPlayer: { id: 1, name: 'Alice Smith', battingAt: 1, score: 45 }, notOutPlayer: { id: 0, name: 'Bob Jones', battingAt: 2, score: 10 } },
+      ],
+    },
     inningsLength: 35.4,
   },
   theirInnings: {
-    batting: { entries: [], extras: { wides: 0, noBalls: 0, byes: 0, legByes: 0, penalties: 0, total: 0 }, score: 0, wickets: 0 },
-    bowling: { entries: [] },
+    batting: {
+      entries: [
+        { playerId: 0, playerName: 'Opp Batsman', runs: 30, ballsFaced: 40, fours: 3, sixes: 0, modeOfDismissal: 'Bowled', bowlerId: 1, bowlerName: 'Alice Smith', fielderId: 0, fielderName: '', battingAt: 1 },
+      ],
+      extras: { wides: 2, noBalls: 0, byes: 1, legByes: 0, penalties: 0, total: 3 },
+      score: 95,
+      wickets: 3,
+    },
+    bowling: {
+      entries: [
+        { playerId: 1, playerName: 'Alice Smith', overs: 8, maidens: 1, runs: 30, wickets: 2 },
+      ],
+    },
     fow: { entries: [] },
-    inningsLength: 0,
+    inningsLength: 28.0,
   },
 };
 
@@ -195,5 +214,143 @@ describe('AdminEditScorecard', () => {
         expect.objectContaining({ method: 'POST' })
       );
     });
+  });
+
+  test('opposition tab shows their batting entries', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Opposition/i }));
+
+    expect(await screen.findByText('Opp Batsman')).toBeInTheDocument();
+    expect(screen.getByText(/b Alice Smith/)).toBeInTheDocument();
+  });
+
+  test('Village CC bowling sub-tab shows their innings bowling entries', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Village CC/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Bowling/i }));
+
+    expect(await screen.findByText('Opp Bowler')).toBeInTheDocument();
+  });
+
+  test('opposition bowling sub-tab shows VCC bowling entries', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Opposition/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Bowling/i }));
+
+    expect(await screen.findByText('Alice Smith')).toBeInTheDocument();
+  });
+
+  test('FoW sub-tab shows fall of wicket entries', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Village CC/i }));
+    await userEvent.click(screen.getByRole('button', { name: /P'ships & FoW/i }));
+
+    expect(await screen.findByText(/Alice Smith/)).toBeInTheDocument();
+  });
+
+  test('add batsman opens edit modal with empty form', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Village CC/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Add batsman/i }));
+
+    expect(await screen.findByRole('dialog', { name: /Edit VCC Batsman/i })).toBeInTheDocument();
+  });
+
+  test('edit batsman opens modal with existing entry data', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Village CC/i }));
+    const editBtns = screen.getAllByRole('button', { name: /Edit batsman/i });
+    await userEvent.click(editBtns[0]);
+
+    expect(await screen.findByRole('dialog', { name: /Edit VCC Batsman/i })).toBeInTheDocument();
+    expect(screen.getByLabelText('Runs')).toHaveValue(45);
+  });
+
+  test('delete batsman removes entry from list', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Village CC/i }));
+    expect(screen.getByText('Alice Smith')).toBeInTheDocument();
+
+    const deleteBtns = screen.getAllByRole('button', { name: /Delete batsman/i });
+    await userEvent.click(deleteBtns[0]);
+
+    expect(screen.queryByText('Alice Smith')).not.toBeInTheDocument();
+  });
+
+  test('add bowler opens edit modal', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Opposition/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Bowling/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Add bowler/i }));
+
+    expect(await screen.findByRole('dialog', { name: /Edit VCC Bowler/i })).toBeInTheDocument();
+  });
+
+  test('edit extras opens extras modal', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Village CC/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Edit extras/i }));
+
+    expect(await screen.findByRole('dialog', { name: /Edit Extras/i })).toBeInTheDocument();
+  });
+
+  test('edit overs opens overs modal', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Village CC/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Edit overs/i }));
+
+    expect(await screen.findByRole('dialog', { name: /Edit Innings Overs/i })).toBeInTheDocument();
+    expect(screen.getByLabelText('Overs Played')).toHaveValue(35.4);
+  });
+
+  test('add FoW entry opens FoW modal', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    await userEvent.click(screen.getByRole('button', { name: /Village CC/i }));
+    await userEvent.click(screen.getByRole('button', { name: /P'ships & FoW/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Add FoW entry/i }));
+
+    expect(await screen.findByRole('dialog', { name: /Edit FoW/i })).toBeInTheDocument();
+  });
+
+  test('conditions tab shows captain and wicket keeper selectors', async () => {
+    setupMocks();
+    renderWithMatchId('1');
+    await waitFor(() => screen.getByText(/Barton CC/));
+
+    expect(screen.getByText('Captain')).toBeInTheDocument();
+    expect(screen.getByText('Wicket Keeper')).toBeInTheDocument();
   });
 });
