@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SearchableSelect from './SearchableSelect';
+import ImageCropper from './ImageCropper';
 import { getScorecardByMatchId, saveScorecard, getMatchReport, saveMatchReport } from '../api/scorecardsApi';
 import { getMatchById } from '../api/fixturesApi';
 import { getAllPlayers } from '../api/playersApi';
@@ -637,6 +638,7 @@ const AdminEditScorecard: React.FC = () => {
   const [match, setMatch] = useState<MatchV1 | null>(null);
   const [players, setPlayers] = useState<PlayerV1[]>([]);
   const [matchReport, setMatchReport] = useState<MatchReportV1>({});
+  const [cropSource, setCropSource] = useState<string | null>(null);
   const [savingReport, setSavingReport] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -943,7 +945,7 @@ const AdminEditScorecard: React.FC = () => {
                 reader.onload = ev => {
                   const result = ev.target?.result;
                   if (typeof result === 'string') {
-                    setMatchReport(r => ({ ...r, base64EncodedImage: result }));
+                    setCropSource(result);
                   }
                 };
                 reader.onerror = () => setErrorMsg('Failed to read image file.');
@@ -1189,6 +1191,17 @@ const AdminEditScorecard: React.FC = () => {
       )}
 
       {renderModal()}
+
+      {cropSource && (
+        <ImageCropper
+          src={cropSource}
+          onCrop={dataUrl => {
+            setMatchReport(r => ({ ...r, base64EncodedImage: dataUrl }));
+            setCropSource(null);
+          }}
+          onCancel={() => setCropSource(null)}
+        />
+      )}
     </div>
   );
 };
