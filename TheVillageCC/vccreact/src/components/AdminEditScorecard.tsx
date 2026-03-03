@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import Header from './Header';
-import Footer from './Footer';
 import SearchableSelect from './SearchableSelect';
 import { getScorecardByMatchId, saveScorecard } from '../api/scorecardsApi';
 import { getMatchById } from '../api/fixturesApi';
@@ -889,9 +887,6 @@ const AdminEditScorecard: React.FC = () => {
 
   const renderInningsTab = (side: 'home' | 'away') => {
     const subTab = side === 'home' ? activeHomeSubTab : activeAwaySubTab;
-    const setSubTab = side === 'home'
-      ? (t: 'batting' | 'bowling' | 'fow') => setActiveHomeSubTab(t)
-      : (t: 'batting' | 'bowling' | 'fow') => setActiveAwaySubTab(t);
     const isVccBatting = side === 'home';
     const isVccBowling = side === 'away';
     const inn = getInnings(side);
@@ -901,19 +896,6 @@ const AdminEditScorecard: React.FC = () => {
 
     return (
       <div>
-        {/* Sub-tabs */}
-        <div className="flex gap-1 border-b border-gray-200 mb-4">
-          {(['batting', 'bowling', 'fow'] as const).map(t => (
-            <button
-              key={t}
-              onClick={() => setSubTab(t)}
-              className={`px-4 py-2 text-sm font-medium border-b-2 transition ${subTab === t ? 'border-villageGreen text-villageGreen' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-            >
-              {t === 'fow' ? 'Partnerships & FoW' : t.charAt(0).toUpperCase() + t.slice(1)}
-            </button>
-          ))}
-        </div>
-
         {subTab === 'batting' && (
           <BattingTable
             entries={battingEntries}
@@ -1029,63 +1011,87 @@ const AdminEditScorecard: React.FC = () => {
     ? `vs ${match.opposition?.name ?? '—'} (${match.date ? match.date.slice(0, 10) : '—'})`
     : `Match #${numericMatchId}`;
 
+  const activeSubTab = activeTab === 'home' ? activeHomeSubTab : activeAwaySubTab;
+
   return (
-    <div className="font-sans text-villageText bg-gray-50 min-h-screen">
-      <Header />
-      <main>
-        <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="flex items-center gap-3 mb-1">
-            <Link to="/admin/scorecards" className="text-sm text-villageGreen hover:underline">← Scorecards</Link>
+    <div className="flex flex-col h-screen bg-gray-50 font-sans text-villageText">
+      {/* Fixed top navbar */}
+      <div className="flex-none bg-villageGreen text-white flex items-center h-14 px-2 shadow-md z-20">
+        <Link to="/admin/scorecards" className="flex items-center justify-center w-10 h-10" aria-label="Back to Scorecards">
+          <span className="material-symbols-outlined">arrow_back</span>
+        </Link>
+        <h1 className="flex-1 text-center text-sm font-semibold tracking-wide truncate px-1">{matchTitle}</h1>
+        <button
+          onClick={handleSave}
+          disabled={saving || isLoading}
+          aria-label="Save scorecard"
+          className="flex items-center justify-center w-10 h-10 disabled:opacity-50"
+        >
+          <span className="material-symbols-outlined text-[22px]">{saving ? 'hourglass_empty' : 'cloud_upload'}</span>
+        </button>
+      </div>
+
+      {/* Fixed secondary tab bar — main sections */}
+      <div className="flex-none bg-white border-b border-gray-200 flex z-10">
+        {(['conditions', 'home', 'away'] as const).map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 py-2.5 text-xs font-medium border-b-2 transition ${activeTab === tab ? 'border-villageGreen text-villageGreen' : 'border-transparent text-gray-500'}`}
+          >
+            {tab === 'conditions' ? 'Conditions' : tab === 'home' ? 'Village CC' : 'Opposition'}
+          </button>
+        ))}
+      </div>
+
+      {/* Notification banners */}
+      {errorMsg && (
+        <div className="flex-none px-4 py-2 text-red-600 text-xs bg-red-50 border-b border-red-200">{errorMsg}</div>
+      )}
+      {successMsg && (
+        <div className="flex-none px-4 py-2 text-green-700 text-xs bg-green-50 border-b border-green-200">{successMsg}</div>
+      )}
+
+      {/* Scrollable content */}
+      <div className={`flex-1 overflow-y-auto ${activeTab !== 'conditions' ? 'pb-14' : ''}`}>
+        {isLoading ? (
+          <div className="px-4 pt-4 space-y-2">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="h-10 bg-gray-200 rounded animate-pulse" />
+            ))}
           </div>
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-villageText">Scorecard {matchTitle}</h1>
-            <button
-              onClick={handleSave}
-              disabled={saving || isLoading}
-              aria-label="Save scorecard"
-              className="flex items-center gap-1 bg-villageGreen text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-green-800 transition disabled:opacity-50"
-            >
-              <span className="material-symbols-outlined text-[18px] leading-none" aria-hidden="true">save</span>
-              {saving ? 'Saving…' : 'Save'}
-            </button>
+        ) : (
+          <div className="px-4 py-4">
+            {activeTab === 'conditions' && renderConditionsTab()}
+            {activeTab === 'home' && renderInningsTab('home')}
+            {activeTab === 'away' && renderInningsTab('away')}
           </div>
+        )}
+      </div>
 
-          {errorMsg && (
-            <p className="mt-3 text-red-600 text-sm bg-red-50 border border-red-200 rounded p-2">{errorMsg}</p>
-          )}
-          {successMsg && (
-            <p className="mt-3 text-green-700 text-sm bg-green-50 border border-green-200 rounded p-2">{successMsg}</p>
-          )}
-
-          {isLoading ? (
-            <div className="mt-6 space-y-2">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="h-10 bg-gray-200 rounded animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="mt-6">
-              {/* Main tabs */}
-              <div className="flex gap-1 border-b border-gray-200 mb-6">
-                {(['conditions', 'home', 'away'] as const).map(tab => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 text-sm font-medium border-b-2 transition ${activeTab === tab ? 'border-villageGreen text-villageGreen' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                  >
-                    {tab === 'conditions' ? 'Conditions' : tab === 'home' ? 'Village CC' : 'Opposition'}
-                  </button>
-                ))}
-              </div>
-
-              {activeTab === 'conditions' && renderConditionsTab()}
-              {activeTab === 'home' && renderInningsTab('home')}
-              {activeTab === 'away' && renderInningsTab('away')}
-            </div>
-          )}
-        </section>
-      </main>
-      <Footer />
+      {/* Fixed bottom tab bar — innings sub-tabs (hidden on Conditions tab) */}
+      {activeTab !== 'conditions' && (
+        <div className="flex-none fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex z-20">
+          {(['batting', 'bowling', 'fow'] as const).map(t => {
+            const isActive = activeSubTab === t;
+            const setSubTab = activeTab === 'home'
+              ? () => setActiveHomeSubTab(t)
+              : () => setActiveAwaySubTab(t);
+            return (
+              <button
+                key={t}
+                onClick={setSubTab}
+                className={`flex-1 flex flex-col items-center justify-center py-2 text-[10px] font-medium border-t-2 transition ${isActive ? 'border-villageGreen text-villageGreen' : 'border-transparent text-gray-500'}`}
+              >
+                <span className="material-symbols-outlined text-[20px] leading-none mb-0.5">
+                  {t === 'batting' ? 'sports_cricket' : t === 'bowling' ? 'sports_handball' : 'people'}
+                </span>
+                {t === 'fow' ? "P'ships & FoW" : t.charAt(0).toUpperCase() + t.slice(1)}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {renderModal()}
     </div>
