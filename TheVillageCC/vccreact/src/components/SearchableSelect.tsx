@@ -49,11 +49,18 @@ const SearchableSelect: React.FC<Props> = ({
     setFilter('');
   };
 
-  const clearSelection = (e: React.MouseEvent) => {
+  const clearSelection = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
     onChange('');
     setIsOpen(false);
     setFilter('');
+  };
+
+  const handleClearKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      clearSelection(e);
+    }
   };
 
   // Close dropdown when clicking outside
@@ -107,14 +114,16 @@ const SearchableSelect: React.FC<Props> = ({
           </span>
           <span className="flex items-center gap-1 shrink-0 ml-2">
             {selectedOption && (
-              <button
-                type="button"
+              <span
+                role="button"
+                tabIndex={0}
                 aria-label="Clear selection"
                 onClick={clearSelection}
-                className="material-symbols-outlined text-[16px] leading-none text-gray-400 hover:text-gray-600 p-0 bg-transparent border-0"
+                onKeyDown={handleClearKeyDown}
+                className="material-symbols-outlined text-[16px] leading-none text-gray-400 hover:text-gray-600 cursor-pointer"
               >
                 close
-              </button>
+              </span>
             )}
             <span className="material-symbols-outlined text-[16px] leading-none text-gray-400">expand_more</span>
           </span>
