@@ -43,3 +43,14 @@ export type BowlingCardV1 = components['schemas']['BowlingCardV1'];
 export type FoWV1 = components['schemas']['FoWV1'];
 export type FoWPlayerV1 = components['schemas']['FoWPlayerV1'];
 export type MatchConditionsV1 = components['schemas']['MatchConditionsV1'];
+
+// Live scoring app types
+export type MatchStateV1 = components['schemas']['MatchStateV1'];
+export type MatchStateUpdateV1 = components['schemas']['MatchStateUpdateV1'];
+export type PlayerStateV1 = components['schemas']['PlayerStateV1'];
+export type PartnershipStubV1 = components['schemas']['PartnershipStubV1'];
+export type BallByBallMatchConditionsV1 = components['schemas']['BallByBallMatchConditionsV1'];
+export type LiveScoringMatchSummaryV1 = components['schemas']['LiveScoringMatchSummaryV1'];
+export type BallByBallMatchDescriptorV1 = components['schemas']['BallByBallMatchDescriptorV1'];
+export type OppositionInningsDetailsV1 = components['schemas']['OppositionInningsDetailsV1'];
+export type InningsEndDetailsV1 = components['schemas']['InningsEndDetailsV1'];
