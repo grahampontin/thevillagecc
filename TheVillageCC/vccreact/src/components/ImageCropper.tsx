@@ -161,6 +161,7 @@ const ImageCropper: React.FC<Props> = ({ src, onCrop, onCancel }) => {
               position: 'absolute',
               width: naturalSize ? naturalSize.w * zoom : '100%',
               height: naturalSize ? naturalSize.h * zoom : 'auto',
+              maxWidth: 'none',
               left: offset.x,
               top: offset.y,
               userSelect: 'none',
