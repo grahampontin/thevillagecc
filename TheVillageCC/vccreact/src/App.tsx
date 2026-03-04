@@ -11,6 +11,7 @@ import Results from './components/Results';
 import Stats from './components/Stats';
 import PlayerDetail from './components/PlayerDetail';
 import LiveScorecard from './components/LiveScorecard';
+import LiveScoring from './components/LiveScoring';
 import AdminLanding from './components/AdminLanding';
 import AdminPlayers from './components/AdminPlayers';
 import AdminTeams from './components/AdminTeams';
@@ -34,6 +35,7 @@ function App() {
         <Route path="/stats" element={<Stats />} />
         <Route path="/player/:playerId" element={<PlayerDetail />} />
         <Route path="/scorecard/:matchId" element={<LiveScorecard />} />
+        <Route path="/scoring" element={<LiveScoring />} />
         <Route path="/admin" element={<AdminLanding />} />
         <Route path="/admin/players" element={<AdminPlayers />} />
         <Route path="/admin/teams" element={<AdminTeams />} />
