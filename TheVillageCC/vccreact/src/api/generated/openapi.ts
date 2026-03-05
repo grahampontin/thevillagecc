@@ -3,2800 +3,1753 @@
  * Do not make direct changes to the file.
  */
 
+
 export interface paths {
-    "/api/Awards": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  "/api/Awards": {
+    get: {
+      parameters: {
+        query?: {
+          season?: number;
         };
-        get: {
-            parameters: {
-                query?: {
-                    season?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["AwardV1"][];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["AwardV1"][];
+          };
         };
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["AwardV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["AwardV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
-        };
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["AwardV1"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["AwardV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Awards/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    put: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["AwardV1"];
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["AwardV1"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["AwardV1"];
+          };
         };
-        put?: never;
-        post?: never;
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
         };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/Committee": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    post: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["AwardV1"];
         };
-        get: {
-            parameters: {
-                query?: {
-                    season?: number;
-                    year?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["CommitteePostV1"][];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description Created */
+        201: {
+          content: {
+            "application/json": components["schemas"]["AwardV1"];
+          };
         };
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["CommitteePostV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["CommitteePostV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
         };
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["CommitteePostV1"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["CommitteePostV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Committee/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/Awards/{id}": {
+    get: {
+      parameters: {
+        path: {
+          id: number;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["CommitteePostV1"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["AwardV1"];
+          };
         };
-        put?: never;
-        post?: never;
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
         };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Fixtures": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    delete: {
+      parameters: {
+        path: {
+          id: number;
         };
-        get: {
-            parameters: {
-                query?: {
-                    season?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchV1"][];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description No Content */
+        204: {
+          content: never;
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/LiveScoring/matches": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/Committee": {
+    get: {
+      parameters: {
+        query?: {
+          season?: number;
+          year?: number;
         };
-        get: {
-            parameters: {
-                query?: {
-                    season?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["LiveScoringMatchSummaryV1"][];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["CommitteePostV1"][];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/LiveScoring/{matchId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    put: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["CommitteePostV1"];
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    matchId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchStateV1"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["CommitteePostV1"];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/LiveScoring/{matchId}/scorecard": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    post: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["CommitteePostV1"];
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    matchId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["LiveScorecardV1"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description Created */
+        201: {
+          content: {
+            "application/json": components["schemas"]["CommitteePostV1"];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/LiveScoring/{matchId}/start": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/Committee/{id}": {
+    get: {
+      parameters: {
+        path: {
+          id: number;
         };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    matchId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["BallByBallMatchConditionsV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchStateV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["CommitteePostV1"];
+          };
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/LiveScoring/{matchId}/over": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    delete: {
+      parameters: {
+        path: {
+          id: number;
         };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    matchId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["MatchStateUpdateV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchStateV1"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description No Content */
+        204: {
+          content: never;
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/LiveScoring/{matchId}/opposition-score": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/Fixtures": {
+    get: {
+      parameters: {
+        query?: {
+          season?: number;
         };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    matchId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["OppositionInningsDetailsV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchStateV1"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchV1"][];
+          };
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/LiveScoring/{matchId}/end-innings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/LiveScoring/matches": {
+    get: {
+      parameters: {
+        query?: {
+          season?: number;
         };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    matchId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["InningsEndDetailsV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchStateV1"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["LiveScoringMatchSummaryV1"][];
+          };
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/LiveScoring/{matchId}/last-over": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/LiveScoring/{matchId}": {
+    get: {
+      parameters: {
+        path: {
+          matchId: number;
         };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    matchId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchStateV1"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchStateV1"];
+          };
         };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/LiveScoring/{matchId}/reset": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/LiveScoring/{matchId}/scorecard": {
+    get: {
+      parameters: {
+        path: {
+          matchId: number;
         };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    matchId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["LiveScorecardV1"];
+          };
         };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/LiveScoring/{matchId}/force-end": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/LiveScoring/{matchId}/start": {
+    post: {
+      parameters: {
+        path: {
+          matchId: number;
         };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    matchId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["BallByBallMatchConditionsV1"];
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchStateV1"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/Matches": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/LiveScoring/{matchId}/over": {
+    post: {
+      parameters: {
+        path: {
+          matchId: number;
         };
-        get: {
-            parameters: {
-                query?: {
-                    season?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchV1"][];
-                    };
-                };
-            };
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["MatchStateUpdateV1"];
         };
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["MatchV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchStateV1"];
+          };
         };
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["MatchV1"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Matches/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/LiveScoring/{matchId}/opposition-score": {
+    post: {
+      parameters: {
+        path: {
+          matchId: number;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchV1"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["OppositionInningsDetailsV1"];
         };
-        put?: never;
-        post?: never;
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Implemented */
-                501: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchStateV1"];
+          };
         };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Players": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/LiveScoring/{matchId}/end-innings": {
+    post: {
+      parameters: {
+        path: {
+          matchId: number;
         };
-        get: {
-            parameters: {
-                query?: {
-                    includeInactive?: boolean;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["PlayerV1"][];
-                    };
-                };
-            };
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["InningsEndDetailsV1"];
         };
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["PlayerV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["PlayerV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchStateV1"];
+          };
         };
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["PlayerV1"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["PlayerV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Players/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/LiveScoring/{matchId}/last-over": {
+    delete: {
+      parameters: {
+        path: {
+          matchId: number;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["PlayerV1"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchStateV1"];
+          };
         };
-        put?: never;
-        post?: never;
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Implemented */
-                501: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Results": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/LiveScoring/{matchId}/reset": {
+    delete: {
+      parameters: {
+        path: {
+          matchId: number;
         };
-        get: {
-            parameters: {
-                query?: {
-                    season?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ResultV1"][];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description No Content */
+        204: {
+          content: never;
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Results/recent": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/LiveScoring/{matchId}/force-end": {
+    post: {
+      parameters: {
+        path: {
+          matchId: number;
         };
-        get: {
-            parameters: {
-                query?: {
-                    count?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ResultV1"][];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description No Content */
+        204: {
+          content: never;
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Scorecards/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/Matches": {
+    get: {
+      parameters: {
+        query?: {
+          season?: number;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchScorecardV1"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchV1"][];
+          };
         };
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["MatchScorecardV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MatchScorecardV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Stats/query": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    put: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["MatchV1"];
         };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["StatsQueryV1"];
-                    "text/json": components["schemas"]["StatsQueryV1"];
-                    "application/*+json": components["schemas"]["StatsQueryV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["StatsDataV1"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchV1"];
+          };
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/Stats/player/{playerId}/detail": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    post: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["MatchV1"];
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    playerId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["PlayerDetailV1"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description Created */
+        201: {
+          content: {
+            "application/json": components["schemas"]["MatchV1"];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/Stats/player/{playerId}/{statsType}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/Matches/{id}": {
+    get: {
+      parameters: {
+        path: {
+          id: number;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    playerId: number;
-                    statsType: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["StatsDataV1"][];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchV1"];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/Stats/chart/{playerId}/{chartType}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    delete: {
+      parameters: {
+        path: {
+          id: number;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    playerId: number;
-                    chartType: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ChartJsConfig"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description No Content */
+        204: {
+          content: never;
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Not Implemented */
+        501: {
+          content: never;
+        };
+      };
     };
-    "/api/Stats/playermatches/{playerId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/Players": {
+    get: {
+      parameters: {
+        query?: {
+          includeInactive?: boolean;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    playerId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["StatsDataV1"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["PlayerV1"][];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Stats/familytree": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    put: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["PlayerV1"];
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["FamilyTreeNode"][];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["PlayerV1"];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/Stats/leadingplayers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    post: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["PlayerV1"];
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["LeadingPlayerCategoryV1"][];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description Created */
+        201: {
+          content: {
+            "application/json": components["schemas"]["PlayerV1"];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
     };
-    "/api/Teams": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/Players/{id}": {
+    get: {
+      parameters: {
+        path: {
+          id: number;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["TeamV1"][];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["PlayerV1"];
+          };
         };
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["TeamV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["TeamV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
         };
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["TeamV1"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["TeamV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Teams/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    delete: {
+      parameters: {
+        path: {
+          id: number;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["TeamV1"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description No Content */
+        204: {
+          content: never;
         };
-        put?: never;
-        post?: never;
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Implemented */
-                501: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+        /** @description Not Implemented */
+        501: {
+          content: never;
         };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Venues": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/Results": {
+    get: {
+      parameters: {
+        query?: {
+          season?: number;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["VenueV1"][];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["ResultV1"][];
+          };
         };
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["VenueV1"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["VenueV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
-        };
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["VenueV1"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["VenueV1"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/Venues/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+  };
+  "/api/Results/recent": {
+    get: {
+      parameters: {
+        query?: {
+          count?: number;
         };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["VenueV1"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["ResultV1"][];
+          };
         };
-        put?: never;
-        post?: never;
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProblemDetails"];
-                    };
-                };
-            };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
         };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
+  };
+  "/api/Scorecards/{id}": {
+    get: {
+      parameters: {
+        path: {
+          id: number;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchScorecardV1"];
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+    post: {
+      parameters: {
+        path: {
+          id: number;
+        };
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["MatchScorecardV1"];
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchScorecardV1"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Stats/query": {
+    post: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["StatsQueryV1"];
+          "text/json": components["schemas"]["StatsQueryV1"];
+          "application/*+json": components["schemas"]["StatsQueryV1"];
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["StatsDataV1"];
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Stats/player/{playerId}/detail": {
+    get: {
+      parameters: {
+        path: {
+          playerId: number;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["PlayerDetailV1"];
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Stats/player/{playerId}/{statsType}": {
+    get: {
+      parameters: {
+        path: {
+          playerId: number;
+          statsType: string;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["StatsDataV1"][];
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Stats/chart/{playerId}/{chartType}": {
+    get: {
+      parameters: {
+        path: {
+          playerId: number;
+          chartType: string;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["ChartJsConfig"];
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Stats/playermatches/{playerId}": {
+    get: {
+      parameters: {
+        path: {
+          playerId: number;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["StatsDataV1"];
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Stats/familytree": {
+    get: {
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["FamilyTreeNode"][];
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Stats/leadingplayers": {
+    get: {
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["LeadingPlayerCategoryV1"][];
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Teams": {
+    get: {
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["TeamV1"][];
+          };
+        };
+      };
+    };
+    put: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["TeamV1"];
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["TeamV1"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+    post: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["TeamV1"];
+        };
+      };
+      responses: {
+        /** @description Created */
+        201: {
+          content: {
+            "application/json": components["schemas"]["TeamV1"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Teams/{id}": {
+    get: {
+      parameters: {
+        path: {
+          id: number;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["TeamV1"];
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+    delete: {
+      parameters: {
+        path: {
+          id: number;
+        };
+      };
+      responses: {
+        /** @description No Content */
+        204: {
+          content: never;
+        };
+        /** @description Not Implemented */
+        501: {
+          content: never;
+        };
+      };
+    };
+  };
+  "/api/Venues": {
+    get: {
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["VenueV1"][];
+          };
+        };
+      };
+    };
+    put: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["VenueV1"];
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["VenueV1"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+    post: {
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["VenueV1"];
+        };
+      };
+      responses: {
+        /** @description Created */
+        201: {
+          content: {
+            "application/json": components["schemas"]["VenueV1"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Venues/{id}": {
+    get: {
+      parameters: {
+        path: {
+          id: number;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["VenueV1"];
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+    delete: {
+      parameters: {
+        path: {
+          id: number;
+        };
+      };
+      responses: {
+        /** @description No Content */
+        204: {
+          content: never;
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
 }
+
 export type webhooks = Record<string, never>;
+
 export interface components {
-    schemas: {
-        AGGridOptions: {
-            columnDefs?: components["schemas"]["StatsColumnDefinitionV1"][] | null;
-            rowData?: unknown[] | null;
-            footerRow?: unknown;
-        };
-        AwardV1: {
-            /** Format: int32 */
-            year?: number;
-            award?: string | null;
-            /** Format: int32 */
-            playerId?: number;
-            playerName?: string | null;
-            data?: string | null;
-            /** Format: int32 */
-            id?: number;
-        };
-        Ball: {
-            readonly isWide?: boolean;
-            readonly isNoBall?: boolean;
-            /** Format: int32 */
-            matchId?: number;
-            /** Format: int32 */
-            overNumber?: number;
-        };
-        BallByBallMatchConditionsV1: {
-            /** Format: int32 */
-            captain?: number;
-            /** Format: int32 */
-            keeper?: number;
-            wonToss?: boolean;
-            batted?: boolean;
-            declaration?: boolean;
-            /** Format: int32 */
-            overs?: number;
-            playerIds?: number[] | null;
-        };
-        BallByBallMatchDescriptorV1: {
-            /** Format: int32 */
-            matchId?: number;
-            batOrBowl?: string | null;
-            opponent?: string | null;
-            dateString?: string | null;
-            /** Format: int32 */
-            overs?: number;
-        };
-        BallV1: {
-            /** Format: int32 */
-            ballNumber?: number;
-            /** Format: int32 */
-            amount?: number;
-            /** Format: int32 */
-            batsman?: number;
-            batsmanName?: string | null;
-            bowler?: string | null;
-            thing?: string | null;
-            wicket?: components["schemas"]["WicketV1"];
-            /** Format: double */
-            angle?: number | null;
-            /** Format: int32 */
-            matchId?: number;
-            /** Format: int32 */
-            overNumber?: number;
-            isWide?: boolean;
-            isNoBall?: boolean;
-            isBoundary?: boolean;
-            isSix?: boolean;
-            isBowlersWicket?: boolean;
-            isFieldingExtra?: boolean;
-        };
-        BatsmanInningsDetails: {
-            /** Format: int32 */
-            careerHighScore?: number;
-            /** Format: double */
-            careerAverage?: number;
-            /** Format: int32 */
-            careerRuns?: number;
-            /** Format: int32 */
-            matches?: number;
-            /** Format: int32 */
-            ballsFacedInLastTenOvers?: number;
-            /** Format: int32 */
-            scoreForLastTenOvers?: number;
-            /** Format: int32 */
-            ballsFacedFromThisBowler?: number;
-            /** Format: int32 */
-            scoreForThisBowler?: number;
-            /** Format: double */
-            strikeRate?: number;
-            /** Format: int32 */
-            dots?: number;
-            /** Format: int32 */
-            sixes?: number;
-            /** Format: int32 */
-            fours?: number;
-            /** Format: int32 */
-            balls?: number;
-            /** Format: int32 */
-            score?: number;
-            name?: string | null;
-            /** Format: int32 */
-            playerId?: number;
-        };
-        BattingCardLineData: {
-            /** Format: int32 */
-            playerID?: number;
-            /** Format: int32 */
-            matchID?: number;
-            /** Format: int32 */
-            venueID?: number;
-            playerName?: string | null;
-            /** Format: int32 */
-            runs?: number;
-            /** Format: int32 */
-            modeOfDismissal?: number;
-            /** Format: int32 */
-            bowlerID?: number;
-            bowlerName?: string | null;
-            /** Format: int32 */
-            fielderID?: number;
-            fielderName?: string | null;
-            /** Format: int32 */
-            fours?: number;
-            /** Format: int32 */
-            sixes?: number;
-            /** Format: int32 */
-            battingAt?: number;
-            /** Format: int32 */
-            score?: number;
-            /** Format: date-time */
-            matchDate?: string;
-            /** Format: int32 */
-            matchTypeID?: number;
-            /** Format: int32 */
-            ballsFaced?: number;
-            /** Format: int32 */
-            dotBalls?: number;
-        };
-        BattingCardV1: {
-            entries?: components["schemas"]["BattingEntryV1"][] | null;
-            extras?: components["schemas"]["ExtrasV1"];
-            /** Format: int32 */
-            score?: number;
-            /** Format: int32 */
-            wickets?: number;
-        };
-        BattingEntryV1: {
-            /** Format: int32 */
-            playerId?: number;
-            playerName?: string | null;
-            /** Format: int32 */
-            runs?: number;
-            modeOfDismissal?: string | null;
-            /** Format: int32 */
-            bowlerId?: number;
-            bowlerName?: string | null;
-            /** Format: int32 */
-            fielderId?: number;
-            fielderName?: string | null;
-            /** Format: int32 */
-            fours?: number;
-            /** Format: int32 */
-            sixes?: number;
-            /** Format: int32 */
-            battingAt?: number;
-            /** Format: int32 */
-            ballsFaced?: number;
-            /** Format: int32 */
-            dotBalls?: number;
-            wicket?: components["schemas"]["WicketV1"];
-        };
-        BowlerInningsDetails: {
-            name?: string | null;
-            justThisSpell?: components["schemas"]["BowlingDetails"];
-            details?: components["schemas"]["BowlingDetails"];
-        };
-        BowlerInningsDetailsV1: {
-            name?: string | null;
-            justThisSpell?: components["schemas"]["BowlingDetailsV1"];
-            details?: components["schemas"]["BowlingDetailsV1"];
-        };
-        BowlingCardV1: {
-            entries?: components["schemas"]["BowlingEntryV1"][] | null;
-        };
-        BowlingDetails: {
-            /** Format: int32 */
-            overs?: number;
-            /** Format: int32 */
-            maidens?: number;
-            /** Format: int32 */
-            runs?: number;
-            /** Format: int32 */
-            wickets?: number;
-            /** Format: int32 */
-            dots?: number;
-            /** Format: int32 */
-            fours?: number;
-            /** Format: int32 */
-            sixes?: number;
-            /** Format: double */
-            economy?: number;
-            /** Format: int32 */
-            wides?: number;
-            /** Format: int32 */
-            noBalls?: number;
-        };
-        BowlingDetailsV1: {
-            /** Format: int32 */
-            overs?: number;
-            /** Format: int32 */
-            maidens?: number;
-            /** Format: int32 */
-            runs?: number;
-            /** Format: int32 */
-            wickets?: number;
-            /** Format: double */
-            economy?: number;
-        };
-        BowlingEntryV1: {
-            playerName?: string | null;
-            /** Format: int32 */
-            playerId?: number;
-            /** Format: int32 */
-            maidens?: number;
-            /** Format: int32 */
-            runs?: number;
-            /** Format: int32 */
-            wickets?: number;
-            /** Format: double */
-            overs?: number;
-        };
-        BowlingStatsEntryData: {
-            /** Format: int32 */
-            playerID?: number;
-            playerName?: string | null;
-            /** Format: int32 */
-            matchID?: number;
-            /** Format: double */
-            overs?: number;
-            /** Format: int32 */
-            runs?: number;
-            /** Format: int32 */
-            wickets?: number;
-            /** Format: int32 */
-            maidens?: number;
-            /** Format: date-time */
-            matchDate?: string;
-            /** Format: int32 */
-            matchTypeID?: number;
-            /** Format: int32 */
-            venueID?: number;
-        };
-        ChartJsConfig: {
-            type?: string | null;
-            data?: components["schemas"]["ChartJsData"];
-            options?: components["schemas"]["ChartJsOptions"];
-        };
-        ChartJsData: {
-            datasets?: components["schemas"]["ChartJsDataSet"][] | null;
-            labels?: string[] | null;
-        };
-        ChartJsDataSet: {
-            spanGaps?: boolean;
-            label?: string | null;
-            type?: string | null;
-            data?: unknown[] | null;
-            backgroundColor?: unknown;
-            borderColor?: unknown;
-            /** Format: int32 */
-            borderWidth?: number | null;
-        };
-        ChartJsLegendOptions: {
-            display?: boolean;
-            position?: string | null;
-        };
-        ChartJsOptions: {
-            responsive?: boolean;
-            plugins?: components["schemas"]["ChartJsPlugins"];
-            scales?: components["schemas"]["ChartJsScales"];
-        };
-        ChartJsPlugins: {
-            title?: components["schemas"]["ChartJsTitleOptions"];
-            legend?: components["schemas"]["ChartJsLegendOptions"];
-        };
-        ChartJsScale: {
-            /** Format: int32 */
-            min?: number;
-        };
-        ChartJsScales: {
-            r?: components["schemas"]["ChartJsScale"];
-        };
-        ChartJsTitleOptions: {
-            display?: boolean;
-            text?: string | null;
-        };
-        CommitteePostV1: {
-            /** Format: int32 */
-            year?: number;
-            post?: string | null;
-            /** Format: int32 */
-            playerId?: number;
-            /** Format: int32 */
-            id?: number;
-        };
-        ExtrasV1: {
-            /** Format: int32 */
-            wides?: number;
-            /** Format: int32 */
-            noBalls?: number;
-            /** Format: int32 */
-            penalties?: number;
-            /** Format: int32 */
-            byes?: number;
-            /** Format: int32 */
-            legByes?: number;
-            /** Format: int32 */
-            total?: number;
-        };
-        FallOfWicket: {
-            outGoingPlayer?: components["schemas"]["Player"];
-            bowler?: string | null;
-            /** Format: int32 */
-            wicketNumber?: number;
-            /** Format: int32 */
-            teamScore?: number;
-            outgoingBatsmanInningsDetails?: components["schemas"]["BatsmanInningsDetails"];
-            overAsString?: string | null;
-            partnership?: components["schemas"]["Partnership"];
-            wicket?: components["schemas"]["Wicket"];
-            readonly outgoingPlayerName?: string | null;
-            /** Format: int32 */
-            outGoingPlayerId?: number;
-            /** Format: int32 */
-            outGoingPlayerScore?: number;
-            /** Format: int32 */
-            notOutPlayerId?: number;
-            /** Format: int32 */
-            notOutPlayerScore?: number;
-        };
-        FamilyTreeNode: {
-            /** Format: int32 */
-            id?: number;
-            /** Format: int32 */
-            parentId?: number | null;
-            name?: string | null;
-            /** Format: int32 */
-            caps?: number;
-            /** Format: int32 */
-            responsibleCaps?: number;
-        };
-        FoWEntryV1: {
-            outgoingPlayer?: components["schemas"]["FoWPlayerV1"];
-            notOutPlayer?: components["schemas"]["FoWPlayerV1"];
-            /** Format: int32 */
-            wicket?: number;
-            /** Format: int32 */
-            score?: number;
-            /** Format: double */
-            overs?: number;
-            /** Format: int32 */
-            partnership?: number;
-        };
-        FoWPlayerV1: {
-            /** Format: int32 */
-            id?: number;
-            name?: string | null;
-            /** Format: int32 */
-            battingAt?: number;
-            /** Format: int32 */
-            score?: number;
-        };
-        FoWV1: {
-            entries?: components["schemas"]["FoWEntryV1"][] | null;
-        };
-        InPlayScorecardV1: {
-            onStrikeBatsman?: components["schemas"]["BatsmanInningsDetails"];
-            otherBatsman?: components["schemas"]["BatsmanInningsDetails"];
-            lastBatsmanOut?: components["schemas"]["BatsmanInningsDetails"];
-            opposition?: string | null;
-            /** Format: int32 */
-            ourLastCompletedOver?: number;
-            /** Format: int32 */
-            oversRemaining?: number;
-            declarationGame?: boolean;
-            /** Format: int32 */
-            score?: number;
-            /** Format: int32 */
-            wickets?: number;
-            /** Format: double */
-            runRate?: number;
-            currentPartnership?: components["schemas"]["Partnership"];
-            previousPartnership?: components["schemas"]["Partnership"];
-            lastManOut?: components["schemas"]["FallOfWicket"];
-            fallOfWickets?: components["schemas"]["FallOfWicket"][] | null;
-            completedOvers?: components["schemas"]["OverSummaryV1"][] | null;
-            bowlerOneDetails?: components["schemas"]["BowlerInningsDetails"];
-            bowlerTwoDetails?: components["schemas"]["BowlerInningsDetails"];
-            liveBattingCard?: components["schemas"]["LiveBattingCard"];
-            /** Format: int32 */
-            overs?: number;
-            tossWinnerBatted?: boolean;
-            wonToss?: boolean;
-            ourInningsStatus?: string | null;
-            theirInningsStatus?: string | null;
-            /** Format: int32 */
-            theirScore?: number;
-            /** Format: int32 */
-            theirWickets?: number;
-            /** Format: int32 */
-            theirOver?: number;
-            /** Format: double */
-            theirRunRate?: number;
-            isFirstInnings?: boolean;
-            theirCompletedOvers?: components["schemas"]["OppositionInningsDetails"][] | null;
-            isMatchComplete?: boolean;
-            resultText?: string | null;
-            ourInningsCommentary?: string | null;
-            theirInningsCommentary?: string | null;
-            liveBowlingCard?: components["schemas"]["BowlerInningsDetails"][] | null;
-            partnerships?: components["schemas"]["Partnership"][] | null;
-        };
-        InningsEndDetailsV1: {
-            commentary?: string | null;
-            inningsType?: string | null;
-            wasDeclared?: boolean;
-        };
-        InningsScoreCardV1: {
-            batting?: components["schemas"]["BattingCardV1"];
-            bowling?: components["schemas"]["BowlingCardV1"];
-            fow?: components["schemas"]["FoWV1"];
-            /** Format: double */
-            inningsLength?: number;
-        };
-        LeadingPlayerCategoryV1: {
-            category?: string | null;
-            players?: components["schemas"]["LeadingPlayerEntryV1"][] | null;
-        };
-        LeadingPlayerEntryV1: {
-            /** Format: int32 */
-            playerId?: number;
-            playerName?: string | null;
-            /** Format: int32 */
-            value?: number;
-        };
-        LiveBattingCard: Record<string, never>;
-        LiveScorecardV1: {
-            inPlayData?: components["schemas"]["InPlayScorecardV1"];
-            finalScorecard?: components["schemas"]["MatchScorecardV1"];
-            matchReport?: components["schemas"]["MatchReportV1"];
-            matchData?: components["schemas"]["MatchV1"];
-            result?: components["schemas"]["ResultV1"];
-        };
-        /**
-         * Format: int32
-         * @enum {integer}
-         */
-        LiveScoringMatchSummaryKindV1: 0 | 1;
-        LiveScoringMatchSummaryV1: {
-            kind?: components["schemas"]["LiveScoringMatchSummaryKindV1"];
-            match?: components["schemas"]["MatchV1"];
-            ballByBall?: components["schemas"]["BallByBallMatchDescriptorV1"];
-        };
-        MatchConditionsV1: {
-            abandoned?: boolean;
-            /** Format: int32 */
-            captainId?: number;
-            /** Format: int32 */
-            wicketKeeperId?: number;
-            /** Format: int32 */
-            overs?: number;
-            declaration?: boolean;
-            weWonTheToss?: boolean;
-            tossWinnerBatted?: boolean;
-        };
-        MatchReportV1: {
-            conditions?: string | null;
-            report?: string | null;
-            base64EncodedImage?: string | null;
-        };
-        MatchScorecardV1: {
-            ourInnings?: components["schemas"]["InningsScoreCardV1"];
-            theirInnings?: components["schemas"]["InningsScoreCardV1"];
-            matchConditions?: components["schemas"]["MatchConditionsV1"];
-        };
-        MatchStateUpdateV1: {
-            /** Format: int32 */
-            lastCompletedOver?: number;
-            /** Format: int32 */
-            onStrikeBatsmanId?: number;
-            over?: components["schemas"]["OverV1"];
-            players?: components["schemas"]["PlayerStateV1"][] | null;
-            /** Format: double */
-            runRate?: number;
-            /** Format: int32 */
-            score?: number;
-            bowlers?: string[] | null;
-            /** Format: int32 */
-            matchId?: number;
-            previousBowler?: string | null;
-            previousBowlerButOne?: string | null;
-            partnership?: components["schemas"]["PartnershipStubV1"];
-            nextState?: string | null;
-            /** Format: int32 */
-            oppositionScore?: number;
-            /** Format: int32 */
-            oppositionWickets?: number;
-            oppositionName?: string | null;
-            oppositionShortName?: string | null;
-            bowlerDetails?: components["schemas"]["BowlerInningsDetailsV1"][] | null;
-        };
-        MatchStateV1: {
-            /** Format: int32 */
-            lastCompletedOver?: number;
-            /** Format: int32 */
-            onStrikeBatsmanId?: number;
-            over?: components["schemas"]["OverV1"];
-            players?: components["schemas"]["PlayerStateV1"][] | null;
-            /** Format: double */
-            runRate?: number;
-            /** Format: int32 */
-            score?: number;
-            bowlers?: string[] | null;
-            /** Format: int32 */
-            matchId?: number;
-            previousBowler?: string | null;
-            previousBowlerButOne?: string | null;
-            partnership?: components["schemas"]["PartnershipStubV1"];
-            nextState?: string | null;
-            /** Format: int32 */
-            oppositionScore?: number;
-            /** Format: int32 */
-            oppositionWickets?: number;
-            oppositionName?: string | null;
-            oppositionShortName?: string | null;
-            bowlerDetails?: components["schemas"]["BowlerInningsDetailsV1"][] | null;
-            liveScorecard?: components["schemas"]["LiveScorecardV1"];
-        };
-        MatchV1: {
-            isHome?: boolean;
-            type?: string | null;
-            date?: string | null;
-            opposition?: components["schemas"]["TeamV1"];
-            venue?: components["schemas"]["VenueV1"];
-            /** Format: int32 */
-            id?: number;
-        };
-        /**
-         * Format: int32
-         * @enum {integer}
-         */
-        ModesOfDismissal: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-        /**
-         * Format: int32
-         * @enum {integer}
-         */
-        ModesOfDismissalV1: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-        OppositionInningsDetails: {
-            /** Format: int32 */
-            over?: number;
-            /** Format: int32 */
-            score?: number;
-            /** Format: int32 */
-            wickets?: number;
-            commentary?: string | null;
-        };
-        OppositionInningsDetailsV1: {
-            /** Format: int32 */
-            over?: number;
-            /** Format: int32 */
-            score?: number;
-            /** Format: int32 */
-            wickets?: number;
-            commentary?: string | null;
-        };
-        OverSummaryV1: {
-            over?: components["schemas"]["OverV1"];
-            /** Format: int32 */
-            scoreAtEndOfOver?: number;
-            /** Format: int32 */
-            wicketsAtEndOfOver?: number;
-            /** Format: int32 */
-            scoreForThisOver?: number;
-        };
-        OverV1: {
-            /** Format: int32 */
-            overNumber?: number;
-            bowler?: string | null;
-            /** Format: int32 */
-            runsConceded?: number;
-            /** Format: int32 */
-            wicketsTaken?: number;
-            balls?: components["schemas"]["BallV1"][] | null;
-            commentary?: string | null;
-        };
-        Partnership: {
-            /** Format: int32 */
-            playerId1?: number;
-            /** Format: int32 */
-            playerId2?: number;
-            readonly playerIds?: number[] | null;
-            readonly balls?: components["schemas"]["Ball"][] | null;
-            /** Format: int32 */
-            readonly ballCount?: number;
-            /** Format: int32 */
-            readonly score?: number;
-            /** Format: double */
-            readonly runRate?: number;
-            readonly oversAsString?: string | null;
-            /** Format: int32 */
-            readonly player1Score?: number;
-            /** Format: int32 */
-            readonly player2Score?: number;
-            readonly player1Name?: string | null;
-            readonly player2Name?: string | null;
-        };
-        PartnershipStubV1: {
-            /** Format: int32 */
-            runs?: number;
-            /** Format: int32 */
-            balls?: number;
-            /** Format: int32 */
-            fours?: number;
-            /** Format: int32 */
-            sixes?: number;
-        };
-        Player: {
-            /** Format: int32 */
-            readonly id?: number;
-            name?: string | null;
-            readonly formalName?: string | null;
-            fullName?: string | null;
-            firstName?: string | null;
-            surname?: string | null;
-            middleInitials?: string | null;
-            ringerOf?: components["schemas"]["Player"];
-            /** Format: int32 */
-            ringerOfId?: number;
-            nickname?: string | null;
-            bowlingStyle?: string | null;
-            battingStyle?: string | null;
-            playingRole?: components["schemas"]["PlayingRole"];
-            /** Format: int32 */
-            readonly caps?: number;
-            /** Format: date-time */
-            readonly debut?: string;
-            isActive?: boolean;
-            isRightHandBat?: boolean;
-            bio?: string | null;
-            /** Format: int32 */
-            readonly numberOfMatchesPlayedThisSeason?: number;
-            readonly battingStatsData?: components["schemas"]["BattingCardLineData"][] | null;
-            readonly bowlingStatsData?: components["schemas"]["BowlingStatsEntryData"][] | null;
-            readonly fieldingStatsData?: components["schemas"]["BattingCardLineData"][] | null;
-        };
-        PlayerDetailV1: {
-            player?: components["schemas"]["PlayerV1"];
-            playerImageUrl?: string | null;
-            battingStats?: components["schemas"]["StatsDataV1"];
-            bowlingStats?: components["schemas"]["StatsDataV1"];
-        };
-        PlayerStateV1: {
-            /** Format: int32 */
-            playerId?: number;
-            playerName?: string | null;
-            /** Format: int32 */
-            position?: number;
-            state?: string | null;
-            /** Format: int32 */
-            currentScore?: number;
-            /** Format: int32 */
-            fours?: number;
-            /** Format: int32 */
-            ballsFaced?: number;
-            /** Format: int32 */
-            sixes?: number;
-            /** Format: double */
-            strikeRate?: number;
-            /** Format: int32 */
-            asOfOver?: number;
-        };
-        PlayerV1: {
-            /** Format: int32 */
-            playerId?: number;
-            /** Format: int32 */
-            matches?: number;
-            name?: string | null;
-            shortName?: string | null;
-            nickname?: string | null;
-            battingStyle?: string | null;
-            bowlingStyle?: string | null;
-            isActive?: boolean;
-            firstName?: string | null;
-            surname?: string | null;
-            middleInitials?: string | null;
-            debut?: string | null;
-            clubConnection?: components["schemas"]["PlayerV1"];
-            isRightHandBat?: boolean;
-            lastMatchDate?: string | null;
-            playingRole?: string | null;
-            /** Format: int32 */
-            wickets?: number;
-            /** Format: int32 */
-            catches?: number;
-            /** Format: int32 */
-            runs?: number;
-        };
-        /**
-         * Format: int32
-         * @enum {integer}
-         */
-        PlayingRole: 0 | 1 | 2 | 3 | 4;
-        ProblemDetails: {
-            type?: string | null;
-            title?: string | null;
-            /** Format: int32 */
-            status?: number | null;
-            detail?: string | null;
-            instance?: string | null;
-        } & {
-            [key: string]: unknown;
-        };
-        ResultV1: {
-            /** Format: int32 */
-            matchId?: number;
-            homeTeamName?: string | null;
-            homeTeamScore?: string | null;
-            awayTeamName?: string | null;
-            awayTeamScore?: string | null;
-            resultText?: string | null;
-            resultMargin?: string | null;
-            matchDate?: string | null;
-            winningTeam?: string | null;
-            losingTeam?: string | null;
-            margin?: string | null;
-            /** Format: double */
-            theirOversFaced?: number;
-            /** Format: int32 */
-            theirWickets?: number;
-            /** Format: int32 */
-            theirScore?: number;
-            /** Format: double */
-            ourOversFaced?: number;
-            /** Format: int32 */
-            ourWickets?: number;
-            /** Format: int32 */
-            ourScore?: number;
-            isTied?: boolean;
-            isDrawn?: boolean;
-            isAbandoned?: boolean;
-            venueName?: string | null;
-            matchReportConditions?: string | null;
-            matchReportText?: string | null;
-            matchReportImage?: string | null;
-            isWinner?: boolean | null;
-        };
-        StatsColumnDefinitionV1: {
-            headerName?: string | null;
-            field?: string | null;
-            readonly cellRenderer?: string | null;
-        };
-        StatsDataV1: {
-            statsType?: string | null;
-            gridOptions?: components["schemas"]["AGGridOptions"];
-        };
-        StatsQueryV1: {
-            category?: string | null;
-            /** Format: date-time */
-            from?: string;
-            /** Format: date-time */
-            to?: string;
-            venue?: string | null;
-            matchTypes?: string[] | null;
-        };
-        TeamV1: {
-            /** Format: int32 */
-            id?: number;
-            name?: string | null;
-        };
-        VenueV1: {
-            /** Format: int32 */
-            id?: number;
-            name?: string | null;
-            mapUrl?: string | null;
-            description?: string | null;
-            /** Format: double */
-            latitude?: number | null;
-            /** Format: double */
-            longitude?: number | null;
-        };
-        Wicket: {
-            readonly isRunOut?: boolean;
-            readonly isCaught?: boolean;
-            readonly isCaughtAndBowled?: boolean;
-            readonly isBowled?: boolean;
-            readonly isLbw?: boolean;
-            readonly isStumped?: boolean;
-            readonly isHitWicket?: boolean;
-            readonly isRetired?: boolean;
-            readonly isRetiredHurt?: boolean;
-            modeOfDismissalAsEnum?: components["schemas"]["ModesOfDismissal"];
-        };
-        WicketV1: {
-            bowler?: string | null;
-            fielder?: string | null;
-            /** Format: int32 */
-            player?: number;
-            playerName?: string | null;
-            description?: string | null;
-            modeOfDismissal?: components["schemas"]["ModesOfDismissalV1"];
-            readonly isRunOut?: boolean;
-            readonly isCaught?: boolean;
-            readonly isCaughtAndBowled?: boolean;
-            readonly isBowled?: boolean;
-            readonly isLbw?: boolean;
-            readonly isStumped?: boolean;
-            readonly isHitWicket?: boolean;
-            readonly isRetired?: boolean;
-            readonly isRetiredHurt?: boolean;
-        };
+  schemas: {
+    AGGridOptions: {
+      columnDefs?: components["schemas"]["StatsColumnDefinitionV1"][] | null;
+      rowData?: unknown[] | null;
+      footerRow?: unknown;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    AwardV1: {
+      /** Format: int32 */
+      year?: number;
+      award?: string | null;
+      /** Format: int32 */
+      playerId?: number;
+      playerName?: string | null;
+      data?: string | null;
+      /** Format: int32 */
+      id?: number;
+    };
+    BallByBallMatchConditionsV1: {
+      /** Format: int32 */
+      captain?: number;
+      /** Format: int32 */
+      keeper?: number;
+      wonToss?: boolean;
+      batted?: boolean;
+      declaration?: boolean;
+      /** Format: int32 */
+      overs?: number;
+      playerIds?: number[] | null;
+    };
+    BallByBallMatchDescriptorV1: {
+      /** Format: int32 */
+      matchId?: number;
+      batOrBowl?: string | null;
+      opponent?: string | null;
+      dateString?: string | null;
+      /** Format: int32 */
+      overs?: number;
+    };
+    BallV1: {
+      /** Format: int32 */
+      ballNumber?: number;
+      /** Format: int32 */
+      amount?: number;
+      /** Format: int32 */
+      batsman?: number;
+      batsmanName?: string | null;
+      bowler?: string | null;
+      thing?: string | null;
+      wicket?: components["schemas"]["WicketV1"];
+      /** Format: double */
+      angle?: number | null;
+      /** Format: int32 */
+      matchId?: number;
+      /** Format: int32 */
+      overNumber?: number;
+      isWide?: boolean;
+      isNoBall?: boolean;
+      isBoundary?: boolean;
+      isSix?: boolean;
+      isBowlersWicket?: boolean;
+      isFieldingExtra?: boolean;
+    };
+    BatsmanInningsDetailsV1: {
+      /** Format: int32 */
+      careerHighScore?: number;
+      /** Format: double */
+      careerAverage?: number;
+      /** Format: int32 */
+      careerRuns?: number;
+      /** Format: int32 */
+      matches?: number;
+      /** Format: int32 */
+      ballsFacedInLastTenOvers?: number;
+      /** Format: int32 */
+      scoreForLastTenOvers?: number;
+      /** Format: int32 */
+      ballsFacedFromThisBowler?: number;
+      /** Format: int32 */
+      scoreForThisBowler?: number;
+      /** Format: double */
+      strikeRate?: number;
+      /** Format: int32 */
+      dots?: number;
+      /** Format: int32 */
+      sixes?: number;
+      /** Format: int32 */
+      fours?: number;
+      /** Format: int32 */
+      balls?: number;
+      /** Format: int32 */
+      score?: number;
+      name?: string | null;
+      /** Format: int32 */
+      playerId?: number;
+    };
+    BattingCardV1: {
+      entries?: components["schemas"]["BattingEntryV1"][] | null;
+      extras?: components["schemas"]["ExtrasV1"];
+      /** Format: int32 */
+      score?: number;
+      /** Format: int32 */
+      wickets?: number;
+    };
+    BattingEntryV1: {
+      /** Format: int32 */
+      playerId?: number;
+      playerName?: string | null;
+      /** Format: int32 */
+      runs?: number;
+      modeOfDismissal?: components["schemas"]["ModesOfDismissalV1"];
+      /** Format: int32 */
+      bowlerId?: number;
+      bowlerName?: string | null;
+      /** Format: int32 */
+      fielderId?: number;
+      fielderName?: string | null;
+      /** Format: int32 */
+      fours?: number;
+      /** Format: int32 */
+      sixes?: number;
+      /** Format: int32 */
+      battingAt?: number;
+      /** Format: int32 */
+      ballsFaced?: number;
+      /** Format: int32 */
+      dotBalls?: number;
+      wicket?: components["schemas"]["WicketV1"];
+    };
+    BowlerInningsDetailsV1: {
+      name?: string | null;
+      justThisSpell?: components["schemas"]["BowlingDetailsV1"];
+      details?: components["schemas"]["BowlingDetailsV1"];
+    };
+    BowlingCardV1: {
+      entries?: components["schemas"]["BowlingEntryV1"][] | null;
+    };
+    BowlingDetailsV1: {
+      /** Format: int32 */
+      overs?: number;
+      /** Format: int32 */
+      maidens?: number;
+      /** Format: int32 */
+      runs?: number;
+      /** Format: int32 */
+      wickets?: number;
+      /** Format: double */
+      economy?: number;
+    };
+    BowlingEntryV1: {
+      playerName?: string | null;
+      /** Format: int32 */
+      playerId?: number;
+      /** Format: int32 */
+      maidens?: number;
+      /** Format: int32 */
+      runs?: number;
+      /** Format: int32 */
+      wickets?: number;
+      /** Format: double */
+      overs?: number;
+    };
+    ChartJsConfig: {
+      type?: string | null;
+      data?: components["schemas"]["ChartJsData"];
+      options?: components["schemas"]["ChartJsOptions"];
+    };
+    ChartJsData: {
+      datasets?: components["schemas"]["ChartJsDataSet"][] | null;
+      labels?: string[] | null;
+    };
+    ChartJsDataSet: {
+      spanGaps?: boolean;
+      label?: string | null;
+      type?: string | null;
+      data?: unknown[] | null;
+      backgroundColor?: unknown;
+      borderColor?: unknown;
+      /** Format: int32 */
+      borderWidth?: number | null;
+    };
+    ChartJsLegendOptions: {
+      display?: boolean;
+      position?: string | null;
+    };
+    ChartJsOptions: {
+      responsive?: boolean;
+      plugins?: components["schemas"]["ChartJsPlugins"];
+      scales?: components["schemas"]["ChartJsScales"];
+    };
+    ChartJsPlugins: {
+      title?: components["schemas"]["ChartJsTitleOptions"];
+      legend?: components["schemas"]["ChartJsLegendOptions"];
+    };
+    ChartJsScale: {
+      /** Format: int32 */
+      min?: number;
+    };
+    ChartJsScales: {
+      r?: components["schemas"]["ChartJsScale"];
+    };
+    ChartJsTitleOptions: {
+      display?: boolean;
+      text?: string | null;
+    };
+    CommitteePostV1: {
+      /** Format: int32 */
+      year?: number;
+      post?: string | null;
+      /** Format: int32 */
+      playerId?: number;
+      /** Format: int32 */
+      id?: number;
+    };
+    ExtrasV1: {
+      /** Format: int32 */
+      wides?: number;
+      /** Format: int32 */
+      noBalls?: number;
+      /** Format: int32 */
+      penalties?: number;
+      /** Format: int32 */
+      byes?: number;
+      /** Format: int32 */
+      legByes?: number;
+      /** Format: int32 */
+      total?: number;
+    };
+    FallOfWicketV1: {
+      /** Format: int32 */
+      wicketNumber?: number;
+      /** Format: int32 */
+      teamScore?: number;
+      overAsString?: string | null;
+      bowler?: string | null;
+      /** Format: int32 */
+      outGoingPlayerId?: number;
+      outgoingPlayerName?: string | null;
+      /** Format: int32 */
+      outGoingPlayerScore?: number;
+      /** Format: int32 */
+      notOutPlayerId?: number;
+      /** Format: int32 */
+      notOutPlayerScore?: number;
+      wicket?: components["schemas"]["WicketV1"];
+      outgoingBatsmanInningsDetails?: components["schemas"]["BatsmanInningsDetailsV1"];
+      partnership?: components["schemas"]["PartnershipV1"];
+    };
+    FamilyTreeNode: {
+      /** Format: int32 */
+      id?: number;
+      /** Format: int32 */
+      parentId?: number | null;
+      name?: string | null;
+      /** Format: int32 */
+      caps?: number;
+      /** Format: int32 */
+      responsibleCaps?: number;
+    };
+    FoWEntryV1: {
+      outgoingPlayer?: components["schemas"]["FoWPlayerV1"];
+      notOutPlayer?: components["schemas"]["FoWPlayerV1"];
+      /** Format: int32 */
+      wicket?: number;
+      /** Format: int32 */
+      score?: number;
+      /** Format: double */
+      overs?: number;
+      /** Format: int32 */
+      partnership?: number;
+    };
+    FoWPlayerV1: {
+      /** Format: int32 */
+      id?: number;
+      name?: string | null;
+      /** Format: int32 */
+      battingAt?: number;
+      /** Format: int32 */
+      score?: number;
+    };
+    FoWV1: {
+      entries?: components["schemas"]["FoWEntryV1"][] | null;
+    };
+    InPlayScorecardV1: {
+      onStrikeBatsman?: components["schemas"]["BatsmanInningsDetailsV1"];
+      otherBatsman?: components["schemas"]["BatsmanInningsDetailsV1"];
+      lastBatsmanOut?: components["schemas"]["BatsmanInningsDetailsV1"];
+      opposition?: string | null;
+      /** Format: int32 */
+      ourLastCompletedOver?: number;
+      /** Format: int32 */
+      oversRemaining?: number;
+      declarationGame?: boolean;
+      /** Format: int32 */
+      score?: number;
+      /** Format: int32 */
+      wickets?: number;
+      /** Format: double */
+      runRate?: number;
+      currentPartnership?: components["schemas"]["PartnershipV1"];
+      previousPartnership?: components["schemas"]["PartnershipV1"];
+      lastManOut?: components["schemas"]["FallOfWicketV1"];
+      fallOfWickets?: components["schemas"]["FallOfWicketV1"][] | null;
+      completedOvers?: components["schemas"]["OverSummaryV1"][] | null;
+      bowlerOneDetails?: components["schemas"]["BowlerInningsDetailsV1"];
+      bowlerTwoDetails?: components["schemas"]["BowlerInningsDetailsV1"];
+      liveBattingCard?: components["schemas"]["LiveBattingCardV1"];
+      /** Format: int32 */
+      overs?: number;
+      tossWinnerBatted?: boolean;
+      wonToss?: boolean;
+      ourInningsStatus?: string | null;
+      theirInningsStatus?: string | null;
+      /** Format: int32 */
+      theirScore?: number;
+      /** Format: int32 */
+      theirWickets?: number;
+      /** Format: int32 */
+      theirOver?: number;
+      /** Format: double */
+      theirRunRate?: number;
+      isFirstInnings?: boolean;
+      theirCompletedOvers?: components["schemas"]["OppositionInningsDetailsV1"][] | null;
+      isMatchComplete?: boolean;
+      resultText?: string | null;
+      ourInningsCommentary?: string | null;
+      theirInningsCommentary?: string | null;
+      liveBowlingCard?: components["schemas"]["BowlerInningsDetailsV1"][] | null;
+      partnerships?: components["schemas"]["PartnershipV1"][] | null;
+    };
+    InningsEndDetailsV1: {
+      commentary?: string | null;
+      inningsType?: string | null;
+      wasDeclared?: boolean;
+    };
+    InningsScoreCardV1: {
+      batting?: components["schemas"]["BattingCardV1"];
+      bowling?: components["schemas"]["BowlingCardV1"];
+      fow?: components["schemas"]["FoWV1"];
+      /** Format: double */
+      inningsLength?: number;
+    };
+    LeadingPlayerCategoryV1: {
+      category?: string | null;
+      players?: components["schemas"]["LeadingPlayerEntryV1"][] | null;
+    };
+    LeadingPlayerEntryV1: {
+      /** Format: int32 */
+      playerId?: number;
+      playerName?: string | null;
+      /** Format: int32 */
+      value?: number;
+    };
+    LiveBattingCardEntryV1: {
+      batsmanInningsDetails?: components["schemas"]["BatsmanInningsDetailsV1"];
+      wicket?: components["schemas"]["WicketV1"];
+    };
+    LiveBattingCardV1: {
+      players?: {
+        [key: string]: components["schemas"]["LiveBattingCardEntryV1"];
+      } | null;
+      extras?: components["schemas"]["LiveExtrasV1"];
+    };
+    LiveExtrasV1: {
+      /** Format: int32 */
+      byes?: number;
+      /** Format: int32 */
+      legByes?: number;
+      /** Format: int32 */
+      wides?: number;
+      /** Format: int32 */
+      noBalls?: number;
+      /** Format: int32 */
+      penalty?: number;
+      /** Format: int32 */
+      total?: number;
+      detailString?: string | null;
+    };
+    LiveScorecardV1: {
+      inPlayData?: components["schemas"]["InPlayScorecardV1"];
+      finalScorecard?: components["schemas"]["MatchScorecardV1"];
+      matchReport?: components["schemas"]["MatchReportV1"];
+      matchData?: components["schemas"]["MatchV1"];
+      result?: components["schemas"]["ResultV1"];
+    };
+    /** @enum {string} */
+    LiveScoringMatchSummaryKindV1: "Match" | "BallByBall";
+    LiveScoringMatchSummaryV1: {
+      kind?: components["schemas"]["LiveScoringMatchSummaryKindV1"];
+      match?: components["schemas"]["MatchV1"];
+      ballByBall?: components["schemas"]["BallByBallMatchDescriptorV1"];
+    };
+    MatchConditionsV1: {
+      abandoned?: boolean;
+      /** Format: int32 */
+      captainId?: number;
+      /** Format: int32 */
+      wicketKeeperId?: number;
+      /** Format: int32 */
+      overs?: number;
+      declaration?: boolean;
+      weWonTheToss?: boolean;
+      tossWinnerBatted?: boolean;
+    };
+    MatchReportV1: {
+      conditions?: string | null;
+      report?: string | null;
+      base64EncodedImage?: string | null;
+    };
+    MatchScorecardV1: {
+      ourInnings?: components["schemas"]["InningsScoreCardV1"];
+      theirInnings?: components["schemas"]["InningsScoreCardV1"];
+      matchConditions?: components["schemas"]["MatchConditionsV1"];
+    };
+    MatchStateUpdateV1: {
+      /** Format: int32 */
+      lastCompletedOver?: number;
+      /** Format: int32 */
+      onStrikeBatsmanId?: number;
+      over?: components["schemas"]["OverV1"];
+      players?: components["schemas"]["PlayerStateV1"][] | null;
+      /** Format: double */
+      runRate?: number;
+      /** Format: int32 */
+      score?: number;
+      bowlers?: string[] | null;
+      /** Format: int32 */
+      matchId?: number;
+      previousBowler?: string | null;
+      previousBowlerButOne?: string | null;
+      partnership?: components["schemas"]["PartnershipStubV1"];
+      nextState?: string | null;
+      /** Format: int32 */
+      oppositionScore?: number;
+      /** Format: int32 */
+      oppositionWickets?: number;
+      oppositionName?: string | null;
+      oppositionShortName?: string | null;
+      bowlerDetails?: components["schemas"]["BowlerInningsDetailsV1"][] | null;
+    };
+    MatchStateV1: {
+      /** Format: int32 */
+      lastCompletedOver?: number;
+      /** Format: int32 */
+      onStrikeBatsmanId?: number;
+      over?: components["schemas"]["OverV1"];
+      players?: components["schemas"]["PlayerStateV1"][] | null;
+      /** Format: double */
+      runRate?: number;
+      /** Format: int32 */
+      score?: number;
+      bowlers?: string[] | null;
+      /** Format: int32 */
+      matchId?: number;
+      previousBowler?: string | null;
+      previousBowlerButOne?: string | null;
+      partnership?: components["schemas"]["PartnershipStubV1"];
+      nextState?: string | null;
+      /** Format: int32 */
+      oppositionScore?: number;
+      /** Format: int32 */
+      oppositionWickets?: number;
+      oppositionName?: string | null;
+      oppositionShortName?: string | null;
+      bowlerDetails?: components["schemas"]["BowlerInningsDetailsV1"][] | null;
+      liveScorecard?: components["schemas"]["LiveScorecardV1"];
+    };
+    MatchV1: {
+      isHome?: boolean;
+      type?: string | null;
+      date?: string | null;
+      opposition?: components["schemas"]["TeamV1"];
+      venue?: components["schemas"]["VenueV1"];
+      /** Format: int32 */
+      id?: number;
+    };
+    /** @enum {string} */
+    ModesOfDismissalV1: "NotOut" | "Bowled" | "Stumped" | "RunOut" | "Caught" | "CaughtAndBowled" | "LBW" | "HitWicket" | "DidNotBat" | "Retired" | "RetiredHurt";
+    OppositionInningsDetailsV1: {
+      /** Format: int32 */
+      over?: number;
+      /** Format: int32 */
+      score?: number;
+      /** Format: int32 */
+      wickets?: number;
+      commentary?: string | null;
+    };
+    OverSummaryV1: {
+      over?: components["schemas"]["OverV1"];
+      /** Format: int32 */
+      scoreAtEndOfOver?: number;
+      /** Format: int32 */
+      wicketsAtEndOfOver?: number;
+      /** Format: int32 */
+      scoreForThisOver?: number;
+    };
+    OverV1: {
+      /** Format: int32 */
+      overNumber?: number;
+      bowler?: string | null;
+      /** Format: int32 */
+      runsConceded?: number;
+      /** Format: int32 */
+      wicketsTaken?: number;
+      balls?: components["schemas"]["BallV1"][] | null;
+      commentary?: string | null;
+    };
+    PartnershipStubV1: {
+      /** Format: int32 */
+      runs?: number;
+      /** Format: int32 */
+      balls?: number;
+      /** Format: int32 */
+      fours?: number;
+      /** Format: int32 */
+      sixes?: number;
+    };
+    PartnershipV1: {
+      /** Format: int32 */
+      playerId1?: number;
+      /** Format: int32 */
+      playerId2?: number;
+      /** Format: int32 */
+      score?: number;
+      /** Format: int32 */
+      ballCount?: number;
+      /** Format: int32 */
+      player1Score?: number;
+      /** Format: int32 */
+      player2Score?: number;
+      /** Format: double */
+      runRate?: number;
+      oversAsString?: string | null;
+    };
+    PlayerDetailV1: {
+      player?: components["schemas"]["PlayerV1"];
+      playerImageUrl?: string | null;
+      battingStats?: components["schemas"]["StatsDataV1"];
+      bowlingStats?: components["schemas"]["StatsDataV1"];
+    };
+    PlayerStateV1: {
+      /** Format: int32 */
+      playerId?: number;
+      playerName?: string | null;
+      /** Format: int32 */
+      position?: number;
+      state?: string | null;
+      /** Format: int32 */
+      currentScore?: number;
+      /** Format: int32 */
+      fours?: number;
+      /** Format: int32 */
+      ballsFaced?: number;
+      /** Format: int32 */
+      sixes?: number;
+      /** Format: double */
+      strikeRate?: number;
+      /** Format: int32 */
+      asOfOver?: number;
+    };
+    PlayerV1: {
+      /** Format: int32 */
+      playerId?: number;
+      /** Format: int32 */
+      matches?: number;
+      name?: string | null;
+      shortName?: string | null;
+      nickname?: string | null;
+      battingStyle?: string | null;
+      bowlingStyle?: string | null;
+      isActive?: boolean;
+      firstName?: string | null;
+      surname?: string | null;
+      middleInitials?: string | null;
+      debut?: string | null;
+      clubConnection?: components["schemas"]["PlayerV1"];
+      isRightHandBat?: boolean;
+      lastMatchDate?: string | null;
+      playingRole?: string | null;
+      /** Format: int32 */
+      wickets?: number;
+      /** Format: int32 */
+      catches?: number;
+      /** Format: int32 */
+      runs?: number;
+    };
+    ProblemDetails: {
+      type?: string | null;
+      title?: string | null;
+      /** Format: int32 */
+      status?: number | null;
+      detail?: string | null;
+      instance?: string | null;
+      [key: string]: unknown;
+    };
+    ResultV1: {
+      /** Format: int32 */
+      matchId?: number;
+      homeTeamName?: string | null;
+      homeTeamScore?: string | null;
+      awayTeamName?: string | null;
+      awayTeamScore?: string | null;
+      resultText?: string | null;
+      resultMargin?: string | null;
+      matchDate?: string | null;
+      winningTeam?: string | null;
+      losingTeam?: string | null;
+      margin?: string | null;
+      /** Format: double */
+      theirOversFaced?: number;
+      /** Format: int32 */
+      theirWickets?: number;
+      /** Format: int32 */
+      theirScore?: number;
+      /** Format: double */
+      ourOversFaced?: number;
+      /** Format: int32 */
+      ourWickets?: number;
+      /** Format: int32 */
+      ourScore?: number;
+      isTied?: boolean;
+      isDrawn?: boolean;
+      isAbandoned?: boolean;
+      venueName?: string | null;
+      matchReportConditions?: string | null;
+      matchReportText?: string | null;
+      matchReportImage?: string | null;
+      isWinner?: boolean | null;
+    };
+    StatsColumnDefinitionV1: {
+      headerName?: string | null;
+      field?: string | null;
+      cellRenderer?: string | null;
+    };
+    StatsDataV1: {
+      statsType?: string | null;
+      gridOptions?: components["schemas"]["AGGridOptions"];
+    };
+    StatsQueryV1: {
+      category?: string | null;
+      /** Format: date-time */
+      from?: string;
+      /** Format: date-time */
+      to?: string;
+      venue?: string | null;
+      matchTypes?: string[] | null;
+    };
+    TeamV1: {
+      /** Format: int32 */
+      id?: number;
+      name?: string | null;
+    };
+    VenueV1: {
+      /** Format: int32 */
+      id?: number;
+      name?: string | null;
+      mapUrl?: string | null;
+      description?: string | null;
+      /** Format: double */
+      latitude?: number | null;
+      /** Format: double */
+      longitude?: number | null;
+    };
+    WicketV1: {
+      bowler?: string | null;
+      fielder?: string | null;
+      /** Format: int32 */
+      player?: number;
+      playerName?: string | null;
+      description?: string | null;
+      modeOfDismissal?: components["schemas"]["ModesOfDismissalV1"];
+      isRunOut?: boolean;
+      isCaught?: boolean;
+      isCaughtAndBowled?: boolean;
+      isBowled?: boolean;
+      isLbw?: boolean;
+      isStumped?: boolean;
+      isHitWicket?: boolean;
+      isRetired?: boolean;
+      isRetiredHurt?: boolean;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
+
 export type $defs = Record<string, never>;
+
+export type external = Record<string, never>;
+
 export type operations = Record<string, never>;
