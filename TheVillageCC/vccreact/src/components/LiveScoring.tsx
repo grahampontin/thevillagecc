@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   getLiveScoringMatches,
   getLiveScoringMatchState,
@@ -40,6 +40,7 @@ interface LocalBall {
   batsmanName: string;
   bowlerName: string;
   wicket?: LocalWicket | null;
+  angle?: number | null;
 }
 
 interface LocalWicket {
@@ -218,6 +219,117 @@ const ErrorToast: React.FC<ErrorToastProps> = ({ message, onClose }) => (
 );
 
 // ---------------------------------------------------------------------------
+// Wagon Wheel Input
+// ---------------------------------------------------------------------------
+
+interface WagonWheelInputProps {
+  batsmanName: string;
+  amount: number;
+  onConfirm: (angle: number | null) => void;
+}
+
+const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, onConfirm }) => {
+  const [selectedAngle, setSelectedAngle] = useState<number | null>(null);
+  const [lineEnd, setLineEnd] = useState<{ x: number; y: number } | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  const stumpsX = 150;
+  const stumpsY = 100;
+
+  const handleSvgPoint = (clientX: number, clientY: number) => {
+    if (!svgRef.current) return;
+    const pt = svgRef.current.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    const ctm = svgRef.current.getScreenCTM();
+    if (!ctm) return;
+    const svgP = pt.matrixTransform(ctm.inverse());
+    const dx = svgP.x - stumpsX;
+    const dy = svgP.y - stumpsY;
+    let angle = Math.atan2(dy, dx) + Math.PI / 2;
+    if (angle < 0) angle += 2 * Math.PI;
+    if (angle >= 2 * Math.PI) angle -= 2 * Math.PI;
+    setSelectedAngle(angle);
+    setLineEnd({ x: svgP.x, y: svgP.y });
+  };
+
+  const handleMouseClick = (e: React.MouseEvent<SVGSVGElement>) => {
+    handleSvgPoint(e.clientX, e.clientY);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<SVGSVGElement>) => {
+    if (e.changedTouches.length === 0) return;
+    const touch = e.changedTouches[0];
+    handleSvgPoint(touch.clientX, touch.clientY);
+    e.preventDefault();
+  };
+
+  const ballColor = amount >= 6 ? '#ff0000' : amount >= 4 ? '#0000ff' : '#2196f3';
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <div className="text-center">
+        <p className="text-sm font-semibold text-gray-800">{batsmanName}</p>
+        <p className="text-xs text-gray-500">
+          {amount} {amount === 1 ? 'run' : 'runs'} — tap the field to mark the shot
+        </p>
+      </div>
+      <svg
+        ref={svgRef}
+        viewBox="0 0 300 260"
+        className="w-full max-w-xs"
+        onClick={handleMouseClick}
+        onTouchEnd={handleTouchEnd}
+        style={{ touchAction: 'none', cursor: 'crosshair' }}
+        data-testid="wagon-wheel-input"
+      >
+        {/* Field boundary */}
+        <ellipse cx={150} cy={120} rx={135} ry={110} fill="#4a8f3f" />
+        {/* 30-yard circle */}
+        <ellipse cx={150} cy={120} rx={67} ry={55}
+          fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
+        {/* Pitch */}
+        <rect x={stumpsX - 6} y={stumpsY - 35} width={12} height={70} fill="#c8a96e" rx="2" />
+        {/* Off / Leg labels */}
+        <text x={80} y={126} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
+        <text x={80} y={139} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+        <text x={220} y={126} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
+        <text x={220} y={139} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+        {/* Shot line */}
+        {lineEnd && (
+          <line
+            x1={stumpsX} y1={stumpsY}
+            x2={lineEnd.x} y2={lineEnd.y}
+            stroke={ballColor}
+            strokeWidth={3}
+            strokeLinecap="round"
+          />
+        )}
+        {/* Stumps marker */}
+        <circle cx={stumpsX} cy={stumpsY} r={5} fill="white" />
+        <line x1={stumpsX - 5} y1={stumpsY + 35} x2={stumpsX + 5} y2={stumpsY + 35}
+          stroke="rgba(255,255,255,0.8)" strokeWidth="2" />
+      </svg>
+      <div className="flex gap-3 w-full">
+        <button
+          onClick={() => onConfirm(null)}
+          className="flex-1 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium"
+        >
+          Skip
+        </button>
+        <button
+          onClick={() => onConfirm(selectedAngle)}
+          disabled={selectedAngle === null}
+          className="flex-1 py-2 bg-villageGreen text-white rounded-lg text-sm font-medium disabled:opacity-50"
+        >
+          Done
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
@@ -238,6 +350,8 @@ const LiveScoring: React.FC = () => {
   const [waitingForBallType, setWaitingForBallType] = useState(false);
   // Whether to show 5+ alternatives (5, 7, 8)
   const [showFivePlus, setShowFivePlus] = useState(false);
+  // Whether to show the wagon wheel shot-location overlay
+  const [showWagonWheel, setShowWagonWheel] = useState(false);
 
   // Choose match screen
   const [matchesList, setMatchesList] = useState<LiveScoringMatchSummaryV1[]>([]);
@@ -342,6 +456,7 @@ const LiveScoring: React.FC = () => {
     setLocalBalls([]);
     setWaitingForBallType(false);
     setShowFivePlus(false);
+    setShowWagonWheel(false);
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -506,6 +621,7 @@ const LiveScoring: React.FC = () => {
     setLocalBalls([]);
     setWaitingForBallType(false);
     setShowFivePlus(false);
+    setShowWagonWheel(false);
     setScreen('scoring');
   }, [isNewOverValid, showToast, matchState, showBatsmanSelects, strikerBatsmanId, nonStrikerBatsmanId, selectedBowler]);
 
@@ -610,6 +726,21 @@ const LiveScoring: React.FC = () => {
   const handleRunsConfirmed = useCallback(() => {
     setWaitingForBallType(false);
     setShowFivePlus(false);
+    // Show wagon wheel to record shot location for confirmed run shots (not extras)
+    const lastBall = localBalls[localBalls.length - 1];
+    if (lastBall && lastBall.amount > 0 && lastBall.thing === '') {
+      setShowWagonWheel(true);
+    }
+  }, [localBalls]);
+
+  const handleWagonWheelSet = useCallback((angle: number | null) => {
+    setShowWagonWheel(false);
+    if (angle !== null) {
+      setLocalBalls(prev => {
+        if (prev.length === 0) return prev;
+        return [...prev.slice(0, -1), { ...prev[prev.length - 1], angle }];
+      });
+    }
   }, []);
 
   const handleUndo = useCallback(() => {
@@ -758,6 +889,7 @@ const LiveScoring: React.FC = () => {
       batsmanName: b.batsmanName,
       bowler: b.bowlerName,
       thing: b.thing,
+      angle: b.angle ?? undefined,
       wicket: b.wicket
         ? {
             player: b.wicket.playerId,
@@ -1346,7 +1478,7 @@ const LiveScoring: React.FC = () => {
     const bowlerOversDisplay = `${bowlerOvers}.${localLegalBalls}`;
 
     return (
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full relative">
         {/* Bottom share toolbar equivalent */}
         <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-100 flex-shrink-0">
           <div className="w-8" />
@@ -1605,6 +1737,25 @@ const LiveScoring: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Wagon Wheel Overlay */}
+        {showWagonWheel && (() => {
+          const lastBall = localBalls[localBalls.length - 1];
+          return (
+            <div className="absolute inset-0 bg-black/60 z-20 flex flex-col items-center justify-center p-4">
+              <div className="bg-white rounded-xl w-full max-w-sm p-4 shadow-xl">
+                <h2 className="text-sm font-semibold text-gray-700 text-center mb-3 uppercase tracking-wide">
+                  Shot Location
+                </h2>
+                <WagonWheelInput
+                  batsmanName={lastBall?.batsmanName ?? ''}
+                  amount={lastBall?.amount ?? 0}
+                  onConfirm={handleWagonWheelSet}
+                />
+              </div>
+            </div>
+          );
+        })()}
       </div>
     );
   };
