@@ -1043,6 +1043,8 @@ const LiveScorecard: React.FC = () => {
                   const barSize = (score: number) => (score / Math.max(highScore, 1)) * halfW;
                   const textPad = 6;
                   const minBarWidthForInsideLabel = 60;
+                  const battingEntries = scorecardData.finalScorecard?.ourInnings?.batting?.entries ?? [];
+                  const getPlayerNameById = (id?: number) => battingEntries.find((e: BattingEntryV1) => e.playerId === id)?.playerName ?? undefined;
                   return (
                     <svg
                       data-testid="partnerships-chart"
@@ -1056,8 +1058,10 @@ const LiveScorecard: React.FC = () => {
                         const p2Score = p.player2Score ?? 0;
                         const leftW = barSize(p1Score);
                         const rightW = barSize(p2Score);
-                        const p1Label = p1Score > 0 ? `${p.player1Name ?? 'Bat 1'} (${p1Score})` : (p.player1Name ?? 'Bat 1');
-                        const p2Label = p2Score > 0 ? `${p.player2Name ?? 'Bat 2'} (${p2Score})` : (p.player2Name ?? 'Bat 2');
+                        const p1Name = getPlayerNameById(p.playerId1);
+                        const p2Name = getPlayerNameById(p.playerId2);
+                        const p1Label = p1Score > 0 ? `${p1Name ?? 'Bat 1'} (${p1Score})` : (p1Name ?? 'Bat 1');
+                        const p2Label = p2Score > 0 ? `${p2Name ?? 'Bat 2'} (${p2Score})` : (p2Name ?? 'Bat 2');
                         return (
                           <g key={i}>
                             {/* Left bar (player 1) */}

@@ -177,7 +177,7 @@ const EditBatsmanModal: React.FC<EditBatsmanModalProps> = ({ entry, isVcc, playe
       </div>
       <div>
         <label className={labelCls()} htmlFor="bat-mode">Mode of Dismissal</label>
-        <select id="bat-mode" value={form.modeOfDismissal ?? 'NotOut'} onChange={e => setForm(f => ({ ...f, modeOfDismissal: e.target.value }))} className={inputCls()}>
+        <select id="bat-mode" value={form.modeOfDismissal ?? 'NotOut'} onChange={e => setForm(f => ({ ...f, modeOfDismissal: e.target.value as DismissalMode }))} className={inputCls()}>
           {DISMISSAL_MODES.map(m => <option key={m} value={m}>{m}</option>)}
         </select>
       </div>

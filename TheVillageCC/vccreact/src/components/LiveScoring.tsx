@@ -45,8 +45,7 @@ interface LocalBall {
 interface LocalWicket {
   playerId: number;
   playerName: string;
-  /** ModesOfDismissalV1 integer */
-  modeOfDismissal: number;
+  modeOfDismissal: components['schemas']['ModesOfDismissalV1'];
   bowler: string;
   fielder: string;
   description: string;
@@ -56,16 +55,16 @@ interface LocalWicket {
   batsmenCrossed: boolean;
 }
 
-// Dismissal mode mapping: short code → ModesOfDismissalV1 integer
-const DISMISSAL_MODES: { code: string; label: string; value: number; hasFielder: boolean; hasRuns: boolean; hasCrossed: boolean }[] = [
-  { code: 'b',   label: 'Bowled',          value: 1,  hasFielder: false, hasRuns: false, hasCrossed: false },
-  { code: 'ct',  label: 'Caught',          value: 2,  hasFielder: true,  hasRuns: false, hasCrossed: true  },
-  { code: 'lbw', label: 'LBW',             value: 3,  hasFielder: false, hasRuns: false, hasCrossed: false },
-  { code: 'ro',  label: 'Run Out',         value: 4,  hasFielder: true,  hasRuns: true,  hasCrossed: false },
-  { code: 'st',  label: 'Stumped',         value: 5,  hasFielder: true,  hasRuns: false, hasCrossed: false },
-  { code: 'hw',  label: 'Hit Wicket',      value: 6,  hasFielder: false, hasRuns: false, hasCrossed: false },
-  { code: 'rt',  label: 'Retired (out)',   value: 8,  hasFielder: false, hasRuns: false, hasCrossed: false },
-  { code: 'rh',  label: 'Retired Hurt',   value: 9,  hasFielder: false, hasRuns: false, hasCrossed: false },
+// Dismissal mode mapping: short code → ModesOfDismissalV1
+const DISMISSAL_MODES: { code: string; label: string; value: components['schemas']['ModesOfDismissalV1']; hasFielder: boolean; hasRuns: boolean; hasCrossed: boolean }[] = [
+  { code: 'b',   label: 'Bowled',          value: 'Bowled',      hasFielder: false, hasRuns: false, hasCrossed: false },
+  { code: 'ct',  label: 'Caught',          value: 'Caught',      hasFielder: true,  hasRuns: false, hasCrossed: true  },
+  { code: 'lbw', label: 'LBW',             value: 'LBW',         hasFielder: false, hasRuns: false, hasCrossed: false },
+  { code: 'ro',  label: 'Run Out',         value: 'RunOut',      hasFielder: true,  hasRuns: true,  hasCrossed: false },
+  { code: 'st',  label: 'Stumped',         value: 'Stumped',     hasFielder: true,  hasRuns: false, hasCrossed: false },
+  { code: 'hw',  label: 'Hit Wicket',      value: 'HitWicket',   hasFielder: false, hasRuns: false, hasCrossed: false },
+  { code: 'rt',  label: 'Retired (out)',   value: 'Retired',     hasFielder: false, hasRuns: false, hasCrossed: false },
+  { code: 'rh',  label: 'Retired Hurt',   value: 'RetiredHurt', hasFielder: false, hasRuns: false, hasCrossed: false },
 ];
 
 // ---------------------------------------------------------------------------
@@ -116,7 +115,7 @@ function computeBowlerRunsInOver(bowlerName: string, balls: LocalBall[]): number
 
 function computeBowlerWicketsInOver(bowlerName: string, balls: LocalBall[]): number {
   return balls.filter(
-    b => b.bowlerName === bowlerName && b.wicket != null && b.wicket.modeOfDismissal !== 4, // not run out
+    b => b.bowlerName === bowlerName && b.wicket != null && b.wicket.modeOfDismissal !== 'RunOut',
   ).length;
 }
 
@@ -763,7 +762,7 @@ const LiveScoring: React.FC = () => {
         ? {
             player: b.wicket.playerId,
             playerName: b.wicket.playerName,
-            modeOfDismissal: b.wicket.modeOfDismissal as components['schemas']['ModesOfDismissalV1'],
+            modeOfDismissal: b.wicket.modeOfDismissal,
             bowler: b.wicket.bowler,
             fielder: b.wicket.fielder,
             description: b.wicket.description,
