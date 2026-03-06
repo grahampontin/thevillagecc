@@ -272,6 +272,57 @@ describe('LiveScoring', () => {
     await waitFor(() => screen.getByText('OUT!'));
   };
 
+  /** Navigate through the full team-setup flow so allPlayers is populated. */
+  const navigateToScoringScreenViaSetup = async (playerOverrides: Array<{ playerId: number; [key: string]: unknown }> = []) => {
+    const newMatchState = { ...mockMatchState, nextState: 'SelectTeam' };
+    (liveScoringApi.getLiveScoringMatchState as jest.Mock).mockResolvedValue(newMatchState);
+    const startedState = { ...mockMatchState, nextState: 'BattingOver' };
+    (liveScoringApi.startLiveScoringMatch as jest.Mock).mockResolvedValue(startedState);
+
+    const players = mockPlayers.map(p => {
+      const override = playerOverrides.find(o => o.playerId === p.playerId);
+      return override ? { ...p, ...override } : p;
+    });
+    (playersApi.getAllPlayers as jest.Mock).mockResolvedValue(players);
+
+    renderLiveScoring();
+    await waitFor(() => screen.getByText('vs Test CC'));
+    fireEvent.click(screen.getByText('vs Test CC'));
+
+    await waitFor(() => screen.getByText('Select Team'));
+    await waitFor(() => screen.getByText('Alice Smith'));
+
+    // Select all 11 players
+    players.forEach(p => { fireEvent.click(screen.getByText(p.name)); });
+    await waitFor(() => screen.getByLabelText('Done'));
+    fireEvent.click(screen.getByLabelText('Done'));
+
+    // Match conditions — selects are siblings of labels (no htmlFor), find by adjacent text
+    await waitFor(() => screen.getByText('Match Conditions'));
+
+    // Get all comboboxes in order: Captain, Keeper, Format, [Overs], Winner, Decided
+    const selects = screen.getAllByRole('combobox');
+    fireEvent.change(selects[0], { target: { value: '1' } }); // Captain: Alice Smith
+    fireEvent.change(selects[1], { target: { value: '2' } }); // Keeper: Bob Jones
+    fireEvent.change(selects[2], { target: { value: 'Limited Overs' } }); // Format
+
+    const oversInput = await waitFor(() => screen.getByPlaceholderText(/e\.g\. 40/i));
+    fireEvent.change(oversInput, { target: { value: '20' } });
+
+    // Winner and Decided selects appear after format is set (re-query)
+    const allSelects = screen.getAllByRole('combobox');
+    fireEvent.change(allSelects[3], { target: { value: 'We' } }); // Winner
+    fireEvent.change(allSelects[4], { target: { value: 'Bat' } }); // Decided to
+
+    await waitFor(() => screen.getByLabelText('Done'));
+    fireEvent.click(screen.getByLabelText('Done'));
+
+    await waitFor(() => screen.getByText('Over Details'));
+    fireEvent.click(screen.getByText('A Bowler'));
+    fireEvent.click(screen.getByLabelText('Done'));
+    await waitFor(() => screen.getByText('OUT!'));
+  };
+
   it('shows wagon wheel overlay after confirming a scoring run', async () => {
     await navigateToScoringScreen();
 
@@ -285,6 +336,26 @@ describe('LiveScoring', () => {
       expect(screen.getByTestId('wagon-wheel-input')).toBeInTheDocument();
     });
     expect(screen.getByText('Shot Location')).toBeInTheDocument();
+  });
+
+  it('shows "drag the field" instruction in wagon wheel overlay', async () => {
+    await navigateToScoringScreen();
+
+    fireEvent.click(screen.getByText('1'));
+    fireEvent.click(screen.getByText('Runs'));
+
+    await waitFor(() => screen.getByTestId('wagon-wheel-input'));
+    expect(screen.getByText(/drag the field to mark the shot/i)).toBeInTheDocument();
+  });
+
+  it('does not show shot description before a position is selected', async () => {
+    await navigateToScoringScreen();
+
+    fireEvent.click(screen.getByText('1'));
+    fireEvent.click(screen.getByText('Runs'));
+
+    await waitFor(() => screen.getByTestId('wagon-wheel-input'));
+    expect(screen.queryByTestId('shot-description')).not.toBeInTheDocument();
   });
 
   it('does not show wagon wheel for a dot ball', async () => {
@@ -373,5 +444,46 @@ describe('LiveScoring', () => {
     expect(balls).toHaveLength(1);
     // angle should be undefined when skipped
     expect(balls[0].angle).toBeUndefined();
+  });
+
+  it('shows default Off/Leg labels for a right-handed batsman', async () => {
+    await navigateToScoringScreen();
+
+    fireEvent.click(screen.getByText('1'));
+    fireEvent.click(screen.getByText('Runs'));
+
+    await waitFor(() => screen.getByTestId('wagon-wheel-input'));
+
+    const svg = screen.getByTestId('wagon-wheel-input');
+    const textElements = svg.querySelectorAll('text');
+    const offTexts = Array.from(textElements).filter(el => el.textContent === 'Off');
+    const legTexts = Array.from(textElements).filter(el => el.textContent === 'Leg');
+
+    // Off should be at x=80 (left side), Leg at x=220 (right side) for right-handers
+    expect(offTexts.length).toBeGreaterThan(0);
+    expect(legTexts.length).toBeGreaterThan(0);
+    expect(offTexts[0].getAttribute('x')).toBe('80');
+    expect(legTexts[0].getAttribute('x')).toBe('220');
+  });
+
+  it('shows inverted Off/Leg labels for a left-handed batsman', async () => {
+    // Set up Alice Smith (playerId: 1, the on-strike batsman) as left-handed
+    await navigateToScoringScreenViaSetup([{ playerId: 1, isRightHandBat: false }]);
+
+    fireEvent.click(screen.getByText('1'));
+    fireEvent.click(screen.getByText('Runs'));
+
+    await waitFor(() => screen.getByTestId('wagon-wheel-input'));
+
+    const svg = screen.getByTestId('wagon-wheel-input');
+    const textElements = svg.querySelectorAll('text');
+    const offTexts = Array.from(textElements).filter(el => el.textContent === 'Off');
+    const legTexts = Array.from(textElements).filter(el => el.textContent === 'Leg');
+
+    // For left-hander: Off should be at x=220 (right side), Leg at x=80 (left side)
+    expect(offTexts.length).toBeGreaterThan(0);
+    expect(legTexts.length).toBeGreaterThan(0);
+    expect(offTexts[0].getAttribute('x')).toBe('220');
+    expect(legTexts[0].getAttribute('x')).toBe('80');
   });
 });
