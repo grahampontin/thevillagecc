@@ -259,4 +259,119 @@ describe('LiveScoring', () => {
       expect(balls.length).toBeGreaterThan(0);
     });
   });
+
+  // ---- Wagon Wheel ----
+
+  const navigateToScoringScreen = async () => {
+    renderLiveScoring();
+    await waitFor(() => screen.getByText('vs Test CC'));
+    fireEvent.click(screen.getByText('vs Test CC'));
+    await waitFor(() => screen.getByText('Over Details'));
+    fireEvent.click(screen.getByText('A Bowler'));
+    fireEvent.click(screen.getByLabelText('Done'));
+    await waitFor(() => screen.getByText('OUT!'));
+  };
+
+  it('shows wagon wheel overlay after confirming a scoring run', async () => {
+    await navigateToScoringScreen();
+
+    // Click "1" to score a run
+    fireEvent.click(screen.getByText('1'));
+    // Click "Runs" to confirm it was runs (not extras)
+    fireEvent.click(screen.getByText('Runs'));
+
+    // Wagon wheel overlay should appear
+    await waitFor(() => {
+      expect(screen.getByTestId('wagon-wheel-input')).toBeInTheDocument();
+    });
+    expect(screen.getByText('Shot Location')).toBeInTheDocument();
+  });
+
+  it('does not show wagon wheel for a dot ball', async () => {
+    await navigateToScoringScreen();
+
+    // Click "0" (dot ball)
+    const dotButton = screen.getAllByRole('button').find(
+      b => b.querySelector('.material-symbols-outlined')?.textContent === 'brightness_1',
+    );
+    fireEvent.click(dotButton!);
+
+    // Wagon wheel should NOT appear for a dot ball
+    expect(screen.queryByTestId('wagon-wheel-input')).not.toBeInTheDocument();
+  });
+
+  it('does not show wagon wheel when extras button is clicked instead of Runs', async () => {
+    await navigateToScoringScreen();
+
+    // Click "1" to score a run
+    fireEvent.click(screen.getByText('1'));
+    // Click "Wide" instead of "Runs"
+    fireEvent.click(screen.getByText('Wide'));
+
+    // Wagon wheel should NOT appear for extras
+    expect(screen.queryByTestId('wagon-wheel-input')).not.toBeInTheDocument();
+  });
+
+  it('closes wagon wheel overlay when Skip is clicked', async () => {
+    await navigateToScoringScreen();
+
+    fireEvent.click(screen.getByText('1'));
+    fireEvent.click(screen.getByText('Runs'));
+
+    await waitFor(() => screen.getByTestId('wagon-wheel-input'));
+
+    // Click Skip
+    fireEvent.click(screen.getByText('Skip'));
+
+    // Overlay should close
+    await waitFor(() => {
+      expect(screen.queryByTestId('wagon-wheel-input')).not.toBeInTheDocument();
+    });
+    // Scoring screen should still be shown
+    expect(screen.getByText('OUT!')).toBeInTheDocument();
+  });
+
+  it('includes angle in submitted over after wagon wheel interaction', async () => {
+    (liveScoringApi.submitOver as jest.Mock).mockResolvedValue({
+      ...mockMatchState,
+      nextState: 'BattingOver',
+    });
+
+    await navigateToScoringScreen();
+
+    // Score 1 run
+    fireEvent.click(screen.getByText('1'));
+    fireEvent.click(screen.getByText('Runs'));
+
+    await waitFor(() => screen.getByTestId('wagon-wheel-input'));
+
+    // Skip wagon wheel (angle stays null)
+    fireEvent.click(screen.getByText('Skip'));
+    await waitFor(() => expect(screen.queryByTestId('wagon-wheel-input')).not.toBeInTheDocument());
+
+    // Navigate to end-over screen via the Done button
+    const doneButton = screen.getAllByRole('button').find(
+      b => b.querySelector('.material-symbols-outlined')?.textContent === 'done',
+    );
+    fireEvent.click(doneButton!);
+
+    await waitFor(() => screen.getByText('End Over'));
+
+    // Submit the over
+    const endOverDoneButton = screen.getAllByRole('button').find(
+      b => b.querySelector('.material-symbols-outlined')?.textContent === 'done',
+    );
+    fireEvent.click(endOverDoneButton!);
+
+    await waitFor(() => {
+      expect(liveScoringApi.submitOver).toHaveBeenCalled();
+    });
+
+    const call = (liveScoringApi.submitOver as jest.Mock).mock.calls[0];
+    const payload = call[1];
+    const balls = payload.over.balls;
+    expect(balls).toHaveLength(1);
+    // angle should be undefined when skipped
+    expect(balls[0].angle).toBeUndefined();
+  });
 });
