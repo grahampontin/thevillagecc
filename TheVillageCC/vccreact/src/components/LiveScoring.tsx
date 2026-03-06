@@ -222,79 +222,187 @@ const ErrorToast: React.FC<ErrorToastProps> = ({ message, onClose }) => (
 // Wagon Wheel Input
 // ---------------------------------------------------------------------------
 
+/**
+ * Returns the cricket field zone name for a given angle.
+ * Angle convention: 0 = toward bowler (straight up), increasing clockwise.
+ * Zones are defined for a right-handed batsman (off side = left, leg side = right).
+ */
+function getScoringArea(angle: number): string {
+  const TWO_PI = 2 * Math.PI;
+  const a = ((angle % TWO_PI) + TWO_PI) % TWO_PI;
+  if (a < Math.PI * 0.25)  return 'Mid-on';
+  if (a < Math.PI * 0.5)   return 'Mid-wicket';
+  if (a < Math.PI * 0.675) return 'Square Leg';
+  if (a < Math.PI * 0.75)  return 'Backward Square Leg';
+  if (a < Math.PI * 1.0)   return 'Fine Leg';
+  if (a < Math.PI * 1.25)  return 'Third Man';
+  if (a < Math.PI * 1.5)   return 'Point';
+  if (a < Math.PI * 1.75)  return 'Cover';
+  return 'Mid-off';
+}
+
+/**
+ * Computes the boundary intersection point of a ray from (sx, sy) in the
+ * direction defined by `angle` (0=up, clockwise) with the given ellipse.
+ */
+function getBoundaryPoint(
+  sx: number, sy: number,
+  angle: number,
+  cx: number, cy: number,
+  rx: number, ry: number,
+): { x: number; y: number } {
+  const dirX = Math.sin(angle);
+  const dirY = -Math.cos(angle);
+  const dsx = sx - cx;
+  const dsy = sy - cy;
+  const a = dirX * dirX / (rx * rx) + dirY * dirY / (ry * ry);
+  const b = 2 * (dsx * dirX / (rx * rx) + dsy * dirY / (ry * ry));
+  const c = dsx * dsx / (rx * rx) + dsy * dsy / (ry * ry) - 1;
+  const disc = b * b - 4 * a * c;
+  // disc < 0 means the stumps are outside the ellipse, which should not happen
+  // in normal use. Fallback: project a point in the given direction using rx as distance.
+  if (disc < 0) return { x: sx + dirX * rx, y: sy + dirY * ry };
+  const t = (-b + Math.sqrt(disc)) / (2 * a);
+  return { x: sx + t * dirX, y: sy + t * dirY };
+}
+
 interface WagonWheelInputProps {
   batsmanName: string;
   amount: number;
+  isLeftHanded?: boolean;
   onConfirm: (angle: number | null) => void;
 }
 
-const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, onConfirm }) => {
+const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, isLeftHanded, onConfirm }) => {
   const [selectedAngle, setSelectedAngle] = useState<number | null>(null);
   const [lineEnd, setLineEnd] = useState<{ x: number; y: number } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
 
   const stumpsX = 150;
   const stumpsY = 100;
+  const ellipseCx = 150;
+  const ellipseCy = 120;
+  const ellipseRx = 135;
+  const ellipseRy = 110;
+  const isBoundaryShot = amount >= 4;
 
-  const handleSvgPoint = (clientX: number, clientY: number) => {
-    if (!svgRef.current) return;
+  const computeAngleAndEnd = (clientX: number, clientY: number): { angle: number; end: { x: number; y: number } } | null => {
+    if (!svgRef.current) return null;
     const pt = svgRef.current.createSVGPoint();
     pt.x = clientX;
     pt.y = clientY;
     const ctm = svgRef.current.getScreenCTM();
-    if (!ctm) return;
-    const svgP = pt.matrixTransform(ctm.inverse());
-    const dx = svgP.x - stumpsX;
-    const dy = svgP.y - stumpsY;
+    if (!ctm) return null;
+    const cursorPoint = pt.matrixTransform(ctm.inverse());
+    const dx = cursorPoint.x - stumpsX;
+    const dy = cursorPoint.y - stumpsY;
     let angle = Math.atan2(dy, dx) + Math.PI / 2;
     if (angle < 0) angle += 2 * Math.PI;
     if (angle >= 2 * Math.PI) angle -= 2 * Math.PI;
-    setSelectedAngle(angle);
-    setLineEnd({ x: svgP.x, y: svgP.y });
+    const end = isBoundaryShot
+      ? getBoundaryPoint(stumpsX, stumpsY, angle, ellipseCx, ellipseCy, ellipseRx, ellipseRy)
+      : cursorPoint;
+    return { angle, end };
   };
 
-  const handleMouseClick = (e: React.MouseEvent<SVGSVGElement>) => {
-    handleSvgPoint(e.clientX, e.clientY);
+  const applyPoint = (clientX: number, clientY: number) => {
+    const result = computeAngleAndEnd(clientX, clientY);
+    if (!result) return;
+    setSelectedAngle(result.angle);
+    setLineEnd(result.end);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<SVGSVGElement>) => {
+    setIsDragging(true);
+    applyPoint(e.clientX, e.clientY);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
+    if (!isDragging) return;
+    applyPoint(e.clientX, e.clientY);
+  };
+
+  const handleMouseUp = (e: React.MouseEvent<SVGSVGElement>) => {
+    if (isDragging) {
+      applyPoint(e.clientX, e.clientY);
+      setIsDragging(false);
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<SVGSVGElement>) => {
+    e.preventDefault();
+    if (e.touches.length === 0) return;
+    const touch = e.touches[0];
+    applyPoint(touch.clientX, touch.clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<SVGSVGElement>) => {
+    e.preventDefault();
+    if (e.touches.length === 0) return;
+    const touch = e.touches[0];
+    applyPoint(touch.clientX, touch.clientY);
   };
 
   const handleTouchEnd = (e: React.TouchEvent<SVGSVGElement>) => {
+    e.preventDefault();
     if (e.changedTouches.length === 0) return;
     const touch = e.changedTouches[0];
-    handleSvgPoint(touch.clientX, touch.clientY);
-    e.preventDefault();
+    applyPoint(touch.clientX, touch.clientY);
   };
 
   const ballColor = amount >= 6 ? '#ff0000' : amount >= 4 ? '#0000ff' : '#2196f3';
+
+  const shotDescription = selectedAngle !== null ? (() => {
+    // Mirror angle for left-handed batsman before computing zone
+    const zoneAngle = isLeftHanded
+      ? (2 * Math.PI - selectedAngle) % (2 * Math.PI)
+      : selectedAngle;
+    const area = getScoringArea(zoneAngle);
+    if (amount >= 6) return `6 over ${area}`;
+    if (amount >= 4) return `4 through ${area}`;
+    if (amount === 1) return `Single to ${area}`;
+    return `${amount} to ${area}`;
+  })() : null;
+
+  // Off side is left for right-handers, right for left-handers
+  const offSideX = isLeftHanded ? 220 : 80;
+  const legSideX = isLeftHanded ? 80 : 220;
 
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="text-center">
         <p className="text-sm font-semibold text-gray-800">{batsmanName}</p>
         <p className="text-xs text-gray-500">
-          {amount} {amount === 1 ? 'run' : 'runs'} — tap the field to mark the shot
+          {amount} {amount === 1 ? 'run' : 'runs'} — drag the field to mark the shot
         </p>
       </div>
       <svg
         ref={svgRef}
         viewBox="0 0 300 260"
         className="w-full max-w-xs"
-        onClick={handleMouseClick}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={() => setIsDragging(false)}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         style={{ touchAction: 'none', cursor: 'crosshair' }}
         data-testid="wagon-wheel-input"
       >
         {/* Field boundary */}
-        <ellipse cx={150} cy={120} rx={135} ry={110} fill="#4a8f3f" />
+        <ellipse cx={ellipseCx} cy={ellipseCy} rx={ellipseRx} ry={ellipseRy} fill="#4a8f3f" />
         {/* 30-yard circle */}
-        <ellipse cx={150} cy={120} rx={67} ry={55}
+        <ellipse cx={ellipseCx} cy={ellipseCy} rx={67} ry={55}
           fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
         {/* Pitch */}
         <rect x={stumpsX - 6} y={stumpsY - 35} width={12} height={70} fill="#c8a96e" rx="2" />
         {/* Off / Leg labels */}
-        <text x={80} y={126} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
-        <text x={80} y={139} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
-        <text x={220} y={126} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
-        <text x={220} y={139} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+        <text x={offSideX} y={126} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
+        <text x={offSideX} y={139} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+        <text x={legSideX} y={126} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
+        <text x={legSideX} y={139} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
         {/* Shot line */}
         {lineEnd && (
           <line
@@ -310,6 +418,11 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
         <line x1={stumpsX - 5} y1={stumpsY + 35} x2={stumpsX + 5} y2={stumpsY + 35}
           stroke="rgba(255,255,255,0.8)" strokeWidth="2" />
       </svg>
+      {shotDescription && (
+        <p className="text-sm font-semibold text-gray-800 text-center" data-testid="shot-description">
+          {shotDescription}
+        </p>
+      )}
       <div className="flex gap-3 w-full">
         <button
           onClick={() => onConfirm(null)}
@@ -1741,6 +1854,8 @@ const LiveScoring: React.FC = () => {
         {/* Wagon Wheel Overlay */}
         {showWagonWheel && (() => {
           const lastBall = localBalls[localBalls.length - 1];
+          const batsmanPlayer = allPlayers.find(p => p.playerId === lastBall?.batsmanId);
+          const isLeftHanded = batsmanPlayer?.isRightHandBat === false;
           return (
             <div className="absolute inset-0 bg-black/60 z-20 flex flex-col items-center justify-center p-4">
               <div className="bg-white rounded-xl w-full max-w-sm p-4 shadow-xl">
@@ -1750,6 +1865,7 @@ const LiveScoring: React.FC = () => {
                 <WagonWheelInput
                   batsmanName={lastBall?.batsmanName ?? ''}
                   amount={lastBall?.amount ?? 0}
+                  isLeftHanded={isLeftHanded}
                   onConfirm={handleWagonWheelSet}
                 />
               </div>
