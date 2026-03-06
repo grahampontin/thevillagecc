@@ -133,6 +133,20 @@ describe('LiveScoring', () => {
     });
   });
 
+  it('navigates to select team screen (not match conditions) when nextState is MatchConditions', async () => {
+    const newMatchState = { ...mockMatchState, nextState: 'MatchConditions' };
+    (liveScoringApi.getLiveScoringMatchState as jest.Mock).mockResolvedValue(newMatchState);
+    renderLiveScoring();
+
+    await waitFor(() => screen.getByText('vs New CC'));
+    fireEvent.click(screen.getByText('vs New CC'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Select Team')).toBeInTheDocument();
+    });
+    expect(screen.queryByText('Match Conditions')).not.toBeInTheDocument();
+  });
+
   // ---- Select Team screen ----
 
   it('loads players on select team screen', async () => {

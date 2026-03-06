@@ -170,7 +170,9 @@ function getNextStateScreen(nextState: string | null | undefined): Screen {
     case 'EndOfBowlingInnings': return 'endInnings';
     case 'EndOfMatch': return 'endMatch';
     case 'SelectTeam': return 'selectTeam';
-    case 'MatchConditions': return 'matchConditions';
+    // MatchConditions also goes to selectTeam first: the flow is selectTeam → matchConditions.
+    // handleSelectTeamDone advances from selectTeam to matchConditions once 11 players are chosen.
+    case 'MatchConditions': return 'selectTeam';
     default: return 'chooseMatch';
   }
 }
