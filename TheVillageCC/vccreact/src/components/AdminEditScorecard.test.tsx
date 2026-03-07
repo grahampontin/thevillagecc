@@ -87,8 +87,7 @@ describe('AdminEditScorecard', () => {
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({ ok: true, json: async () => mockMatch })      // getMatchById
       .mockResolvedValueOnce({ ok: true, json: async () => mockPlayers })    // getAllPlayers
-      .mockResolvedValueOnce({ ok: true, json: async () => mockScorecard })  // getScorecardByMatchId
-      .mockResolvedValueOnce({ ok: true, json: async () => ({}) });          // getMatchReport
+      .mockResolvedValueOnce({ ok: true, json: async () => mockScorecard }); // getScorecardByMatchId
   };
 
   test('renders loading skeleton initially', () => {
@@ -189,8 +188,8 @@ describe('AdminEditScorecard', () => {
 
   test('match report modal opens and saves', async () => {
     setupMocks();
-    // Mock the save match report call
-    (global.fetch as jest.Mock).mockResolvedValueOnce({ ok: true, status: 204, json: async () => undefined });
+    // Mock the save scorecard call (match report is saved via the scorecard endpoint)
+    (global.fetch as jest.Mock).mockResolvedValueOnce({ ok: true, json: async () => mockScorecard });
 
     renderWithMatchId('1');
     await waitFor(() => screen.getByText(/Barton CC/));
@@ -210,7 +209,7 @@ describe('AdminEditScorecard', () => {
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/matchreports/1'),
+        expect.stringContaining('/api/Scorecards/1'),
         expect.objectContaining({ method: 'POST' })
       );
     });

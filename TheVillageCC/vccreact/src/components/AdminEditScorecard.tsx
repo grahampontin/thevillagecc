@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SearchableSelect from './SearchableSelect';
 import ImageCropper from './ImageCropper';
-import { getScorecardByMatchId, saveScorecard, getMatchReport, saveMatchReport } from '../api/scorecardsApi';
+import { getScorecardByMatchId, saveScorecard } from '../api/scorecardsApi';
 import { getMatchById } from '../api/fixturesApi';
 import { getAllPlayers } from '../api/playersApi';
 import {
@@ -653,17 +653,16 @@ const AdminEditScorecard: React.FC = () => {
     if (!numericMatchId) return;
     try {
       setIsLoading(true);
-      const [matchData, playersData, sc, report] = await Promise.all([
+      const [matchData, playersData, sc] = await Promise.all([
         getMatchById(numericMatchId),
         getAllPlayers(),
         getScorecardByMatchId(numericMatchId).catch(() => emptyScorecard()),
-        getMatchReport(numericMatchId).catch(() => ({})),
       ]);
       playersData.sort((a, b) => (a.surname ?? '').localeCompare(b.surname ?? ''));
       setMatch(matchData);
       setPlayers(playersData);
       setScorecard(sc ?? emptyScorecard());
-      setMatchReport(report ?? {});
+      setMatchReport(sc?.matchReport ?? {});
     } catch (err) {
       console.error('Failed to load scorecard data', err);
       setErrorMsg('Failed to load match data.');
@@ -695,11 +694,14 @@ const AdminEditScorecard: React.FC = () => {
   };
 
   const handleSaveMatchReport = async () => {
+    if (!scorecard) return;
     setSavingReport(true);
     setErrorMsg(null);
     setSuccessMsg(null);
     try {
-      await saveMatchReport(numericMatchId, matchReport);
+      const saved = await saveScorecard(numericMatchId, { ...scorecard, matchReport });
+      setScorecard(saved);
+      setMatchReport(saved.matchReport ?? matchReport);
       setSuccessMsg('Match report saved successfully.');
       setModal({ kind: 'none' });
     } catch (err: unknown) {
