@@ -3,7 +3,7 @@
  * Centralizes all Fixtures and Matches endpoint calls.
  */
 
-import { getJson, postJson, putJson } from './http';
+import { getJson, postJson, putJson, deleteRequest } from './http';
 import { MatchV1 } from './swaggerTypes';
 import { apiUrl } from './config';
 
@@ -61,4 +61,12 @@ export async function createMatch(match: MatchV1): Promise<MatchV1> {
  */
 export async function updateMatch(match: MatchV1): Promise<MatchV1> {
   return putJson<MatchV1>(apiUrl('/api/Matches'), match);
+}
+
+/**
+ * Deletes a match by ID.
+ * Uses DELETE /api/Matches/{id}
+ */
+export async function deleteMatch(id: number): Promise<void> {
+  return deleteRequest(apiUrl(`/api/Matches/${id}`));
 }
