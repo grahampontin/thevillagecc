@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import { getMatchesBySeason, createMatch, updateMatch } from '../api/fixturesApi';
+import { getMatchesBySeason, createMatch, updateMatch, deleteMatch } from '../api/fixturesApi';
 import { getAllTeams } from '../api/teamsApi';
 import { getAllVenues } from '../api/venuesApi';
 import { MatchV1, TeamV1, VenueV1 } from '../api/swaggerTypes';
@@ -93,6 +93,16 @@ const AdminMatches: React.FC = () => {
     setForm(toFormState(m));
     setErrorMsg(null);
     setModalOpen(true);
+  };
+
+  const handleDelete = async (m: MatchV1) => {
+    if (!window.confirm(`Delete match vs ${m.opposition?.name ?? 'unknown'}?`)) return;
+    try {
+      await deleteMatch(m.id!);
+      await loadMatches(season);
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Delete failed.');
+    }
   };
 
   const handleSave = async () => {
@@ -186,13 +196,22 @@ const AdminMatches: React.FC = () => {
                     <span className="text-sm text-gray-800">
                       {m.opposition?.name ?? '—'} ({m.date ? m.date.slice(0, 10) : '—'})
                     </span>
-                    <button
-                      onClick={() => openEdit(m)}
-                      className="text-gray-500 hover:text-villageGreen transition"
-                      aria-label={`Edit match vs ${m.opposition?.name}`}
-                    >
-                      <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => openEdit(m)}
+                        className="text-gray-500 hover:text-villageGreen transition"
+                        aria-label={`Edit match vs ${m.opposition?.name}`}
+                      >
+                        <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(m)}
+                        className="text-gray-400 hover:text-red-600 transition"
+                        aria-label={`Delete match vs ${m.opposition?.name}`}
+                      >
+                        <span className="material-symbols-outlined text-[20px] leading-none">delete</span>
+                      </button>
+                    </div>
                   </li>
                 ))}
                 {filteredMatches.length === 0 && (
