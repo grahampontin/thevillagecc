@@ -23,7 +23,7 @@ const Header: React.FC = () => {
           <a href="/stats" className="text-gray-700 hover:text-villageGreen transition">Stats</a>
           <a href="/committee" className="text-gray-700 hover:text-villageGreen transition">Committee</a>
           <a href="/awards" className="text-gray-700 hover:text-villageGreen transition">Awards</a>
-          <a href="/Tours.aspx" className="text-gray-700 hover:text-villageGreen transition">Tours</a>
+          <a href="/tours" className="text-gray-700 hover:text-villageGreen transition">Tours</a>
           <a
             href="/admin"
             className="border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition"
@@ -51,7 +51,7 @@ const Header: React.FC = () => {
           <a href="/stats" className="py-1 text-gray-700 hover:text-villageGreen transition">Stats</a>
           <a href="/committee" className="py-1 text-gray-700 hover:text-villageGreen transition">Committee</a>
           <a href="/awards" className="py-1 text-gray-700 hover:text-villageGreen transition">Awards</a>
-          <a href="/Tours.aspx" className="py-1 text-gray-700 hover:text-villageGreen transition">Tours</a>
+          <a href="/tours" className="py-1 text-gray-700 hover:text-villageGreen transition">Tours</a>
           <a
             href="/admin"
             className="mt-1 inline-flex items-center justify-center border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition w-max"
