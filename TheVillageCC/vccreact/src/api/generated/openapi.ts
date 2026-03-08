@@ -1472,6 +1472,7 @@ export interface components {
       ourInnings?: components["schemas"]["InningsScoreCardV1"];
       theirInnings?: components["schemas"]["InningsScoreCardV1"];
       matchConditions?: components["schemas"]["MatchConditionsV1"];
+      matchReport?: components["schemas"]["MatchReportV1"];
     };
     MatchStateUpdateV1: {
       /** Format: int32 */
