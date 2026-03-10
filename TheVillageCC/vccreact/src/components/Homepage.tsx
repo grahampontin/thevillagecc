@@ -34,7 +34,7 @@ const CAROUSEL_SLIDES = [
     title: 'Tours!',
     subtitle: 'The Village CC loves a spot of touring, check out some our recent trips.',
     buttonText: 'Touring',
-    buttonLink: '/Tours.html'
+    buttonLink: '/tours'
   },
   {
     image: '/images/newCarousel/slide1.jpg',
@@ -139,7 +139,7 @@ const Homepage: React.FC = () => {
                   {CAROUSEL_SLIDES[currentSlide].buttonText}
                 </a>
                 <a
-                  href="/awards"
+                  href="/about"
                   className="inline-flex items-center justify-center px-4 py-2 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:border-villageGreen hover:text-villageGreen transition"
                 >
                   Learn more about us
@@ -196,13 +196,15 @@ const Homepage: React.FC = () => {
               {/* About card */}
               <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
                 <div className="w-8 h-8 rounded-md bg-villageGreenLight flex items-center justify-center">
-                  <span className="text-xs text-villageGreen font-semibold">i</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-villageGreen" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z" />
+                  </svg>
                 </div>
                 <h3 className="text-sm font-semibold text-villageText">About us</h3>
                 <p className="text-sm text-gray-600">
                   Your one‑stop shop for club history, myths, legends and well‑worn clichés.
                 </p>
-                <a href="/awards" className="mt-2 text-sm font-medium text-villageGreen hover:underline">
+                <a href="/about" className="mt-2 text-sm font-medium text-villageGreen hover:underline">
                   Read the origin story →
                 </a>
               </div>
@@ -210,7 +212,9 @@ const Homepage: React.FC = () => {
               {/* Get involved card */}
               <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
                 <div className="w-8 h-8 rounded-md bg-villageGreenLight flex items-center justify-center">
-                  <span className="text-xs text-villageGreen font-semibold">+</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-villageGreen" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87m6-4.13a4 4 0 10-8 0 4 4 0 008 0zm6 0a3 3 0 11-6 0 3 3 0 016 0zM3 17a3 3 0 116 0" />
+                  </svg>
                 </div>
                 <h3 className="text-sm font-semibold text-villageText">Get involved</h3>
                 <p className="text-sm text-gray-600">
@@ -224,7 +228,9 @@ const Homepage: React.FC = () => {
               {/* Stats card */}
               <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
                 <div className="w-8 h-8 rounded-md bg-villageGreenLight flex items-center justify-center">
-                  <span className="text-xs text-villageGreen font-semibold">%</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-villageGreen" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
                 </div>
                 <h3 className="text-sm font-semibold text-villageText">Stats</h3>
                 <p className="text-sm text-gray-600">
@@ -255,8 +261,24 @@ const Homepage: React.FC = () => {
             </div>
 
             {isLoading && (
-              <div className="mt-8">
-                <p>Loading match reports...</p>
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                {[...Array(2)].map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-50 border border-gray-200 rounded-lg p-4 animate-pulse"
+                    role="status"
+                    aria-label="Loading recent result"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                      <div className="h-5 bg-gray-200 rounded-full w-16"></div>
+                    </div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-2/3 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-full mb-1"></div>
+                    <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                  </div>
+                ))}
               </div>
             )}
             

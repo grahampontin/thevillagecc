@@ -17,7 +17,7 @@ describe('Homepage', () => {
     
     render(<Homepage />);
     
-    expect(screen.getByText(/Loading match reports/i)).toBeInTheDocument();
+    expect(screen.getAllByLabelText(/loading recent result/i).length).toBeGreaterThan(0);
   });
 
   test('fetches and displays match reports from API', async () => {
