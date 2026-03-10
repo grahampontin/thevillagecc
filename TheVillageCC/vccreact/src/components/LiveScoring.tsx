@@ -16,6 +16,7 @@ import {
   BallByBallMatchDescriptorV1,
 } from '../api/swaggerTypes';
 import type { components } from '../api/generated/openapi';
+import { getScoringArea } from '../utils/cricketUtils';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -223,26 +224,6 @@ const ErrorToast: React.FC<ErrorToastProps> = ({ message, onClose }) => (
 // ---------------------------------------------------------------------------
 // Wagon Wheel Input
 // ---------------------------------------------------------------------------
-
-/**
- * Returns the cricket field zone name for a given angle.
- * Angle convention: 0 = toward bowler (straight up), increasing clockwise.
- * Zones are defined for a right-handed batsman (off side = left, leg side = right).
- */
-function getScoringArea(angle: number): string {
-  const TWO_PI = 2 * Math.PI;
-  const a = ((angle % TWO_PI) + TWO_PI) % TWO_PI;
-  if (a < Math.PI * 0.25)  return 'Mid-on';
-  if (a < Math.PI * 0.5)   return 'Mid-wicket';
-  if (a < Math.PI * 0.675) return 'Square Leg';
-  if (a < Math.PI * 0.75)  return 'Backward Square Leg';
-  if (a < Math.PI * 1.0)   return 'Fine Leg';
-  if (a < Math.PI * 1.25)  return 'Third Man';
-  if (a < Math.PI * 1.5)   return 'Point';
-  if (a < Math.PI * 1.75)  return 'Cover';
-  return 'Mid-off';
-}
-
 /**
  * Computes the boundary intersection point of a ray from (sx, sy) in the
  * direction defined by `angle` (0=up, clockwise) with the given ellipse.
