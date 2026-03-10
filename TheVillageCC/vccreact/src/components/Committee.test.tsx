@@ -160,4 +160,18 @@ describe('Committee', () => {
     expect(screen.queryByRole('img', { name: /Alice Smith/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('img', { name: /Bob Jones/i })).not.toBeInTheDocument();
   });
+
+  test('displays role descriptions for known posts', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayers })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockCommittee })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail(null) })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockPlayerDetail(null) });
+
+    renderWithRouter(<Committee />);
+
+    await screen.findByText('Alice Smith');
+    expect(screen.getByText(/Wins the toss/i)).toBeInTheDocument();
+    expect(screen.getByText(/Knows where the money went/i)).toBeInTheDocument();
+  });
 });

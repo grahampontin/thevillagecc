@@ -35,6 +35,17 @@ const POST_ICON: Record<string, string> = {
   Webmaster: 'code',
 };
 
+const POST_DESCRIPTION: Record<string, string> = {
+  Captain: 'Wins the toss. Occasionally wins matches.',
+  ViceCaptain: 'Agrees with everything the Captain says — especially when the Captain is wrong.',
+  Treasurer: 'Knows where the money went. Probably.',
+  FixturesSecretary: 'Responsible for finding opponents willing to play us.',
+  SocialSecretary: 'Organises the one part of cricket that matters: the post-match beer.',
+  DirectorOfCricket: 'A role of great mystery. Constitutionally responsible for lugging the kit bag — though this is disputed, mostly by whoever holds the post.',
+  TourSecretary: 'Books the minibus. Occasionally remembers the cricket kit.',
+  Webmaster: 'The only person who understands why the website is broken.',
+};
+
 const humanizePost = (raw: string): string => {
   if (!raw) return '';
   // Split PascalCase: "ViceCaptain" → "Vice Captain"
@@ -191,6 +202,9 @@ const Committee: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-sm font-medium text-villageText">{post.playerName}</p>
+                  {POST_DESCRIPTION[post.post] && (
+                    <p className="mt-1 text-xs text-gray-500 italic">{POST_DESCRIPTION[post.post]}</p>
+                  )}
                 </div>
               ))}
             </div>
