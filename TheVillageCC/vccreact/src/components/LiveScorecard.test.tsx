@@ -914,6 +914,56 @@ describe('LiveScorecard', () => {
     });
   });
 
+  test('shows location in ball description when angle is recorded', async () => {
+    // Math.PI * 1.4 falls in the Point zone (Math.PI * 1.25 <= angle < Math.PI * 1.5)
+    const pointAngle = Math.PI * 1.4;
+    // Math.PI * 1.65 falls in the Cover zone (Math.PI * 1.5 <= angle < Math.PI * 1.75)
+    const coverAngle = Math.PI * 1.65;
+    // Math.PI * 0.1 falls in the Mid-on zone (angle < Math.PI * 0.25)
+    const midOnAngle = Math.PI * 0.1;
+
+    const withBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 10,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 10,
+            over: {
+              overNumber: 1,
+              bowler: 'A. Bowler',
+              runsConceded: 10,
+              wicketsTaken: 0,
+              balls: [
+                { ballNumber: 1, amount: 1, thing: '', bowler: 'A. Bowler', batsmanName: 'B. Batsman', angle: pointAngle },
+                { ballNumber: 2, amount: 2, thing: '', bowler: 'A. Bowler', batsmanName: 'B. Batsman', angle: pointAngle },
+                { ballNumber: 3, amount: 4, thing: '', bowler: 'A. Bowler', batsmanName: 'B. Batsman', angle: coverAngle },
+                { ballNumber: 4, amount: 6, thing: '', bowler: 'A. Bowler', batsmanName: 'C. Batsman', angle: midOnAngle },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/A\. Bowler to B\. Batsman, single to Point/)).toBeInTheDocument();
+      expect(screen.getByText(/A\. Bowler to B\. Batsman, 2 runs to Point/)).toBeInTheDocument();
+      expect(screen.getByText(/A\. Bowler to B\. Batsman, FOUR through Cover/)).toBeInTheDocument();
+      expect(screen.getByText(/A\. Bowler to C\. Batsman, SIX! over Mid-on/)).toBeInTheDocument();
+    });
+  });
+
   test('shows ball-by-ball commentary with over number from OverV1 overNumber field', async () => {
     const withBalls = {
       ...mockCompletedScorecardData,

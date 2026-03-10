@@ -16,6 +16,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { getLiveScorecardData } from '../api/liveScoringApi';
 import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1, BallV1 } from '../api/swaggerTypes';
+import { getScoringArea } from '../utils/cricketUtils';
 
 ChartJS.register(
   CategoryScale,
@@ -140,14 +141,15 @@ const LiveScorecard: React.FC = () => {
     const amount = ball.amount ?? 0;
     const thing = ball.thing ?? '';
     const plural = amount !== 1 ? 's' : '';
+    const area = ball.angle != null ? getScoringArea(ball.angle) : null;
     switch (thing) {
       case '':
         switch (amount) {
           case 0: return 'no run';
-          case 1: return 'single';
-          case 4: return 'FOUR';
-          case 6: return 'SIX!';
-          default: return `${amount} runs`;
+          case 1: return area ? `single to ${area}` : 'single';
+          case 4: return area ? `FOUR through ${area}` : 'FOUR';
+          case 6: return area ? `SIX! over ${area}` : 'SIX!';
+          default: return area ? `${amount} runs to ${area}` : `${amount} runs`;
         }
       case 'wd': return `${amount} wide${plural}`;
       case 'nb': return `${amount} no ball${plural}`;
