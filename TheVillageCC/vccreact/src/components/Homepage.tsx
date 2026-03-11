@@ -212,9 +212,7 @@ const Homepage: React.FC = () => {
               {/* Get involved card */}
               <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col gap-2">
                 <div className="w-8 h-8 rounded-md bg-villageGreenLight flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-villageGreen" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87m6-4.13a4 4 0 10-8 0 4 4 0 008 0zm6 0a3 3 0 11-6 0 3 3 0 016 0zM3 17a3 3 0 116 0" />
-                  </svg>
+                  <span className="material-icons-round text-villageGreen text-xl leading-none" aria-hidden="true">sports_cricket</span>
                 </div>
                 <h3 className="text-sm font-semibold text-villageText">Get involved</h3>
                 <p className="text-sm text-gray-600">
