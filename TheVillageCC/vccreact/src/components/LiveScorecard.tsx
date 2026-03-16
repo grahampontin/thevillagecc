@@ -728,7 +728,7 @@ const LiveScorecard: React.FC = () => {
           {hasOversDisplay && (
             <div className="overflow-x-auto">
               <div
-                className="flex items-baseline gap-0 text-sm font-mono whitespace-nowrap py-1"
+                className="flex items-center gap-0 text-sm font-mono whitespace-nowrap py-1"
                 data-testid="horizontal-overs"
               >
                 {recentOvers.map((overData, idx) => {
@@ -737,17 +737,19 @@ const LiveScorecard: React.FC = () => {
                     ? [...overData.over.balls].sort((a, b) => (a.ballNumber ?? 0) - (b.ballNumber ?? 0))
                     : [];
                   return (
-                    <span key={idx} className="flex-shrink-0">
+                    <span key={idx} className="flex items-center flex-shrink-0">
                       {idx > 0 && <span className="mx-2 text-gray-400">|</span>}
                       <span className="font-semibold text-gray-700 mr-1">Ovr {overNum}:</span>
                       {balls.length > 0 ? balls.map((ball, bi) => {
-                        const char = getBallChar(ball);
-                        let textClass = 'text-gray-500';
-                        if (ball.wicket) textClass = 'text-red-600 font-bold';
-                        else if (char === '4') textClass = 'text-blue-600 font-semibold';
-                        else if (char === '6') textClass = 'text-orange-500 font-semibold';
-                        else if (char === 'Wd' || char === 'Nb') textClass = 'text-amber-600';
-                        return <span key={bi} className={`mx-0.5 ${textClass}`}>{char}</span>;
+                        const blob = getBallBlob(ball);
+                        return (
+                          <span
+                            key={bi}
+                            className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 mx-0.5 ${blob.className}`}
+                          >
+                            {blob.label}
+                          </span>
+                        );
                       }) : <span className="text-gray-400">—</span>}
                     </span>
                   );

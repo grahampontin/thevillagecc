@@ -1741,7 +1741,7 @@ describe('LiveScorecard', () => {
     // Over label should be shown
     expect(oversContainer.textContent).toMatch(/Ovr 1:/);
     // Dot ball, four, wicket, wide, six all represented
-    expect(oversContainer.textContent).toMatch(/\./);
+    expect(oversContainer.textContent).toMatch(/[·.]/);
     expect(oversContainer.textContent).toMatch(/4/);
     expect(oversContainer.textContent).toMatch(/W/);
     expect(oversContainer.textContent).toMatch(/Wd/);
