@@ -380,16 +380,14 @@ describe('LiveScorecard', () => {
 
     renderWithRouter('123');
 
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: /Match Report/i })).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: /Match Report/i }));
-
+    // Match report is now always visible (not behind a collapsible button)
     await waitFor(() => {
       expect(screen.getByText(/Sunny day, good batting conditions/i)).toBeInTheDocument();
       expect(screen.getByText(/An excellent match with great performances from both teams/i)).toBeInTheDocument();
     });
+
+    // The section heading should be visible
+    expect(screen.getByText(/^Match Report$/i)).toBeInTheDocument();
   });
 
   test('handles fetch exception gracefully', async () => {
@@ -726,12 +724,7 @@ describe('LiveScorecard', () => {
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithBatsmen);
     renderWithRouter('123');
 
-    // Expand the Scorecards section first
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: /Scorecards/i })).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByRole('button', { name: /Scorecards/i }));
-
+    // At the Crease section is now always visible (not behind a collapsible button)
     await waitFor(() => {
       expect(screen.getByText('OnStrikeBatter')).toBeInTheDocument();
       expect(screen.getByText('OtherBatter')).toBeInTheDocument();
@@ -754,12 +747,7 @@ describe('LiveScorecard', () => {
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithBowlers);
     renderWithRouter('123');
 
-    // Expand the Scorecards section first
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: /Scorecards/i })).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByRole('button', { name: /Scorecards/i }));
-
+    // Bowling details are now directly visible in the At the Crease section
     await waitFor(() => {
       expect(screen.getByText('FastBowler')).toBeInTheDocument();
     });
@@ -1628,19 +1616,14 @@ describe('LiveScorecard', () => {
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithBatsmen);
     renderWithRouter('123');
 
+    // At the Crease section is always visible for live matches (not behind a Scorecards collapsible)
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /Scorecards/i })).toBeInTheDocument();
-    });
-
-    // Live panels are collapsed by default
-    expect(screen.queryByText('OnStrikeBatter')).not.toBeInTheDocument();
-
-    // Expand it
-    fireEvent.click(screen.getByRole('button', { name: /Scorecards/i }));
-
-    await waitFor(() => {
+      expect(screen.getByText(/^At the Crease$/i)).toBeInTheDocument();
       expect(screen.getByText('OnStrikeBatter')).toBeInTheDocument();
     });
+
+    // There is no "Scorecards" collapsible button for live matches
+    expect(screen.queryByRole('button', { name: /^Scorecards$/i })).not.toBeInTheDocument();
   });
 
   test('section order for completed match: Match Report, Scorecards, Commentary, Analysis', async () => {
@@ -1664,26 +1647,29 @@ describe('LiveScorecard', () => {
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(completedWithCommentary);
     renderWithRouter('123');
 
+    // Match Report is now always visible (heading, not a button)
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /Match Report/i })).toBeInTheDocument();
+      expect(screen.getByText(/^Match Report$/i)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Scorecards/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Team Analysis/i })).toBeInTheDocument();
     });
 
-    // Verify order: Match Report before Scorecards, Scorecards before Commentary, Commentary before Analysis
-    const buttons = screen.getAllByRole('button');
-    const matchReportIdx = buttons.findIndex(b => /Match Report/i.test(b.textContent ?? ''));
-    const scorecardsIdx = buttons.findIndex(b => /^Scorecards$/i.test(b.textContent?.trim() ?? ''));
-    const commentaryIdx = buttons.findIndex(b => /Over-by-over Commentary/i.test(b.textContent ?? ''));
-    const teamAnalysisIdx = buttons.findIndex(b => /Team Analysis/i.test(b.textContent ?? ''));
+    // Verify order: Match Report (heading) before Scorecards button, Scorecards before Commentary, Commentary before Analysis
+    const allElements = screen.getAllByRole('heading').concat(screen.getAllByRole('button'));
+    // Match Report is now an h2 heading in the page
+    const matchReportHeading = screen.getByText(/^Match Report$/i);
+    const scorecardsBtn = screen.getByRole('button', { name: /^Scorecards$/i });
+    const commentaryBtn = screen.getByRole('button', { name: /Over-by-over Commentary/i });
+    const teamAnalysisBtn = screen.getByRole('button', { name: /Team Analysis/i });
 
-    expect(matchReportIdx).toBeLessThan(scorecardsIdx);
-    expect(scorecardsIdx).toBeLessThan(commentaryIdx);
-    expect(commentaryIdx).toBeLessThan(teamAnalysisIdx);
+    // Use DOM position comparison (compareDocumentPosition)
+    expect(matchReportHeading.compareDocumentPosition(scorecardsBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(scorecardsBtn.compareDocumentPosition(commentaryBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(commentaryBtn.compareDocumentPosition(teamAnalysisBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  test('section order for live match: Commentary, Scorecards, Analysis (no Match Report)', async () => {
+  test('section order for live match: At the Crease, Commentary, Analysis (no Match Report)', async () => {
     const liveWithCommentary = {
       ...mockLiveScorecardData,
       inPlayData: {
@@ -1703,17 +1689,99 @@ describe('LiveScorecard', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Scorecards/i })).toBeInTheDocument();
     });
 
-    // No Match Report for live matches
+    // No Match Report or Scorecards button for live matches
     expect(screen.queryByRole('button', { name: /^Match Report$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^Scorecards$/i })).not.toBeInTheDocument();
 
-    // Commentary before Scorecards
-    const buttons = screen.getAllByRole('button');
-    const commentaryIdx = buttons.findIndex(b => /Over-by-over Commentary/i.test(b.textContent ?? ''));
-    const scorecardsIdx = buttons.findIndex(b => /^Scorecards$/i.test(b.textContent?.trim() ?? ''));
+    // At the Crease section is always visible (has the horizontal overs display)
+    expect(screen.getByTestId('horizontal-overs')).toBeInTheDocument();
 
-    expect(commentaryIdx).toBeLessThan(scorecardsIdx);
+    // Commentary comes after the At the Crease section
+    const atTheCreaseEl = screen.getByTestId('horizontal-overs');
+    const commentaryBtn = screen.getByRole('button', { name: /Over-by-over Commentary/i });
+    expect(atTheCreaseEl.compareDocumentPosition(commentaryBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  test('shows horizontal overs display in At the Crease section for live match', async () => {
+    const liveWithOvers = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 9,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 9,
+            over: {
+              overNumber: 1,
+              balls: [
+                { ballNumber: 1, amount: 0, thing: '' },
+                { ballNumber: 2, amount: 4, thing: '' },
+                { ballNumber: 3, amount: 1, thing: '' },
+                { ballNumber: 4, amount: 0, thing: '', wicket: { description: 'out' } },
+                { ballNumber: 5, amount: 1, thing: 'wd' },
+                { ballNumber: 6, amount: 6, thing: '' },
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithOvers);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('horizontal-overs')).toBeInTheDocument();
+    });
+
+    const oversContainer = screen.getByTestId('horizontal-overs');
+    // Over label should be shown
+    expect(oversContainer.textContent).toMatch(/Ovr 1:/);
+    // Dot ball, four, wicket, wide, six all represented
+    expect(oversContainer.textContent).toMatch(/\./);
+    expect(oversContainer.textContent).toMatch(/4/);
+    expect(oversContainer.textContent).toMatch(/W/);
+    expect(oversContainer.textContent).toMatch(/Wd/);
+    expect(oversContainer.textContent).toMatch(/6/);
+  });
+
+  test('shows up to last 5 overs in horizontal display', async () => {
+    const manyOvers = Array.from({ length: 7 }, (_, i) => ({
+      scoreAtEndOfOver: (i + 1) * 8,
+      wicketsAtEndOfOver: 0,
+      scoreForThisOver: 8,
+      over: {
+        overNumber: i + 1,
+        balls: [
+          { ballNumber: 1, amount: 1, thing: '' },
+          { ballNumber: 2, amount: 1, thing: '' },
+        ],
+      },
+    }));
+
+    const liveWithManyOvers = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        completedOvers: manyOvers,
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithManyOvers);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('horizontal-overs')).toBeInTheDocument();
+    });
+
+    const oversContainer = screen.getByTestId('horizontal-overs');
+    // Only overs 3-7 should be shown (last 5 of 7)
+    expect(oversContainer.textContent).not.toMatch(/Ovr 1:/);
+    expect(oversContainer.textContent).not.toMatch(/Ovr 2:/);
+    expect(oversContainer.textContent).toMatch(/Ovr 3:/);
+    expect(oversContainer.textContent).toMatch(/Ovr 7:/);
   });
 });

@@ -39,7 +39,6 @@ const LiveScorecard: React.FC = () => {
   const [activeAnalysisTab, setActiveAnalysisTab] = useState<'worm' | 'manhattan' | 'partnerships' | 'wagon'>('worm');
   const [commentaryExpanded, setCommentaryExpanded] = useState(false);
   const [analysisExpanded, setAnalysisExpanded] = useState(false);
-  const [matchReportExpanded, setMatchReportExpanded] = useState(false);
   const [playerAnalysisExpanded, setPlayerAnalysisExpanded] = useState(false);
   const [scorecardExpanded, setScorecardExpanded] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
@@ -170,6 +169,15 @@ const LiveScorecard: React.FC = () => {
     if (amount === 4) return { label: '4', className: 'bg-blue-500 text-white' };
     if (amount === 6) return { label: '6', className: 'bg-orange-500 text-white' };
     return { label: String(amount), className: 'bg-gray-200 text-gray-700' };
+  };
+
+  const getBallChar = (ball: BallV1): string => {
+    if (ball.wicket) return 'W';
+    const thing = ball.thing ?? '';
+    const amount = ball.amount ?? 0;
+    if (thing === 'wd') return 'Wd';
+    if (thing === 'nb') return 'Nb';
+    return amount === 0 ? '.' : String(amount);
   };
 
   const formatBattingStats = (
@@ -573,40 +581,184 @@ const LiveScorecard: React.FC = () => {
   ) : null;
 
   const matchReportSection = (completed && scorecardData.matchReport && (scorecardData.matchReport.conditions || scorecardData.matchReport.report)) ? (
-    <section className="max-w-6xl mx-auto mt-6 mb-10">
-      <button
-        type="button"
-        className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
-        onClick={() => setMatchReportExpanded(prev => !prev)}
-        aria-expanded={matchReportExpanded}
-      >
-        <span className="text-base font-semibold text-gray-800">Match Report</span>
-        <svg
-          className={`w-5 h-5 text-gray-500 transition-transform ${matchReportExpanded ? 'rotate-180' : ''}`}
-          fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-      {matchReportExpanded && (
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-6 mt-3">
-          {scorecardData.matchReport.conditions && (
-            <div className="mb-4">
-              <h3 className="font-semibold text-gray-900 mb-2">Conditions</h3>
-              <p className="text-sm text-gray-700">{scorecardData.matchReport.conditions}</p>
+    <section className="max-w-6xl mx-auto mt-6">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-6">
+        <h2 className="text-base font-semibold text-gray-800 mb-4">Match Report</h2>
+        {scorecardData.matchReport.conditions && (
+          <div className="mb-4">
+            <h3 className="font-semibold text-gray-900 mb-2">Conditions</h3>
+            <p className="text-sm text-gray-700">{scorecardData.matchReport.conditions}</p>
+          </div>
+        )}
+        {scorecardData.matchReport.report && (
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-2">Report</h3>
+            <div className="text-sm text-gray-700 prose prose-sm max-w-none"
+                 dangerouslySetInnerHTML={{ __html: scorecardData.matchReport.report }} />
+          </div>
+        )}
+      </div>
+    </section>
+  ) : null;
+
+  // At the Crease section for live matches — always visible, first section after hero
+  const atTheCreaseSection = (() => {
+    if (!live) return null;
+
+    const completedOversForDisplay = data.completedOvers ?? [];
+    const hasAtCrease = !!(data.onStrikeBatsman || data.otherBatsman || data.bowlerOneDetails || data.bowlerTwoDetails);
+    const hasOversDisplay = completedOversForDisplay.length > 0;
+
+    if (!hasAtCrease && !hasOversDisplay) return null;
+
+    const recentOvers = completedOversForDisplay.slice(-5);
+
+    return (
+      <section className="max-w-6xl mx-auto mt-6">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-6">
+          <h2 className="text-base font-semibold text-gray-800 mb-4">At the Crease</h2>
+
+          {hasAtCrease && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              {(data.onStrikeBatsman || data.otherBatsman) && (
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Batting</h3>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-xs text-gray-500 border-b border-gray-100">
+                        <th className="pb-1.5 text-left font-normal">Batter</th>
+                        <th className="pb-1.5 text-right font-normal">R</th>
+                        <th className="pb-1.5 text-right font-normal">B</th>
+                        <th className="pb-1.5 text-right font-normal">4s</th>
+                        <th className="pb-1.5 text-right font-normal">6s</th>
+                        <th className="pb-1.5 text-right font-normal">SR</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.onStrikeBatsman && (
+                        <tr className="border-b border-gray-50">
+                          <td className="py-1.5 font-medium">
+                            {data.onStrikeBatsman.name}
+                            <span className="ml-1 text-villageGreen text-xs font-bold">*</span>
+                          </td>
+                          <td className="py-1.5 text-right font-medium">{data.onStrikeBatsman.score ?? 0}</td>
+                          <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.balls ?? 0}</td>
+                          <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.fours ?? 0}</td>
+                          <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.sixes ?? 0}</td>
+                          <td className="py-1.5 text-right text-gray-600">
+                            {data.onStrikeBatsman.strikeRate != null ? data.onStrikeBatsman.strikeRate.toFixed(1) : '-'}
+                          </td>
+                        </tr>
+                      )}
+                      {data.otherBatsman && (
+                        <tr>
+                          <td className="py-1.5 font-medium">{data.otherBatsman.name}</td>
+                          <td className="py-1.5 text-right font-medium">{data.otherBatsman.score ?? 0}</td>
+                          <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.balls ?? 0}</td>
+                          <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.fours ?? 0}</td>
+                          <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.sixes ?? 0}</td>
+                          <td className="py-1.5 text-right text-gray-600">
+                            {data.otherBatsman.strikeRate != null ? data.otherBatsman.strikeRate.toFixed(1) : '-'}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                  {data.currentPartnership && (
+                    <p className="mt-2 text-xs text-gray-500">
+                      Partnership: {data.currentPartnership.score ?? 0} runs
+                      {data.currentPartnership.oversAsString && ` (${data.currentPartnership.oversAsString} ov)`}
+                    </p>
+                  )}
+                </div>
+              )}
+              {(data.bowlerOneDetails || data.bowlerTwoDetails) && (
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowling</h3>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-xs text-gray-500 border-b border-gray-100">
+                        <th className="pb-1.5 text-left font-normal">Bowler</th>
+                        <th className="pb-1.5 text-right font-normal">O</th>
+                        <th className="pb-1.5 text-right font-normal">M</th>
+                        <th className="pb-1.5 text-right font-normal">R</th>
+                        <th className="pb-1.5 text-right font-normal">W</th>
+                        <th className="pb-1.5 text-right font-normal">Econ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[data.bowlerOneDetails, data.bowlerTwoDetails].filter(Boolean).map((bowler, i, arr) => (
+                        <tr key={i} className={i < arr.length - 1 ? 'border-b border-gray-50' : ''}>
+                          <td className="py-1.5 font-medium">{bowler!.name}</td>
+                          <td className="py-1.5 text-right text-gray-600">{bowler!.details?.overs ?? '-'}</td>
+                          <td className="py-1.5 text-right text-gray-600">{bowler!.details?.maidens ?? 0}</td>
+                          <td className="py-1.5 text-right text-gray-600">{bowler!.details?.runs ?? 0}</td>
+                          <td className="py-1.5 text-right font-medium">{bowler!.details?.wickets ?? 0}</td>
+                          <td className="py-1.5 text-right text-gray-600">
+                            {bowler!.details?.economy != null ? bowler!.details.economy.toFixed(2) : '-'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
-          {scorecardData.matchReport.report && (
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Report</h3>
-              <div className="text-sm text-gray-700 prose prose-sm max-w-none"
-                   dangerouslySetInnerHTML={{ __html: scorecardData.matchReport.report }} />
+
+          {/* Score bar */}
+          <div className="bg-gray-50 rounded-lg px-4 py-3 text-sm mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+              <div className="font-semibold text-gray-900">
+                {data.ourInningsStatus === 'InProgress' ? (
+                  <>The Village CC <span className="text-villageGreen">{data.score}/{data.wickets}</span> ({data.ourLastCompletedOver} ov) · CRR {(data.runRate ?? 0).toFixed(2)}</>
+                ) : data.theirInningsStatus === 'InProgress' ? (
+                  <>{data.opposition} <span className="text-villageGreen">{data.theirScore}/{data.theirWickets}</span> ({data.theirOver} ov) · CRR {(data.theirRunRate ?? 0).toFixed(2)}</>
+                ) : null}
+              </div>
+              {data.ourInningsStatus === 'Completed' && data.theirInningsStatus === 'InProgress' && (
+                <div className="text-gray-500 text-xs">
+                  Target: {(data.score ?? 0) + 1} runs
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Horizontal over-by-over ball display */}
+          {hasOversDisplay && (
+            <div className="overflow-x-auto">
+              <div
+                className="flex items-baseline gap-0 text-sm font-mono whitespace-nowrap py-1"
+                data-testid="horizontal-overs"
+              >
+                {recentOvers.map((overData, idx) => {
+                  const overNum = overData.over?.overNumber ?? (completedOversForDisplay.length - recentOvers.length + idx + 1);
+                  const balls = overData.over?.balls
+                    ? [...overData.over.balls].sort((a, b) => (a.ballNumber ?? 0) - (b.ballNumber ?? 0))
+                    : [];
+                  return (
+                    <span key={idx} className="flex-shrink-0">
+                      {idx > 0 && <span className="mx-2 text-gray-400">|</span>}
+                      <span className="font-semibold text-gray-700 mr-1">Ovr {overNum}:</span>
+                      {balls.length > 0 ? balls.map((ball, bi) => {
+                        const char = getBallChar(ball);
+                        let textClass = 'text-gray-500';
+                        if (ball.wicket) textClass = 'text-red-600 font-bold';
+                        else if (char === '4') textClass = 'text-blue-600 font-semibold';
+                        else if (char === '6') textClass = 'text-orange-500 font-semibold';
+                        else if (char === 'Wd' || char === 'Nb') textClass = 'text-amber-600';
+                        return <span key={bi} className={`mx-0.5 ${textClass}`}>{char}</span>;
+                      }) : <span className="text-gray-400">—</span>}
+                    </span>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
-      )}
-    </section>
-  ) : null;
+      </section>
+    );
+  })();
 
   return (
     <div className="font-sans text-villageText bg-gray-50 min-h-screen">
@@ -696,137 +848,13 @@ const LiveScorecard: React.FC = () => {
         {/* Ordered sections: different arrangement for live vs completed */}
         {live ? (
           <>
-            {/* Live order: 1. Commentary, 2. Scorecards, 3. Analysis */}
+            {/* Live order: 1. At the Crease (always visible), 2. Commentary (folded) */}
+            {atTheCreaseSection}
             {commentarySection}
-
-            {/* Scorecards collapsible (wraps live panels) */}
-            <section className="max-w-6xl mx-auto mt-6">
-              <button
-                type="button"
-                className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
-                onClick={() => setScorecardExpanded(prev => !prev)}
-                aria-expanded={scorecardExpanded}
-              >
-                <span className="text-base font-semibold text-gray-800">Scorecards</span>
-                <svg
-                  className={`w-5 h-5 text-gray-500 transition-transform ${scorecardExpanded ? 'rotate-180' : ''}`}
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {scorecardExpanded && (
-                <div className="mt-3 space-y-4">
-                  {(data.onStrikeBatsman || data.otherBatsman || data.bowlerOneDetails || data.bowlerTwoDetails) && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {(data.onStrikeBatsman || data.otherBatsman) && (
-                        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-                          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">At the Crease</h3>
-                          <table className="w-full text-sm">
-                            <thead>
-                              <tr className="text-xs text-gray-500 border-b border-gray-100">
-                                <th className="pb-1.5 text-left font-normal">Batter</th>
-                                <th className="pb-1.5 text-right font-normal">R</th>
-                                <th className="pb-1.5 text-right font-normal">B</th>
-                                <th className="pb-1.5 text-right font-normal">4s</th>
-                                <th className="pb-1.5 text-right font-normal">6s</th>
-                                <th className="pb-1.5 text-right font-normal">SR</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {data.onStrikeBatsman && (
-                                <tr className="border-b border-gray-50">
-                                  <td className="py-1.5 font-medium">
-                                    {data.onStrikeBatsman.name}
-                                    <span className="ml-1 text-villageGreen text-xs font-bold">*</span>
-                                  </td>
-                                  <td className="py-1.5 text-right font-medium">{data.onStrikeBatsman.score ?? 0}</td>
-                                  <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.balls ?? 0}</td>
-                                  <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.fours ?? 0}</td>
-                                  <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.sixes ?? 0}</td>
-                                  <td className="py-1.5 text-right text-gray-600">
-                                    {data.onStrikeBatsman.strikeRate != null ? data.onStrikeBatsman.strikeRate.toFixed(1) : '-'}
-                                  </td>
-                                </tr>
-                              )}
-                              {data.otherBatsman && (
-                                <tr>
-                                  <td className="py-1.5 font-medium">{data.otherBatsman.name}</td>
-                                  <td className="py-1.5 text-right font-medium">{data.otherBatsman.score ?? 0}</td>
-                                  <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.balls ?? 0}</td>
-                                  <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.fours ?? 0}</td>
-                                  <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.sixes ?? 0}</td>
-                                  <td className="py-1.5 text-right text-gray-600">
-                                    {data.otherBatsman.strikeRate != null ? data.otherBatsman.strikeRate.toFixed(1) : '-'}
-                                  </td>
-                                </tr>
-                              )}
-                            </tbody>
-                          </table>
-                          {data.currentPartnership && (
-                            <p className="mt-2 text-xs text-gray-500">
-                              Partnership: {data.currentPartnership.score ?? 0} runs
-                              {data.currentPartnership.oversAsString && ` (${data.currentPartnership.oversAsString} ov)`}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                      {(data.bowlerOneDetails || data.bowlerTwoDetails) && (
-                        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-                          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowling</h3>
-                          <table className="w-full text-sm">
-                            <thead>
-                              <tr className="text-xs text-gray-500 border-b border-gray-100">
-                                <th className="pb-1.5 text-left font-normal">Bowler</th>
-                                <th className="pb-1.5 text-right font-normal">O</th>
-                                <th className="pb-1.5 text-right font-normal">M</th>
-                                <th className="pb-1.5 text-right font-normal">R</th>
-                                <th className="pb-1.5 text-right font-normal">W</th>
-                                <th className="pb-1.5 text-right font-normal">Econ</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {[data.bowlerOneDetails, data.bowlerTwoDetails].filter(Boolean).map((bowler, i, arr) => (
-                                <tr key={i} className={i < arr.length - 1 ? 'border-b border-gray-50' : ''}>
-                                  <td className="py-1.5 font-medium">{bowler!.name}</td>
-                                  <td className="py-1.5 text-right text-gray-600">{bowler!.details?.overs ?? '-'}</td>
-                                  <td className="py-1.5 text-right text-gray-600">{bowler!.details?.maidens ?? 0}</td>
-                                  <td className="py-1.5 text-right text-gray-600">{bowler!.details?.runs ?? 0}</td>
-                                  <td className="py-1.5 text-right font-medium">{bowler!.details?.wickets ?? 0}</td>
-                                  <td className="py-1.5 text-right text-gray-600">
-                                    {bowler!.details?.economy != null ? bowler!.details.economy.toFixed(2) : '-'}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-4 py-3">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-sm">
-                      <div className="font-semibold text-gray-900">
-                        {data.ourInningsStatus === 'InProgress' ? (
-                          <>The Village CC <span className="text-villageGreen">{data.score}/{data.wickets}</span> ({data.ourLastCompletedOver} ov) · CRR {(data.runRate ?? 0).toFixed(2)}</>
-                        ) : data.theirInningsStatus === 'InProgress' ? (
-                          <>{data.opposition} <span className="text-villageGreen">{data.theirScore}/{data.theirWickets}</span> ({data.theirOver} ov) · CRR {(data.theirRunRate ?? 0).toFixed(2)}</>
-                        ) : null}
-                      </div>
-                      {data.ourInningsStatus === 'Completed' && data.theirInningsStatus === 'InProgress' && (
-                        <div className="text-gray-500 text-xs">
-                          Target: {(data.score ?? 0) + 1} runs
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </section>
           </>
         ) : (
           <>
-            {/* Completed order: 1. Match Report, 2. Scorecards, 3. Commentary, 4. Analysis */}
+            {/* Completed order: 1. Match Report (always visible), 2. Scorecards, 3. Commentary, 4. Analysis */}
             {matchReportSection}
 
             {/* Scorecards collapsible (wraps innings for completed matches) */}
