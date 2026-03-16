@@ -158,6 +158,16 @@ const LiveScorecard: React.FC = () => {
     }
   };
 
+  const toOrdinal = (n: number): string => {
+    const lastTwo = n % 100;
+    const lastOne = n % 10;
+    if (lastTwo >= 11 && lastTwo <= 13) return `${n}th`;
+    if (lastOne === 1) return `${n}st`;
+    if (lastOne === 2) return `${n}nd`;
+    if (lastOne === 3) return `${n}rd`;
+    return `${n}th`;
+  };
+
   const getBallBlob = (ball: BallV1): { label: string; className: string } => {
     if (ball.wicket) return { label: 'W', className: 'bg-red-600 text-white' };
     const thing = ball.thing ?? '';
@@ -731,15 +741,21 @@ const LiveScorecard: React.FC = () => {
                 className="flex items-center gap-0 text-sm font-mono whitespace-nowrap py-1"
                 data-testid="horizontal-overs"
               >
-                {recentOvers.map((overData, idx) => {
-                  const overNum = overData.over?.overNumber ?? (completedOversForDisplay.length - recentOvers.length + idx + 1);
+                {[...recentOvers].reverse().map((overData, idx) => {
+                  const overNum = overData.over?.overNumber ?? (completedOversForDisplay.length - idx);
                   const balls = overData.over?.balls
-                    ? [...overData.over.balls].sort((a, b) => (a.ballNumber ?? 0) - (b.ballNumber ?? 0))
+                    ? [...overData.over.balls].sort((a, b) => (b.ballNumber ?? 0) - (a.ballNumber ?? 0))
                     : [];
+                  const runsThisOver = overData.scoreForThisOver;
                   return (
                     <span key={idx} className="flex items-center flex-shrink-0">
                       {idx > 0 && <span className="mx-2 text-gray-400">|</span>}
-                      <span className="font-semibold text-gray-700 mr-1">Ovr {overNum}:</span>
+                      <span className="font-semibold text-gray-700 mr-1">{toOrdinal(overNum)}:</span>
+                      {runsThisOver !== undefined && runsThisOver !== null && (
+                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 mx-0.5 bg-green-100 text-green-800">
+                          {runsThisOver}
+                        </span>
+                      )}
                       {balls.length > 0 ? balls.map((ball, bi) => {
                         const blob = getBallBlob(ball);
                         return (
