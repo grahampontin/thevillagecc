@@ -1740,9 +1740,9 @@ describe('LiveScorecard', () => {
     const oversContainer = screen.getByTestId('horizontal-overs');
     // Over label should be shown as ordinal (on the RIGHT, no colon)
     expect(oversContainer.textContent).toMatch(/1st/);
-    // Runs total and "runs" label should be shown (on the LEFT, two lines)
+    // Runs total should be shown as (9) format
     expect(oversContainer.textContent).toMatch(/9/);
-    expect(oversContainer.textContent).toMatch(/runs/);
+    expect(oversContainer.textContent).toMatch(/\(9\)/);
     // Dot ball, four, wicket, wide, six all represented
     expect(oversContainer.textContent).toMatch(/[·.]/);
     expect(oversContainer.textContent).toMatch(/4/);
@@ -1787,8 +1787,8 @@ describe('LiveScorecard', () => {
     expect(oversContainer.textContent).not.toMatch(/2nd/);
     expect(oversContainer.textContent).toMatch(/3rd/);
     expect(oversContainer.textContent).toMatch(/7th/);
-    // Runs total and "runs" label for each over should be shown
+    // Runs total should be shown as (8) format for each over
     expect(oversContainer.textContent).toMatch(/8/);
-    expect(oversContainer.textContent).toMatch(/runs/);
+    expect(oversContainer.textContent).toMatch(/\(8\)/);
   });
 });
