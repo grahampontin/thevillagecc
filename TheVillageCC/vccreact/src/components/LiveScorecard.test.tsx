@@ -1594,15 +1594,8 @@ describe('LiveScorecard', () => {
       expect(screen.getByRole('button', { name: /Scorecards/i })).toBeInTheDocument();
     });
 
-    // Scorecards section is collapsed by default
-    expect(screen.queryByText(/Batter/i)).not.toBeInTheDocument();
-
-    // Expand it
-    fireEvent.click(screen.getByRole('button', { name: /Scorecards/i }));
-
-    await waitFor(() => {
-      expect(screen.getAllByText(/Batter/i).length).toBeGreaterThan(0);
-    });
+    // Scorecards tab is auto-selected by default, so content is visible immediately
+    expect(screen.getAllByText(/Batter/i).length).toBeGreaterThan(0);
   });
 
   test('shows collapsible Scorecards section for live match', async () => {

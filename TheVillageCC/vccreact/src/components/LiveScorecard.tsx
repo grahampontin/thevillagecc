@@ -1363,9 +1363,16 @@ const LiveScorecard: React.FC = () => {
               const hasAnySection = (hasOurInnings || hasTheirInnings) || hasCommentaryData || hasAnalysisData;
               if (!hasAnySection) return null;
 
+              // Default to the first available tab if none is explicitly selected
+              const effectiveSectionTab: typeof activeSectionTab = activeSectionTab ??
+                ((hasOurInnings || hasTheirInnings) ? 'scorecard'
+                  : hasCommentaryData ? 'commentary'
+                  : hasAnalysisData ? 'analysis'
+                  : 'players');
+
               const tabBtnClass = (tab: typeof activeSectionTab) =>
                 `px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 transition-colors border-b-2 ${
-                  activeSectionTab === tab
+                  effectiveSectionTab === tab
                     ? 'border-villageGreen text-villageGreen'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`;
@@ -2028,14 +2035,12 @@ const LiveScorecard: React.FC = () => {
                       )}
                     </div>
                     {/* Tab content */}
-                    {activeSectionTab && (
-                      <div className="px-6 py-6">
-                        {activeSectionTab === 'scorecard' && scorecardContent}
-                        {activeSectionTab === 'commentary' && commentaryContent}
-                        {activeSectionTab === 'analysis' && analysisContent}
-                        {activeSectionTab === 'players' && playerAnalysisContent}
-                      </div>
-                    )}
+                    <div className="px-6 py-6">
+                      {effectiveSectionTab === 'scorecard' && scorecardContent}
+                      {effectiveSectionTab === 'commentary' && commentaryContent}
+                      {effectiveSectionTab === 'analysis' && analysisContent}
+                      {effectiveSectionTab === 'players' && playerAnalysisContent}
+                    </div>
                   </div>
                 </section>
               );
