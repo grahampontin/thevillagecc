@@ -750,10 +750,10 @@ const LiveScorecard: React.FC = () => {
                   return (
                     <span key={idx} className="flex items-center flex-shrink-0">
                       {idx > 0 && <span className="mx-2 text-gray-400">|</span>}
-                      <span className="font-semibold text-gray-700 mr-1">{toOrdinal(overNum)}:</span>
                       {runsThisOver !== undefined && runsThisOver !== null && (
-                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 mx-0.5 bg-green-100 text-green-800">
-                          {runsThisOver}
+                        <span className="inline-flex flex-col items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 mx-0.5 bg-green-100 text-green-800 leading-none">
+                          <span>{runsThisOver}</span>
+                          <span className="text-[9px] font-normal">runs</span>
                         </span>
                       )}
                       {balls.length > 0 ? balls.map((ball, bi) => {
@@ -767,6 +767,7 @@ const LiveScorecard: React.FC = () => {
                           </span>
                         );
                       }) : <span className="text-gray-400">—</span>}
+                      <span className="font-semibold text-gray-700 ml-1">{toOrdinal(overNum)}</span>
                     </span>
                   );
                 })}
