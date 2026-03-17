@@ -1738,10 +1738,13 @@ describe('LiveScorecard', () => {
     });
 
     const oversContainer = screen.getByTestId('horizontal-overs');
-    // Over label should be shown
-    expect(oversContainer.textContent).toMatch(/Ovr 1:/);
+    // Over label should be shown as ordinal (on the RIGHT, no colon)
+    expect(oversContainer.textContent).toMatch(/1st/);
+    // Runs total and "runs" label should be shown (on the LEFT, two lines)
+    expect(oversContainer.textContent).toMatch(/9/);
+    expect(oversContainer.textContent).toMatch(/runs/);
     // Dot ball, four, wicket, wide, six all represented
-    expect(oversContainer.textContent).toMatch(/\./);
+    expect(oversContainer.textContent).toMatch(/[·.]/);
     expect(oversContainer.textContent).toMatch(/4/);
     expect(oversContainer.textContent).toMatch(/W/);
     expect(oversContainer.textContent).toMatch(/Wd/);
@@ -1778,10 +1781,14 @@ describe('LiveScorecard', () => {
     });
 
     const oversContainer = screen.getByTestId('horizontal-overs');
-    // Only overs 3-7 should be shown (last 5 of 7)
-    expect(oversContainer.textContent).not.toMatch(/Ovr 1:/);
-    expect(oversContainer.textContent).not.toMatch(/Ovr 2:/);
-    expect(oversContainer.textContent).toMatch(/Ovr 3:/);
-    expect(oversContainer.textContent).toMatch(/Ovr 7:/);
+    // Only overs 3-7 should be shown (last 5 of 7), displayed newest first
+    // Ordinals are on the right with no colon
+    expect(oversContainer.textContent).not.toMatch(/1st/);
+    expect(oversContainer.textContent).not.toMatch(/2nd/);
+    expect(oversContainer.textContent).toMatch(/3rd/);
+    expect(oversContainer.textContent).toMatch(/7th/);
+    // Runs total and "runs" label for each over should be shown
+    expect(oversContainer.textContent).toMatch(/8/);
+    expect(oversContainer.textContent).toMatch(/runs/);
   });
 });
