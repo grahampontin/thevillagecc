@@ -1043,6 +1043,108 @@ describe('LiveScorecard', () => {
     });
   });
 
+  test('ball blobs in commentary section have correct colours for each ball type', async () => {
+    const withBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 12,
+            wicketsAtEndOfOver: 1,
+            scoreForThisOver: 12,
+            over: {
+              overNumber: 3,
+              bowler: 'T. Bowler',
+              balls: [
+                { ballNumber: 1, amount: 0, thing: '', bowler: 'T. Bowler', batsmanName: 'A. Batter' },        // dot → gray
+                { ballNumber: 2, amount: 4, thing: '', bowler: 'T. Bowler', batsmanName: 'A. Batter' },        // four → blue
+                { ballNumber: 3, amount: 6, thing: '', bowler: 'T. Bowler', batsmanName: 'A. Batter' },        // six → orange
+                { ballNumber: 4, amount: 1, thing: 'wd', bowler: 'T. Bowler', batsmanName: 'A. Batter' },      // wide → yellow
+                { ballNumber: 5, amount: 1, thing: 'nb', bowler: 'T. Bowler', batsmanName: 'A. Batter' },      // no ball → yellow
+                { ballNumber: 6, amount: 0, thing: '', bowler: 'T. Bowler', batsmanName: 'A. Batter', wicket: { description: 'caught' } }, // wicket → red
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
+    await waitFor(() => {
+      const blobContainer = screen.getByLabelText(/Over 3 deliveries/i);
+      const blobs = blobContainer.querySelectorAll('[data-testid="ball-blob"]');
+      // dot ball → gray
+      expect(blobs[0]).toHaveClass('bg-gray-300');
+      // four → blue
+      expect(blobs[1]).toHaveClass('bg-blue-500');
+      expect(blobs[1].textContent).toBe('4');
+      // six → orange
+      expect(blobs[2]).toHaveClass('bg-orange-500');
+      expect(blobs[2].textContent).toBe('6');
+      // wide → yellow
+      expect(blobs[3]).toHaveClass('bg-yellow-400');
+      // no ball → yellow
+      expect(blobs[4]).toHaveClass('bg-yellow-400');
+      // wicket → red
+      expect(blobs[5]).toHaveClass('bg-red-600');
+    });
+  });
+
+  test('ball blobs use isBoundary and isSix flags when amount alone may not identify boundaries', async () => {
+    const withFlaggedBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 10,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 10,
+            over: {
+              overNumber: 4,
+              bowler: 'U. Bowler',
+              balls: [
+                { ballNumber: 1, amount: 4, thing: '', isBoundary: true, isSix: false, bowler: 'U. Bowler', batsmanName: 'B. Batter' },   // four via isBoundary
+                { ballNumber: 2, amount: 6, thing: '', isBoundary: false, isSix: true, bowler: 'U. Bowler', batsmanName: 'B. Batter' },   // six via isSix
+                { ballNumber: 3, amount: 6, thing: '', isBoundary: true, isSix: true, bowler: 'U. Bowler', batsmanName: 'B. Batter' },    // six with both flags set → still orange not blue
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withFlaggedBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
+    await waitFor(() => {
+      const blobContainer = screen.getByLabelText(/Over 4 deliveries/i);
+      const blobs = blobContainer.querySelectorAll('[data-testid="ball-blob"]');
+      // four flagged with isBoundary → blue
+      expect(blobs[0]).toHaveClass('bg-blue-500');
+      expect(blobs[0].textContent).toBe('4');
+      // six flagged with isSix only → orange
+      expect(blobs[1]).toHaveClass('bg-orange-500');
+      expect(blobs[1].textContent).toBe('6');
+      // six flagged with both isBoundary and isSix → still orange (isSix takes precedence)
+      expect(blobs[2]).toHaveClass('bg-orange-500');
+      expect(blobs[2].textContent).toBe('6');
+    });
+  });
+
   test('shows Worm chart tab when completedOvers data is present', async () => {
     const withChartData = {
       ...mockCompletedScorecardData,
@@ -1742,6 +1844,56 @@ describe('LiveScorecard', () => {
     expect(oversContainer.textContent).toMatch(/W/);
     expect(oversContainer.textContent).toMatch(/Wd/);
     expect(oversContainer.textContent).toMatch(/6/);
+  });
+
+  test('ball blobs in horizontal overs section have correct colours for fours, sixes, extras and wickets', async () => {
+    const liveWithOvers = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 9,
+            wicketsAtEndOfOver: 1,
+            scoreForThisOver: 9,
+            over: {
+              overNumber: 1,
+              balls: [
+                { ballNumber: 1, amount: 0, thing: '' },                                    // dot → gray
+                { ballNumber: 2, amount: 4, thing: '' },                                    // four → blue
+                { ballNumber: 3, amount: 1, thing: 'wd' },                                  // wide → yellow
+                { ballNumber: 4, amount: 0, thing: '', wicket: { description: 'out' } },    // wicket → red
+                { ballNumber: 5, amount: 6, thing: '' },                                    // six → orange
+                { ballNumber: 6, amount: 2, thing: 'lb' },                                  // leg bye → gray
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithOvers);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('horizontal-overs')).toBeInTheDocument();
+    });
+
+    const oversContainer = screen.getByTestId('horizontal-overs');
+    const blobs = oversContainer.querySelectorAll('[data-testid="ball-blob"]');
+    // Note: balls are displayed newest-first (reversed), so index 0 is ball 6 (lb), etc.
+    const blobsByLabel: Record<string, Element> = {};
+    blobs.forEach(b => {
+      blobsByLabel[b.textContent ?? ''] = b;
+    });
+    // four → blue
+    expect(blobsByLabel['4']).toHaveClass('bg-blue-500');
+    // six → orange
+    expect(blobsByLabel['6']).toHaveClass('bg-orange-500');
+    // wide → yellow
+    expect(blobsByLabel['Wd']).toHaveClass('bg-yellow-400');
+    // wicket → red
+    expect(blobsByLabel['W']).toHaveClass('bg-red-600');
   });
 
   test('shows up to last 5 overs in horizontal display', async () => {
