@@ -334,7 +334,7 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
     applyPoint(touch.clientX, touch.clientY);
   };
 
-  const ballColor = amount >= 6 ? '#ff0000' : amount >= 4 ? '#0000ff' : '#2196f3';
+  const ballColor = amount >= 6 ? '#f97316' : amount >= 4 ? '#3b82f6' : '#2196f3';
 
   const shotDescription = selectedAngle !== null ? (() => {
     // Mirror angle for left-handed batsman before computing zone
