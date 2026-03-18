@@ -176,8 +176,8 @@ const LiveScorecard: React.FC = () => {
     if (thing === 'nb') return { label: 'Nb', className: 'bg-yellow-400 text-gray-800' };
     if (thing === 'b' || thing === 'lb') return { label: String(amount), className: 'bg-gray-200 text-gray-600' };
     if (amount === 0) return { label: '·', className: 'bg-gray-300 text-gray-600' };
-    if (amount === 4) return { label: '4', className: 'bg-blue-500 text-white' };
-    if (amount === 6) return { label: '6', className: 'bg-orange-500 text-white' };
+    if (ball.isSix || amount === 6) return { label: '6', className: 'bg-orange-500 text-white' };
+    if ((ball.isBoundary && !ball.isSix) || amount === 4) return { label: '4', className: 'bg-blue-500 text-white' };
     return { label: String(amount), className: 'bg-gray-200 text-gray-700' };
   };
 
@@ -751,6 +751,7 @@ const LiveScorecard: React.FC = () => {
                         return (
                           <span
                             key={bi}
+                            data-testid="ball-blob"
                             className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 mx-0.5 ${blob.className}`}
                           >
                             {blob.label}
