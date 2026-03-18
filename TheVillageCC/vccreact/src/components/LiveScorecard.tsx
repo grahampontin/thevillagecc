@@ -615,12 +615,12 @@ const LiveScorecard: React.FC = () => {
     const recentOvers = completedOversForDisplay.slice(-5);
 
     return (
-      <section className="max-w-6xl mx-auto mt-6">
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-6">
-          <h2 className="text-base font-semibold text-gray-800 mb-4">At the Crease</h2>
+      <section className="max-w-6xl mx-auto mt-2 sm:mt-6">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-4 sm:px-6 py-4 sm:py-6">
+          <h2 className="text-base font-semibold text-gray-800 mb-3 sm:mb-4">At the Crease</h2>
 
           {hasAtCrease && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3 sm:mb-4">
               {(data.onStrikeBatsman || data.otherBatsman) && (
                 <div>
                   <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Batting</h3>
@@ -775,9 +775,9 @@ const LiveScorecard: React.FC = () => {
 
       <main>
         {/* Hero Match Card */}
-        <section className="bg-white border border-gray-200 rounded-xl shadow-sm max-w-6xl mx-auto mt-6 px-6 py-6">
+        <section className="bg-white border border-gray-200 rounded-xl shadow-sm max-w-6xl mx-auto mt-2 sm:mt-6 px-4 sm:px-6 py-3 sm:py-5">
           {/* Match meta */}
-          <p className="text-center text-xs text-gray-500 mb-5">
+          <p className="text-center text-xs text-gray-500 mb-2 sm:mb-4">
             {scorecardData.matchData?.type || (data.declarationGame ? 'Declaration' : `${data.overs}-over match`)}
             {' · '}
             {scorecardData.result?.venueName || scorecardData.matchData?.venue?.name || 'TBC'}
@@ -788,16 +788,16 @@ const LiveScorecard: React.FC = () => {
           <div className="flex flex-row items-center justify-between gap-2 sm:gap-6">
             {/* Left team */}
             {oppositionIsHomeTeam ? (
-              <div className="flex flex-col items-center gap-2 min-w-0 flex-1 text-center">
-                {oppositionIcon('h-12 w-12 sm:h-16 sm:w-16')}
+              <div className="flex flex-col items-center gap-1 sm:gap-2 min-w-0 flex-1 text-center">
+                {oppositionIcon('h-9 w-9 sm:h-14 sm:w-14')}
                 <h1 className="text-xs sm:text-base font-semibold">{data.opposition}</h1>
-                {theirScoreDisplay && <p className="text-2xl sm:text-3xl font-bold">{theirScoreDisplay}</p>}
+                {theirScoreDisplay && <p className="text-xl sm:text-3xl font-bold">{theirScoreDisplay}</p>}
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-2 min-w-0 flex-1 text-center">
-                {villageIcon('h-12 w-12 sm:h-16 sm:w-16')}
+              <div className="flex flex-col items-center gap-1 sm:gap-2 min-w-0 flex-1 text-center">
+                {villageIcon('h-9 w-9 sm:h-14 sm:w-14')}
                 <h1 className="text-xs sm:text-base font-semibold">The Village CC</h1>
-                {ourScoreDisplay && <p className="text-2xl sm:text-3xl font-bold">{ourScoreDisplay}</p>}
+                {ourScoreDisplay && <p className="text-xl sm:text-3xl font-bold">{ourScoreDisplay}</p>}
               </div>
             )}
 
@@ -834,22 +834,22 @@ const LiveScorecard: React.FC = () => {
 
             {/* Right team */}
             {oppositionIsHomeTeam ? (
-              <div className="flex flex-col items-center gap-2 min-w-0 flex-1 text-center">
-                {villageIcon('h-12 w-12 sm:h-16 sm:w-16')}
+              <div className="flex flex-col items-center gap-1 sm:gap-2 min-w-0 flex-1 text-center">
+                {villageIcon('h-9 w-9 sm:h-14 sm:w-14')}
                 <h1 className="text-xs sm:text-base font-semibold">The Village CC</h1>
-                {ourScoreDisplay && <p className="text-2xl sm:text-3xl font-bold">{ourScoreDisplay}</p>}
+                {ourScoreDisplay && <p className="text-xl sm:text-3xl font-bold">{ourScoreDisplay}</p>}
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-2 min-w-0 flex-1 text-center">
-                {oppositionIcon('h-12 w-12 sm:h-16 sm:w-16')}
+              <div className="flex flex-col items-center gap-1 sm:gap-2 min-w-0 flex-1 text-center">
+                {oppositionIcon('h-9 w-9 sm:h-14 sm:w-14')}
                 <h1 className="text-xs sm:text-base font-semibold">{data.opposition}</h1>
-                {theirScoreDisplay && <p className="text-2xl sm:text-3xl font-bold">{theirScoreDisplay}</p>}
+                {theirScoreDisplay && <p className="text-xl sm:text-3xl font-bold">{theirScoreDisplay}</p>}
               </div>
             )}
           </div>
 
           {/* Toss info */}
-          <p className="mt-4 text-center text-xs text-gray-500">
+          <p className="mt-2 sm:mt-3 text-center text-xs text-gray-500">
             {data.wonToss ? 'The Village CC' : data.opposition} won the toss and elected to {data.tossWinnerBatted ? 'bat' : 'field'}
           </p>
         </section>
@@ -963,30 +963,30 @@ const LiveScorecard: React.FC = () => {
               };
 
               return (
-                <section className="max-w-6xl mx-auto mt-6">
+                <section className="max-w-6xl mx-auto mt-4">
+                  <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
                   <button
                     type="button"
-                    className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
+                    className="w-full flex justify-between items-center px-4 py-3 text-left"
                     onClick={() => setAnalysisExpanded(prev => !prev)}
                     aria-expanded={analysisExpanded}
                   >
-                    <span className="text-base font-semibold text-gray-800">Team Analysis</span>
+                    <span className="text-sm font-semibold text-gray-700">Team Analysis</span>
                     <svg
-                      className={`w-5 h-5 text-gray-500 transition-transform ${analysisExpanded ? 'rotate-180' : ''}`}
+                      className={`w-4 h-4 text-gray-400 transition-transform ${analysisExpanded ? 'rotate-180' : ''}`}
                       fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
                   {analysisExpanded && (
-                    <>
-                      <div className="flex gap-2 mt-3 mb-3 flex-wrap">
+                    <div className="border-t border-gray-100 px-4 py-4">
+                      <div className="flex gap-2 mb-3 flex-wrap">
                         {ourOvers.length > 0 && tabBtn('worm', 'Worm')}
                         {ourOvers.length > 0 && tabBtn('manhattan', 'Manhattan')}
                         {partnerships.length > 0 && tabBtn('partnerships', 'Partnerships')}
                         {wagonWheelBalls.length > 0 && tabBtn('wagon', 'Wagon Wheel')}
                       </div>
-                      <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
                     {activeAnalysisTab === 'worm' && ourOvers.length > 0 && (
                       <Line data={wormData} options={chartOptions} />
                     )}
@@ -1081,7 +1081,7 @@ const LiveScorecard: React.FC = () => {
                       });
 
                       const ballColor = (score: number) =>
-                        score >= 6 ? '#ff0000' : score >= 4 ? '#0000ff' : '#ffdd00';
+                        score >= 6 ? '#f97316' : score >= 4 ? '#3b82f6' : '#ffdd00';
 
                       const keyY = svgH - 30;
 
@@ -1106,16 +1106,16 @@ const LiveScorecard: React.FC = () => {
                           })}
                           <line x1={10} y1={keyY} x2={50} y2={keyY} stroke="#ffdd00" strokeWidth={4} />
                           <text x={55} y={keyY + 4} fontSize={13} fill="#333">Runs</text>
-                          <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#0000ff" strokeWidth={4} />
+                          <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#3b82f6" strokeWidth={4} />
                           <text x={155} y={keyY + 4} fontSize={13} fill="#333">Fours</text>
-                          <line x1={215} y1={keyY} x2={255} y2={keyY} stroke="#ff0000" strokeWidth={4} />
+                          <line x1={215} y1={keyY} x2={255} y2={keyY} stroke="#f97316" strokeWidth={4} />
                           <text x={260} y={keyY + 4} fontSize={13} fill="#333">Sixes</text>
                         </svg>
                       );
                     })()}
-                      </div>
-                    </>
+                    </div>
                   )}
+                  </div>
                 </section>
               );
             })()}
@@ -1198,24 +1198,25 @@ const LiveScorecard: React.FC = () => {
               );
 
               return (
-                <section className="max-w-6xl mx-auto mt-6">
+                <section className="max-w-6xl mx-auto mt-4">
+                  <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
                   <button
                     type="button"
-                    className="w-full flex justify-between items-center bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 text-left"
+                    className="w-full flex justify-between items-center px-4 py-3 text-left"
                     onClick={() => setPlayerAnalysisExpanded(prev => !prev)}
                     aria-expanded={playerAnalysisExpanded}
                   >
-                    <span className="text-base font-semibold text-gray-800">Player Analysis</span>
+                    <span className="text-sm font-semibold text-gray-700">Player Analysis</span>
                     <svg
-                      className={`w-5 h-5 text-gray-500 transition-transform ${playerAnalysisExpanded ? 'rotate-180' : ''}`}
+                      className={`w-4 h-4 text-gray-400 transition-transform ${playerAnalysisExpanded ? 'rotate-180' : ''}`}
                       fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
                   {playerAnalysisExpanded && (
-                    <>
-                      <div className="flex gap-2 mt-3 mb-3 flex-wrap items-center">
+                    <div className="border-t border-gray-100 px-4 py-4">
+                      <div className="flex gap-2 mb-3 flex-wrap items-center">
                         {players.map(player => (
                           <button
                             key={player.id}
@@ -1259,15 +1260,14 @@ const LiveScorecard: React.FC = () => {
                           </button>
                         )}
                       </div>
-                      <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4">
-                        <p className="text-sm font-semibold text-gray-700 mb-3">{selectedPlayer.name}</p>
-                        {activePlayerAnalysisTab === 'worm' && playerWormPoints.length > 0 && (
-                          <Line data={playerWormData} options={playerWormOptions} />
-                        )}
-                        {activePlayerAnalysisTab === 'worm' && playerWormPoints.length === 0 && (
-                          <p className="text-sm text-gray-500">No ball-by-ball data available for this player.</p>
-                        )}
-                        {activePlayerAnalysisTab === 'wagon' && (() => {
+                      <p className="text-sm font-semibold text-gray-700 mb-3">{selectedPlayer.name}</p>
+                      {activePlayerAnalysisTab === 'worm' && playerWormPoints.length > 0 && (
+                        <Line data={playerWormData} options={playerWormOptions} />
+                      )}
+                      {activePlayerAnalysisTab === 'worm' && playerWormPoints.length === 0 && (
+                        <p className="text-sm text-gray-500">No ball-by-ball data available for this player.</p>
+                      )}
+                      {activePlayerAnalysisTab === 'wagon' && (() => {
                           const svgW = 500;
                           const svgH = 420;
                           const fieldCx = svgW / 2;
@@ -1301,7 +1301,7 @@ const LiveScorecard: React.FC = () => {
                           });
 
                           const ballColor = (score: number) =>
-                            score >= 6 ? '#ff0000' : score >= 4 ? '#0000ff' : '#ffdd00';
+                            score >= 6 ? '#f97316' : score >= 4 ? '#3b82f6' : '#ffdd00';
 
                           const keyY = svgH - 30;
 
@@ -1326,16 +1326,16 @@ const LiveScorecard: React.FC = () => {
                               })}
                               <line x1={10} y1={keyY} x2={50} y2={keyY} stroke="#ffdd00" strokeWidth={4} />
                               <text x={55} y={keyY + 4} fontSize={13} fill="#333">Runs</text>
-                              <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#0000ff" strokeWidth={4} />
+                              <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#3b82f6" strokeWidth={4} />
                               <text x={155} y={keyY + 4} fontSize={13} fill="#333">Fours</text>
-                              <line x1={215} y1={keyY} x2={255} y2={keyY} stroke="#ff0000" strokeWidth={4} />
+                              <line x1={215} y1={keyY} x2={255} y2={keyY} stroke="#f97316" strokeWidth={4} />
                               <text x={260} y={keyY + 4} fontSize={13} fill="#333">Sixes</text>
                             </svg>
                           );
-                        })()}
-                      </div>
-                    </>
+                      })()}
+                    </div>
                   )}
+                  </div>
                 </section>
               );
             })()}
@@ -1746,7 +1746,7 @@ const LiveScorecard: React.FC = () => {
                       });
 
                       const ballColor = (score: number) =>
-                        score >= 6 ? '#ff0000' : score >= 4 ? '#0000ff' : '#ffdd00';
+                        score >= 6 ? '#f97316' : score >= 4 ? '#3b82f6' : '#ffdd00';
 
                       const keyY = svgH - 30;
 
@@ -1771,9 +1771,9 @@ const LiveScorecard: React.FC = () => {
                           })}
                           <line x1={10} y1={keyY} x2={50} y2={keyY} stroke="#ffdd00" strokeWidth={4} />
                           <text x={55} y={keyY + 4} fontSize={13} fill="#333">Runs</text>
-                          <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#0000ff" strokeWidth={4} />
+                          <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#3b82f6" strokeWidth={4} />
                           <text x={155} y={keyY + 4} fontSize={13} fill="#333">Fours</text>
-                          <line x1={215} y1={keyY} x2={255} y2={keyY} stroke="#ff0000" strokeWidth={4} />
+                          <line x1={215} y1={keyY} x2={255} y2={keyY} stroke="#f97316" strokeWidth={4} />
                           <text x={260} y={keyY + 4} fontSize={13} fill="#333">Sixes</text>
                         </svg>
                       );
@@ -1947,7 +1947,7 @@ const LiveScorecard: React.FC = () => {
                       });
 
                       const ballColor = (score: number) =>
-                        score >= 6 ? '#ff0000' : score >= 4 ? '#0000ff' : '#ffdd00';
+                        score >= 6 ? '#f97316' : score >= 4 ? '#3b82f6' : '#ffdd00';
 
                       const keyY = svgH - 30;
 
@@ -1972,9 +1972,9 @@ const LiveScorecard: React.FC = () => {
                           })}
                           <line x1={10} y1={keyY} x2={50} y2={keyY} stroke="#ffdd00" strokeWidth={4} />
                           <text x={55} y={keyY + 4} fontSize={13} fill="#333">Runs</text>
-                          <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#0000ff" strokeWidth={4} />
+                          <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#3b82f6" strokeWidth={4} />
                           <text x={155} y={keyY + 4} fontSize={13} fill="#333">Fours</text>
-                          <line x1={215} y1={keyY} x2={255} y2={keyY} stroke="#ff0000" strokeWidth={4} />
+                          <line x1={215} y1={keyY} x2={255} y2={keyY} stroke="#f97316" strokeWidth={4} />
                           <text x={260} y={keyY + 4} fontSize={13} fill="#333">Sixes</text>
                         </svg>
                       );
