@@ -94,6 +94,7 @@ const SearchableSelect: React.FC<Props> = ({
           type="text"
           role="combobox"
           aria-expanded="true"
+          aria-controls={`${id}-listbox`}
           aria-autocomplete="list"
           value={filter}
           onChange={e => setFilter(e.target.value)}
@@ -132,6 +133,7 @@ const SearchableSelect: React.FC<Props> = ({
 
       {isOpen && (
         <ul
+          id={`${id}-listbox`}
           role="listbox"
           className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto text-sm"
         >

@@ -181,15 +181,6 @@ const LiveScorecard: React.FC = () => {
     return { label: String(amount), className: 'bg-gray-200 text-gray-700' };
   };
 
-  const getBallChar = (ball: BallV1): string => {
-    if (ball.wicket) return 'W';
-    const thing = ball.thing ?? '';
-    const amount = ball.amount ?? 0;
-    if (thing === 'wd') return 'Wd';
-    if (thing === 'nb') return 'Nb';
-    return amount === 0 ? '.' : String(amount);
-  };
-
   const formatBattingStats = (
     score: number | undefined,
     details: { balls?: number; fours?: number; sixes?: number; strikeRate?: number } | null | undefined
