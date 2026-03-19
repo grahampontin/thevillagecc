@@ -1764,7 +1764,7 @@ describe('LiveScorecard', () => {
       ...mockLiveScorecardData,
       inPlayData: {
         ...mockLiveScorecardData.inPlayData,
-        onStrikeBatsman: { name: 'OnStrikeBatter', score: 34, balls: 28, fours: 4, sixes: 1, strikeRate: 121.4 },
+        onStrikeBatsman: { name: 'OnStrikeBatter', score: 34, balls: 28, fours: 4, sixes: 1, strikeRate: 121.4, playerId: 5 },
       },
     };
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithBatsmen);
@@ -1776,8 +1776,14 @@ describe('LiveScorecard', () => {
       expect(screen.getByText('OnStrikeBatter')).toBeInTheDocument();
     });
 
-    // There is no "Scorecards" collapsible button for live matches
-    expect(screen.queryByRole('button', { name: /^Scorecards$/i })).not.toBeInTheDocument();
+    // A "Scorecards" collapsible button is now shown for live matches too
+    expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
+
+    // Expanding it shows batting content (batsman appears in At the Crease and Scorecards sections)
+    fireEvent.click(screen.getByRole('button', { name: /^Scorecards$/i }));
+    await waitFor(() => {
+      expect(screen.getAllByText('OnStrikeBatter').length).toBeGreaterThanOrEqual(2);
+    });
   });
 
   test('section order for completed match: Match Report, Scorecards, Commentary, Analysis', async () => {
@@ -1823,7 +1829,7 @@ describe('LiveScorecard', () => {
     expect(commentaryBtn.compareDocumentPosition(teamAnalysisBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  test('section order for live match: At the Crease, Commentary, Analysis (no Match Report)', async () => {
+  test('section order for live match: At the Crease, Scorecards, Commentary, Analysis (no Match Report)', async () => {
     const liveWithCommentary = {
       ...mockLiveScorecardData,
       inPlayData: {
@@ -1845,17 +1851,21 @@ describe('LiveScorecard', () => {
       expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
     });
 
-    // No Match Report or Scorecards button for live matches
+    // No Match Report for live matches
     expect(screen.queryByRole('button', { name: /^Match Report$/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /^Scorecards$/i })).not.toBeInTheDocument();
+
+    // Scorecards collapsible IS present for live matches
+    expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
 
     // At the Crease section is always visible (has the horizontal overs display)
     expect(screen.getByTestId('horizontal-overs')).toBeInTheDocument();
 
-    // Commentary comes after the At the Crease section
+    // Scorecards comes after At the Crease, Commentary comes after Scorecards
     const atTheCreaseEl = screen.getByTestId('horizontal-overs');
+    const scorecardsBtn = screen.getByRole('button', { name: /^Scorecards$/i });
     const commentaryBtn = screen.getByRole('button', { name: /Over-by-over Commentary/i });
-    expect(atTheCreaseEl.compareDocumentPosition(commentaryBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(atTheCreaseEl.compareDocumentPosition(scorecardsBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(scorecardsBtn.compareDocumentPosition(commentaryBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   test('shows horizontal overs display in At the Crease section for live match', async () => {
@@ -1996,5 +2006,233 @@ describe('LiveScorecard', () => {
     // Runs total should be shown as (8) format for each over
     expect(oversContainer.textContent).toMatch(/8/);
     expect(oversContainer.textContent).toMatch(/\(8\)/);
+  });
+
+  test('shows placeholder for VCC innings when ourInningsStatus is NotStarted', async () => {
+    const notStarted = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        ourInningsStatus: 'NotStarted',
+        theirInningsStatus: 'InProgress',
+        theirScore: 80,
+        theirWickets: 3,
+        theirOver: 15,
+      },
+    };
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(notStarted);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /^Scorecards$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/The Village CC innings has not yet started/i)).toBeInTheDocument();
+    });
+  });
+
+  test('shows placeholder for opposition innings when theirInningsStatus is NotStarted', async () => {
+    const ourInningsOnly = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        ourInningsStatus: 'InProgress',
+        theirInningsStatus: 'NotStarted',
+        score: 120,
+        wickets: 4,
+        opposition: 'Test Oppo',
+      },
+    };
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(ourInningsOnly);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /^Scorecards$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Test Oppo innings has not yet started/i)).toBeInTheDocument();
+    });
+  });
+
+  test('shows batting rows in live scorecard from completed overs ball-by-ball data', async () => {
+    const liveWithBalls = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        ourInningsStatus: 'InProgress',
+        theirInningsStatus: 'NotStarted',
+        score: 25,
+        wickets: 0,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 10,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 10,
+            over: {
+              overNumber: 1,
+              balls: [
+                { ballNumber: 1, amount: 4, thing: '', batsman: 1, batsmanName: 'Alice', isBoundary: true },
+                { ballNumber: 2, amount: 0, thing: '', batsman: 2, batsmanName: 'Bob' },
+                { ballNumber: 3, amount: 6, thing: '', batsman: 1, batsmanName: 'Alice', isSix: true },
+              ],
+            },
+          },
+        ],
+      },
+    };
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /^Scorecards$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Alice')).toBeInTheDocument();
+      expect(screen.getByText('Bob')).toBeInTheDocument();
+    });
+  });
+
+  test('shows fall of wickets in live scorecard when fallOfWickets data is present', async () => {
+    const liveWithFoW = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        ourInningsStatus: 'InProgress',
+        theirInningsStatus: 'NotStarted',
+        fallOfWickets: [
+          {
+            wicketNumber: 1,
+            teamScore: 45,
+            overAsString: '8.3',
+            outgoingPlayerName: 'Charlie',
+          },
+        ],
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 45,
+            wicketsAtEndOfOver: 1,
+            scoreForThisOver: 8,
+            over: {
+              overNumber: 8,
+              balls: [
+                { ballNumber: 3, amount: 0, thing: '', batsman: 3, batsmanName: 'Charlie', wicket: { playerName: 'Charlie' } },
+              ],
+            },
+          },
+        ],
+      },
+    };
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithFoW);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /^Scorecards$/i }));
+
+    await waitFor(() => {
+      // FoW should display "45-1 (Charlie, 8.3)"
+      expect(screen.getByText(/Fall of Wickets/i)).toBeInTheDocument();
+      expect(screen.getByText(/45-1/)).toBeInTheDocument();
+    });
+  });
+
+  test('shows bowling rows in live scorecard from liveBowlingCard data', async () => {
+    const liveWithBowling = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        ourInningsStatus: 'InProgress',
+        theirInningsStatus: 'NotStarted',
+        liveBowlingCard: [
+          {
+            name: 'Dave Bowler',
+            details: { overs: 5, maidens: 1, runs: 22, wickets: 2, economy: 4.4 },
+          },
+          {
+            name: 'Eve Bowler',
+            details: { overs: 4, maidens: 0, runs: 30, wickets: 1, economy: 7.5 },
+          },
+        ],
+      },
+    };
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithBowling);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /^Scorecards$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Dave Bowler')).toBeInTheDocument();
+      expect(screen.getByText('Eve Bowler')).toBeInTheDocument();
+    });
+  });
+
+  test('live scorecard shows opposition innings summary when their innings is in progress', async () => {
+    const liveBothInnings = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        ourInningsStatus: 'Completed',
+        theirInningsStatus: 'InProgress',
+        score: 180,
+        wickets: 8,
+        theirScore: 95,
+        theirWickets: 4,
+        theirOver: 20,
+        opposition: 'Rival Club',
+      },
+    };
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveBothInnings);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /^Scorecards$/i }));
+
+    // Both innings tabs should show
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /The Village CC Innings/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Rival Club Innings/i })).toBeInTheDocument();
+    });
+
+    // Switch to their innings
+    fireEvent.click(screen.getByRole('button', { name: /Rival Club Innings/i }));
+    await waitFor(() => {
+      // The opposition score summary should show their score (may appear in hero + scorecard)
+      expect(screen.getAllByText('95/4').length).toBeGreaterThan(0);
+    });
+  });
+
+  test('completed match never shows in-play Scorecards section alongside formal scorecard', async () => {
+    // When match is completed, only the formal tab-based scorecard section is shown
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      // Formal Scorecards tab appears
+      expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
+    });
+
+    // There should be exactly one Scorecards button (the formal one in the tab bar)
+    expect(screen.getAllByRole('button', { name: /^Scorecards$/i })).toHaveLength(1);
+
+    // The formal scorecard is in a tab layout (Match Report heading visible)
+    expect(screen.getByText(/^Match Report$/i)).toBeInTheDocument();
   });
 });
