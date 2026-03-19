@@ -172,9 +172,10 @@ const LiveScorecard: React.FC = () => {
     if (ball.wicket) return { label: 'W', className: 'bg-red-600 text-white' };
     const thing = ball.thing ?? '';
     const amount = ball.amount ?? 0;
-    if (thing === 'wd') return { label: 'Wd', className: 'bg-yellow-400 text-gray-800' };
-    if (thing === 'nb') return { label: 'Nb', className: 'bg-yellow-400 text-gray-800' };
-    if (thing === 'b' || thing === 'lb') return { label: String(amount), className: 'bg-gray-200 text-gray-600' };
+    if (thing === 'wd') return { label: amount > 1 ? `${amount}Wd` : 'Wd', className: 'bg-yellow-400 text-gray-800' };
+    if (thing === 'nb') return { label: amount > 1 ? `${amount}Nb` : 'Nb', className: 'bg-yellow-400 text-gray-800' };
+    if (thing === 'b') return { label: amount > 1 ? `${amount}B` : 'B', className: 'bg-yellow-400 text-gray-800' };
+    if (thing === 'lb') return { label: amount > 1 ? `${amount}Lb` : 'Lb', className: 'bg-yellow-400 text-gray-800' };
     if (amount === 0) return { label: '·', className: 'bg-gray-300 text-gray-600' };
     if (ball.isSix || amount === 6) return { label: '6', className: 'bg-orange-500 text-white' };
     if ((ball.isBoundary && !ball.isSix) || amount === 4) return { label: '4', className: 'bg-blue-500 text-white' };
@@ -519,7 +520,7 @@ const LiveScorecard: React.FC = () => {
                                 <div className="flex items-center gap-2">
                                   <span
                                     data-testid="ball-blob"
-                                    className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 ${blob.className}`}
+                                    className={`inline-flex items-center justify-center w-7 h-7 rounded-full ${blob.label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold flex-shrink-0 ${blob.className}`}
                                   >
                                     {blob.label}
                                   </span>
@@ -752,7 +753,7 @@ const LiveScorecard: React.FC = () => {
                           <span
                             key={bi}
                             data-testid="ball-blob"
-                            className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 mx-0.5 ${blob.className}`}
+                            className={`inline-flex items-center justify-center w-7 h-7 rounded-full ${blob.label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold flex-shrink-0 mx-0.5 ${blob.className}`}
                           >
                             {blob.label}
                           </span>
@@ -1484,7 +1485,7 @@ const LiveScorecard: React.FC = () => {
                                       <div className="flex items-center gap-2">
                                         <span
                                           data-testid="ball-blob"
-                                          className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0 ${blob.className}`}
+                                          className={`inline-flex items-center justify-center w-7 h-7 rounded-full ${blob.label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold flex-shrink-0 ${blob.className}`}
                                         >
                                           {blob.label}
                                         </span>
