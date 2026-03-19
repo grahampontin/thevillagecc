@@ -1098,6 +1098,65 @@ describe('LiveScorecard', () => {
     });
   });
 
+  test('ball blobs show byes and leg byes as yellow and include runs when > 1', async () => {
+    const withByeBalls = {
+      ...mockCompletedScorecardData,
+      inPlayData: {
+        ...mockCompletedScorecardData.inPlayData,
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 10,
+            wicketsAtEndOfOver: 0,
+            scoreForThisOver: 10,
+            over: {
+              overNumber: 5,
+              bowler: 'T. Bowler',
+              balls: [
+                { ballNumber: 1, amount: 1, thing: 'b', bowler: 'T. Bowler', batsmanName: 'A. Batter' },       // bye (1) → yellow 'B'
+                { ballNumber: 2, amount: 4, thing: 'b', bowler: 'T. Bowler', batsmanName: 'A. Batter' },       // bye (4) → yellow '4B'
+                { ballNumber: 3, amount: 1, thing: 'lb', bowler: 'T. Bowler', batsmanName: 'A. Batter' },      // leg bye (1) → yellow 'Lb'
+                { ballNumber: 4, amount: 3, thing: 'lb', bowler: 'T. Bowler', batsmanName: 'A. Batter' },      // leg bye (3) → yellow '3Lb'
+                { ballNumber: 5, amount: 5, thing: 'wd', bowler: 'T. Bowler', batsmanName: 'A. Batter' },      // wide (5) → yellow '5Wd'
+                { ballNumber: 6, amount: 2, thing: 'nb', bowler: 'T. Bowler', batsmanName: 'A. Batter' },      // no ball (2) → yellow '2Nb'
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(withByeBalls);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Over-by-over Commentary/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Over-by-over Commentary/i }));
+
+    await waitFor(() => {
+      const blobContainer = screen.getByLabelText(/Over 5 deliveries/i);
+      const blobs = blobContainer.querySelectorAll('[data-testid="ball-blob"]');
+      // bye (1) → yellow, label 'B'
+      expect(blobs[0]).toHaveClass('bg-yellow-400');
+      expect(blobs[0].textContent).toBe('B');
+      // bye (4) → yellow, label '4B'
+      expect(blobs[1]).toHaveClass('bg-yellow-400');
+      expect(blobs[1].textContent).toBe('4B');
+      // leg bye (1) → yellow, label 'Lb'
+      expect(blobs[2]).toHaveClass('bg-yellow-400');
+      expect(blobs[2].textContent).toBe('Lb');
+      // leg bye (3) → yellow, label '3Lb'
+      expect(blobs[3]).toHaveClass('bg-yellow-400');
+      expect(blobs[3].textContent).toBe('3Lb');
+      // wide (5) → yellow, label '5Wd'
+      expect(blobs[4]).toHaveClass('bg-yellow-400');
+      expect(blobs[4].textContent).toBe('5Wd');
+      // no ball (2) → yellow, label '2Nb'
+      expect(blobs[5]).toHaveClass('bg-yellow-400');
+      expect(blobs[5].textContent).toBe('2Nb');
+    });
+  });
+
   test('ball blobs use isBoundary and isSix flags when amount alone may not identify boundaries', async () => {
     const withFlaggedBalls = {
       ...mockCompletedScorecardData,
@@ -1864,7 +1923,7 @@ describe('LiveScorecard', () => {
                 { ballNumber: 3, amount: 1, thing: 'wd' },                                  // wide → yellow
                 { ballNumber: 4, amount: 0, thing: '', wicket: { description: 'out' } },    // wicket → red
                 { ballNumber: 5, amount: 6, thing: '' },                                    // six → orange
-                { ballNumber: 6, amount: 2, thing: 'lb' },                                  // leg bye → gray
+                { ballNumber: 6, amount: 2, thing: 'lb' },                                  // leg bye → yellow
               ],
             },
           },
@@ -1892,6 +1951,8 @@ describe('LiveScorecard', () => {
     expect(blobsByLabel['6']).toHaveClass('bg-orange-500');
     // wide → yellow
     expect(blobsByLabel['Wd']).toHaveClass('bg-yellow-400');
+    // leg bye (2 runs) → yellow with label '2Lb'
+    expect(blobsByLabel['2Lb']).toHaveClass('bg-yellow-400');
     // wicket → red
     expect(blobsByLabel['W']).toHaveClass('bg-red-600');
   });

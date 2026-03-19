@@ -154,9 +154,10 @@ function shouldSwitchStriker(ball: LocalBall): boolean {
 
 function getBallLabel(ball: LocalBall): { label: string; className: string } {
   if (ball.wicket) return { label: 'W', className: 'bg-red-600 text-white' };
-  if (ball.thing === 'wd') return { label: 'Wd', className: 'bg-yellow-400 text-gray-800' };
-  if (ball.thing === 'nb') return { label: 'Nb', className: 'bg-yellow-400 text-gray-800' };
-  if (ball.thing === 'b' || ball.thing === 'lb') return { label: String(ball.amount), className: 'bg-gray-200 text-gray-600' };
+  if (ball.thing === 'wd') return { label: ball.amount > 1 ? `${ball.amount}Wd` : 'Wd', className: 'bg-yellow-400 text-gray-800' };
+  if (ball.thing === 'nb') return { label: ball.amount > 1 ? `${ball.amount}Nb` : 'Nb', className: 'bg-yellow-400 text-gray-800' };
+  if (ball.thing === 'b') return { label: ball.amount > 1 ? `${ball.amount}B` : 'B', className: 'bg-yellow-400 text-gray-800' };
+  if (ball.thing === 'lb') return { label: ball.amount > 1 ? `${ball.amount}Lb` : 'Lb', className: 'bg-yellow-400 text-gray-800' };
   if (ball.amount === 0) return { label: '·', className: 'bg-gray-300 text-gray-600' };
   if (ball.amount === 4) return { label: '4', className: 'bg-blue-500 text-white' };
   if (ball.amount === 6) return { label: '6', className: 'bg-orange-500 text-white' };
@@ -1718,7 +1719,7 @@ const LiveScoring: React.FC = () => {
                 return (
                   <div
                     key={i}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${className}`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold flex-shrink-0 ${className}`}
                   >
                     {label}
                   </div>
