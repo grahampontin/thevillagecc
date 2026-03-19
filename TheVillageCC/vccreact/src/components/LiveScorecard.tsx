@@ -38,6 +38,7 @@ const LiveScorecard: React.FC = () => {
   const [activeCommentaryTab, setActiveCommentaryTab] = useState<'vcc' | 'oppo'>('vcc');
   const [activeAnalysisTab, setActiveAnalysisTab] = useState<'worm' | 'manhattan' | 'partnerships' | 'wagon'>('worm');
   const [commentaryExpanded, setCommentaryExpanded] = useState(false);
+  const [scorecardExpanded, setScorecardExpanded] = useState(false);
   const [analysisExpanded, setAnalysisExpanded] = useState(false);
   const [playerAnalysisExpanded, setPlayerAnalysisExpanded] = useState(false);
   const [activeSectionTab, setActiveSectionTab] = useState<'scorecard' | 'commentary' | 'analysis' | 'players' | null>(null);
@@ -582,6 +583,313 @@ const LiveScorecard: React.FC = () => {
     </section>
   ) : null;
 
+  // In-play scorecard section for live matches — collapsible, shown below "At the Crease"
+  const inPlayScorecardSection = (() => {
+    if (!live) return null;
+
+    const ourStatus = data.ourInningsStatus;
+    const theirStatus = data.theirInningsStatus;
+
+    // Build aggregated batting stats from completed overs ball-by-ball data
+    const buildInPlayBattingRows = () => {
+      const completedOvers = data.completedOvers ?? [];
+      type BatsmanRow = {
+        id: number; name: string; runs: number; balls: number;
+        fours: number; sixes: number; isOut: boolean; battingOrder: number;
+      };
+      const batsmenMap = new Map<number, BatsmanRow>();
+      let orderCounter = 0;
+
+      completedOvers.forEach(over => {
+        over.over?.balls?.forEach(ball => {
+          if (ball.batsman == null) return;
+          if (!batsmenMap.has(ball.batsman)) {
+            batsmenMap.set(ball.batsman, {
+              id: ball.batsman,
+              name: ball.batsmanName ?? `Batsman ${orderCounter + 1}`,
+              runs: 0, balls: 0, fours: 0, sixes: 0,
+              isOut: false, battingOrder: orderCounter++,
+            });
+          }
+          const entry = batsmenMap.get(ball.batsman)!;
+          const thing = ball.thing ?? '';
+          // Balls faced: everything except wides
+          if (thing !== 'wd') entry.balls++;
+          // Bat runs: normal deliveries and no-balls (no-ball penalty = 1 run, so bat runs = total - 1)
+          if (thing === '' || thing === 'nb') {
+            const batRuns = thing === 'nb' ? Math.max(0, (ball.amount ?? 0) - 1) : (ball.amount ?? 0);
+            entry.runs += batRuns;
+            // Prefer isSix/isBoundary flags; fall back to run count
+            if (ball.isSix || batRuns >= 6) entry.sixes++;
+            else if ((ball.isBoundary && !ball.isSix) || batRuns === 4) entry.fours++;
+          }
+          if (ball.wicket) entry.isOut = true;
+        });
+      });
+
+      // Override current batsmen with live aggregated stats (these include the current in-progress over)
+      const updateWithLiveBatsman = (liveBatsman: NonNullable<typeof data.onStrikeBatsman>) => {
+        if (liveBatsman.playerId == null) return;
+        const existing = batsmenMap.get(liveBatsman.playerId);
+        if (existing) {
+          existing.runs = liveBatsman.score ?? existing.runs;
+          existing.balls = liveBatsman.balls ?? existing.balls;
+          existing.fours = liveBatsman.fours ?? existing.fours;
+          existing.sixes = liveBatsman.sixes ?? existing.sixes;
+        } else {
+          // Batsman appeared in the current (incomplete) over — add them
+          batsmenMap.set(liveBatsman.playerId, {
+            id: liveBatsman.playerId,
+            name: liveBatsman.name ?? 'Unknown',
+            runs: liveBatsman.score ?? 0,
+            balls: liveBatsman.balls ?? 0,
+            fours: liveBatsman.fours ?? 0,
+            sixes: liveBatsman.sixes ?? 0,
+            isOut: false,
+            battingOrder: orderCounter++,
+          });
+        }
+      };
+
+      if (data.onStrikeBatsman) updateWithLiveBatsman(data.onStrikeBatsman);
+      if (data.otherBatsman) updateWithLiveBatsman(data.otherBatsman);
+
+      return Array.from(batsmenMap.values()).sort((a, b) => a.battingOrder - b.battingOrder);
+    };
+
+    const battingRows = (ourStatus === 'InProgress' || ourStatus === 'Completed') ? buildInPlayBattingRows() : [];
+
+    // Bowling rows: use liveBowlingCard (all bowlers) or fall back to bowlerOneDetails/bowlerTwoDetails
+    const bowlingRows: Array<{ name: string; overs?: number; maidens?: number; runs?: number; wickets?: number; economy?: number }> =
+      (data.liveBowlingCard && data.liveBowlingCard.length > 0)
+        ? data.liveBowlingCard.map(b => ({
+            name: b.name ?? '',
+            overs: b.details?.overs,
+            maidens: b.details?.maidens,
+            runs: b.details?.runs,
+            wickets: b.details?.wickets,
+            economy: b.details?.economy,
+          }))
+        : [data.bowlerOneDetails, data.bowlerTwoDetails]
+            .filter((b): b is NonNullable<typeof b> => !!b)
+            .map(b => ({
+              name: b.name ?? '',
+              overs: b.details?.overs,
+              maidens: b.details?.maidens,
+              runs: b.details?.runs,
+              wickets: b.details?.wickets,
+              economy: b.details?.economy,
+            }));
+
+    const fowEntries = data.fallOfWickets ?? [];
+
+    const onStrikeId = data.onStrikeBatsman?.playerId;
+    const otherBatsmanId = data.otherBatsman?.playerId;
+
+    const ourInningsContent = (() => {
+      if (ourStatus === 'NotStarted' || !ourStatus) {
+        return (
+          <div className="py-6 text-center text-sm text-gray-500">
+            The Village CC innings has not yet started.
+          </div>
+        );
+      }
+      return (
+        <div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-gray-200 text-left text-xs text-gray-500 uppercase tracking-wide">
+                  <th className="py-2 pr-2">Batter</th>
+                  <th className="py-2 text-right">R</th>
+                  <th className="py-2 text-right">B</th>
+                  <th className="py-2 text-right">4s</th>
+                  <th className="py-2 text-right">6s</th>
+                  <th className="py-2 text-right">SR</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-800">
+                {battingRows.map((row, idx) => {
+                  const isOnStrike = row.id === onStrikeId;
+                  const isOther = row.id === otherBatsmanId;
+                  const isBatting = isOnStrike || isOther;
+                  return (
+                    <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-2 pr-2 font-medium">
+                        {row.name}
+                        {isOnStrike && <span className="ml-1 text-villageGreen text-xs font-bold">*</span>}
+                        {isBatting && !row.isOut && (
+                          <span className="ml-1 text-xs text-green-600 font-normal">(batting)</span>
+                        )}
+                      </td>
+                      <td className="py-2 text-right font-medium">{row.runs}</td>
+                      <td className="py-2 text-right text-gray-600">{row.balls}</td>
+                      <td className="py-2 text-right text-gray-600">{row.fours}</td>
+                      <td className="py-2 text-right text-gray-600">{row.sixes}</td>
+                      <td className="py-2 text-right text-gray-600">
+                        {row.balls > 0 ? (row.runs / row.balls * 100).toFixed(1) : '-'}
+                      </td>
+                    </tr>
+                  );
+                })}
+                {battingRows.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-4 text-center text-gray-400">No batting data yet.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {fowEntries.length > 0 && (
+            <div className="mt-4">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Fall of Wickets</h3>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-gray-700">
+                {fowEntries.map((fow, i) => (
+                  <span key={i} className="whitespace-nowrap">
+                    {fow.teamScore ?? 0}-{fow.wicketNumber ?? (i + 1)}
+                    {fow.outgoingPlayerName && (
+                      <span className="text-gray-500"> ({fow.outgoingPlayerName}{fow.overAsString ? `, ${fow.overAsString}` : ''})</span>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {bowlingRows.length > 0 && (
+            <div className="mt-6 overflow-x-auto">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Bowling</h3>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b-2 border-gray-200 text-left text-xs text-gray-500 uppercase tracking-wide">
+                    <th className="py-2">Bowler</th>
+                    <th className="py-2 text-right">O</th>
+                    <th className="py-2 text-right">M</th>
+                    <th className="py-2 text-right">R</th>
+                    <th className="py-2 text-right">W</th>
+                    <th className="py-2 text-right">Econ</th>
+                  </tr>
+                </thead>
+                <tbody className="text-gray-800">
+                  {bowlingRows.map((bowler, i) => (
+                    <tr key={i} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-2 font-medium">{bowler.name}</td>
+                      <td className="py-2 text-right text-gray-600">{bowler.overs ?? '-'}</td>
+                      <td className="py-2 text-right text-gray-600">{bowler.maidens ?? 0}</td>
+                      <td className="py-2 text-right text-gray-600">{bowler.runs ?? 0}</td>
+                      <td className="py-2 text-right font-medium">{bowler.wickets ?? 0}</td>
+                      <td className="py-2 text-right text-gray-600">
+                        {bowler.economy != null ? bowler.economy.toFixed(2) : '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      );
+    })();
+
+    const theirInningsContent = (() => {
+      if (theirStatus === 'NotStarted' || !theirStatus) {
+        return (
+          <div className="py-6 text-center text-sm text-gray-500">
+            {data.opposition ?? 'Opposition'} innings has not yet started.
+          </div>
+        );
+      }
+      return (
+        <div>
+          <div className="mb-4 p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
+            <span className="font-semibold">{data.opposition ?? 'Opposition'}</span>
+            {': '}
+            <span className="font-semibold text-gray-900">
+              {data.theirScore ?? 0}/{data.theirWickets ?? 0}
+            </span>
+            {data.theirOver != null && data.theirOver > 0 && (
+              <span className="text-gray-500"> ({data.theirOver} ov)</span>
+            )}
+            {theirStatus === 'InProgress' && (
+              <span className="ml-2 text-xs text-green-600 font-semibold">In progress</span>
+            )}
+          </div>
+          {(data.theirCompletedOvers?.length ?? 0) > 0 && (
+            <div className="text-xs text-gray-500 mt-2">
+              <p className="font-semibold uppercase tracking-wide mb-1">Over summary</p>
+              <div className="flex flex-wrap gap-x-2 gap-y-1">
+                {data.theirCompletedOvers!.map((ov, i) => (
+                  <span key={i} className="whitespace-nowrap">
+                    Ov {ov.over ?? (i + 1)}: {ov.score ?? 0}/{ov.wickets ?? 0}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {(data.theirCompletedOvers?.length ?? 0) === 0 && theirStatus === 'InProgress' && (
+            <p className="text-sm text-gray-500">Detailed ball-by-ball data not available for opposition innings.</p>
+          )}
+        </div>
+      );
+    })();
+
+    const showBothInnings = !!(ourStatus && ourStatus !== 'NotStarted') && !!(theirStatus && theirStatus !== 'NotStarted');
+
+    return (
+      <section className="max-w-6xl mx-auto mt-4">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <button
+            type="button"
+            className="w-full flex justify-between items-center px-4 py-3 text-left"
+            onClick={() => setScorecardExpanded(prev => !prev)}
+            aria-expanded={scorecardExpanded}
+          >
+            <span className="text-sm font-semibold text-gray-700">Scorecards</span>
+            <svg
+              className={`w-4 h-4 text-gray-400 transition-transform ${scorecardExpanded ? 'rotate-180' : ''}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          {scorecardExpanded && (
+            <div className="border-t border-gray-100 px-4 py-4">
+              {showBothInnings && (
+                <div className="flex gap-2 mb-4 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => setActiveInnings('our')}
+                    className={`px-4 py-2 rounded-full text-sm font-medium ${
+                      activeInnings === 'our'
+                        ? 'bg-villageGreen text-white'
+                        : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                    }`}
+                  >
+                    The Village CC Innings
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveInnings('their')}
+                    className={`px-4 py-2 rounded-full text-sm font-medium ${
+                      activeInnings === 'their'
+                        ? 'bg-villageGreen text-white'
+                        : 'border border-villageGreen text-villageGreen hover:bg-villageGreenLight'
+                    }`}
+                  >
+                    {data.opposition ?? 'Opposition'} Innings
+                  </button>
+                </div>
+              )}
+              {(!showBothInnings || activeInnings === 'our') && ourInningsContent}
+              {(!showBothInnings || activeInnings === 'their') && theirInningsContent}
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  })();
+
   const matchReportSection = (completed && scorecardData.matchReport && (scorecardData.matchReport.conditions || scorecardData.matchReport.report)) ? (
     <section className="max-w-6xl mx-auto mt-6">
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-6">
@@ -859,8 +1167,9 @@ const LiveScorecard: React.FC = () => {
         {/* Ordered sections: different arrangement for live vs completed */}
         {live ? (
           <>
-            {/* Live order: 1. At the Crease (always visible), 2. Commentary (folded), 3. Analysis, 4. Player Analysis */}
+            {/* Live order: 1. At the Crease (always visible), 2. Scorecards (collapsible), 3. Commentary (folded), 4. Analysis, 5. Player Analysis */}
             {atTheCreaseSection}
+            {inPlayScorecardSection}
             {commentarySection}
             {/* Team Analysis section for live matches */}
             {((data.completedOvers?.length ?? 0) > 0 || (data.partnerships?.length ?? 0) > 0) && (() => {
