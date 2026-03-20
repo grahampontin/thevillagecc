@@ -1755,8 +1755,12 @@ describe('LiveScorecard', () => {
       expect(screen.getByRole('button', { name: /Scorecards/i })).toBeInTheDocument();
     });
 
-    // Scorecards tab is auto-selected by default, so content is visible immediately
-    expect(screen.getAllByText(/Batter/i).length).toBeGreaterThan(0);
+    // Scorecards collapsible starts collapsed — click to expand
+    fireEvent.click(screen.getByRole('button', { name: /Scorecards/i }));
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/Batter/i).length).toBeGreaterThan(0);
+    });
   });
 
   test('shows collapsible Scorecards section for live match', async () => {
@@ -2220,19 +2224,19 @@ describe('LiveScorecard', () => {
   });
 
   test('completed match never shows in-play Scorecards section alongside formal scorecard', async () => {
-    // When match is completed, only the formal tab-based scorecard section is shown
+    // When match is completed, only the formal collapsible scorecard section is shown
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
     renderWithRouter('123');
 
     await waitFor(() => {
-      // Formal Scorecards tab appears
+      // Formal Scorecards collapsible appears
       expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
     });
 
-    // There should be exactly one Scorecards button (the formal one in the tab bar)
+    // There should be exactly one Scorecards button
     expect(screen.getAllByRole('button', { name: /^Scorecards$/i })).toHaveLength(1);
 
-    // The formal scorecard is in a tab layout (Match Report heading visible)
+    // The Match Report heading is always visible
     expect(screen.getByText(/^Match Report$/i)).toBeInTheDocument();
   });
 });
