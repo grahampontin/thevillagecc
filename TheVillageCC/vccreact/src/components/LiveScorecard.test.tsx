@@ -2223,6 +2223,85 @@ describe('LiveScorecard', () => {
     });
   });
 
+  test('in-play scorecard shows dismissal details for out batters', async () => {
+    const liveWithDismissals = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        ourInningsStatus: 'InProgress',
+        completedOvers: [
+          {
+            over: {
+              balls: [
+                {
+                  batsman: 1, batsmanName: 'BowledBatter', thing: '', amount: 0,
+                  wicket: { bowler: 'FastBowler', fielder: null, isBowled: true },
+                },
+                {
+                  batsman: 2, batsmanName: 'CaughtBatter', thing: '', amount: 3,
+                  wicket: { bowler: 'SpinBowler', fielder: 'SlipFielder', isCaught: true },
+                },
+                {
+                  batsman: 3, batsmanName: 'NotOutBatter', thing: '', amount: 2,
+                },
+              ],
+            },
+          },
+        ],
+        onStrikeBatsman: { playerId: 3, name: 'NotOutBatter', score: 2, balls: 1, fours: 0, sixes: 0 },
+        otherBatsman: null,
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithDismissals);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Scorecards/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Scorecards/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('b. FastBowler')).toBeInTheDocument();
+      expect(screen.getByText('ct. SlipFielder b. SpinBowler')).toBeInTheDocument();
+    });
+  });
+
+  test('in-play scorecard shows batting icon for current batsmen instead of text', async () => {
+    const liveWithActiveBatsmen = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        ourInningsStatus: 'InProgress',
+        completedOvers: [
+          {
+            over: {
+              balls: [
+                { batsman: 10, batsmanName: 'StrikeBatter', thing: '', amount: 1 },
+                { batsman: 11, batsmanName: 'NonStrikeBatter', thing: '', amount: 0 },
+              ],
+            },
+          },
+        ],
+        onStrikeBatsman: { playerId: 10, name: 'StrikeBatter', score: 1, balls: 1, fours: 0, sixes: 0 },
+        otherBatsman: { playerId: 11, name: 'NonStrikeBatter', score: 0, balls: 1, fours: 0, sixes: 0 },
+      },
+    };
+
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithActiveBatsmen);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Scorecards/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Scorecards/i }));
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('img', { name: /batting/i }).length).toBeGreaterThan(0);
+    });
+    expect(screen.queryByText('(batting)')).not.toBeInTheDocument();
+  });
+
   test('completed match never shows in-play Scorecards section alongside formal scorecard', async () => {
     // When match is completed, only the formal collapsible scorecard section is shown
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
