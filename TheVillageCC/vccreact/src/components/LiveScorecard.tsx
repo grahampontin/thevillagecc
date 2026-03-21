@@ -659,6 +659,7 @@ const LiveScorecard: React.FC = () => {
       type BatsmanRow = {
         id: number; name: string; runs: number; balls: number;
         fours: number; sixes: number; isOut: boolean; battingOrder: number;
+        dismissal?: string;
       };
       const batsmenMap = new Map<number, BatsmanRow>();
       let orderCounter = 0;
@@ -686,7 +687,7 @@ const LiveScorecard: React.FC = () => {
             if (ball.isSix || batRuns >= 6) entry.sixes++;
             else if ((ball.isBoundary && !ball.isSix) || batRuns === 4) entry.fours++;
           }
-          if (ball.wicket) entry.isOut = true;
+          if (ball.wicket) { entry.isOut = true; entry.dismissal = formatWicketDismissal(ball.wicket); }
         });
       });
 
@@ -764,6 +765,7 @@ const LiveScorecard: React.FC = () => {
               <thead>
                 <tr className="border-b-2 border-gray-200 text-left text-xs text-gray-500 uppercase tracking-wide">
                   <th className="py-2 pr-2">Batter</th>
+                  <th className="py-2 text-gray-400 font-normal"></th>
                   <th className="py-2 text-right">R</th>
                   <th className="py-2 text-right">B</th>
                   <th className="py-2 text-right">4s</th>
@@ -785,6 +787,7 @@ const LiveScorecard: React.FC = () => {
                           <span className="ml-1 text-xs text-green-600 font-normal">(batting)</span>
                         )}
                       </td>
+                      <td className="py-2 text-sm text-gray-500">{row.isOut ? (row.dismissal ?? 'out') : ''}</td>
                       <td className="py-2 text-right font-medium">{row.runs}</td>
                       <td className="py-2 text-right text-gray-600">{row.balls}</td>
                       <td className="py-2 text-right text-gray-600">{row.fours}</td>
@@ -797,7 +800,7 @@ const LiveScorecard: React.FC = () => {
                 })}
                 {battingRows.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="py-4 text-center text-gray-400">No batting data yet.</td>
+                    <td colSpan={7} className="py-4 text-center text-gray-400">No batting data yet.</td>
                   </tr>
                 )}
               </tbody>

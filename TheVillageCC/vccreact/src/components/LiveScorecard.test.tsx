@@ -2223,6 +2223,54 @@ describe('LiveScorecard', () => {
     });
   });
 
+  test('shows dismissal details for out batters in live in-play scorecard', async () => {
+    const liveWithWicket = {
+      ...mockLiveScorecardData,
+      inPlayData: {
+        ...mockLiveScorecardData.inPlayData,
+        ourInningsStatus: 'InProgress',
+        theirInningsStatus: 'NotStarted',
+        completedOvers: [
+          {
+            scoreAtEndOfOver: 30,
+            wicketsAtEndOfOver: 1,
+            scoreForThisOver: 30,
+            over: {
+              overNumber: 5,
+              balls: [
+                { ballNumber: 1, amount: 4, thing: '', batsman: 1, batsmanName: 'Alice' },
+                {
+                  ballNumber: 2, amount: 0, thing: '', batsman: 2, batsmanName: 'Bob',
+                  wicket: {
+                    isBowled: true, isCaught: false, isCaughtAndBowled: false,
+                    isLbw: false, isStumped: false, isRunOut: false,
+                    isHitWicket: false, isRetired: false, isRetiredHurt: false,
+                    bowler: 'Greenwood',
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+    (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(liveWithWicket);
+    renderWithRouter('123');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Scorecards$/i })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^Scorecards$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Bob')).toBeInTheDocument();
+      expect(screen.getByText('b. Greenwood')).toBeInTheDocument();
+    });
+
+    // Alice is not out — no dismissal text shown for her
+    expect(screen.queryByText(/not out/i)).not.toBeInTheDocument();
+  });
+
   test('completed match never shows in-play Scorecards section alongside formal scorecard', async () => {
     // When match is completed, only the formal collapsible scorecard section is shown
     (getLiveScorecardData as jest.Mock).mockResolvedValueOnce(mockCompletedScorecardData);
