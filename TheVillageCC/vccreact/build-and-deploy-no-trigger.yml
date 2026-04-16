@@ -1,0 +1,45 @@
+# Azure DevOps pipeline for deploying the React (CRA) app to Azure Static Web Apps
+# Repo: GitHub
+# Deploys only from: master
+#
+# Required pipeline variable (mark secret):
+# - AZURE_STATIC_WEB_APPS_API_TOKEN : deployment token for the SWA 'thevillagecc'
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  NODE_VERSION: '22.x'
+
+steps:
+  - checkout: self
+    submodules: false
+
+  - task: NodeTool@0
+    displayName: 'Use Node $(NODE_VERSION)'
+    inputs:
+      versionSpec: '$(NODE_VERSION)'
+
+
+  - script: |
+      npm ci
+    displayName: 'Install dependencies'
+    workingDirectory: 'TheVillageCC/vccreact'
+
+  - script: |
+      npm config set fund false
+      npm config set audit false
+      npm run verify
+    displayName: 'Build'
+    workingDirectory: 'TheVillageCC/vccreact'
+
+  # Deploy to Azure Static Web Apps
+  # Note: This uses the SWA deployment token (no Azure service connection needed)
+  - task: AzureStaticWebApp@0
+    displayName: 'Deploy to Azure Static Web Apps (thevillagecc)'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    inputs:
+      azure_static_web_apps_api_token: '$(AZURE_STATIC_WEB_APPS_API_TOKEN)'
+      app_location: 'TheVillageCC/vccreact'
+      output_location: 'build'
+      api_location: ''
