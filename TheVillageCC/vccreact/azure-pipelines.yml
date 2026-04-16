@@ -30,8 +30,6 @@ steps:
     inputs:
       versionSpec: '$(NODE_VERSION)'
 
-  - script: npm install -g npm@11
-    displayName: 'Upgrade npm to v11'
 
   - script: |
       npm ci
