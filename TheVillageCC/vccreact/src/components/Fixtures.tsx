@@ -35,13 +35,13 @@ const Fixtures: React.FC = () => {
 
   // Helper function to format date for calendar
   const formatDateForCalendar = (dateString: string): string => {
-    const date = new Date(dateString);
-    // Check if date is valid before calling toISOString
-    if (isNaN(date.getTime())) {
+    // Extract the date portion directly to avoid timezone shifts
+    const datePart = dateString.split('T')[0];
+    if (!datePart || !/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
       console.error(`Invalid date string: ${dateString}`);
       return '';
     }
-    return date.toISOString().split('T')[0];
+    return datePart;
   };
 
   // Helper function to format date for display
