@@ -80,7 +80,7 @@ const Stats: React.FC = () => {
       columnDefs[0].pinned = 'left';
       columnDefs[0].sort = 'asc';
       columnDefs[0].filter = 'agTextColumnFilter';
-      columnDefs[0].minWidth = 120;
+      columnDefs[0].minWidth = 150;
     }
   };
 
@@ -169,8 +169,7 @@ const Stats: React.FC = () => {
   const defaultColDef: ColDef = {
     resizable: true,
     sortable: true,
-    flex: 1,
-    minWidth: 80,
+    minWidth: 100,
     filter: 'agNumberColumnFilter',
   };
 
@@ -409,6 +408,7 @@ const Stats: React.FC = () => {
                     columnDefs={statsData[activeTab].gridOptions.columnDefs}
                     rowData={statsData[activeTab].gridOptions.rowData}
                     defaultColDef={defaultColDef}
+                    autoSizeStrategy={{ type: 'fitGridWidth' }}
                     suppressColumnVirtualisation={true}
                     components={{
                       LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
