@@ -80,6 +80,7 @@ const Stats: React.FC = () => {
       columnDefs[0].pinned = 'left';
       columnDefs[0].sort = 'asc';
       columnDefs[0].filter = 'agTextColumnFilter';
+      columnDefs[0].minWidth = 120;
     }
   };
 
@@ -169,6 +170,7 @@ const Stats: React.FC = () => {
     resizable: true,
     sortable: true,
     flex: 1,
+    minWidth: 80,
     filter: 'agNumberColumnFilter',
   };
 
@@ -390,7 +392,7 @@ const Stats: React.FC = () => {
             <h2 className="text-lg font-semibold text-villageText mb-4">Results</h2>
 
             {/* Grid */}
-            <div className="w-full h-[600px] border border-gray-200 rounded-md">
+            <div className="w-full h-[400px] sm:h-[600px] border border-gray-200 rounded-md">
               {isLoading && !statsData[activeTab] && (
                 <div className="skeleton-grid p-4">
                   <span className="visually-hidden">Loading...</span>
@@ -401,17 +403,19 @@ const Stats: React.FC = () => {
                 </div>
               )}
               {statsData[activeTab] && (
-                <AgGridReact
-                  theme={themeBalham}
-                  columnDefs={statsData[activeTab].gridOptions.columnDefs}
-                  rowData={statsData[activeTab].gridOptions.rowData}
-                  defaultColDef={defaultColDef}
-                  suppressColumnVirtualisation={true}
-                  components={{
-                    LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
-                    ParameterizedLinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
-                  }}
-                />
+                <div className="vcc-ag-grid-compact w-full h-full">
+                  <AgGridReact
+                    theme={themeBalham}
+                    columnDefs={statsData[activeTab].gridOptions.columnDefs}
+                    rowData={statsData[activeTab].gridOptions.rowData}
+                    defaultColDef={defaultColDef}
+                    suppressColumnVirtualisation={true}
+                    components={{
+                      LinkToPlayerStatsRenderer: LinkToPlayerStatsRenderer,
+                      ParameterizedLinkToMatchReportRenderer: ParameterizedLinkToMatchReportRenderer,
+                    }}
+                  />
+                </div>
               )}
             </div>
           </div>
