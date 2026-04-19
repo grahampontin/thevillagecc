@@ -500,4 +500,71 @@ describe('LiveScoring', () => {
     expect(offTexts[0].getAttribute('x')).toBe('80');
     expect(legTexts[0].getAttribute('x')).toBe('220');
   });
+
+  // ---- Striker rotation ----
+
+  /** Returns the name of the on-strike batsman based on the batting table (first data row = striker). */
+  const getOnStrikeBatsmanName = () => {
+    const rows = screen.getAllByRole('row');
+    // Skip header row; first data row is the on-strike batsman
+    const dataRows = rows.filter(row =>
+      row.textContent?.includes('Alice Smith') || row.textContent?.includes('Bob Jones'),
+    );
+    return dataRows[0]?.textContent ?? '';
+  };
+
+  it('5 no-ball does not change the on-strike batsman', async () => {
+    await navigateToScoringScreen();
+
+    // Initially Alice Smith (playerId 1) is on strike
+    expect(getOnStrikeBatsmanName()).toContain('Alice Smith');
+
+    // Enter 5 runs via the 5+ menu, then mark as No Ball
+    // (5 total = 4 bat runs + 1 no-ball penalty, even bat runs → no striker change)
+    fireEvent.click(screen.getByText('5+'));
+    await waitFor(() => screen.getByText('5'));
+    fireEvent.click(screen.getByText('5'));
+    fireEvent.click(screen.getByText('No Ball'));
+
+    // Alice should still be on strike
+    await waitFor(() => {
+      expect(getOnStrikeBatsmanName()).toContain('Alice Smith');
+    });
+  });
+
+  it('1-wide does not change the on-strike batsman', async () => {
+    await navigateToScoringScreen();
+
+    // Initially Alice Smith is on strike
+    expect(getOnStrikeBatsmanName()).toContain('Alice Smith');
+
+    // Enter 1 run then mark as Wide (1 wide = just the wide penalty, no overthrows → no striker change)
+    fireEvent.click(screen.getByText('1'));
+    fireEvent.click(screen.getByText('Wide'));
+
+    // Alice should still be on strike
+    await waitFor(() => {
+      expect(getOnStrikeBatsmanName()).toContain('Alice Smith');
+    });
+  });
+
+  it('single run changes the on-strike batsman', async () => {
+    await navigateToScoringScreen();
+
+    // Initially Alice Smith is on strike
+    expect(getOnStrikeBatsmanName()).toContain('Alice Smith');
+
+    // Score 1 run (odd → striker switches)
+    fireEvent.click(screen.getByText('1'));
+    fireEvent.click(screen.getByText('Runs'));
+
+    // Skip wagon wheel
+    await waitFor(() => screen.getByTestId('wagon-wheel-input'));
+    fireEvent.click(screen.getByText('Skip'));
+
+    // Bob should now be on strike
+    await waitFor(() => {
+      expect(getOnStrikeBatsmanName()).toContain('Bob Jones');
+    });
+  });
 });
