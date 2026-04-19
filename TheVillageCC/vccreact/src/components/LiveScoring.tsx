@@ -263,10 +263,12 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
   const [isDragging, setIsDragging] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  // Batter's stumps are at the bottom of the pitch
+  // Pitch is vertically centred in the field (inner oval centre = y 120).
+  // Batter stands at the BOTTOM of the pitch; bowler comes from the TOP.
   const stumpsX = 150;
-  const stumpsY = 175;
-  const pitchTopY = stumpsY - 70; // bowler's end of pitch
+  const pitchHeight = 70;
+  const pitchTopY = 120 - pitchHeight / 2;  // = 85, bowler's end
+  const stumpsY = pitchTopY + pitchHeight;   // = 155, batter's end
   const ellipseCx = 150;
   const ellipseCy = 120;
   const ellipseRx = 135;
@@ -351,9 +353,9 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
     return `${amount} to ${area}`;
   })() : null;
 
-  // Off side is left for right-handers, right for left-handers
-  const offSideX = isLeftHanded ? 220 : 80;
-  const legSideX = isLeftHanded ? 80 : 220;
+  // For a right-hander: leg side = LEFT (x=80), off side = RIGHT (x=220). Mirrored for left-handers.
+  const offSideX = isLeftHanded ? 80 : 220;
+  const legSideX = isLeftHanded ? 220 : 80;
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -393,11 +395,11 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
           points={`${stumpsX - 5},${pitchTopY - 6} ${stumpsX + 5},${pitchTopY - 6} ${stumpsX},${pitchTopY + 4}`}
           fill="rgba(255,255,255,0.75)"
         />
-        {/* Off / Leg labels — positioned vertically around mid-field */}
-        <text x={offSideX} y={106} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
-        <text x={offSideX} y={119} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
-        <text x={legSideX} y={106} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
-        <text x={legSideX} y={119} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+        {/* Off / Leg labels — sit beside the batter's end of the pitch */}
+        <text x={offSideX} y={151} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
+        <text x={offSideX} y={164} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+        <text x={legSideX} y={151} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
+        <text x={legSideX} y={164} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
         {/* Shot line */}
         {lineEnd && (
           <line
