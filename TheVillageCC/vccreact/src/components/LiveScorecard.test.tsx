@@ -903,12 +903,12 @@ describe('LiveScorecard', () => {
   });
 
   test('shows location in ball description when angle is recorded', async () => {
-    // Math.PI * 1.4 falls in the Point zone (Math.PI * 1.25 <= angle < Math.PI * 1.5)
-    const pointAngle = Math.PI * 1.4;
-    // Math.PI * 1.65 falls in the Cover zone (Math.PI * 1.5 <= angle < Math.PI * 1.75)
-    const coverAngle = Math.PI * 1.65;
-    // Math.PI * 0.1 falls in the Mid-on zone (angle < Math.PI * 0.25)
-    const midOnAngle = Math.PI * 0.1;
+    // Math.PI * 0.58 falls in the Point zone (Math.PI * 0.5 <= angle < Math.PI * 0.675)
+    const pointAngle = Math.PI * 0.58;
+    // Math.PI * 0.35 falls in the Cover zone (Math.PI * 0.25 <= angle < Math.PI * 0.5)
+    const coverAngle = Math.PI * 0.35;
+    // Math.PI * 1.85 falls in the Mid-on zone (Math.PI * 1.75 <= angle < Math.PI * 2)
+    const midOnAngle = Math.PI * 1.85;
 
     const withBalls = {
       ...mockCompletedScorecardData,

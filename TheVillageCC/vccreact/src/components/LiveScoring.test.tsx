@@ -473,11 +473,11 @@ describe('LiveScoring', () => {
     const offTexts = Array.from(textElements).filter(el => el.textContent === 'Off');
     const legTexts = Array.from(textElements).filter(el => el.textContent === 'Leg');
 
-    // Off should be at x=80 (left side), Leg at x=220 (right side) for right-handers
+    // Off should be at x=220 (right side), Leg at x=80 (left side) for right-handers
     expect(offTexts.length).toBeGreaterThan(0);
     expect(legTexts.length).toBeGreaterThan(0);
-    expect(offTexts[0].getAttribute('x')).toBe('80');
-    expect(legTexts[0].getAttribute('x')).toBe('220');
+    expect(offTexts[0].getAttribute('x')).toBe('220');
+    expect(legTexts[0].getAttribute('x')).toBe('80');
   });
 
   it('shows inverted Off/Leg labels for a left-handed batsman', async () => {
@@ -494,10 +494,10 @@ describe('LiveScoring', () => {
     const offTexts = Array.from(textElements).filter(el => el.textContent === 'Off');
     const legTexts = Array.from(textElements).filter(el => el.textContent === 'Leg');
 
-    // For left-hander: Off should be at x=220 (right side), Leg at x=80 (left side)
+    // For left-hander: Off should be at x=80 (left side), Leg at x=220 (right side)
     expect(offTexts.length).toBeGreaterThan(0);
     expect(legTexts.length).toBeGreaterThan(0);
-    expect(offTexts[0].getAttribute('x')).toBe('220');
-    expect(legTexts[0].getAttribute('x')).toBe('80');
+    expect(offTexts[0].getAttribute('x')).toBe('80');
+    expect(legTexts[0].getAttribute('x')).toBe('220');
   });
 });
