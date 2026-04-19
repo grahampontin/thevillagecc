@@ -263,8 +263,10 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
   const [isDragging, setIsDragging] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
 
+  // Batter's stumps are at the bottom of the pitch
   const stumpsX = 150;
-  const stumpsY = 100;
+  const stumpsY = 175;
+  const pitchTopY = stumpsY - 70; // bowler's end of pitch
   const ellipseCx = 150;
   const ellipseCy = 120;
   const ellipseRx = 135;
@@ -381,12 +383,21 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
         <ellipse cx={ellipseCx} cy={ellipseCy} rx={67} ry={55}
           fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
         {/* Pitch */}
-        <rect x={stumpsX - 6} y={stumpsY - 35} width={12} height={70} fill="#c8a96e" rx="2" />
-        {/* Off / Leg labels */}
-        <text x={offSideX} y={126} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
-        <text x={offSideX} y={139} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
-        <text x={legSideX} y={126} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
-        <text x={legSideX} y={139} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+        <rect x={stumpsX - 6} y={pitchTopY} width={12} height={70} fill="#c8a96e" rx="2" />
+        {/* Bowler direction arrow — pointing down toward the batter */}
+        <text x={stumpsX} y={pitchTopY - 22} textAnchor="middle" fill="rgba(255,255,255,0.75)" fontSize="9">Bowler</text>
+        <line x1={stumpsX} y1={pitchTopY - 18} x2={stumpsX} y2={pitchTopY - 6}
+          stroke="rgba(255,255,255,0.75)" strokeWidth="2" />
+        {/* Arrowhead */}
+        <polygon
+          points={`${stumpsX - 5},${pitchTopY - 6} ${stumpsX + 5},${pitchTopY - 6} ${stumpsX},${pitchTopY + 4}`}
+          fill="rgba(255,255,255,0.75)"
+        />
+        {/* Off / Leg labels — positioned vertically around mid-field */}
+        <text x={offSideX} y={106} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
+        <text x={offSideX} y={119} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+        <text x={legSideX} y={106} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
+        <text x={legSideX} y={119} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
         {/* Shot line */}
         {lineEnd && (
           <line
@@ -397,10 +408,8 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
             strokeLinecap="round"
           />
         )}
-        {/* Stumps marker */}
+        {/* Batter's stumps marker */}
         <circle cx={stumpsX} cy={stumpsY} r={5} fill="white" />
-        <line x1={stumpsX - 5} y1={stumpsY + 35} x2={stumpsX + 5} y2={stumpsY + 35}
-          stroke="rgba(255,255,255,0.8)" strokeWidth="2" />
       </svg>
       {shotDescription && (
         <p className="text-sm font-semibold text-gray-800 text-center" data-testid="shot-description">
