@@ -199,7 +199,8 @@ describe('AdminEditScorecard', () => {
 
     expect(await screen.findByRole('dialog', { name: /Match Report/i })).toBeInTheDocument();
     expect(screen.getByLabelText('Conditions')).toBeInTheDocument();
-    expect(screen.getByLabelText('Report')).toBeInTheDocument();
+    // Report uses a rich-text editor (not a standard form control) so check label text presence
+    expect(screen.getByText('Report')).toBeInTheDocument();
 
     // Fill in conditions
     await userEvent.type(screen.getByLabelText('Conditions'), 'Sunny day');

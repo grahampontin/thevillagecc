@@ -44,6 +44,11 @@
       "react-app/jest"
     ]
   },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(@tiptap|prosemirror-|orderedmap|w3c-keyname|rope-sequence)/)"
+    ]
+  },
   "browserslist": {
     "production": [
       ">0.2%",

@@ -1577,9 +1577,9 @@ describe('LiveScorecard', () => {
       const svg = document.querySelector('[data-testid="wagon-wheel"]');
       expect(svg).toBeInTheDocument();
       // Two scoring balls → two ball <line> elements (dot ball is skipped)
-      // Key has 3 lines; total lines = 2 (balls) + 3 (key) = 5
+      // Key has 3 lines; bowler arrow has 1 line; total lines = 2 (balls) + 3 (key) + 1 (bowler arrow) = 6
       const lines = svg!.querySelectorAll('line');
-      expect(lines.length).toBe(5);
+      expect(lines.length).toBe(6);
     });
   });
 
