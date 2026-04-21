@@ -84,6 +84,17 @@ const Stats: React.FC = () => {
     }
   };
 
+  // Helper function to apply custom comparators to specific columns
+  const applyCustomComparators = (columnDefs: ColDef[]) => {
+    const hsCol = columnDefs.find(col => col.field === 'HS' || col.headerName === 'HS');
+    if (hsCol) {
+      hsCol.comparator = (valueA: string, valueB: string) => {
+        const parse = (v: string) => parseFloat(String(v ?? '').replace('*', '')) || 0;
+        return parse(valueA) - parse(valueB);
+      };
+    }
+  };
+
   // Load initial batting stats
   useEffect(() => {
     if (fromDate && toDate) {
@@ -105,6 +116,7 @@ const Stats: React.FC = () => {
           
           // Configure first column
           configureFirstColumn(data.gridOptions.columnDefs);
+          applyCustomComparators(data.gridOptions.columnDefs);
 
           setStatsData({ batting: data });
         } catch (error) {
@@ -141,6 +153,7 @@ const Stats: React.FC = () => {
       
       // Configure first column
       configureFirstColumn(data.gridOptions.columnDefs);
+      applyCustomComparators(data.gridOptions.columnDefs);
 
       setStatsData(prev => ({ ...prev, [category]: data }));
     } catch (error) {
