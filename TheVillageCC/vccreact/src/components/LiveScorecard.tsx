@@ -1429,59 +1429,78 @@ const LiveScorecard: React.FC = () => {
                       const svgW = 500;
                       const svgH = 420;
                       const fieldCx = svgW / 2;
-                      const fieldCy = 200;
+                      const fieldCy = 190;
                       const fieldRx = 190;
-                      const fieldRy = 160;
+                      const fieldRy = 155;
                       const stumpsX = fieldCx;
-                      const stumpsY = 180;
-                      const radius = fieldRx;
+                      // Pitch vertically centred in inner oval; batter at the BOTTOM of the pitch
+                      const pitchH = 90;
+                      const pitchTopY = fieldCy - pitchH / 2; // bowler end
+                      const stumpsY = pitchTopY + pitchH;     // batter end
 
-                      const wheelDistance = (score: number, angle: number, r: number): number => {
-                        let scale = r / 4;
-                        if (score === 6) scale *= 0.75;
-                        let dist = score * scale;
-                        const halfPi = Math.PI / 2;
-                        if (angle <= halfPi) {
-                          dist -= score * 5 * ((halfPi - angle) / halfPi);
-                        } else if (angle <= Math.PI) {
-                          dist += score * 5 * ((angle - halfPi) / halfPi);
-                        } else if (angle <= Math.PI * 1.5) {
-                          dist += score * 5 * ((Math.PI * 1.5 - angle) / halfPi);
-                        } else {
-                          dist -= score * 5 * ((angle - Math.PI * 1.5) / halfPi);
-                        }
-                        return dist;
+                      // Distance along direction `angle` from stumps to outer ellipse boundary
+                      const getBoundaryDist = (angle: number): number => {
+                        const dirX = Math.sin(angle);
+                        const dirY = -Math.cos(angle);
+                        const dsx = stumpsX - fieldCx;
+                        const dsy = stumpsY - fieldCy;
+                        const a = (dirX * dirX) / (fieldRx * fieldRx) + (dirY * dirY) / (fieldRy * fieldRy);
+                        const b = 2 * (dsx * dirX / (fieldRx * fieldRx) + dsy * dirY / (fieldRy * fieldRy));
+                        const c = (dsx * dsx) / (fieldRx * fieldRx) + (dsy * dsy) / (fieldRy * fieldRy) - 1;
+                        const disc = b * b - 4 * a * c;
+                        if (disc < 0) return fieldRx;
+                        return (-b + Math.sqrt(disc)) / (2 * a);
                       };
 
-                      const ballEndPoint = (angle: number, dist: number) => ({
-                        x: Math.round(Math.cos(angle - Math.PI / 2) * dist + stumpsX),
-                        y: Math.round(Math.sin(angle - Math.PI / 2) * dist + stumpsY),
-                      });
+                      // Boundaries reach the edge; 1–3 run shots are scaled proportionally
+                      const ballEndPoint = (angle: number, score: number) => {
+                        const dirX = Math.sin(angle);
+                        const dirY = -Math.cos(angle);
+                        const t = getBoundaryDist(angle);
+                        const fraction = score >= 4 ? 1 : score / 4;
+                        return {
+                          x: Math.round(stumpsX + t * dirX * fraction),
+                          y: Math.round(stumpsY + t * dirY * fraction),
+                        };
+                      };
 
                       const ballColor = (score: number) =>
                         score >= 6 ? '#f97316' : score >= 4 ? '#3b82f6' : '#ffdd00';
-
                       const keyY = svgH - 30;
 
                       return (
                         <svg data-testid="wagon-wheel" viewBox={`0 0 ${svgW} ${svgH}`} className="w-full" style={{ maxHeight: 480 }}>
+                          {/* Field */}
                           <ellipse cx={fieldCx} cy={fieldCy} rx={fieldRx} ry={fieldRy} fill="#4a8f3f" />
                           <ellipse cx={fieldCx} cy={fieldCy} rx={fieldRx * 0.5} ry={fieldRy * 0.5}
                             fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
-                          <rect x={stumpsX - 7} y={stumpsY - 45} width={14} height={90} fill="#c8a96e" rx="2" />
-                          <text x={fieldCx - fieldRx * 0.55} y={fieldCy + 6} textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="14">Off Side</text>
-                          <text x={fieldCx + fieldRx * 0.55} y={fieldCy + 6} textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="14">Leg Side</text>
+                          {/* Pitch — centred in oval, batter at bottom */}
+                          <rect x={stumpsX - 7} y={pitchTopY} width={14} height={pitchH} fill="#c8a96e" rx="2" />
+                          {/* Bowler direction arrow */}
+                          <text x={stumpsX} y={pitchTopY - 32} textAnchor="middle" fill="rgba(255,255,255,0.85)" fontSize="13">Bowler</text>
+                          <line x1={stumpsX} y1={pitchTopY - 27} x2={stumpsX} y2={pitchTopY - 8}
+                            stroke="rgba(255,255,255,0.85)" strokeWidth="2" />
+                          <polygon
+                            points={`${stumpsX - 6},${pitchTopY - 8} ${stumpsX + 6},${pitchTopY - 8} ${stumpsX},${pitchTopY + 4}`}
+                            fill="rgba(255,255,255,0.85)"
+                          />
+                          {/* Off/Leg labels — Off=right, Leg=left for right-handed batters */}
+                          <text x={fieldCx + fieldRx * 0.55} y={stumpsY - 10} textAnchor="middle" fill="rgba(255,255,255,0.75)" fontSize="14">Off Side</text>
+                          <text x={fieldCx - fieldRx * 0.55} y={stumpsY - 10} textAnchor="middle" fill="rgba(255,255,255,0.75)" fontSize="14">Leg Side</text>
+                          {/* Batter stumps */}
+                          <circle cx={stumpsX} cy={stumpsY} r={6} fill="white" />
+                          {/* Shot lines */}
                           {wagonWheelBalls.map((ball, idx) => {
                             const angle = ball.angle!;
                             const rawScore = ball.amount ?? 0;
                             const score = ball.thing === 'nb' ? rawScore - 1 : rawScore;
                             if (score <= 0) return null;
-                            const dist = wheelDistance(score, angle, radius);
-                            const end = ballEndPoint(angle, dist);
+                            const end = ballEndPoint(angle, score);
                             return (
                               <line key={idx} x1={stumpsX} y1={stumpsY} x2={end.x} y2={end.y} stroke={ballColor(score)} strokeWidth={2} strokeOpacity={0.85} />
                             );
                           })}
+                          {/* Legend */}
                           <line x1={10} y1={keyY} x2={50} y2={keyY} stroke="#ffdd00" strokeWidth={4} />
                           <text x={55} y={keyY + 4} fontSize={13} fill="#333">Runs</text>
                           <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#3b82f6" strokeWidth={4} />
@@ -1649,34 +1668,40 @@ const LiveScorecard: React.FC = () => {
                           const svgW = 500;
                           const svgH = 420;
                           const fieldCx = svgW / 2;
-                          const fieldCy = 200;
+                          const fieldCy = 190;
                           const fieldRx = 190;
-                          const fieldRy = 160;
+                          const fieldRy = 155;
                           const stumpsX = fieldCx;
-                          const stumpsY = 180;
-                          const radius = fieldRx;
+                          // Pitch vertically centred in inner oval; batter at the BOTTOM of the pitch
+                          const pitchH = 90;
+                          const pitchTopY = fieldCy - pitchH / 2; // bowler end
+                          const stumpsY = pitchTopY + pitchH;     // batter end
 
-                          const wheelDistance = (score: number, angle: number, r: number): number => {
-                            let scale = r / 4;
-                            if (score === 6) scale *= 0.75;
-                            let dist = score * scale;
-                            const halfPi = Math.PI / 2;
-                            if (angle <= halfPi) {
-                              dist -= score * 5 * ((halfPi - angle) / halfPi);
-                            } else if (angle <= Math.PI) {
-                              dist += score * 5 * ((angle - halfPi) / halfPi);
-                            } else if (angle <= Math.PI * 1.5) {
-                              dist += score * 5 * ((Math.PI * 1.5 - angle) / halfPi);
-                            } else {
-                              dist -= score * 5 * ((angle - Math.PI * 1.5) / halfPi);
-                            }
-                            return dist;
+                          // Distance along direction `angle` from stumps to outer ellipse boundary
+                          const getBoundaryDist = (angle: number): number => {
+                            const dirX = Math.sin(angle);
+                            const dirY = -Math.cos(angle);
+                            const dsx = stumpsX - fieldCx;
+                            const dsy = stumpsY - fieldCy;
+                            const a = (dirX * dirX) / (fieldRx * fieldRx) + (dirY * dirY) / (fieldRy * fieldRy);
+                            const b = 2 * (dsx * dirX / (fieldRx * fieldRx) + dsy * dirY / (fieldRy * fieldRy));
+                            const c = (dsx * dsx) / (fieldRx * fieldRx) + (dsy * dsy) / (fieldRy * fieldRy) - 1;
+                            const disc = b * b - 4 * a * c;
+                            if (disc < 0) return fieldRx;
+                            return (-b + Math.sqrt(disc)) / (2 * a);
                           };
 
-                          const ballEndPoint = (angle: number, dist: number) => ({
-                            x: Math.round(Math.cos(angle - Math.PI / 2) * dist + stumpsX),
-                            y: Math.round(Math.sin(angle - Math.PI / 2) * dist + stumpsY),
-                          });
+                          // Boundaries reach the edge; 1–3 run shots are scaled proportionally
+                          const ballEndPoint = (angle: number, score: number) => {
+                            const dirX = Math.sin(angle);
+                            const dirY = -Math.cos(angle);
+                            const t = getBoundaryDist(angle);
+                            const fraction = score >= 4 ? 1 : score / 4;
+                            return {
+                              x: Math.round(stumpsX + t * dirX * fraction),
+                              y: Math.round(stumpsY + t * dirY * fraction),
+                            };
+                          };
 
                           const ballColor = (score: number) =>
                             score >= 6 ? '#f97316' : score >= 4 ? '#3b82f6' : '#ffdd00';
@@ -1685,23 +1710,37 @@ const LiveScorecard: React.FC = () => {
 
                           return (
                             <svg data-testid="player-wagon-wheel" viewBox={`0 0 ${svgW} ${svgH}`} className="w-full" style={{ maxHeight: 480 }}>
+                              {/* Field */}
                               <ellipse cx={fieldCx} cy={fieldCy} rx={fieldRx} ry={fieldRy} fill="#4a8f3f" />
                               <ellipse cx={fieldCx} cy={fieldCy} rx={fieldRx * 0.5} ry={fieldRy * 0.5}
                                 fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
-                              <rect x={stumpsX - 7} y={stumpsY - 45} width={14} height={90} fill="#c8a96e" rx="2" />
-                              <text x={fieldCx - fieldRx * 0.55} y={fieldCy + 6} textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="14">Off Side</text>
-                              <text x={fieldCx + fieldRx * 0.55} y={fieldCy + 6} textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="14">Leg Side</text>
+                              {/* Pitch — centred in oval, batter at bottom */}
+                              <rect x={stumpsX - 7} y={pitchTopY} width={14} height={pitchH} fill="#c8a96e" rx="2" />
+                              {/* Bowler direction arrow */}
+                              <text x={stumpsX} y={pitchTopY - 32} textAnchor="middle" fill="rgba(255,255,255,0.85)" fontSize="13">Bowler</text>
+                              <line x1={stumpsX} y1={pitchTopY - 27} x2={stumpsX} y2={pitchTopY - 8}
+                                stroke="rgba(255,255,255,0.85)" strokeWidth="2" />
+                              <polygon
+                                points={`${stumpsX - 6},${pitchTopY - 8} ${stumpsX + 6},${pitchTopY - 8} ${stumpsX},${pitchTopY + 4}`}
+                                fill="rgba(255,255,255,0.85)"
+                              />
+                              {/* Off/Leg labels — Off=right, Leg=left for right-handed batters */}
+                              <text x={fieldCx + fieldRx * 0.55} y={stumpsY - 10} textAnchor="middle" fill="rgba(255,255,255,0.75)" fontSize="14">Off Side</text>
+                              <text x={fieldCx - fieldRx * 0.55} y={stumpsY - 10} textAnchor="middle" fill="rgba(255,255,255,0.75)" fontSize="14">Leg Side</text>
+                              {/* Batter stumps */}
+                              <circle cx={stumpsX} cy={stumpsY} r={6} fill="white" />
+                              {/* Shot lines */}
                               {playerWagonBalls.map((ball, idx) => {
                                 const angle = ball.angle!;
                                 const rawScore = ball.amount ?? 0;
                                 const score = ball.thing === 'nb' ? rawScore - 1 : rawScore;
                                 if (score <= 0) return null;
-                                const dist = wheelDistance(score, angle, radius);
-                                const end = ballEndPoint(angle, dist);
+                                const end = ballEndPoint(angle, score);
                                 return (
                                   <line key={idx} x1={stumpsX} y1={stumpsY} x2={end.x} y2={end.y} stroke={ballColor(score)} strokeWidth={2} strokeOpacity={0.85} />
                                 );
                               })}
+                              {/* Legend */}
                               <line x1={10} y1={keyY} x2={50} y2={keyY} stroke="#ffdd00" strokeWidth={4} />
                               <text x={55} y={keyY + 4} fontSize={13} fill="#333">Runs</text>
                               <line x1={110} y1={keyY} x2={150} y2={keyY} stroke="#3b82f6" strokeWidth={4} />
