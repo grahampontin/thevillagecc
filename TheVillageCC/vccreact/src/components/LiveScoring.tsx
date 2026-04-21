@@ -812,7 +812,9 @@ const LiveScoring: React.FC = () => {
     // If the extra was a wide or no-ball, re-evaluate striker switch
     setLocalBalls(prev => [...prev.slice(0, -1), updatedBall]);
 
-    // Re-evaluate striker after extra type change
+    // Re-evaluate striker after extra type change.
+    // addBall already applied the switch based on the original (no-extra) ball, so if the
+    // switch requirement changes we simply toggle (swap) the two batsmen regardless of direction.
     const originalShouldSwitch = shouldSwitchStriker(lastBall);
     const newShouldSwitch = shouldSwitchStriker(updatedBall);
     if (originalShouldSwitch !== newShouldSwitch) {
@@ -820,9 +822,8 @@ const LiveScoring: React.FC = () => {
       if (battingPlayers.length >= 2) {
         const currentStriker = localOnStrikeBatsmanId;
         const other = battingPlayers.find(p => p.playerId !== currentStriker);
-        const original = battingPlayers.find(p => p.playerId === currentStriker);
-        if (other && original) {
-          setLocalOnStrikeBatsmanId(newShouldSwitch ? (other.playerId ?? null) : (original.playerId ?? null));
+        if (other) {
+          setLocalOnStrikeBatsmanId(other.playerId ?? null);
         }
       }
     }
