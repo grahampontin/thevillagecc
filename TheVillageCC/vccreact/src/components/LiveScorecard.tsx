@@ -688,8 +688,13 @@ const LiveScorecard: React.FC = () => {
             else if ((ball.isBoundary && !ball.isSix) || batRuns === 4) entry.fours++;
           }
           if (ball.wicket) {
-            entry.isOut = true;
-            entry.dismissal = formatWicketDismissal(ball.wicket);
+            // Use ball.wicket.player to identify the dismissed batsman — this may differ
+            // from ball.batsman (the facing batter) e.g. in run outs of the non-striker
+            // or any case where the dismissed player is not the one who faced the ball.
+            const dismissedId = ball.wicket.player ?? ball.batsman;
+            const dismissedEntry = batsmenMap.get(dismissedId) ?? entry;
+            dismissedEntry.isOut = true;
+            dismissedEntry.dismissal = formatWicketDismissal(ball.wicket);
           }
         });
       });
@@ -703,6 +708,10 @@ const LiveScorecard: React.FC = () => {
           existing.balls = liveBatsman.balls ?? existing.balls;
           existing.fours = liveBatsman.fours ?? existing.fours;
           existing.sixes = liveBatsman.sixes ?? existing.sixes;
+          // This player is confirmed as currently batting — clear any incorrect 'out' status
+          // that may have been set due to a data inconsistency in the completed overs
+          existing.isOut = false;
+          existing.dismissal = undefined;
         } else {
           // Batsman appeared in the current (incomplete) over — add them
           batsmenMap.set(liveBatsman.playerId, {
