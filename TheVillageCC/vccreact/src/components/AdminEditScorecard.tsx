@@ -90,16 +90,16 @@ interface ModalWrapperProps {
 }
 
 const ModalWrapper: React.FC<ModalWrapperProps> = ({ title, onClose, onSave, saving, maxWidth = 'max-w-lg', children }) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-label={title}>
-    <div className={`bg-white rounded-lg shadow-xl w-full ${maxWidth} my-4`}>
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-label={title}>
+    <div className={`bg-white rounded-lg shadow-xl w-full ${maxWidth} flex flex-col max-h-[90vh]`}>
+      <div className="flex-none flex items-center justify-between px-5 py-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold">{title}</h2>
         <button onClick={onClose} aria-label="Close" className="text-gray-400 hover:text-gray-600">
           <span className="material-symbols-outlined">close</span>
         </button>
       </div>
-      <div className="px-5 py-4 space-y-4">{children}</div>
-      <div className="px-5 py-4 border-t border-gray-200 flex justify-end gap-3">
+      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">{children}</div>
+      <div className="flex-none px-5 py-4 border-t border-gray-200 flex justify-end gap-3">
         <button onClick={onClose} className="px-4 py-2 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition">Cancel</button>
         <button onClick={onSave} disabled={saving} className="px-4 py-2 text-sm rounded-md bg-villageGreen text-white font-medium hover:bg-green-800 transition disabled:opacity-50">
           {saving ? 'Saving…' : 'Save'}
