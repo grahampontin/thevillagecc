@@ -76,7 +76,9 @@ const Homepage: React.FC = () => {
             : (item.resultText ?? '').trim();
 
           // Prefer match report text if present (falls back to empty string)
-          const reportText = item.matchReportText || '';
+          const rawReportText = item.matchReportText || '';
+          // Strip HTML tags so the preview is plain text even if stored as HTML
+          const reportText = rawReportText.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
           const text = reportText.length > MAX_REPORT_PREVIEW_LENGTH
             ? reportText.substring(0, MAX_REPORT_PREVIEW_LENGTH) + '...'
             : reportText;

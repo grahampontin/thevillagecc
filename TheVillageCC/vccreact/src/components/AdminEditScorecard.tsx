@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SearchableSelect from './SearchableSelect';
 import ImageCropper from './ImageCropper';
+import RichTextEditor from './RichTextEditor';
 import { getScorecardByMatchId, saveScorecard } from '../api/scorecardsApi';
 import { getMatchById } from '../api/fixturesApi';
 import { getAllPlayers } from '../api/playersApi';
@@ -84,12 +85,13 @@ interface ModalWrapperProps {
   onClose: () => void;
   onSave: () => void;
   saving?: boolean;
+  maxWidth?: string;
   children: React.ReactNode;
 }
 
-const ModalWrapper: React.FC<ModalWrapperProps> = ({ title, onClose, onSave, saving, children }) => (
+const ModalWrapper: React.FC<ModalWrapperProps> = ({ title, onClose, onSave, saving, maxWidth = 'max-w-lg', children }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-label={title}>
-    <div className="bg-white rounded-lg shadow-xl w-full max-w-lg my-4">
+    <div className={`bg-white rounded-lg shadow-xl w-full ${maxWidth} my-4`}>
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold">{title}</h2>
         <button onClick={onClose} aria-label="Close" className="text-gray-400 hover:text-gray-600">
@@ -910,6 +912,7 @@ const AdminEditScorecard: React.FC = () => {
           onClose={() => setModal({ kind: 'none' })}
           onSave={handleSaveMatchReport}
           saving={savingReport}
+          maxWidth="max-w-2xl"
         >
           <div>
             <label className={labelCls()} htmlFor="report-conditions">Conditions</label>
@@ -923,14 +926,12 @@ const AdminEditScorecard: React.FC = () => {
             />
           </div>
           <div>
-            <label className={labelCls()} htmlFor="report-text">Report</label>
-            <textarea
-              id="report-text"
-              rows={8}
-              placeholder="Prey tell, what did happen?"
+            <label className={labelCls()}>Report</label>
+            <RichTextEditor
               value={matchReport.report ?? ''}
-              onChange={e => setMatchReport(r => ({ ...r, report: e.target.value }))}
-              className={inputCls()}
+              onChange={html => setMatchReport(r => ({ ...r, report: html }))}
+              placeholder="Prey tell, what did happen?"
+              minHeight={220}
             />
           </div>
           <div>
