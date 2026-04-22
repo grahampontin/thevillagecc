@@ -33,7 +33,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "fetch:openapi": "curl --max-time 120 --retry 3 --retry-delay 15 -f -o cricketclub.json https://api.dev.thevillagecc.org.uk/swagger/v1/swagger.json",
     "generate:openapi": "node ./scripts/strip-bom.js ./cricketclub.json && openapi-typescript ./cricketclub.json -o ./src/api/generated/openapi.ts",
+    "generate:openapi:fresh": "npm run fetch:openapi && npm run generate:openapi",
     "check:no-domain-dto-imports": "node ./scripts/check-no-domain-dto-imports.js",
     "verify": "npm run generate:openapi && npm run check:no-domain-dto-imports && npm test -- --watchAll=false && npm run build",
     "eject": "react-scripts eject"
