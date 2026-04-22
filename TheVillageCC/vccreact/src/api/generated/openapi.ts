@@ -509,9 +509,17 @@ export interface paths {
         204: {
           content: never;
         };
-        /** @description Not Implemented */
-        501: {
-          content: never;
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+        /** @description Conflict */
+        409: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
         };
       };
     };
@@ -954,6 +962,51 @@ export interface paths {
         };
         /** @description Not Implemented */
         501: {
+          content: never;
+        };
+      };
+    };
+  };
+  "/api/Teams/{id}/details": {
+    get: {
+      parameters: {
+        path: {
+          id: number;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["TeamDetailV1"];
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Teams/summaries": {
+    get: {
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["TeamSummaryV1"][];
+          };
+        };
+      };
+    };
+  };
+  "/api/Teams/recalculate-stats": {
+    post: {
+      responses: {
+        /** @description OK */
+        200: {
           content: never;
         };
       };
@@ -1707,10 +1760,45 @@ export interface components {
       venue?: string | null;
       matchTypes?: string[] | null;
     };
+    TeamDetailV1: {
+      /** Format: int32 */
+      id?: number;
+      name?: string | null;
+      logoUrl?: string | null;
+      websiteUrl?: string | null;
+      /** Format: int32 */
+      homeVenueId?: number | null;
+      homeVenueName?: string | null;
+      difficultyRating?: string | null;
+      /** Format: double */
+      winPercentage?: number;
+      matches?: components["schemas"]["ResultV1"][] | null;
+    };
+    TeamSummaryV1: {
+      /** Format: int32 */
+      id?: number;
+      name?: string | null;
+      homeVenueName?: string | null;
+      difficultyRating?: string | null;
+      /** Format: double */
+      winPercentage?: number;
+      /** Format: int32 */
+      played?: number;
+      /** Format: int32 */
+      won?: number;
+      /** Format: int32 */
+      lost?: number;
+      /** Format: int32 */
+      noResult?: number;
+    };
     TeamV1: {
       /** Format: int32 */
       id?: number;
       name?: string | null;
+      logoUrl?: string | null;
+      websiteUrl?: string | null;
+      /** Format: int32 */
+      homeVenueId?: number | null;
     };
     VenueV1: {
       /** Format: int32 */

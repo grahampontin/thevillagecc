@@ -18,6 +18,8 @@ export type MatchV1 = components['schemas']['MatchV1'];
 export type PlayerV1 = components['schemas']['PlayerV1'];
 export type ResultV1 = components['schemas']['ResultV1'];
 export type TeamV1 = components['schemas']['TeamV1'];
+export type TeamDetailV1 = components['schemas']['TeamDetailV1'];
+export type TeamSummaryV1 = components['schemas']['TeamSummaryV1'];
 export type VenueV1 = components['schemas']['VenueV1'];
 
 // Live scoring

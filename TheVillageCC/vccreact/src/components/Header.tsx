@@ -52,6 +52,7 @@ const Header: React.FC = () => {
           <a href="/committee" className="py-1 text-gray-700 hover:text-villageGreen transition">Committee</a>
           <a href="/awards" className="py-1 text-gray-700 hover:text-villageGreen transition">Awards</a>
           <a href="/tours" className="py-1 text-gray-700 hover:text-villageGreen transition">Tours</a>
+          <a href="/teams" className="py-1 text-gray-700 hover:text-villageGreen transition">Teams</a>
           <a
             href="/admin"
             className="mt-1 inline-flex items-center justify-center border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition w-max"

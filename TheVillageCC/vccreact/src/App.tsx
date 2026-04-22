@@ -22,6 +22,8 @@ import AdminCommittee from './components/AdminCommittee';
 import AdminScorecards from './components/AdminScorecards';
 import AdminEditScorecard from './components/AdminEditScorecard';
 import Tours from './components/Tours';
+import Teams from './components/Teams';
+import TeamDetail from './components/TeamDetail';
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
         <Route path="/player/:playerId" element={<PlayerDetail />} />
         <Route path="/scorecard/:matchId" element={<LiveScorecard />} />
         <Route path="/tours" element={<Tours />} />
+        <Route path="/teams" element={<Teams />} />
+        <Route path="/teams/:teamId" element={<TeamDetail />} />
         <Route path="/scoring" element={<LiveScoring />} />
         <Route path="/admin" element={<AdminLanding />} />
         <Route path="/admin/players" element={<AdminPlayers />} />
