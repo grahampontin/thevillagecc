@@ -1,0 +1,52 @@
+﻿# AGENTS.md – AI Agent Guide for VCC React
+
+## Project Overview
+Cricket club website (Create React App + TypeScript). A React SPA that communicates with an IIS/.NET backend via a REST API.  
+Styling uses **Tailwind CSS** + **Bootstrap/react-bootstrap**. Data grids use **AG Grid**. Charts use **Chart.js/react-chartjs-2**. Rich text via **Tiptap**.
+
+## Architecture
+
+### Routing (`src/App.tsx`)
+All routes are flat in `App.tsx`. Public pages (`/`, `/about`, `/fixtures`, etc.) and admin pages (`/admin/*`) live side-by-side – there is no auth guard in the frontend.
+
+### API Layer (`src/api/`)
+All backend calls go through a 3-layer stack:
+1. **`src/api/http.ts`** – thin `fetch` wrappers: `getJson`, `postJson`, `putJson`, `deleteRequest`
+2. **`src/api/config.ts`** – `apiUrl(path)` helper that prepends `REACT_APP_API_BASE_URL` in production; returns relative paths in dev/test
+3. **`src/api/*Api.ts`** – one file per resource (e.g. `playersApi.ts`, `fixturesApi.ts`). Always import from these; never call `fetch` directly in components.
+
+### DTO Types (`src/api/swaggerTypes.ts`)
+All request/response types come from the OpenAPI spec (`cricketclub.json`). They are **generated** to `src/api/generated/openapi.ts` and re-exported as named aliases from `src/api/swaggerTypes.ts`.  
+**Always import types from `src/api/swaggerTypes.ts`, never from `generated/openapi.ts` directly, and never write handmade duplicates.**
+
+### Components (`src/components/`)
+One file per page/feature. Admin components are prefixed `Admin`. AG Grid cell renderers live in `src/components/cellRenderers/`.
+
+## Key Commands
+
+| Task | Command |
+|---|---|
+| Start dev server | `npm start` (proxies `/api` → `http://localhost:5000` or `REACT_APP_API_URL`) |
+| Run tests (CI mode) | `npm test -- --watchAll=false` |
+| Build for production | `npm run build` |
+| Regenerate OpenAPI types | `npm run generate:openapi` |
+| Full pre-commit check | `npm run verify` (generates types → checks imports → tests → build) |
+| Check no domain DTO imports | `npm run check:no-domain-dto-imports` |
+
+## Dev Environment
+- Backend URL defaults to `http://localhost:5000`; override via `.env.development` → `REACT_APP_API_URL=http://localhost:8080`
+- Production static web app needs `REACT_APP_API_BASE_URL=https://<api-host>` set at build time (see `src/api/config.ts`)
+- The proxy (`src/setupProxy.js`) rewrites `/api/*` → `<target>/api/*` (i.e. the prefix is preserved on the backend)
+
+## Enforced Conventions
+- **No `domain/` imports**: `scripts/check-no-domain-dto-imports.js` (run in `verify`) blocks any import from a `domain/` path. DTO types must come from `swaggerTypes.ts`.
+- **Regenerate types before editing**: if the backend schema changed, run `npm run generate:openapi` first so `swaggerTypes.ts` aliases stay accurate.
+- **Jest transform**: `@tiptap` and several prosemirror packages are excluded from `transformIgnorePatterns` in `package.json` so they get transpiled in tests – keep this if adding new ESM-only deps.
+
+## Important Files
+- `cricketclub.json` – OpenAPI spec (source of truth for all DTO shapes)
+- `src/api/swaggerTypes.ts` – canonical DTO type imports for components
+- `src/api/config.ts` – `apiUrl()` – always use this for endpoint paths
+- `src/setupProxy.js` – dev proxy config
+- `src/App.tsx` – all route definitions
+
