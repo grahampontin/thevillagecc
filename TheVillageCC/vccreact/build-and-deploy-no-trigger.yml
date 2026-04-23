@@ -4,6 +4,8 @@
 #
 # Required pipeline variable (mark secret):
 # - AZURE_STATIC_WEB_APPS_API_TOKEN : deployment token for the SWA 'thevillagecc'
+trigger: none
+pr: none
 
 pool:
   vmImage: ubuntu-latest
