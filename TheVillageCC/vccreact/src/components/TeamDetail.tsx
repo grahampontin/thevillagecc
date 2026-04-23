@@ -6,32 +6,61 @@ import { getTeamDetails } from '../api/teamsApi';
 import { TeamDetailV1, ResultV1 } from '../api/swaggerTypes';
 import { getResultBadge } from '../utils/matchResultUtils';
 
-// Traffic light badge for difficulty rating
-const DifficultyBadge: React.FC<{ rating?: string | null }> = ({ rating }) => {
-  if (!rating) return <span className="text-gray-400 text-sm">Not rated</span>;
-  const lower = rating.toLowerCase();
-  if (lower === 'red')
-    return (
-      <span className="inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1 rounded-full bg-red-100 text-red-700">
-        <span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>Tough
-      </span>
-    );
-  if (lower === 'amber')
-    return (
-      <span className="inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1 rounded-full bg-amber-100 text-amber-700">
-        <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>Competitive
-      </span>
-    );
-  if (lower === 'green')
-    return (
-      <span className="inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700">
-        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>Favourable
-      </span>
-    );
-  return <span className="text-gray-500 text-sm">{rating}</span>;
+// ── Types ──────────────────────────────────────────────────────────────────
+
+type DifficultyRating = 'red' | 'amber' | 'green' | 'unknown' | null;
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function difficultyLabel(rating: DifficultyRating): string {
+  switch (rating) {
+    case 'red':   return 'Hard';
+    case 'amber': return 'Medium';
+    case 'green': return 'Easy';
+    default:      return 'New';
+  }
+}
+
+function formatWinPct(winPercentage: number | undefined, played: number): string {
+  if (played === 0) return '—';
+  if (winPercentage == null) return '—';
+  return `${(winPercentage * 100).toFixed(0)}%`;
+}
+
+// ── DifficultyBadge ────────────────────────────────────────────────────────
+
+const BADGE_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
+  red:     { bg: 'bg-red-100',     text: 'text-red-700',     dot: 'bg-red-500'     },
+  amber:   { bg: 'bg-amber-100',   text: 'text-amber-700',   dot: 'bg-amber-500'   },
+  green:   { bg: 'bg-emerald-100', text: 'text-emerald-700', dot: 'bg-emerald-500' },
+  unknown: { bg: 'bg-gray-100',    text: 'text-gray-500',    dot: 'bg-gray-400'    },
 };
 
-// Stat card component
+const DIFFICULTY_TOOLTIP =
+  'Difficulty is calculated from the margin of every result against this team, not just win/loss counts. ' +
+  'A 10-wicket defeat counts as much harder than a 1-wicket defeat, and a crushing run victory counts as much easier than a narrow one. ' +
+  'Ratings are relative: the hardest third of teams (by weighted margin) are Red, the middle third Amber, and the easiest third Green. ' +
+  'Teams with fewer than 3 completed matches are shown as New.';
+
+const DifficultyBadge: React.FC<{ rating: DifficultyRating }> = ({ rating }) => {
+  const key = rating?.toLowerCase() ?? 'unknown';
+  const style = BADGE_STYLES[key] ?? BADGE_STYLES.unknown;
+  const label = difficultyLabel(rating);
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1 rounded-full ${style.bg} ${style.text}`}
+      aria-label={`Difficulty: ${label}`}
+      title={DIFFICULTY_TOOLTIP}
+    >
+      <span className={`w-2.5 h-2.5 rounded-full inline-block ${style.dot}`}></span>
+      {label}
+    </span>
+  );
+};
+
+// ── StatCard ───────────────────────────────────────────────────────────────
+
 const StatCard: React.FC<{ label: string; value: string | number; accent?: string }> = ({
   label,
   value,
@@ -43,6 +72,8 @@ const StatCard: React.FC<{ label: string; value: string | number; accent?: strin
   </div>
 );
 
+// ── Skeleton ───────────────────────────────────────────────────────────────
+
 const SkeletonLoader: React.FC = () => (
   <div className="space-y-4" role="status" aria-label="Loading" aria-live="polite">
     <div className="h-8 bg-gray-200 rounded w-1/3 animate-pulse"></div>
@@ -51,11 +82,13 @@ const SkeletonLoader: React.FC = () => (
   </div>
 );
 
+// ── Main component ─────────────────────────────────────────────────────────
+
 const TeamDetail: React.FC = () => {
   const { teamId } = useParams<{ teamId: string }>();
-  const [team, setTeam] = useState<TeamDetailV1 | null>(null);
+  const [team, setTeam]     = useState<TeamDetailV1 | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError]     = useState<string | null>(null);
 
   useEffect(() => {
     const id = parseInt(teamId ?? '', 10);
@@ -70,31 +103,22 @@ const TeamDetail: React.FC = () => {
       .finally(() => setLoading(false));
   }, [teamId]);
 
-  const matches = team?.matches ?? [];
-  const played = matches.length;
-  const won = matches.filter(m => m.isWinner === true).length;
-  const lost = matches.filter(m => m.isWinner === false && !m.isTied && !m.isDrawn && !m.isAbandoned).length;
-  const noResult = matches.filter(m => m.isTied || m.isDrawn || m.isAbandoned).length;
-  const winPct =
-    team?.winPercentage != null
-      ? `${Math.round(team.winPercentage * 100)}%`
-      : played > 0
-      ? `${Math.round((won / played) * 100)}%`
-      : '—';
+  // Stats derived from match list (API pre-sorts newest-first, so no client sort needed)
+  const matches   = team?.matches ?? [];
+  const played    = matches.length;
+  const won       = matches.filter(m => m.isWinner === true).length;
+  const lost      = matches.filter(m => m.isWinner === false && !m.isTied && !m.isDrawn && !m.isAbandoned).length;
+  const noResult  = matches.filter(m => m.isTied || m.isDrawn || m.isAbandoned).length;
+  const winPct    = formatWinPct(team?.winPercentage, played);
 
-  // Sort matches newest first
-  const sortedMatches = [...matches].sort((a, b) => {
-    if (!a.matchDate && !b.matchDate) return 0;
-    if (!a.matchDate) return 1;
-    if (!b.matchDate) return -1;
-    return new Date(b.matchDate).getTime() - new Date(a.matchDate).getTime();
-  });
+  const difficultyRating = (team?.difficultyRating as DifficultyRating) ?? null;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+
         {/* Back link */}
         <Link to="/teams" className="text-sm text-villageGreen hover:underline mb-6 inline-block">
           ← Back to all teams
@@ -108,46 +132,67 @@ const TeamDetail: React.FC = () => {
 
         {!loading && team && (
           <>
-            {/* Team header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">{team.name}</h1>
-                {team.homeVenueName && (
-                  <p className="text-gray-500 text-sm mt-1">
-                    <span className="font-medium">Home ground:</span> {team.homeVenueName}
-                  </p>
+            {/* ── Team header card ── */}
+            <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+
+                {/* Logo */}
+                {team.logoUrl && (
+                  <img
+                    src={team.logoUrl}
+                    alt={`${team.name ?? 'Team'} logo`}
+                    className="w-16 h-16 object-contain rounded-lg border border-gray-100 flex-shrink-0"
+                    onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
                 )}
-                {team.websiteUrl && (
-                  <a
-                    href={team.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-villageGreen text-sm hover:underline mt-0.5 inline-block"
-                  >
-                    {team.websiteUrl}
-                  </a>
-                )}
+
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h1 className="text-2xl font-bold text-gray-900">{team.name}</h1>
+                    <DifficultyBadge rating={difficultyRating} />
+                  </div>
+
+                  <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
+                    {team.homeVenueName && (
+                      <span>📍 {team.homeVenueName}</span>
+                    )}
+                    {team.websiteUrl && (
+                      <a
+                        href={team.websiteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-villageGreen hover:underline truncate max-w-xs"
+                      >
+                        🔗 {team.websiteUrl}
+                      </a>
+                    )}
+                  </div>
+
+                  {/* Headline stats inline */}
+                  <div className="mt-3 text-sm text-gray-600">
+                    <span className="font-medium">Played:</span> {played}&ensp;
+                    <span className="font-medium text-emerald-700">Won:</span> {won}&ensp;
+                    <span className="font-medium text-red-600">Lost:</span> {lost}
+                    {noResult > 0 && <>&ensp;<span className="font-medium text-gray-500">No result:</span> {noResult}</>}
+                    &ensp;<span className="font-medium">Win rate:</span> {winPct}
+                  </div>
+                </div>
               </div>
-              <DifficultyBadge rating={team.difficultyRating} />
             </div>
 
-            {/* Stats row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-              <StatCard label="Played" value={played} />
-              <StatCard label="Won" value={won} accent="text-emerald-600" />
-              <StatCard label="Lost" value={lost} accent="text-red-600" />
-              <StatCard label="Win %" value={winPct} accent="text-villageGreen" />
+            {/* ── Stat cards ── */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+              <StatCard label="Played"  value={played} />
+              <StatCard label="Won"     value={won}    accent="text-emerald-600" />
+              <StatCard label="Lost"    value={lost}   accent="text-red-600" />
+              <StatCard label="Win Rate" value={winPct} accent="text-villageGreen" />
             </div>
-            {noResult > 0 && (
-              <p className="text-xs text-gray-400 -mt-6 mb-8">
-                {noResult} match{noResult > 1 ? 'es' : ''} with no result (tied / drawn / abandoned) not included in win/loss counts.
-              </p>
-            )}
 
-            {/* Match history */}
+            {/* ── Match history ── */}
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Match History</h2>
 
-            {sortedMatches.length === 0 ? (
+            {matches.length === 0 ? (
               <p className="text-gray-400 text-sm">No matches recorded against this team.</p>
             ) : (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
@@ -155,44 +200,54 @@ const TeamDetail: React.FC = () => {
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200">
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Date</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden md:table-cell">Venue</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-700">Score</th>
-                      <th className="px-4 py-3 text-center font-semibold text-gray-700">Result</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden sm:table-cell">Margin</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-700">Result</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden md:table-cell">Scores</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden sm:table-cell">Venue</th>
                       <th className="px-4 py-3 text-center font-semibold text-gray-700">Scorecard</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {sortedMatches.map((match: ResultV1, idx: number) => {
+                    {matches.map((match: ResultV1, idx: number) => {
+                      const isWon      = match.isWinner === true;
+                      const isLost     = match.isWinner === false && !match.isTied && !match.isDrawn && !match.isAbandoned;
                       const badge = getResultBadge({
-                        isWinner: match.isWinner ?? null,
-                        isTied: match.isTied ?? false,
-                        isDrawn: match.isDrawn ?? false,
+                        isWinner:    match.isWinner ?? null,
+                        isTied:      match.isTied ?? false,
+                        isDrawn:     match.isDrawn ?? false,
                         isAbandoned: match.isAbandoned ?? false,
                       });
+
                       const dateStr = match.matchDate
                         ? new Date(match.matchDate).toLocaleDateString('en-GB', {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
+                            day: '2-digit', month: 'short', year: 'numeric',
                           })
                         : '—';
+
+                      const resultText = match.resultText
+                        ? (isWon ? '✅ ' : isLost ? '❌ ' : '') + match.resultText
+                        : badge.text;
+
                       const scoreDisplay =
-                        match.homeTeamName && match.awayTeamName
-                          ? `${match.homeTeamName} ${match.homeTeamScore ?? ''} v ${match.awayTeamScore ?? ''} ${match.awayTeamName}`
-                          : match.resultText ?? '—';
+                        match.homeTeamScore && match.awayTeamScore
+                          ? `${match.homeTeamScore} v ${match.awayTeamScore}`
+                          : '—';
+
+                      const rowBg = isWon ? 'bg-emerald-50/40' : isLost ? 'bg-red-50/40' : '';
 
                       return (
-                        <tr key={match.matchId ?? idx} className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <tr
+                          key={match.matchId ?? idx}
+                          className={`border-b border-gray-100 hover:brightness-95 transition ${rowBg}`}
+                        >
                           <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{dateStr}</td>
-                          <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{match.venueName ?? '—'}</td>
-                          <td className="px-4 py-3 text-gray-700">{scoreDisplay}</td>
-                          <td className="px-4 py-3 text-center">
-                            <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full ${badge.color}`}>
+                          <td className="px-4 py-3 text-gray-700">
+                            <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mr-2 ${badge.color}`}>
                               {badge.text}
                             </span>
+                            <span className="text-gray-600 hidden sm:inline">{match.resultText ?? ''}</span>
                           </td>
-                          <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{match.margin ?? match.resultMargin ?? '—'}</td>
+                          <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{scoreDisplay}</td>
+                          <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{match.venueName ?? '—'}</td>
                           <td className="px-4 py-3 text-center">
                             {match.matchId ? (
                               <Link
