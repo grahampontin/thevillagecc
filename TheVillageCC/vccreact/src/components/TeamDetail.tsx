@@ -42,16 +42,19 @@ const DIFFICULTY_TOOLTIP =
   'Ratings are relative: the hardest third of teams (by weighted margin) are Red, the middle third Amber, and the easiest third Green. ' +
   'Teams with fewer than 3 completed matches are shown as New.';
 
-const DifficultyBadge: React.FC<{ rating: DifficultyRating }> = ({ rating }) => {
+const DifficultyBadge: React.FC<{ rating: DifficultyRating; score?: number | null }> = ({ rating, score }) => {
   const key = rating?.toLowerCase() ?? 'unknown';
   const style = BADGE_STYLES[key] ?? BADGE_STYLES.unknown;
   const label = difficultyLabel(rating);
+  const scoreTitle = score != null
+    ? `${DIFFICULTY_TOOLTIP}\n\nDifficulty score: ${score.toFixed(3)}`
+    : DIFFICULTY_TOOLTIP;
 
   return (
     <span
       className={`inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1 rounded-full ${style.bg} ${style.text}`}
       aria-label={`Difficulty: ${label}`}
-      title={DIFFICULTY_TOOLTIP}
+      title={scoreTitle}
     >
       <span className={`w-2.5 h-2.5 rounded-full inline-block ${style.dot}`}></span>
       {label}
@@ -150,7 +153,7 @@ const TeamDetail: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-3">
                     <h1 className="text-2xl font-bold text-gray-900">{team.name}</h1>
-                    <DifficultyBadge rating={difficultyRating} />
+                    <DifficultyBadge rating={difficultyRating} score={team.difficultyScore} />
                   </div>
 
                   <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">

@@ -960,9 +960,11 @@ export interface paths {
         204: {
           content: never;
         };
-        /** @description Not Implemented */
-        501: {
-          content: never;
+        /** @description Conflict */
+        409: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
         };
       };
     };
@@ -1771,6 +1773,8 @@ export interface components {
       homeVenueName?: string | null;
       difficultyRating?: string | null;
       /** Format: double */
+      difficultyScore?: number | null;
+      /** Format: double */
       winPercentage?: number;
       matches?: components["schemas"]["ResultV1"][] | null;
     };
@@ -1780,6 +1784,8 @@ export interface components {
       name?: string | null;
       homeVenueName?: string | null;
       difficultyRating?: string | null;
+      /** Format: double */
+      difficultyScore?: number | null;
       /** Format: double */
       winPercentage?: number;
       /** Format: int32 */

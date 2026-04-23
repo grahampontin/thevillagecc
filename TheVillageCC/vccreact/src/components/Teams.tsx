@@ -14,8 +14,6 @@ type SortDir = 'asc' | 'desc';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
-const DIFFICULTY_ORDER: Record<string, number> = { red: 0, amber: 1, green: 2, unknown: 3 };
-
 function difficultyLabel(rating: DifficultyRating): string {
   switch (rating) {
     case 'red':   return 'Hard';
@@ -40,19 +38,22 @@ const BADGE_STYLES: Record<string, { bg: string; text: string; dot: string }> = 
   unknown: { bg: 'bg-gray-100',    text: 'text-gray-500',    dot: 'bg-gray-400'    },
 };
 
-const DifficultyBadge: React.FC<{ rating: DifficultyRating; size?: 'sm' | 'md' }> = ({
+const DifficultyBadge: React.FC<{ rating: DifficultyRating; score?: number | null; size?: 'sm' | 'md' }> = ({
   rating,
+  score,
   size = 'sm',
 }) => {
   const key = rating?.toLowerCase() ?? 'unknown';
   const style = BADGE_STYLES[key] ?? BADGE_STYLES.unknown;
   const label = difficultyLabel(rating);
   const px = size === 'md' ? 'px-3 py-1 text-sm' : 'px-2.5 py-0.5 text-xs';
+  const scoreTitle = score != null ? `Difficulty score: ${score.toFixed(3)}` : undefined;
 
   return (
     <span
       className={`inline-flex items-center gap-1.5 font-semibold rounded-full ${px} ${style.bg} ${style.text}`}
       aria-label={`Difficulty: ${label}`}
+      title={scoreTitle}
     >
       <span className={`w-2 h-2 rounded-full inline-block ${style.dot}`}></span>
       {label}
@@ -187,9 +188,13 @@ const Teams: React.FC = () => {
           cmp = (a.winPercentage ?? 0) - (b.winPercentage ?? 0);
           break;
         case 'difficultyRating': {
-          const ra: number = DIFFICULTY_ORDER[a.difficultyRating?.toLowerCase() ?? 'unknown'] ?? 3;
-          const rb: number = DIFFICULTY_ORDER[b.difficultyRating?.toLowerCase() ?? 'unknown'] ?? 3;
-          cmp = ra - rb;
+          // Sort by numeric difficultyScore; nulls always last
+          const hasA = a.difficultyScore != null;
+          const hasB = b.difficultyScore != null;
+          if (!hasA && !hasB) { cmp = 0; break; }
+          if (!hasA) { return 1; }   // a is null → always after b
+          if (!hasB) { return -1; }  // b is null → always after a
+          cmp = (a.difficultyScore as number) - (b.difficultyScore as number);
           break;
         }
       }
@@ -325,7 +330,10 @@ const Teams: React.FC = () => {
                       {formatWinPct(team.winPercentage, team.played)}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <DifficultyBadge rating={(team.difficultyRating as DifficultyRating) ?? null} />
+                      <DifficultyBadge
+                        rating={(team.difficultyRating as DifficultyRating) ?? null}
+                        score={team.difficultyScore}
+                      />
                     </td>
                   </tr>
                 ))}
