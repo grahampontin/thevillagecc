@@ -14,9 +14,9 @@ type DifficultyRating = 'red' | 'amber' | 'green' | 'unknown' | null;
 
 function difficultyLabel(rating: DifficultyRating): string {
   switch (rating) {
-    case 'red':   return 'Hard';
-    case 'amber': return 'Medium';
-    case 'green': return 'Easy';
+    case 'red':   return 'Tough';
+    case 'amber': return 'Competitive';
+    case 'green': return 'Favourable';
     default:      return 'New';
   }
 }
@@ -39,7 +39,7 @@ const BADGE_STYLES: Record<string, { bg: string; text: string; dot: string }> = 
 const DIFFICULTY_TOOLTIP =
   'Difficulty is calculated from the margin of every result against this team, not just win/loss counts. ' +
   'A 10-wicket defeat counts as much harder than a 1-wicket defeat, and a crushing run victory counts as much easier than a narrow one. ' +
-  'Ratings are relative: the hardest third of teams (by weighted margin) are Red, the middle third Amber, and the easiest third Green. ' +
+  'Ratings are relative: the hardest third of teams (by weighted margin) are Tough, the middle third Competitive, and the most favourable third Favourable. ' +
   'Teams with fewer than 3 completed matches are shown as New.';
 
 const DifficultyBadge: React.FC<{ rating: DifficultyRating; score?: number | null }> = ({ rating, score }) => {
@@ -247,8 +247,8 @@ const TeamDetail: React.FC = () => {
                             <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mr-2 ${badge.color}`}>
                               {badge.text}
                             </span>
-                            {match.margin && (
-                              <span className="text-gray-600 hidden sm:inline">by {match.margin}</span>
+                            {match.margin && !match.isTied && !match.isDrawn && !match.isAbandoned && (
+                              <span className="text-gray-600 hidden sm:inline">{match.margin}</span>
                             )}
                           </td>
                           <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{scoreDisplay}</td>

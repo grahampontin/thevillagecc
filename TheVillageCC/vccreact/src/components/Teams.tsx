@@ -16,9 +16,9 @@ type SortDir = 'asc' | 'desc';
 
 function difficultyLabel(rating: DifficultyRating): string {
   switch (rating) {
-    case 'red':   return 'Hard';
-    case 'amber': return 'Medium';
-    case 'green': return 'Easy';
+    case 'red':   return 'Tough';
+    case 'amber': return 'Competitive';
+    case 'green': return 'Favourable';
     default:      return 'New';
   }
 }
@@ -66,7 +66,7 @@ const DifficultyBadge: React.FC<{ rating: DifficultyRating; score?: number | nul
 const DIFFICULTY_TOOLTIP =
   'Difficulty is calculated from the margin of every result against this team, not just win/loss counts. ' +
   'A 10-wicket defeat counts as much harder than a 1-wicket defeat, and a crushing run victory counts as much easier than a narrow one. ' +
-  'Ratings are relative: the hardest third of teams (by weighted margin) are Red, the middle third Amber, and the easiest third Green. ' +
+  'Ratings are relative: the hardest third of teams (by weighted margin) are Tough, the middle third Competitive, and the most favourable third Favourable. ' +
   'Teams with fewer than 3 completed matches are shown as New.';
 
 const InfoIcon: React.FC<{ title: string }> = ({ title }) => (
@@ -216,11 +216,11 @@ const Teams: React.FC = () => {
   const colCount = hasNoResult ? 8 : 7;
 
   const DIFF_FILTERS: { value: DifficultyFilter; label: string }[] = [
-    { value: 'all',     label: 'All'    },
-    { value: 'red',     label: 'Hard'   },
-    { value: 'amber',   label: 'Medium' },
-    { value: 'green',   label: 'Easy'   },
-    { value: 'unknown', label: 'New'    },
+    { value: 'all',     label: 'All'         },
+    { value: 'red',     label: 'Tough'       },
+    { value: 'amber',   label: 'Competitive' },
+    { value: 'green',   label: 'Favourable'  },
+    { value: 'unknown', label: 'New'         },
   ];
 
   return (
