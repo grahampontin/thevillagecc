@@ -155,7 +155,7 @@ const Fixtures: React.FC = () => {
                 return (
                   <article
                     key={fixture.id}
-                    className="bg-white border border-gray-200 rounded-lg p-4 pb-12 shadow-sm relative"
+                    className="bg-white border border-gray-200 rounded-lg p-4 pb-12 shadow-sm relative min-w-0 overflow-hidden"
                   >
                     <div className="flex items-start justify-between gap-4 mb-1">
                       <span className="text-xs text-gray-500 flex-1 min-w-0 truncate">
@@ -169,10 +169,10 @@ const Fixtures: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="text-sm font-semibold text-villageText">
+                    <div className="text-sm font-semibold text-villageText break-words pr-10">
                       {fixture.homeTeamName} vs {fixture.awayTeamName}
                     </div>
-                    <p className="mt-1 text-sm text-gray-600 italic">
+                    <p className="mt-1 text-sm text-gray-600 italic break-words pr-10">
                       {fixture.venueName} · {fixture.type}
                     </p>
 
