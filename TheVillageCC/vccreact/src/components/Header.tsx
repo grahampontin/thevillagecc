@@ -24,6 +24,7 @@ const Header: React.FC = () => {
           <a href="/committee" className="text-gray-700 hover:text-villageGreen transition">Committee</a>
           <a href="/awards" className="text-gray-700 hover:text-villageGreen transition">Awards</a>
           <a href="/tours" className="text-gray-700 hover:text-villageGreen transition">Tours</a>
+          <a href="/teams" className="text-gray-700 hover:text-villageGreen transition">Teams</a>
           <a
             href="/admin"
             className="border border-villageGreen text-villageGreen px-3 py-1.5 rounded-md text-xs uppercase tracking-wide hover:bg-villageGreen hover:text-white transition"

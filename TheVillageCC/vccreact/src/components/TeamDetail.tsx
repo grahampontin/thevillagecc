@@ -247,7 +247,9 @@ const TeamDetail: React.FC = () => {
                             <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mr-2 ${badge.color}`}>
                               {badge.text}
                             </span>
-                            <span className="text-gray-600 hidden sm:inline">{match.resultText ?? ''}</span>
+                            {match.margin && (
+                              <span className="text-gray-600 hidden sm:inline">by {match.margin}</span>
+                            )}
                           </td>
                           <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{scoreDisplay}</td>
                           <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{match.venueName ?? '—'}</td>
