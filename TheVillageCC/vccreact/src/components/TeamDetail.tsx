@@ -158,7 +158,16 @@ const TeamDetail: React.FC = () => {
 
                   <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
                     {team.homeVenueName && (
-                      <span>📍 {team.homeVenueName}</span>
+                      <span>
+                        📍{' '}
+                        {team.homeVenueId ? (
+                          <Link to={`/venues/${team.homeVenueId}`} className="text-villageGreen hover:underline">
+                            {team.homeVenueName}
+                          </Link>
+                        ) : (
+                          team.homeVenueName
+                        )}
+                      </span>
                     )}
                     {team.websiteUrl && (
                       <a

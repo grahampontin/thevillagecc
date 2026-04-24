@@ -4,7 +4,7 @@
  */
 
 import { getJson, postJson, putJson, deleteRequest } from './http';
-import { VenueV1 } from './swaggerTypes';
+import { VenueV1, VenueSummaryV1, VenueDetailV1 } from './swaggerTypes';
 import { apiUrl } from './config';
 
 /**
@@ -51,3 +51,29 @@ export async function updateVenue(venue: VenueV1): Promise<VenueV1> {
 export async function deleteVenue(id: number): Promise<void> {
   return deleteRequest(apiUrl(`/api/Venues/${id}`));
 }
+
+/**
+ * Fetches a lightweight summary (stats + pitch rating) for all venues.
+ * Uses GET /api/Venues/summaries
+ */
+export async function getVenueSummaries(): Promise<VenueSummaryV1[]> {
+  return getJson<VenueSummaryV1[]>(apiUrl('/api/Venues/summaries'));
+}
+
+/**
+ * Fetches detailed stats and full match history for a specific venue.
+ * Uses GET /api/Venues/{id}/details
+ */
+export async function getVenueDetails(id: number): Promise<VenueDetailV1> {
+  return getJson<VenueDetailV1>(apiUrl(`/api/Venues/${id}/details`));
+}
+
+/**
+ * Triggers a full rebuild of the venue stats cache.
+ * Admin/developer use only — do not expose on public pages.
+ * Uses POST /api/Venues/recalculate-stats
+ */
+export async function recalculateVenueStats(): Promise<void> {
+  return postJson<void>(apiUrl('/api/Venues/recalculate-stats'), {});
+}
+

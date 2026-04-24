@@ -1110,6 +1110,51 @@ export interface paths {
       };
     };
   };
+  "/api/Venues/summaries": {
+    get: {
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["VenueSummaryV1"][];
+          };
+        };
+      };
+    };
+  };
+  "/api/Venues/{id}/details": {
+    get: {
+      parameters: {
+        path: {
+          id: number;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["VenueDetailV1"];
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/Venues/recalculate-stats": {
+    post: {
+      responses: {
+        /** @description OK */
+        200: {
+          content: never;
+        };
+      };
+    };
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -1805,6 +1850,40 @@ export interface components {
       websiteUrl?: string | null;
       /** Format: int32 */
       homeVenueId?: number | null;
+    };
+    VenueDetailV1: {
+      /** Format: int32 */
+      id?: number;
+      name?: string | null;
+      description?: string | null;
+      /** Format: double */
+      latitude?: number | null;
+      /** Format: double */
+      longitude?: number | null;
+      mapUrl?: string | null;
+      stats?: components["schemas"]["VenueStatsV1"];
+      matches?: components["schemas"]["ResultV1"][] | null;
+    };
+    VenueStatsV1: {
+      /** Format: int32 */
+      matchesPlayed?: number;
+      /** Format: double */
+      averageRunsPerInnings?: number;
+      /** Format: double */
+      difficultyScore?: number | null;
+      difficultyLabel?: string | null;
+    };
+    VenueSummaryV1: {
+      /** Format: int32 */
+      id?: number;
+      name?: string | null;
+      description?: string | null;
+      /** Format: double */
+      latitude?: number | null;
+      /** Format: double */
+      longitude?: number | null;
+      mapUrl?: string | null;
+      stats?: components["schemas"]["VenueStatsV1"];
     };
     VenueV1: {
       /** Format: int32 */

@@ -21,6 +21,9 @@ export type TeamV1 = components['schemas']['TeamV1'];
 export type TeamDetailV1 = components['schemas']['TeamDetailV1'];
 export type TeamSummaryV1 = components['schemas']['TeamSummaryV1'];
 export type VenueV1 = components['schemas']['VenueV1'];
+export type VenueStatsV1 = components['schemas']['VenueStatsV1'];
+export type VenueSummaryV1 = components['schemas']['VenueSummaryV1'];
+export type VenueDetailV1 = components['schemas']['VenueDetailV1'];
 
 // Live scoring
 export type LiveScorecardV1 = components['schemas']['LiveScorecardV1'];

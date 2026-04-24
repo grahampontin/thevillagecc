@@ -24,6 +24,8 @@ import AdminEditScorecard from './components/AdminEditScorecard';
 import Tours from './components/Tours';
 import Teams from './components/Teams';
 import TeamDetail from './components/TeamDetail';
+import VenuesListPage from './components/VenuesListPage';
+import VenueDetailPage from './components/VenueDetailPage';
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
         <Route path="/tours" element={<Tours />} />
         <Route path="/teams" element={<Teams />} />
         <Route path="/teams/:teamId" element={<TeamDetail />} />
+        <Route path="/venues" element={<VenuesListPage />} />
+        <Route path="/venues/:venueId" element={<VenueDetailPage />} />
         <Route path="/scoring" element={<LiveScoring />} />
         <Route path="/admin" element={<AdminLanding />} />
         <Route path="/admin/players" element={<AdminPlayers />} />
