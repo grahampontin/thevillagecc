@@ -87,11 +87,35 @@ const SkeletonLoader: React.FC = () => (
 
 // ── Main component ─────────────────────────────────────────────────────────
 
+// ── MatchReportRow ─────────────────────────────────────────────────────────
+
+const MatchReportRow: React.FC<{ colSpan: number; reportText: string }> = ({ colSpan, reportText }) => (
+  <tr className="bg-gray-50 border-b border-gray-100">
+    <td colSpan={colSpan} className="px-6 py-4">
+      <div
+        className="prose prose-sm max-w-none text-gray-700"
+        dangerouslySetInnerHTML={{ __html: reportText }}
+      />
+    </td>
+  </tr>
+);
+
+// ── Main component ─────────────────────────────────────────────────────────
+
 const TeamDetail: React.FC = () => {
   const { teamId } = useParams<{ teamId: string }>();
-  const [team, setTeam]     = useState<TeamDetailV1 | null>(null);
+  const [team, setTeam]       = useState<TeamDetailV1 | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState<string | null>(null);
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+
+  function toggleRow(matchId: number) {
+    setExpandedRows(prev => {
+      const next = new Set(prev);
+      if (next.has(matchId)) { next.delete(matchId); } else { next.add(matchId); }
+      return next;
+    });
+  }
 
   useEffect(() => {
     const id = parseInt(teamId ?? '', 10);
@@ -216,12 +240,17 @@ const TeamDetail: React.FC = () => {
                       <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden md:table-cell">Scores</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden sm:table-cell">Venue</th>
                       <th className="px-4 py-3 text-center font-semibold text-gray-700">Scorecard</th>
+                      <th className="px-4 py-3 text-center font-semibold text-gray-700">Report</th>
                     </tr>
                   </thead>
                   <tbody>
                     {matches.map((match: ResultV1, idx: number) => {
-                      const isWon      = match.isWinner === true;
-                      const isLost     = match.isWinner === false && !match.isTied && !match.isDrawn && !match.isAbandoned;
+                      const rowKey    = match.matchId ?? idx;
+                      const isWon     = match.isWinner === true;
+                      const isLost    = match.isWinner === false && !match.isTied && !match.isDrawn && !match.isAbandoned;
+                      const hasReport = !!match.matchReportText;
+                      const expanded  = typeof rowKey === 'number' && expandedRows.has(rowKey);
+
                       const badge = getResultBadge({
                         isWinner:    match.isWinner ?? null,
                         isTied:      match.isTied ?? false,
@@ -235,10 +264,6 @@ const TeamDetail: React.FC = () => {
                           })
                         : '—';
 
-                      const resultText = match.resultText
-                        ? (isWon ? '✅ ' : isLost ? '❌ ' : '') + match.resultText
-                        : badge.text;
-
                       const scoreDisplay =
                         match.homeTeamScore && match.awayTeamScore
                           ? `${match.homeTeamScore} v ${match.awayTeamScore}`
@@ -247,34 +272,54 @@ const TeamDetail: React.FC = () => {
                       const rowBg = isWon ? 'bg-emerald-50/40' : isLost ? 'bg-red-50/40' : '';
 
                       return (
-                        <tr
-                          key={match.matchId ?? idx}
-                          className={`border-b border-gray-100 hover:brightness-95 transition ${rowBg}`}
-                        >
-                          <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{dateStr}</td>
-                          <td className="px-4 py-3 text-gray-700">
-                            <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mr-2 ${badge.color}`}>
-                              {badge.text}
-                            </span>
-                            {match.margin && !match.isTied && !match.isDrawn && !match.isAbandoned && (
-                              <span className="text-gray-600 hidden sm:inline">{match.margin}</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{scoreDisplay}</td>
-                          <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{match.venueName ?? '—'}</td>
-                          <td className="px-4 py-3 text-center">
-                            {match.matchId ? (
-                              <Link
-                                to={`/scorecard/${match.matchId}`}
-                                className="text-villageGreen hover:underline text-xs font-medium"
-                              >
-                                View
-                              </Link>
-                            ) : (
-                              <span className="text-gray-300 text-xs">—</span>
-                            )}
-                          </td>
-                        </tr>
+                        <React.Fragment key={rowKey}>
+                          <tr className={`border-b border-gray-100 hover:brightness-95 transition ${rowBg}`}>
+                            <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{dateStr}</td>
+                            <td className="px-4 py-3 text-gray-700">
+                              <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mr-2 ${badge.color}`}>
+                                {badge.text}
+                              </span>
+                              {match.margin && !match.isTied && !match.isDrawn && !match.isAbandoned && (
+                                <span className="text-gray-600 hidden sm:inline">{match.margin}</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{scoreDisplay}</td>
+                            <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{match.venueName ?? '—'}</td>
+                            <td className="px-4 py-3 text-center">
+                              {match.matchId ? (
+                                <Link
+                                  to={`/scorecard/${match.matchId}`}
+                                  className="text-villageGreen hover:underline text-xs font-medium"
+                                >
+                                  View
+                                </Link>
+                              ) : (
+                                <span className="text-gray-300 text-xs">—</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-center">
+                              {hasReport && match.matchId ? (
+                                <button
+                                  onClick={() => toggleRow(match.matchId!)}
+                                  className={`text-xs font-medium px-2 py-0.5 rounded transition ${
+                                    expanded
+                                      ? 'bg-villageGreen text-white'
+                                      : 'text-villageGreen hover:underline'
+                                  }`}
+                                  aria-label={expanded ? 'Hide match report' : 'Read match report'}
+                                  aria-expanded={expanded}
+                                >
+                                  📝 Report
+                                </button>
+                              ) : (
+                                <span className="text-gray-300 text-xs">—</span>
+                              )}
+                            </td>
+                          </tr>
+                          {expanded && match.matchReportText && (
+                            <MatchReportRow colSpan={6} reportText={match.matchReportText} />
+                          )}
+                        </React.Fragment>
                       );
                     })}
                   </tbody>

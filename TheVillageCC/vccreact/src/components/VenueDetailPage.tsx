@@ -4,6 +4,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { getVenueDetails } from '../api/venuesApi';
 import { VenueDetailV1, ResultV1 } from '../api/swaggerTypes';
+import { getResultBadge } from '../utils/matchResultUtils';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -250,20 +251,28 @@ const VenueDetailPage: React.FC = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200">
-                      <th className="px-4 py-3 text-left font-semibold text-gray-700 w-6" />
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Date</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Opponents</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Result</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden md:table-cell">Scores</th>
+                      <th className="px-4 py-3 text-center font-semibold text-gray-700">Scorecard</th>
+                      <th className="px-4 py-3 text-center font-semibold text-gray-700">Report</th>
                     </tr>
                   </thead>
                   <tbody>
                     {matches.map((match: ResultV1, idx: number) => {
-                      const rowKey   = match.matchId ?? idx;
-                      const isWon    = match.isWinner === true;
-                      const isLost   = match.isWinner === false && !match.isDrawn && !match.isAbandoned && !match.isTied;
+                      const rowKey    = match.matchId ?? idx;
+                      const isWon     = match.isWinner === true;
+                      const isLost    = match.isWinner === false && !match.isDrawn && !match.isAbandoned && !match.isTied;
                       const hasReport = !!match.matchReportText;
                       const expanded  = typeof rowKey === 'number' && expandedRows.has(rowKey);
+
+                      const badge = getResultBadge({
+                        isWinner:    match.isWinner ?? null,
+                        isTied:      match.isTied ?? false,
+                        isDrawn:     match.isDrawn ?? false,
+                        isAbandoned: match.isAbandoned ?? false,
+                      });
 
                       const dateStr = match.matchDate
                         ? new Date(match.matchDate).toLocaleDateString('en-GB', {
@@ -281,15 +290,6 @@ const VenueDetailPage: React.FC = () => {
                         return match.homeTeamName ?? match.awayTeamName ?? '—';
                       })();
 
-                      const resultIcon =
-                        match.isAbandoned ? '—' :
-                        match.isWinner === true  ? '✅' :
-                        match.isWinner === false ? '❌' : '—';
-                      const resultIconClass =
-                        match.isWinner === true  ? 'text-emerald-700' :
-                        match.isWinner === false ? 'text-red-700' : 'text-gray-400';
-                      const resultText = match.resultText ?? (match.isAbandoned ? 'Abandoned' : '');
-
                       const scoreDisplay =
                         match.homeTeamScore && match.awayTeamScore
                           ? `${match.homeTeamScore} v ${match.awayTeamScore}`
@@ -300,37 +300,50 @@ const VenueDetailPage: React.FC = () => {
                       return (
                         <React.Fragment key={rowKey}>
                           <tr className={`border-b border-gray-100 hover:brightness-95 transition ${rowBg}`}>
-                            {/* Chevron expand/collapse — only shown if there's a report */}
-                            <td className="px-3 py-3 text-center">
+                            <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{dateStr}</td>
+                            <td className="px-4 py-3 font-medium text-gray-800">{opponentName}</td>
+                            <td className="px-4 py-3 text-gray-700">
+                              <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mr-2 ${badge.color}`}>
+                                {badge.text}
+                              </span>
+                              {match.margin && !match.isTied && !match.isDrawn && !match.isAbandoned && (
+                                <span className="text-gray-600 hidden sm:inline">{match.margin}</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{scoreDisplay}</td>
+                            <td className="px-4 py-3 text-center">
+                              {match.matchId ? (
+                                <Link
+                                  to={`/scorecard/${match.matchId}`}
+                                  className="text-villageGreen hover:underline text-xs font-medium"
+                                >
+                                  View
+                                </Link>
+                              ) : (
+                                <span className="text-gray-300 text-xs">—</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-center">
                               {hasReport && match.matchId ? (
                                 <button
                                   onClick={() => toggleRow(match.matchId!)}
-                                  className="text-gray-400 hover:text-villageGreen transition"
-                                  aria-label={expanded ? 'Collapse match report' : 'Expand match report'}
+                                  className={`text-xs font-medium px-2 py-0.5 rounded transition ${
+                                    expanded
+                                      ? 'bg-villageGreen text-white'
+                                      : 'text-villageGreen hover:underline'
+                                  }`}
+                                  aria-label={expanded ? 'Hide match report' : 'Read match report'}
                                   aria-expanded={expanded}
                                 >
-                                  {expanded ? '▲' : '▼'}
+                                  📝 Report
                                 </button>
                               ) : (
-                                <span className="text-gray-200">·</span>
+                                <span className="text-gray-300 text-xs">—</span>
                               )}
                             </td>
-                            <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{dateStr}</td>
-                            <td className="px-4 py-3 font-medium text-gray-800">
-                              {match.matchId ? (
-                                <Link to={`/scorecard/${match.matchId}`} className="hover:underline text-gray-800">
-                                  {opponentName}
-                                </Link>
-                              ) : opponentName}
-                            </td>
-                            <td className="px-4 py-3">
-                              <span className={`mr-1 ${resultIconClass}`}>{resultIcon}</span>
-                              <span className="text-gray-700 text-xs">{resultText}</span>
-                            </td>
-                            <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{scoreDisplay}</td>
                           </tr>
                           {expanded && match.matchReportText && (
-                            <MatchReportRow colSpan={5} reportText={match.matchReportText} />
+                            <MatchReportRow colSpan={6} reportText={match.matchReportText} />
                           )}
                         </React.Fragment>
                       );
