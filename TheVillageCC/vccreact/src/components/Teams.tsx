@@ -118,6 +118,16 @@ const SortHeader: React.FC<{
   );
 };
 
+// ── Filter config ──────────────────────────────────────────────────────────
+
+const DIFF_FILTERS: { value: DifficultyFilter; label: string }[] = [
+  { value: 'all',     label: 'All'         },
+  { value: 'red',     label: 'Tough'       },
+  { value: 'amber',   label: 'Competitive' },
+  { value: 'green',   label: 'Favourable'  },
+  { value: 'unknown', label: 'New'         },
+];
+
 // ── Main component ─────────────────────────────────────────────────────────
 
 const Teams: React.FC = () => {
@@ -130,12 +140,16 @@ const Teams: React.FC = () => {
   const [sortField,  setSortField]  = useState<SortField>('name');
   const [sortDir,    setSortDir]    = useState<SortDir>('asc');
 
-  useEffect(() => {
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function load() {
+    setLoading(true);
+    setError(null);
     getTeamSummaries()
       .then(data => setAllTeams(data))
       .catch(() => setError('Failed to load teams. Please try again later.'))
       .finally(() => setLoading(false));
-  }, []);
+  }
 
   // Derived: does any row have noResult > 0?
   const hasNoResult = useMemo(() => allTeams.some(t => (t.noResult ?? 0) > 0), [allTeams]);
@@ -209,19 +223,12 @@ const Teams: React.FC = () => {
       setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortField(field);
-      setSortDir('asc');
+      // Default difficulty sort is descending (toughest opponents first)
+      setSortDir(field === 'difficultyRating' ? 'desc' : 'asc');
     }
   }
 
   const colCount = hasNoResult ? 8 : 7;
-
-  const DIFF_FILTERS: { value: DifficultyFilter; label: string }[] = [
-    { value: 'all',     label: 'All'         },
-    { value: 'red',     label: 'Tough'       },
-    { value: 'amber',   label: 'Competitive' },
-    { value: 'green',   label: 'Favourable'  },
-    { value: 'unknown', label: 'New'         },
-  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -269,8 +276,14 @@ const Teams: React.FC = () => {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">
-            {error}
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm flex items-center justify-between">
+            <span>{error}</span>
+            <button
+              onClick={load}
+              className="ml-4 px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-xs font-medium transition"
+            >
+              Retry
+            </button>
           </div>
         )}
 

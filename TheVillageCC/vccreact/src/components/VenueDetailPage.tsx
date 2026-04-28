@@ -84,9 +84,13 @@ const InfoIcon: React.FC<{ title: string }> = ({ title }) => (
 
 // ── StatCard ───────────────────────────────────────────────────────────────
 
-const StatCard: React.FC<{ label: string; value: React.ReactNode }> = ({ label, value }) => (
+const StatCard: React.FC<{ label: string; value: React.ReactNode; accent?: string }> = ({
+  label,
+  value,
+  accent = 'text-gray-900',
+}) => (
   <div className="bg-white border border-gray-200 rounded-lg px-5 py-4 shadow-sm text-center">
-    <div className="text-2xl font-bold text-gray-900">{value}</div>
+    <div className={`text-2xl font-bold ${accent}`}>{value}</div>
     <div className="text-xs text-gray-500 mt-1 uppercase tracking-wide">{label}</div>
   </div>
 );
@@ -102,6 +106,16 @@ const MatchReportRow: React.FC<{ colSpan: number; reportText: string }> = ({ col
       />
     </td>
   </tr>
+);
+
+// ── Skeleton ───────────────────────────────────────────────────────────────
+
+const SkeletonLoader: React.FC = () => (
+  <div className="space-y-4" role="status" aria-label="Loading" aria-live="polite">
+    <div className="h-8 bg-gray-200 rounded w-1/3 animate-pulse"></div>
+    <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+    <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse"></div>
+  </div>
 );
 
 // ── Main component ─────────────────────────────────────────────────────────
@@ -143,17 +157,25 @@ const VenueDetailPage: React.FC = () => {
     });
   }
 
-  const matches  = venue?.matches ?? [];
-  const stats    = venue?.stats;
-  const label    = normLabel(stats?.difficultyLabel);
+  const matches   = venue?.matches ?? [];
+  const stats     = venue?.stats;
+  const label     = normLabel(stats?.difficultyLabel);
+
+  // Derive W/L/NR counts from the match list (same pattern as TeamDetail)
+  const played    = matches.length;
+  const won       = matches.filter(m => m.isWinner === true).length;
+  const lost      = matches.filter(m => m.isWinner === false && !m.isTied && !m.isDrawn && !m.isAbandoned).length;
+  const noResult  = matches.filter(m => m.isTied || m.isDrawn || m.isAbandoned).length;
+  const winPct    = played === 0 ? '—' : `${((won / played) * 100).toFixed(0)}%`;
+
   const avgWicket = stats?.averageRunsPerWicket;
   const avgDisplay =
-    (stats?.matchesPlayed ?? 0) === 0
+    played === 0
       ? '—'
       : avgWicket != null ? avgWicket.toFixed(1) : '—';
   const avgInnings = stats?.averageRunsPerInnings;
   const avgInningsDisplay =
-    (stats?.matchesPlayed ?? 0) === 0
+    played === 0
       ? '—'
       : avgInnings != null ? avgInnings.toFixed(1) : '—';
 
@@ -168,12 +190,7 @@ const VenueDetailPage: React.FC = () => {
           ← Back to all venues
         </Link>
 
-        {/* Loading spinner */}
-        {loading && (
-          <div className="flex justify-center py-16" role="status" aria-label="Loading" aria-live="polite">
-            <div className="w-8 h-8 border-4 border-villageGreen border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
+        {loading && <SkeletonLoader />}
 
         {/* 404 */}
         {!loading && is404 && (
@@ -214,7 +231,11 @@ const VenueDetailPage: React.FC = () => {
               )}
 
               <div className="mt-1 text-sm text-gray-600">
-                <span className="font-medium">Played:</span> {stats?.matchesPlayed ?? 0}&ensp;
+                <span className="font-medium">Played:</span> {played}&ensp;
+                <span className="font-medium text-emerald-700">Won:</span> {won}&ensp;
+                <span className="font-medium text-red-600">Lost:</span> {lost}
+                {noResult > 0 && <>&ensp;<span className="font-medium text-gray-500">No result:</span> {noResult}</>}
+                &ensp;<span className="font-medium">Win rate:</span> {winPct}&ensp;
                 <span className="font-medium">Avg runs/wicket:</span> {avgDisplay}
                 {stats?.difficultyScore != null && (
                   <>&ensp;<span className="font-medium">Pitch rating:</span> {displayLabel(label)} (score: {stats.difficultyScore.toFixed(1)} / 100)</>
@@ -222,10 +243,17 @@ const VenueDetailPage: React.FC = () => {
               </div>
             </div>
 
-            {/* ── Stat cards ── */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-              <StatCard label="Matches played"   value={stats?.matchesPlayed ?? 0} />
-              <StatCard label="Avg runs/wicket"  value={avgDisplay} />
+            {/* ── Stat cards – match record ── */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+              <StatCard label="Played"   value={played} />
+              <StatCard label="Won"      value={won}    accent="text-emerald-600" />
+              <StatCard label="Lost"     value={lost}   accent="text-red-600" />
+              <StatCard label="Win Rate" value={winPct} accent="text-villageGreen" />
+            </div>
+
+            {/* ── Stat cards – venue metrics ── */}
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <StatCard label="Avg runs/wicket" value={avgDisplay} />
               <StatCard
                 label="Pitch rating"
                 value={<PitchRatingBadge label={label} score={stats?.difficultyScore} size="sm" />}

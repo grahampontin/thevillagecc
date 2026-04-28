@@ -9,7 +9,7 @@ import { VenueSummaryV1 } from '../api/swaggerTypes';
 
 type PitchLabel = 'minefield' | 'difficult' | 'balanced' | 'batting-friendly' | 'road' | 'unknown';
 type PitchFilter = 'all' | PitchLabel;
-type SortField = 'name' | 'matchesPlayed' | 'averageRunsPerWicket' | 'pitchRating';
+type SortField = 'name' | 'played' | 'won' | 'lost' | 'noResult' | 'winPercentage' | 'averageRunsPerWicket' | 'pitchRating';
 type SortDir = 'asc' | 'desc';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -30,6 +30,12 @@ function displayLabel(label: PitchLabel): string {
   if (label === 'batting-friendly') return 'Batting-friendly';
   if (label === 'unknown') return 'New';
   return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+function formatWinPct(winPercentage: number | undefined, played: number | undefined): string {
+  if ((played ?? 0) === 0) return '—';
+  if (winPercentage == null) return '—';
+  return `${(winPercentage * 100).toFixed(0)}%`;
 }
 
 // ── PitchRatingBadge ───────────────────────────────────────────────────────
@@ -85,9 +91,9 @@ const InfoIcon: React.FC<{ title: string }> = ({ title }) => (
 
 // ── Skeleton ───────────────────────────────────────────────────────────────
 
-const SkeletonRow: React.FC = () => (
+const SkeletonRow: React.FC<{ cols: number }> = ({ cols }) => (
   <tr className="border-b border-gray-100">
-    {Array.from({ length: 5 }).map((_, i) => (
+    {Array.from({ length: cols }).map((_, i) => (
       <td key={i} className="px-4 py-3">
         <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
       </td>
@@ -186,8 +192,20 @@ const VenuesListPage: React.FC = () => {
         case 'name':
           cmp = (a.name ?? '').localeCompare(b.name ?? '');
           break;
-        case 'matchesPlayed':
+        case 'played':
           cmp = (a.stats?.matchesPlayed ?? 0) - (b.stats?.matchesPlayed ?? 0);
+          break;
+        case 'won':
+          cmp = (a.stats?.won ?? 0) - (b.stats?.won ?? 0);
+          break;
+        case 'lost':
+          cmp = (a.stats?.lost ?? 0) - (b.stats?.lost ?? 0);
+          break;
+        case 'noResult':
+          cmp = (a.stats?.noResult ?? 0) - (b.stats?.noResult ?? 0);
+          break;
+        case 'winPercentage':
+          cmp = (a.stats?.winPercentage ?? 0) - (b.stats?.winPercentage ?? 0);
           break;
         case 'averageRunsPerWicket':
           cmp = (a.stats?.averageRunsPerWicket ?? 0) - (b.stats?.averageRunsPerWicket ?? 0);
@@ -209,6 +227,9 @@ const VenuesListPage: React.FC = () => {
     return sorted;
   }, [allVenues, search, pitchFilter, sortField, sortDir]);
 
+  // Derived: does any venue have noResult > 0?
+  const hasNoResult = useMemo(() => allVenues.some(v => (v.stats?.noResult ?? 0) > 0), [allVenues]);
+
   function handleSort(field: SortField) {
     if (sortField === field) {
       setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
@@ -218,6 +239,10 @@ const VenuesListPage: React.FC = () => {
       setSortDir(field === 'pitchRating' ? 'desc' : 'asc');
     }
   }
+
+  // Base cols: Venue + Played + Won + Lost + Win% + Avg runs/wicket + Pitch rating + Map = 8
+  // Plus optional N/R column
+  const colCount = hasNoResult ? 9 : 8;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -278,8 +303,14 @@ const VenuesListPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <SortHeader label="Venue"           field="name"                 current={sortField} dir={sortDir} onSort={handleSort} className="text-left" />
-                <SortHeader label="Matches played"  field="matchesPlayed"        current={sortField} dir={sortDir} onSort={handleSort} className="text-right" />
+                <SortHeader label="Venue"    field="name"          current={sortField} dir={sortDir} onSort={handleSort} className="text-left" />
+                <SortHeader label="Played"   field="played"        current={sortField} dir={sortDir} onSort={handleSort} className="text-right" />
+                <SortHeader label="Won"      field="won"           current={sortField} dir={sortDir} onSort={handleSort} className="text-right" />
+                <SortHeader label="Lost"     field="lost"          current={sortField} dir={sortDir} onSort={handleSort} className="text-right" />
+                {hasNoResult && (
+                  <SortHeader label="N/R"   field="noResult"      current={sortField} dir={sortDir} onSort={handleSort} className="text-right" />
+                )}
+                <SortHeader label="Win %"   field="winPercentage" current={sortField} dir={sortDir} onSort={handleSort} className="text-right" />
                 <SortHeader label="Avg runs/wicket" field="averageRunsPerWicket" current={sortField} dir={sortDir} onSort={handleSort} className="text-right hidden sm:table-cell" />
                 <SortHeader
                   label={<>Pitch rating<InfoIcon title={PITCH_RATING_TOOLTIP} /></>}
@@ -293,11 +324,11 @@ const VenuesListPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {loading && Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
+              {loading && Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} cols={colCount} />)}
 
               {!loading && !error && visibleVenues.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={colCount} className="px-4 py-8 text-center text-gray-400">
                     No venues match your search.
                   </td>
                 </tr>
@@ -326,6 +357,20 @@ const VenuesListPage: React.FC = () => {
                       </td>
                       <td className="px-4 py-3 text-right text-gray-700">
                         {venue.stats?.matchesPlayed ?? 0}
+                      </td>
+                      <td className="px-4 py-3 text-right text-emerald-700 font-medium">
+                        {venue.stats?.won ?? 0}
+                      </td>
+                      <td className="px-4 py-3 text-right text-red-600 font-medium">
+                        {venue.stats?.lost ?? 0}
+                      </td>
+                      {hasNoResult && (
+                        <td className="px-4 py-3 text-right text-gray-500">
+                          {venue.stats?.noResult ?? 0}
+                        </td>
+                      )}
+                      <td className="px-4 py-3 text-right text-gray-700">
+                        {formatWinPct(venue.stats?.winPercentage, venue.stats?.matchesPlayed)}
                       </td>
                       <td className="px-4 py-3 text-right text-gray-700 hidden sm:table-cell">
                         {avgDisplay}
@@ -362,7 +407,7 @@ const VenuesListPage: React.FC = () => {
             {search || pitchFilter !== 'all'
               ? ` matching your filter (${allVenues.length} total)`
               : ' total'}.
-            Click a venue name to see full match history.
+            Click a venue name to view full stats and match history.
           </p>
         )}
       </main>

@@ -107,6 +107,7 @@ const TeamDetail: React.FC = () => {
   const [team, setTeam]       = useState<TeamDetailV1 | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState<string | null>(null);
+  const [is404, setIs404]     = useState(false);
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
 
   function toggleRow(matchId: number) {
@@ -126,7 +127,14 @@ const TeamDetail: React.FC = () => {
     }
     getTeamDetails(id)
       .then(data => setTeam(data))
-      .catch(() => setError('Failed to load team details. Please try again later.'))
+      .catch((err: unknown) => {
+        const status = (err as { status?: number })?.status;
+        if (status === 404) {
+          setIs404(true);
+        } else {
+          setError('Failed to load team details. Please try again later.');
+        }
+      })
       .finally(() => setLoading(false));
   }, [teamId]);
 
@@ -152,6 +160,14 @@ const TeamDetail: React.FC = () => {
         </Link>
 
         {loading && <SkeletonLoader />}
+
+        {/* 404 */}
+        {!loading && is404 && (
+          <div className="text-center py-16">
+            <p className="text-gray-500 text-lg mb-4">Team not found.</p>
+            <Link to="/teams" className="text-villageGreen hover:underline text-sm">← Back to all teams</Link>
+          </div>
+        )}
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">{error}</div>
@@ -226,7 +242,7 @@ const TeamDetail: React.FC = () => {
             </div>
 
             {/* ── Match history ── */}
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Match History</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Match history against this team (most recent first)</h2>
 
             {matches.length === 0 ? (
               <p className="text-gray-400 text-sm">No matches recorded against this team.</p>
@@ -236,9 +252,9 @@ const TeamDetail: React.FC = () => {
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200">
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Date</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden sm:table-cell">Venue</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Result</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden md:table-cell">Scores</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden sm:table-cell">Venue</th>
                       <th className="px-4 py-3 text-center font-semibold text-gray-700">Scorecard</th>
                       <th className="px-4 py-3 text-center font-semibold text-gray-700">Report</th>
                     </tr>
@@ -275,6 +291,7 @@ const TeamDetail: React.FC = () => {
                         <React.Fragment key={rowKey}>
                           <tr className={`border-b border-gray-100 hover:brightness-95 transition ${rowBg}`}>
                             <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{dateStr}</td>
+                            <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{match.venueName ?? '—'}</td>
                             <td className="px-4 py-3 text-gray-700">
                               <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mr-2 ${badge.color}`}>
                                 {badge.text}
@@ -284,7 +301,6 @@ const TeamDetail: React.FC = () => {
                               )}
                             </td>
                             <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{scoreDisplay}</td>
-                            <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{match.venueName ?? '—'}</td>
                             <td className="px-4 py-3 text-center">
                               {match.matchId ? (
                                 <Link
