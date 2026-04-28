@@ -1868,6 +1868,8 @@ export interface components {
       /** Format: int32 */
       matchesPlayed?: number;
       /** Format: double */
+      averageRunsPerWicket?: number;
+      /** Format: double */
       averageRunsPerInnings?: number;
       /** Format: double */
       difficultyScore?: number | null;

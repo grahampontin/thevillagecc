@@ -9,7 +9,7 @@ import { VenueSummaryV1 } from '../api/swaggerTypes';
 
 type PitchLabel = 'minefield' | 'difficult' | 'balanced' | 'batting-friendly' | 'road' | 'unknown';
 type PitchFilter = 'all' | PitchLabel;
-type SortField = 'name' | 'matchesPlayed' | 'averageRunsPerInnings' | 'pitchRating';
+type SortField = 'name' | 'matchesPlayed' | 'averageRunsPerWicket' | 'pitchRating';
 type SortDir = 'asc' | 'desc';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -67,9 +67,11 @@ const PitchRatingBadge: React.FC<{
 // ── Pitch rating legend tooltip ────────────────────────────────────────────
 
 const PITCH_RATING_TOOLTIP =
-  'Pitch rating measures how batting-friendly a venue is, based on the average runs scored per innings there across all recorded matches. ' +
-  '"Road" venues see high scores from both teams; "Minefield" venues regularly produce low totals. ' +
-  'Venues with fewer than 3 completed matches are marked New — not enough data to rate.';
+  'Pitch rating measures how batting-friendly a venue is, based on the average runs scored per wicket (batting average) across all recorded matches there. ' +
+  '"Road" venues see batsmen dominate and wickets fall rarely; "Minefield" venues produce cheap dismissals and low totals. ' +
+  'Venues with fewer than 3 completed matches are shown as New — not enough data to rate.\n\n' +
+  'Note: runs-per-wicket is a better measure than runs-per-innings because it captures both scoring rate and how hard it is to survive. ' +
+  'A team dismissed for 150 all out is on a harder pitch than one that scored 150 for 3.';
 
 const InfoIcon: React.FC<{ title: string }> = ({ title }) => (
   <span
@@ -144,12 +146,16 @@ const VenuesListPage: React.FC = () => {
   const [sortField,    setSortField]   = useState<SortField>('name');
   const [sortDir,      setSortDir]     = useState<SortDir>('asc');
 
-  useEffect(() => {
+  function load() {
+    setLoading(true);
+    setError(null);
     getVenueSummaries()
       .then(data => setAllVenues(data))
       .catch(() => setError('Failed to load venues. Please try again later.'))
       .finally(() => setLoading(false));
-  }, []);
+  }
+
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const visibleVenues = useMemo(() => {
     let filtered = allVenues;
@@ -183,16 +189,16 @@ const VenuesListPage: React.FC = () => {
         case 'matchesPlayed':
           cmp = (a.stats?.matchesPlayed ?? 0) - (b.stats?.matchesPlayed ?? 0);
           break;
-        case 'averageRunsPerInnings':
-          cmp = (a.stats?.averageRunsPerInnings ?? 0) - (b.stats?.averageRunsPerInnings ?? 0);
+        case 'averageRunsPerWicket':
+          cmp = (a.stats?.averageRunsPerWicket ?? 0) - (b.stats?.averageRunsPerWicket ?? 0);
           break;
         case 'pitchRating': {
-          // Sort by difficultyScore; nulls always last
+          // Sort by difficultyScore; nulls always last regardless of direction
           const sa = a.stats?.difficultyScore ?? null;
           const sb = b.stats?.difficultyScore ?? null;
           if (sa == null && sb == null) { cmp = 0; break; }
-          if (sa == null) return sortDir === 'asc' ? 1 : -1;
-          if (sb == null) return sortDir === 'asc' ? -1 : 1;
+          if (sa == null) return 1;
+          if (sb == null) return -1;
           cmp = sa - sb;
           break;
         }
@@ -224,7 +230,7 @@ const VenuesListPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">Venues</h1>
           <p className="mt-2 text-gray-500 text-sm max-w-2xl">
             Every ground The Village CC has played at.
-            Pitch rating is based on the average runs scored per innings.
+            Pitch rating is based on the average runs scored per wicket (batting average).
           </p>
         </div>
 
@@ -256,8 +262,14 @@ const VenuesListPage: React.FC = () => {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">
-            {error}
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm flex items-center justify-between">
+            <span>{error}</span>
+            <button
+              onClick={load}
+              className="ml-4 px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-xs font-medium transition"
+            >
+              Retry
+            </button>
           </div>
         )}
 
@@ -266,9 +278,9 @@ const VenuesListPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <SortHeader label="Venue"          field="name"                  current={sortField} dir={sortDir} onSort={handleSort} className="text-left" />
-                <SortHeader label="Matches played" field="matchesPlayed"         current={sortField} dir={sortDir} onSort={handleSort} className="text-right" />
-                <SortHeader label="Avg runs/inns"  field="averageRunsPerInnings" current={sortField} dir={sortDir} onSort={handleSort} className="text-right hidden sm:table-cell" />
+                <SortHeader label="Venue"           field="name"                 current={sortField} dir={sortDir} onSort={handleSort} className="text-left" />
+                <SortHeader label="Matches played"  field="matchesPlayed"        current={sortField} dir={sortDir} onSort={handleSort} className="text-right" />
+                <SortHeader label="Avg runs/wicket" field="averageRunsPerWicket" current={sortField} dir={sortDir} onSort={handleSort} className="text-right hidden sm:table-cell" />
                 <SortHeader
                   label={<>Pitch rating<InfoIcon title={PITCH_RATING_TOOLTIP} /></>}
                   field="pitchRating"
@@ -281,12 +293,12 @@ const VenuesListPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {loading && Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)}
+              {loading && Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
 
               {!loading && !error && visibleVenues.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
-                    No venues match your filter.
+                    No venues match your search.
                   </td>
                 </tr>
               )}
@@ -294,12 +306,12 @@ const VenuesListPage: React.FC = () => {
               {!loading &&
                 visibleVenues.map(venue => {
                   const label = normLabel(venue.stats?.difficultyLabel);
-                  const avgRuns = venue.stats?.averageRunsPerInnings;
+                  const avgWicket = venue.stats?.averageRunsPerWicket;
                   const avgDisplay =
                     (venue.stats?.matchesPlayed ?? 0) === 0
                       ? '—'
-                      : avgRuns != null
-                      ? avgRuns.toFixed(1)
+                      : avgWicket != null
+                      ? avgWicket.toFixed(1)
                       : '—';
 
                   return (

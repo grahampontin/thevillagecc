@@ -4,7 +4,6 @@ import Header from './Header';
 import Footer from './Footer';
 import { getVenueDetails } from '../api/venuesApi';
 import { VenueDetailV1, ResultV1 } from '../api/swaggerTypes';
-import { getResultBadge } from '../utils/matchResultUtils';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -41,9 +40,11 @@ const BADGE_STYLE: Record<PitchLabel, { bg: string; text: string }> = {
 };
 
 const PITCH_RATING_TOOLTIP =
-  'Pitch rating measures how batting-friendly a venue is, based on the average runs scored per innings there across all recorded matches. ' +
-  '"Road" venues see high scores from both teams; "Minefield" venues regularly produce low totals. ' +
-  'Venues with fewer than 3 completed matches are marked New — not enough data to rate.';
+  'Pitch rating measures how batting-friendly a venue is, based on the average runs scored per wicket (batting average) across all recorded matches there. ' +
+  '"Road" venues see batsmen dominate and wickets fall rarely; "Minefield" venues produce cheap dismissals and low totals. ' +
+  'Venues with fewer than 3 completed matches are shown as New — not enough data to rate.\n\n' +
+  'Note: runs-per-wicket is a better measure than runs-per-innings because it captures both scoring rate and how hard it is to survive. ' +
+  'A team dismissed for 150 all out is on a harder pitch than one that scored 150 for 3.';
 
 const PitchRatingBadge: React.FC<{
   label: PitchLabel;
@@ -80,36 +81,37 @@ const InfoIcon: React.FC<{ title: string }> = ({ title }) => (
   </span>
 );
 
-// ── Skeleton ───────────────────────────────────────────────────────────────
+// ── StatCard ───────────────────────────────────────────────────────────────
 
-const SkeletonLoader: React.FC = () => (
-  <div className="space-y-4" role="status" aria-label="Loading" aria-live="polite">
-    <div className="h-8 bg-gray-200 rounded w-1/3 animate-pulse" />
-    <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
-    <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
+const StatCard: React.FC<{ label: string; value: React.ReactNode }> = ({ label, value }) => (
+  <div className="bg-white border border-gray-200 rounded-lg px-5 py-4 shadow-sm text-center">
+    <div className="text-2xl font-bold text-gray-900">{value}</div>
+    <div className="text-xs text-gray-500 mt-1 uppercase tracking-wide">{label}</div>
   </div>
 );
 
-// ── StatCard ───────────────────────────────────────────────────────────────
+// ── MatchReportRow ─────────────────────────────────────────────────────────
 
-const StatCard: React.FC<{ label: string; value: React.ReactNode; accent?: string }> = ({
-  label,
-  value,
-  accent = 'text-gray-900',
-}) => (
-  <div className="bg-white border border-gray-200 rounded-lg px-5 py-4 shadow-sm text-center">
-    <div className={`text-2xl font-bold ${accent}`}>{value}</div>
-    <div className="text-xs text-gray-500 mt-1 uppercase tracking-wide">{label}</div>
-  </div>
+const MatchReportRow: React.FC<{ colSpan: number; reportText: string }> = ({ colSpan, reportText }) => (
+  <tr className="bg-gray-50 border-b border-gray-100">
+    <td colSpan={colSpan} className="px-6 py-4">
+      <div
+        className="prose prose-sm max-w-none text-gray-700"
+        dangerouslySetInnerHTML={{ __html: reportText }}
+      />
+    </td>
+  </tr>
 );
 
 // ── Main component ─────────────────────────────────────────────────────────
 
 const VenueDetailPage: React.FC = () => {
   const { venueId } = useParams<{ venueId: string }>();
-  const [venue, setVenue]     = useState<VenueDetailV1 | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState<string | null>(null);
+  const [venue, setVenue]       = useState<VenueDetailV1 | null>(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState<string | null>(null);
+  const [is404, setIs404]       = useState(false);
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const id = parseInt(venueId ?? '', 10);
@@ -120,20 +122,39 @@ const VenueDetailPage: React.FC = () => {
     }
     getVenueDetails(id)
       .then(data => setVenue(data))
-      .catch(() => setError('Failed to load venue details. Please try again later.'))
+      .catch((err: unknown) => {
+        // Treat HTTP 404 specially
+        const status = (err as { status?: number })?.status;
+        if (status === 404) {
+          setIs404(true);
+        } else {
+          setError('Failed to load venue details. Please try again later.');
+        }
+      })
       .finally(() => setLoading(false));
   }, [venueId]);
+
+  function toggleRow(matchId: number) {
+    setExpandedRows(prev => {
+      const next = new Set(prev);
+      if (next.has(matchId)) { next.delete(matchId); } else { next.add(matchId); }
+      return next;
+    });
+  }
 
   const matches  = venue?.matches ?? [];
   const stats    = venue?.stats;
   const label    = normLabel(stats?.difficultyLabel);
-  const avgRuns  = stats?.averageRunsPerInnings;
+  const avgWicket = stats?.averageRunsPerWicket;
   const avgDisplay =
     (stats?.matchesPlayed ?? 0) === 0
       ? '—'
-      : avgRuns != null
-      ? avgRuns.toFixed(1)
-      : '—';
+      : avgWicket != null ? avgWicket.toFixed(1) : '—';
+  const avgInnings = stats?.averageRunsPerInnings;
+  const avgInningsDisplay =
+    (stats?.matchesPlayed ?? 0) === 0
+      ? '—'
+      : avgInnings != null ? avgInnings.toFixed(1) : '—';
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -146,9 +167,23 @@ const VenueDetailPage: React.FC = () => {
           ← Back to all venues
         </Link>
 
-        {loading && <SkeletonLoader />}
+        {/* Loading spinner */}
+        {loading && (
+          <div className="flex justify-center py-16" role="status" aria-label="Loading" aria-live="polite">
+            <div className="w-8 h-8 border-4 border-villageGreen border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
 
-        {error && (
+        {/* 404 */}
+        {!loading && is404 && (
+          <div className="text-center py-16">
+            <p className="text-gray-500 text-lg mb-4">Venue not found.</p>
+            <Link to="/venues" className="text-villageGreen hover:underline text-sm">← Back to all venues</Link>
+          </div>
+        )}
+
+        {/* Generic error */}
+        {!loading && error && (
           <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">{error}</div>
         )}
 
@@ -156,49 +191,52 @@ const VenueDetailPage: React.FC = () => {
           <>
             {/* ── Venue header card ── */}
             <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mb-6">
-              <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h1 className="text-2xl font-bold text-gray-900">{venue.name ?? 'Unknown Venue'}</h1>
-                    <PitchRatingBadge label={label} score={stats?.difficultyScore} />
-                    <InfoIcon title={PITCH_RATING_TOOLTIP} />
-                  </div>
+              <div className="flex flex-wrap items-center gap-3 mb-2">
+                <h1 className="text-2xl font-bold text-gray-900">{venue.name ?? 'Unknown Venue'}</h1>
+                <PitchRatingBadge label={label} score={stats?.difficultyScore} />
+                <InfoIcon title={PITCH_RATING_TOOLTIP} />
+              </div>
 
-                  {venue.description && (
-                    <p className="mt-2 text-gray-600 text-sm">{venue.description}</p>
-                  )}
+              {venue.description && (
+                <p className="text-gray-600 text-sm mb-2">{venue.description}</p>
+              )}
 
-                  {venue.mapUrl && (
-                    <a
-                      href={venue.mapUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-2 inline-flex items-center gap-1 text-sm text-villageGreen hover:underline"
-                    >
-                      📍 View on Google Maps
-                    </a>
-                  )}
+              {venue.mapUrl && (
+                <a
+                  href={venue.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-sm text-villageGreen hover:underline mb-3"
+                >
+                  📍 View on Google Maps
+                </a>
+              )}
 
-                  <div className="mt-3 text-sm text-gray-600">
-                    <span className="font-medium">Played:</span> {stats?.matchesPlayed ?? 0}&ensp;
-                    <span className="font-medium">Avg runs/innings:</span> {avgDisplay}
-                    {stats?.difficultyScore != null && (
-                      <>&ensp;<span className="font-medium">Pitch score:</span> {stats.difficultyScore.toFixed(1)} / 100</>
-                    )}
-                  </div>
-                </div>
+              <div className="mt-1 text-sm text-gray-600">
+                <span className="font-medium">Played:</span> {stats?.matchesPlayed ?? 0}&ensp;
+                <span className="font-medium">Avg runs/wicket:</span> {avgDisplay}
+                {stats?.difficultyScore != null && (
+                  <>&ensp;<span className="font-medium">Pitch rating:</span> {displayLabel(label)} (score: {stats.difficultyScore.toFixed(1)} / 100)</>
+                )}
               </div>
             </div>
 
             {/* ── Stat cards ── */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
               <StatCard label="Matches played"   value={stats?.matchesPlayed ?? 0} />
-              <StatCard label="Avg runs/innings" value={avgDisplay} />
+              <StatCard label="Avg runs/wicket"  value={avgDisplay} />
               <StatCard
                 label="Pitch rating"
                 value={<PitchRatingBadge label={label} score={stats?.difficultyScore} size="sm" />}
               />
             </div>
+
+            {/* ── Supplementary: avg runs/innings ── */}
+            {(stats?.matchesPlayed ?? 0) > 0 && avgInnings != null && (
+              <p className="text-xs text-gray-400 -mt-5 mb-8 text-right">
+                Avg runs/innings (supplementary): {avgInningsDisplay}
+              </p>
+            )}
 
             {/* ── Match history ── */}
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -212,23 +250,20 @@ const VenueDetailPage: React.FC = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200">
+                      <th className="px-4 py-3 text-left font-semibold text-gray-700 w-6" />
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Date</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Opponents</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Result</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700 hidden md:table-cell">Scores</th>
-                      <th className="px-4 py-3 text-center font-semibold text-gray-700">Scorecard</th>
                     </tr>
                   </thead>
                   <tbody>
                     {matches.map((match: ResultV1, idx: number) => {
-                      const isWon  = match.isWinner === true;
-                      const isLost = match.isWinner === false && !match.isTied && !match.isDrawn && !match.isAbandoned;
-                      const badge  = getResultBadge({
-                        isWinner:    match.isWinner ?? null,
-                        isTied:      match.isTied ?? false,
-                        isDrawn:     match.isDrawn ?? false,
-                        isAbandoned: match.isAbandoned ?? false,
-                      });
+                      const rowKey   = match.matchId ?? idx;
+                      const isWon    = match.isWinner === true;
+                      const isLost   = match.isWinner === false && !match.isDrawn && !match.isAbandoned && !match.isTied;
+                      const hasReport = !!match.matchReportText;
+                      const expanded  = typeof rowKey === 'number' && expandedRows.has(rowKey);
 
                       const dateStr = match.matchDate
                         ? new Date(match.matchDate).toLocaleDateString('en-GB', {
@@ -236,21 +271,24 @@ const VenueDetailPage: React.FC = () => {
                           })
                         : '—';
 
-                      // Determine opponent name (the side that is not The Village CC)
                       const opponentName = (() => {
-                        // homeTeamName/awayTeamName — prefer "away" team as opponent when VCC is home
                         if (match.homeTeamName && match.awayTeamName) {
                           const vcc = 'village';
-                          if ((match.homeTeamName ?? '').toLowerCase().includes(vcc)) {
-                            return match.awayTeamName;
-                          }
-                          if ((match.awayTeamName ?? '').toLowerCase().includes(vcc)) {
-                            return match.homeTeamName;
-                          }
+                          if ((match.homeTeamName ?? '').toLowerCase().includes(vcc)) return match.awayTeamName;
+                          if ((match.awayTeamName ?? '').toLowerCase().includes(vcc)) return match.homeTeamName;
                           return match.awayTeamName;
                         }
                         return match.homeTeamName ?? match.awayTeamName ?? '—';
                       })();
+
+                      const resultIcon =
+                        match.isAbandoned ? '—' :
+                        match.isWinner === true  ? '✅' :
+                        match.isWinner === false ? '❌' : '—';
+                      const resultIconClass =
+                        match.isWinner === true  ? 'text-emerald-700' :
+                        match.isWinner === false ? 'text-red-700' : 'text-gray-400';
+                      const resultText = match.resultText ?? (match.isAbandoned ? 'Abandoned' : '');
 
                       const scoreDisplay =
                         match.homeTeamScore && match.awayTeamScore
@@ -260,37 +298,41 @@ const VenueDetailPage: React.FC = () => {
                       const rowBg = isWon ? 'bg-emerald-50/40' : isLost ? 'bg-red-50/40' : '';
 
                       return (
-                        <tr
-                          key={match.matchId ?? idx}
-                          className={`border-b border-gray-100 hover:brightness-95 transition ${rowBg}`}
-                        >
-                          <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{dateStr}</td>
-                          <td className="px-4 py-3 font-medium text-gray-800">{opponentName}</td>
-                          <td className="px-4 py-3 text-gray-700">
-                            <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mr-2 ${badge.color}`}>
-                              {badge.text}
-                            </span>
-                            {match.margin && !match.isTied && !match.isDrawn && !match.isAbandoned && (
-                              <span className="text-gray-600 hidden sm:inline">{match.margin}</span>
-                            )}
-                            {match.isAbandoned && (
-                              <span className="text-gray-500 text-xs">Abandoned</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{scoreDisplay}</td>
-                          <td className="px-4 py-3 text-center">
-                            {match.matchId ? (
-                              <Link
-                                to={`/scorecard/${match.matchId}`}
-                                className="text-villageGreen hover:underline text-xs font-medium"
-                              >
-                                View
-                              </Link>
-                            ) : (
-                              <span className="text-gray-300 text-xs">—</span>
-                            )}
-                          </td>
-                        </tr>
+                        <React.Fragment key={rowKey}>
+                          <tr className={`border-b border-gray-100 hover:brightness-95 transition ${rowBg}`}>
+                            {/* Chevron expand/collapse — only shown if there's a report */}
+                            <td className="px-3 py-3 text-center">
+                              {hasReport && match.matchId ? (
+                                <button
+                                  onClick={() => toggleRow(match.matchId!)}
+                                  className="text-gray-400 hover:text-villageGreen transition"
+                                  aria-label={expanded ? 'Collapse match report' : 'Expand match report'}
+                                  aria-expanded={expanded}
+                                >
+                                  {expanded ? '▲' : '▼'}
+                                </button>
+                              ) : (
+                                <span className="text-gray-200">·</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{dateStr}</td>
+                            <td className="px-4 py-3 font-medium text-gray-800">
+                              {match.matchId ? (
+                                <Link to={`/scorecard/${match.matchId}`} className="hover:underline text-gray-800">
+                                  {opponentName}
+                                </Link>
+                              ) : opponentName}
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className={`mr-1 ${resultIconClass}`}>{resultIcon}</span>
+                              <span className="text-gray-700 text-xs">{resultText}</span>
+                            </td>
+                            <td className="px-4 py-3 text-gray-500 hidden md:table-cell whitespace-nowrap">{scoreDisplay}</td>
+                          </tr>
+                          {expanded && match.matchReportText && (
+                            <MatchReportRow colSpan={5} reportText={match.matchReportText} />
+                          )}
+                        </React.Fragment>
                       );
                     })}
                   </tbody>
