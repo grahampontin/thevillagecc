@@ -424,13 +424,17 @@ const LiveScorecard: React.FC = () => {
   const villageIcon = (size: string) => (
     <img src="/images/vcc_cricle_small.png" className={`${size} flex-shrink-0`} alt="The Village CC" />
   );
-  const oppositionIcon = (size: string) => (
-    <div className={`${size} rounded-full border-2 border-gray-400 flex items-center justify-center flex-shrink-0`}>
-      <span className="text-gray-600 font-semibold text-xs sm:text-base">
-        {(data.opposition || '').substring(0, 2).toUpperCase()}
-      </span>
-    </div>
-  );
+  const oppositionLogoUrl = scorecardData.matchData?.opposition?.logoUrl;
+  const oppositionIcon = (size: string) =>
+    oppositionLogoUrl ? (
+      <img src={oppositionLogoUrl} className={`${size} rounded-full object-contain flex-shrink-0`} alt={data.opposition ?? 'Opposition'} />
+    ) : (
+      <div className={`${size} rounded-full border-2 border-gray-400 flex items-center justify-center flex-shrink-0`}>
+        <span className="text-gray-600 font-semibold text-xs sm:text-base">
+          {(data.opposition || '').substring(0, 2).toUpperCase()}
+        </span>
+      </div>
+    );
 
   // Section variables for conditional ordering
   const commentarySection = ((data.completedOvers?.length ?? 0) > 0 || (data.theirCompletedOvers?.length ?? 0) > 0) ? (
