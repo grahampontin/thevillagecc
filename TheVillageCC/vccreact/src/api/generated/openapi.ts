@@ -1867,6 +1867,14 @@ export interface components {
     VenueStatsV1: {
       /** Format: int32 */
       matchesPlayed?: number;
+      /** Format: int32 */
+      won?: number;
+      /** Format: int32 */
+      lost?: number;
+      /** Format: int32 */
+      noResult?: number;
+      /** Format: double */
+      winPercentage?: number;
       /** Format: double */
       averageRunsPerWicket?: number;
       /** Format: double */
