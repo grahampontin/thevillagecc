@@ -1,10 +1,23 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import Header from './Header';
 import Footer from './Footer';
 import { getVenueDetails } from '../api/venuesApi';
 import { VenueDetailV1, ResultV1 } from '../api/swaggerTypes';
 import { getResultBadge } from '../utils/matchResultUtils';
+
+// Fix leaflet's default marker icon paths (broken by webpack asset hashing)
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl:       markerIcon,
+  shadowUrl:     markerShadow,
+});
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -228,6 +241,26 @@ const VenueDetailPage: React.FC = () => {
                 >
                   📍 View on Google Maps
                 </a>
+              )}
+
+              {venue.latitude != null && venue.longitude != null && (
+                <div className="mt-3 mb-1 rounded-lg overflow-hidden border border-gray-200 shadow-sm" style={{ height: 280 }}>
+                  <MapContainer
+                    center={[venue.latitude, venue.longitude]}
+                    zoom={17}
+                    style={{ height: '100%', width: '100%' }}
+                    scrollWheelZoom={false}
+                  >
+                    <TileLayer
+                      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                      attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+                      maxZoom={19}
+                    />
+                    <Marker position={[venue.latitude, venue.longitude]}>
+                      <Popup>{venue.name ?? 'Cricket ground'}</Popup>
+                    </Marker>
+                  </MapContainer>
+                </div>
               )}
 
               <div className="mt-1 text-sm text-gray-600">
