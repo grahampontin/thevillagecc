@@ -7,6 +7,7 @@ import {
   BallByBallMatchConditionsV1,
   OppositionInningsDetailsV1,
   InningsEndDetailsV1,
+  AbandonMatchV1,
 } from './swaggerTypes';
 import { apiUrl } from './config';
 
@@ -81,3 +82,14 @@ export async function submitOppositionScore(
 export async function endInnings(matchId: number, payload: InningsEndDetailsV1): Promise<MatchStateV1> {
   return postJson<MatchStateV1>(apiUrl(`/api/LiveScoring/${matchId}/end-innings`), payload);
 }
+
+/**
+ * Abandons the live match, closing any innings in progress and saving ball-by-ball data.
+ * @param matchId - The match ID
+ * @param payload - Abandon details (optional reason)
+ * @returns Promise resolving to void (204 No Content)
+ */
+export async function abandonMatch(matchId: number, payload: AbandonMatchV1): Promise<void> {
+  return postJson<void>(apiUrl(`/api/LiveScoring/${matchId}/abandon`), payload);
+}
+

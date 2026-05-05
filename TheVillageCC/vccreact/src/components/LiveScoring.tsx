@@ -512,6 +512,12 @@ const LiveScoring: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Abandon match dialog state
+  const [showAbandonDialog, setShowAbandonDialog] = useState(false);
+  const [abandonReason, setAbandonReason] = useState('');
+  const [isAbandoning, setIsAbandoning] = useState(false);
+  const [abandonError, setAbandonError] = useState<string | null>(null);
+
   // ---------------------------------------------------------------------------
   // Toast helper
   // ---------------------------------------------------------------------------
@@ -1119,6 +1125,26 @@ const LiveScoring: React.FC = () => {
     isOppositionScoringValid, showToast, selectedMatchId, oppOvers, oppScore, oppWickets,
     oppCommentary, applyMatchState, navigateToNextState,
   ]);
+
+  // ---------------------------------------------------------------------------
+  // Abandon Match handler
+  // ---------------------------------------------------------------------------
+
+  const handleAbandonConfirm = useCallback(async () => {
+    if (!selectedMatchId) return;
+    setIsAbandoning(true);
+    setAbandonError(null);
+    try {
+      await abandonMatch(selectedMatchId, { reason: abandonReason.trim() || null });
+      setShowAbandonDialog(false);
+      setAbandonReason('');
+      setScreen('endMatch');
+    } catch (err) {
+      setAbandonError(err instanceof Error ? err.message : 'Failed to abandon match');
+    } finally {
+      setIsAbandoning(false);
+    }
+  }, [selectedMatchId, abandonReason]);
 
   // ---------------------------------------------------------------------------
   // Computed values for scoring screen
@@ -2080,6 +2106,14 @@ const LiveScoring: React.FC = () => {
               className="w-full text-sm text-gray-900 outline-none resize-none"
             />
           </div>
+
+          {/* Abandon Match */}
+          <button
+            onClick={() => { setAbandonReason(''); setAbandonError(null); setShowAbandonDialog(true); }}
+            className="w-full py-3 rounded-xl border-2 border-amber-500 text-amber-600 font-semibold text-sm hover:bg-amber-50 active:scale-95 transition-all"
+          >
+            Abandon Match
+          </button>
         </div>
       </div>
     </div>
@@ -2199,6 +2233,14 @@ const LiveScoring: React.FC = () => {
               />
             </div>
           </div>
+
+          {/* Abandon Match */}
+          <button
+            onClick={() => { setAbandonReason(''); setAbandonError(null); setShowAbandonDialog(true); }}
+            className="w-full py-3 rounded-xl border-2 border-amber-500 text-amber-600 font-semibold text-sm hover:bg-amber-50 active:scale-95 transition-all"
+          >
+            Abandon Match
+          </button>
         </div>
       </div>
     </div>
@@ -2253,6 +2295,58 @@ const LiveScoring: React.FC = () => {
       </div>
       {toastMessage && (
         <ErrorToast message={toastMessage} onClose={() => setToastMessage(null)} />
+      )}
+      {showAbandonDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 flex flex-col gap-4">
+            <h2 className="text-lg font-bold text-gray-900">Abandon this match?</h2>
+            <p className="text-sm text-gray-600">
+              The match will be marked as abandoned and any ball‑by‑ball data recorded so far will be
+              saved to the scorecard. This cannot be undone.
+            </p>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Reason <span className="font-normal normal-case text-gray-400">(optional)</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. rain, bad light"
+                value={abandonReason}
+                onChange={e => setAbandonReason(e.target.value)}
+                disabled={isAbandoning}
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-amber-500 disabled:opacity-50"
+              />
+            </div>
+            {abandonError && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {abandonError}
+              </p>
+            )}
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setShowAbandonDialog(false); setAbandonError(null); }}
+                disabled={isAbandoning}
+                className="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAbandonConfirm}
+                disabled={isAbandoning}
+                className="flex-1 py-2.5 rounded-xl bg-amber-500 text-white font-semibold text-sm hover:bg-amber-600 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+              >
+                {isAbandoning ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Abandoning…
+                  </>
+                ) : (
+                  'Abandon Match'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

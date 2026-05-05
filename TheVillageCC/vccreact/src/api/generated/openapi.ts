@@ -402,6 +402,32 @@ export interface paths {
       };
     };
   };
+  "/api/LiveScoring/{matchId}/abandon": {
+    post: {
+      parameters: {
+        path: {
+          matchId: number;
+        };
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["AbandonMatchV1"];
+        };
+      };
+      responses: {
+        /** @description No Content */
+        204: {
+          content: never;
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
   "/api/LiveScoring/{matchId}/force-end": {
     post: {
       parameters: {
@@ -1165,6 +1191,9 @@ export interface components {
       columnDefs?: components["schemas"]["StatsColumnDefinitionV1"][] | null;
       rowData?: unknown[] | null;
       footerRow?: unknown;
+    };
+    AbandonMatchV1: {
+      reason?: string | null;
     };
     AwardV1: {
       /** Format: int32 */

@@ -59,3 +59,4 @@ export type LiveScoringMatchSummaryV1 = components['schemas']['LiveScoringMatchS
 export type BallByBallMatchDescriptorV1 = components['schemas']['BallByBallMatchDescriptorV1'];
 export type OppositionInningsDetailsV1 = components['schemas']['OppositionInningsDetailsV1'];
 export type InningsEndDetailsV1 = components['schemas']['InningsEndDetailsV1'];
+export type AbandonMatchV1 = components['schemas']['AbandonMatchV1'];

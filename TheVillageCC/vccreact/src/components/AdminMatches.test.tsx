@@ -10,8 +10,8 @@ const renderWithRouter = (component: React.ReactElement) =>
   render(<BrowserRouter>{component}</BrowserRouter>);
 
 const mockMatches = [
-  { id: 1, opposition: { id: 10, name: 'Barton CC' }, date: '2024-05-11T00:00:00', venue: { id: 1, name: 'Home Ground' }, type: 'Friendly' },
-  { id: 2, opposition: { id: 11, name: 'Oakfield CC' }, date: '2024-06-15T00:00:00', venue: { id: 2, name: 'Away Ground' }, type: 'Friendly' },
+  { id: 1, opposition: { id: 10, name: 'Barton CC' }, date: '2024-05-11T00:00:00', venue: { id: 1, name: 'Home Ground' }, type: 'Friendly', isHome: true },
+  { id: 2, opposition: { id: 11, name: 'Oakfield CC' }, date: '2024-06-15T00:00:00', venue: { id: 2, name: 'Away Ground' }, type: 'Friendly', isHome: false },
 ];
 
 const mockTeams = [
@@ -110,5 +110,29 @@ describe('AdminMatches', () => {
     await userEvent.click(deleteBtn);
 
     expect((global.fetch as jest.Mock).mock.calls.length).toBe(fetchCallsBefore);
+  });
+
+  test('displays H/A badges for home and away matches', async () => {
+    setupFetchForLoad();
+    renderWithRouter(<AdminMatches />);
+    await screen.findByText(/Barton CC/);
+
+    const homeBadges = screen.getAllByText('H');
+    const awayBadges = screen.getAllByText('A');
+    expect(homeBadges.length).toBeGreaterThanOrEqual(1);
+    expect(awayBadges.length).toBeGreaterThanOrEqual(1);
+  });
+
+  test('modal pre-populates Home/Away when editing a match', async () => {
+    setupFetchForLoad();
+    renderWithRouter(<AdminMatches />);
+    await screen.findByText(/Oakfield CC/);
+
+    // Oakfield CC is isHome: false → Away
+    const editBtns = screen.getAllByRole('button', { name: /Edit match vs/i });
+    await userEvent.click(editBtns[1]); // second match (Oakfield, Away)
+
+    const homeAwaySelect = screen.getByRole('combobox', { name: /Home \/ Away/i }) as HTMLSelectElement;
+    expect(homeAwaySelect.value).toBe('away');
   });
 });

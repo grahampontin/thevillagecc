@@ -15,6 +15,7 @@ interface MatchFormState {
   venueId: string;
   date: string;
   type: string;
+  isHome: boolean;
 }
 
 const emptyForm = (): MatchFormState => ({
@@ -22,6 +23,7 @@ const emptyForm = (): MatchFormState => ({
   venueId: '',
   date: new Date().toISOString().slice(0, 10),
   type: 'Friendly',
+  isHome: true,
 });
 
 const toFormState = (m: MatchV1): MatchFormState => ({
@@ -29,6 +31,7 @@ const toFormState = (m: MatchV1): MatchFormState => ({
   venueId: m.venue?.id != null ? String(m.venue.id) : '',
   date: m.date ? m.date.slice(0, 10) : '',
   type: m.type ?? 'Friendly',
+  isHome: m.isHome ?? true,
 });
 
 const AdminMatches: React.FC = () => {
@@ -121,6 +124,7 @@ const AdminMatches: React.FC = () => {
         venue,
         date: form.date,
         type: form.type,
+        isHome: form.isHome,
       };
       if (editingMatch?.id != null) {
         await updateMatch(payload);
@@ -193,8 +197,11 @@ const AdminMatches: React.FC = () => {
               <ul className="mt-3 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
                 {filteredMatches.map((m) => (
                   <li key={m.id} className="flex items-center justify-between px-4 py-3">
-                    <span className="text-sm text-gray-800">
+                    <span className="text-sm text-gray-800 flex items-center gap-2">
                       {m.opposition?.name ?? '—'} ({m.date ? m.date.slice(0, 10) : '—'})
+                      <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${m.isHome ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                        {m.isHome ? 'H' : 'A'}
+                      </span>
                     </span>
                     <div className="flex items-center gap-3">
                       <button
@@ -279,6 +286,18 @@ const AdminMatches: React.FC = () => {
                   {MATCH_TYPES.map(t => (
                     <option key={t} value={t}>{t}</option>
                   ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="match-home-away">Home / Away</label>
+                <select
+                  id="match-home-away"
+                  value={form.isHome ? 'home' : 'away'}
+                  onChange={e => setForm(f => ({ ...f, isHome: e.target.value === 'home' }))}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
+                >
+                  <option value="home">Home</option>
+                  <option value="away">Away</option>
                 </select>
               </div>
             </div>
