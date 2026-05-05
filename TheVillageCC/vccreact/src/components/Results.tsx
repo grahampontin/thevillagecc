@@ -237,7 +237,9 @@ const Results: React.FC = () => {
                       <div className="text-sm font-semibold text-villageText">
                         {getScorelineText(result)}
                       </div>
-                      {result.ResultMargin && (
+                      {result.isAbandoned ? (
+                        <p className="mt-1 text-sm text-gray-600 italic">Match abandoned</p>
+                      ) : result.ResultMargin && (
                         <p className="mt-1 text-sm text-gray-600 italic">
                           {result.ResultMargin}
                         </p>

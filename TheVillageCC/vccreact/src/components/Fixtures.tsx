@@ -105,6 +105,9 @@ const Fixtures: React.FC = () => {
             isHome: match.isHome ?? false
           }));
 
+        // Sort ascending by date (earliest / next fixture first)
+        displayFixtures.sort((a, b) => new Date(a.matchDate).getTime() - new Date(b.matchDate).getTime());
+
         setFixtures(displayFixtures);
       } catch (error) {
         console.error('Error fetching fixtures:', error);

@@ -1207,7 +1207,8 @@ const LiveScorecard: React.FC = () => {
                   <span className="text-xs sm:text-sm font-semibold text-gray-700 whitespace-nowrap">
                     {scorecardData.result?.resultText?.trim() || 'COMPLETED'}
                   </span>
-                  {scorecardData.result?.margin &&
+                  {!scorecardData.result?.isAbandoned &&
+                    scorecardData.result?.margin &&
                     scorecardData.result.margin.trim() !== '' &&
                     scorecardData.result.margin !== 'result not yet in' && (
                     <span className="text-xs text-gray-500 whitespace-nowrap">{scorecardData.result.margin}</span>
