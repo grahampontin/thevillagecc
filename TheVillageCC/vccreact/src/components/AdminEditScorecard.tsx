@@ -18,6 +18,7 @@ import {
   InningsScoreCardV1,
   MatchConditionsV1,
   FoWPlayerV1,
+  MatchDropV1,
 } from '../api/swaggerTypes';
 
 // ---------------------------------------------------------------------------
@@ -616,6 +617,72 @@ const FoWTable: React.FC<FoWTableProps> = ({ entries, onEditEntry, onDeleteEntry
 );
 
 // ---------------------------------------------------------------------------
+// Drops Tab
+// ---------------------------------------------------------------------------
+
+interface DropsTabProps {
+  battingEntries: BattingEntryV1[];
+  dropsState: Record<number, number>;
+  onChange: (playerId: number, count: number) => void;
+}
+
+const DropsTab: React.FC<DropsTabProps> = ({ battingEntries, dropsState, onChange }) => {
+  if (battingEntries.length === 0) {
+    return (
+      <p className="text-sm text-gray-500 py-4">
+        No batting entries yet — add batsmen in the Village CC innings tab first.
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-1">
+      {battingEntries.map((entry, idx) => {
+        const playerId = entry.playerId ?? idx;
+        const didNotBat = entry.modeOfDismissal === 'DidNotBat';
+        const count = dropsState[playerId] ?? 0;
+
+        return (
+          <div
+            key={playerId}
+            className={`flex items-center justify-between px-2 py-2 rounded ${didNotBat ? 'opacity-40' : ''}`}
+          >
+            <span className="text-sm text-gray-800 flex-1 truncate">{entry.playerName ?? '—'}</span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                type="button"
+                onClick={() => onChange(playerId, Math.max(0, count - 1))}
+                disabled={count === 0}
+                className="w-7 h-7 flex items-center justify-center rounded border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                aria-label={`Decrease drops for ${entry.playerName}`}
+              >
+                −
+              </button>
+              <input
+                type="number"
+                min={0}
+                value={count}
+                onChange={e => onChange(playerId, Math.max(0, parseInt(e.target.value, 10) || 0))}
+                className="w-12 text-center border border-gray-300 rounded-md px-1 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
+                aria-label={`Drops for ${entry.playerName}`}
+              />
+              <button
+                type="button"
+                onClick={() => onChange(playerId, count + 1)}
+                className="w-7 h-7 flex items-center justify-center rounded border border-gray-300 text-gray-600 hover:bg-gray-100"
+                aria-label={`Increase drops for ${entry.playerName}`}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// ---------------------------------------------------------------------------
 // Modal state type
 // ---------------------------------------------------------------------------
 
@@ -646,10 +713,11 @@ const AdminEditScorecard: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'conditions' | 'home' | 'away'>('conditions');
+  const [activeTab, setActiveTab] = useState<'conditions' | 'home' | 'away' | 'drops'>('conditions');
   const [activeHomeSubTab, setActiveHomeSubTab] = useState<'batting' | 'bowling' | 'fow'>('batting');
   const [activeAwaySubTab, setActiveAwaySubTab] = useState<'batting' | 'bowling' | 'fow'>('batting');
   const [modal, setModal] = useState<ModalState>({ kind: 'none' });
+  const [dropsState, setDropsState] = useState<Record<number, number>>({});
 
   const loadData = useCallback(async () => {
     if (!numericMatchId) return;
@@ -665,6 +733,12 @@ const AdminEditScorecard: React.FC = () => {
       setPlayers(playersData);
       setScorecard(sc ?? emptyScorecard());
       setMatchReport(sc?.matchReport ?? {});
+      // Initialise drops state from loaded scorecard
+      const dropsMap: Record<number, number> = {};
+      (sc?.drops ?? []).forEach((d: MatchDropV1) => {
+        if (d.playerId != null) dropsMap[d.playerId] = d.drops ?? 0;
+      });
+      setDropsState(dropsMap);
     } catch (err) {
       console.error('Failed to load scorecard data', err);
       setErrorMsg('Failed to load match data.');
@@ -679,14 +753,25 @@ const AdminEditScorecard: React.FC = () => {
   // Save
   // -------------------------------------------------------------------------
 
+  const buildDropsPayload = (): MatchDropV1[] =>
+    Object.entries(dropsState)
+      .filter(([, count]) => count > 0)
+      .map(([playerId, drops]) => ({ playerId: parseInt(playerId, 10), drops }));
+
   const handleSave = async () => {
     if (!scorecard) return;
     setSaving(true);
     setErrorMsg(null);
     setSuccessMsg(null);
     try {
-      const saved = await saveScorecard(numericMatchId, scorecard);
+      const saved = await saveScorecard(numericMatchId, { ...scorecard, drops: buildDropsPayload() });
       setScorecard(saved);
+      // Re-sync drops state from response
+      const dropsMap: Record<number, number> = {};
+      (saved?.drops ?? []).forEach((d: MatchDropV1) => {
+        if (d.playerId != null) dropsMap[d.playerId] = d.drops ?? 0;
+      });
+      setDropsState(dropsMap);
       setSuccessMsg('Scorecard saved successfully.');
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Save failed.');
@@ -701,7 +786,7 @@ const AdminEditScorecard: React.FC = () => {
     setErrorMsg(null);
     setSuccessMsg(null);
     try {
-      const saved = await saveScorecard(numericMatchId, { ...scorecard, matchReport });
+      const saved = await saveScorecard(numericMatchId, { ...scorecard, matchReport, drops: buildDropsPayload() });
       setScorecard(saved);
       setMatchReport(saved.matchReport ?? matchReport);
       setSuccessMsg('Match report saved successfully.');
@@ -1103,6 +1188,24 @@ const AdminEditScorecard: React.FC = () => {
     );
   };
 
+  const renderDropsTab = () => {
+    const battingEntries = scorecard?.ourInnings?.batting?.entries ?? [];
+    return (
+      <div className="max-w-lg">
+        <p className="text-xs text-gray-500 mb-3">
+          Record how many catches each Village player dropped during this match.
+        </p>
+        <DropsTab
+          battingEntries={battingEntries}
+          dropsState={dropsState}
+          onChange={(playerId, count) =>
+            setDropsState(prev => ({ ...prev, [playerId]: count }))
+          }
+        />
+      </div>
+    );
+  };
+
   // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
@@ -1111,7 +1214,7 @@ const AdminEditScorecard: React.FC = () => {
     ? `vs ${match.opposition?.name ?? '—'} (${match.date ? match.date.slice(0, 10) : '—'})`
     : `Match #${numericMatchId}`;
 
-  const activeSubTab = activeTab === 'home' ? activeHomeSubTab : activeAwaySubTab;
+  const activeSubTab = (activeTab === 'home' || activeTab === 'away') ? (activeTab === 'home' ? activeHomeSubTab : activeAwaySubTab) : null;
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 font-sans text-villageText">
@@ -1133,13 +1236,13 @@ const AdminEditScorecard: React.FC = () => {
 
       {/* Fixed secondary tab bar — main sections */}
       <div className="flex-none bg-white border-b border-gray-200 flex z-10">
-        {(['conditions', 'home', 'away'] as const).map(tab => (
+        {(['conditions', 'home', 'away', 'drops'] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2.5 text-xs font-medium border-b-2 transition ${activeTab === tab ? 'border-villageGreen text-villageGreen' : 'border-transparent text-gray-500'}`}
           >
-            {tab === 'conditions' ? 'Conditions' : tab === 'home' ? 'Village CC' : 'Opposition'}
+            {tab === 'conditions' ? 'Conditions' : tab === 'home' ? 'Village CC' : tab === 'away' ? 'Opposition' : 'Drops'}
           </button>
         ))}
       </div>
@@ -1153,7 +1256,7 @@ const AdminEditScorecard: React.FC = () => {
       )}
 
       {/* Scrollable content */}
-      <div className={`flex-1 overflow-y-auto ${activeTab !== 'conditions' ? 'pb-14' : ''}`}>
+      <div className={`flex-1 overflow-y-auto ${(activeTab === 'home' || activeTab === 'away') ? 'pb-14' : ''}`}>
         {isLoading ? (
           <div className="px-4 pt-4 space-y-2">
             {[...Array(8)].map((_, i) => (
@@ -1165,12 +1268,13 @@ const AdminEditScorecard: React.FC = () => {
             {activeTab === 'conditions' && renderConditionsTab()}
             {activeTab === 'home' && renderInningsTab('home')}
             {activeTab === 'away' && renderInningsTab('away')}
+            {activeTab === 'drops' && renderDropsTab()}
           </div>
         )}
       </div>
 
-      {/* Fixed bottom tab bar — innings sub-tabs (hidden on Conditions tab) */}
-      {activeTab !== 'conditions' && (
+      {/* Fixed bottom tab bar — innings sub-tabs (hidden on Conditions and Drops tabs) */}
+      {(activeTab === 'home' || activeTab === 'away') && (
         <div className="flex-none fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex z-20">
           {(['batting', 'bowling', 'fow'] as const).map(t => {
             const isActive = activeSubTab === t;

@@ -15,7 +15,7 @@ import { Line, Bar } from 'react-chartjs-2';
 import Header from './Header';
 import Footer from './Footer';
 import { getLiveScorecardData } from '../api/liveScoringApi';
-import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1, BallV1 } from '../api/swaggerTypes';
+import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1, BallV1, MatchDropV1 } from '../api/swaggerTypes';
 import { getScoringArea } from '../utils/cricketUtils';
 
 ChartJS.register(
@@ -28,6 +28,26 @@ ChartJS.register(
   Tooltip,
   Legend,
 );
+
+// ---------------------------------------------------------------------------
+// Drop icon — shown inline after player name for each dropped catch
+// ---------------------------------------------------------------------------
+
+const DropIcon: React.FC = () => (
+  <span
+    aria-label="Dropped catch"
+    title="Dropped catch"
+    role="img"
+    style={{ fontSize: '1em', color: '#f59e0b', lineHeight: 1 }}
+  >
+    🤲
+  </span>
+);
+
+function dropsForPlayer(playerId: number | undefined, drops: MatchDropV1[] | null | undefined): number {
+  if (!drops || playerId == null) return 0;
+  return drops.find(d => d.playerId === playerId)?.drops ?? 0;
+}
 
 const LiveScorecard: React.FC = () => {
   const { matchId } = useParams<{ matchId: string }>();
@@ -195,7 +215,8 @@ const LiveScorecard: React.FC = () => {
     entries: BattingEntryV1[],
     extras?: { wides?: number; noBalls?: number; byes?: number; legByes?: number; penalties?: number; total?: number },
     score?: number,
-    wickets?: number
+    wickets?: number,
+    drops?: MatchDropV1[] | null
   ) => (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
@@ -211,19 +232,35 @@ const LiveScorecard: React.FC = () => {
           </tr>
         </thead>
         <tbody className="text-gray-800">
-          {entries.map((entry, index) => (
-            <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-              <td className="py-2 pr-2 font-medium">{entry.playerName}</td>
-              <td className="py-2 text-sm text-gray-500">{formatDismissal(entry)}</td>
-              <td className="py-2 text-right font-medium">{entry.runs ?? 0}</td>
-              <td className="py-2 text-right text-gray-600">{entry.ballsFaced ?? 0}</td>
-              <td className="py-2 text-right text-gray-600">{entry.fours ?? 0}</td>
-              <td className="py-2 text-right text-gray-600">{entry.sixes ?? 0}</td>
-              <td className="py-2 text-right text-gray-600">
-                {entry.ballsFaced ? ((entry.runs ?? 0) / entry.ballsFaced * 100).toFixed(1) : '-'}
-              </td>
-            </tr>
-          ))}
+          {entries.map((entry, index) => {
+            const dropCount = dropsForPlayer(entry.playerId, drops);
+            return (
+              <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                <td className="py-2 pr-2 font-medium">
+                  <span>{entry.playerName}</span>
+                  {dropCount > 0 && (
+                    <span
+                      className="ml-1 inline-flex gap-0.5"
+                      title={`Dropped ${dropCount} ${dropCount === 1 ? 'catch' : 'catches'}`}
+                      aria-label={`Dropped ${dropCount} ${dropCount === 1 ? 'catch' : 'catches'}`}
+                    >
+                      {Array.from({ length: dropCount }).map((_, i) => (
+                        <DropIcon key={i} />
+                      ))}
+                    </span>
+                  )}
+                </td>
+                <td className="py-2 text-sm text-gray-500">{formatDismissal(entry)}</td>
+                <td className="py-2 text-right font-medium">{entry.runs ?? 0}</td>
+                <td className="py-2 text-right text-gray-600">{entry.ballsFaced ?? 0}</td>
+                <td className="py-2 text-right text-gray-600">{entry.fours ?? 0}</td>
+                <td className="py-2 text-right text-gray-600">{entry.sixes ?? 0}</td>
+                <td className="py-2 text-right text-gray-600">
+                  {entry.ballsFaced ? ((entry.runs ?? 0) / entry.ballsFaced * 100).toFixed(1) : '-'}
+                </td>
+              </tr>
+            );
+          })}
           {extras && (
             <tr className="border-b border-gray-100 text-gray-600">
               <td className="py-2 pr-2 font-medium" colSpan={2}>
@@ -305,7 +342,8 @@ const LiveScorecard: React.FC = () => {
   const renderInningsContent = (
     innings: NonNullable<NonNullable<LiveScorecardV1['finalScorecard']>['ourInnings']>,
     teamName: string,
-    teamIcon: React.ReactNode
+    teamIcon: React.ReactNode,
+    drops?: MatchDropV1[] | null
   ) => (
     <div>
       <div className="flex items-center gap-3 mb-5">
@@ -322,7 +360,8 @@ const LiveScorecard: React.FC = () => {
         innings.batting?.entries || [],
         innings.batting?.extras,
         innings.batting?.score,
-        innings.batting?.wickets
+        innings.batting?.wickets,
+        drops
       )}
       {innings.fow?.entries && renderFallOfWickets(innings.fow.entries)}
       {innings.bowling?.entries && innings.bowling.entries.length > 0 &&
@@ -592,7 +631,7 @@ const LiveScorecard: React.FC = () => {
     if (completed) {
       if (!hasOurInnings && !hasTheirInnings) return null;
       const ourInningsContent = hasOurInnings && scorecardData.finalScorecard?.ourInnings
-        ? renderInningsContent(scorecardData.finalScorecard.ourInnings, 'The Village CC', villageIcon('h-8 w-8'))
+        ? renderInningsContent(scorecardData.finalScorecard.ourInnings, 'The Village CC', villageIcon('h-8 w-8'), scorecardData.finalScorecard.drops)
         : null;
       const theirInningsContent = hasTheirInnings && scorecardData.finalScorecard?.theirInnings
         ? renderInningsContent(scorecardData.finalScorecard.theirInnings, data.opposition ?? 'Opposition', oppositionIcon('h-8 w-8'))

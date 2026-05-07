@@ -1181,6 +1181,18 @@ export interface paths {
       };
     };
   };
+  "/api/Version": {
+    get: {
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["VersionInfoV1"];
+          };
+        };
+      };
+    };
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -1592,6 +1604,12 @@ export interface components {
       weWonTheToss?: boolean;
       tossWinnerBatted?: boolean;
     };
+    MatchDropV1: {
+      /** Format: int32 */
+      playerId?: number;
+      /** Format: int32 */
+      drops?: number;
+    };
     MatchReportV1: {
       conditions?: string | null;
       report?: string | null;
@@ -1602,6 +1620,7 @@ export interface components {
       theirInnings?: components["schemas"]["InningsScoreCardV1"];
       matchConditions?: components["schemas"]["MatchConditionsV1"];
       matchReport?: components["schemas"]["MatchReportV1"];
+      drops?: components["schemas"]["MatchDropV1"][] | null;
     };
     MatchStateUpdateV1: {
       /** Format: int32 */
@@ -1817,6 +1836,11 @@ export interface components {
       matchReportText?: string | null;
       matchReportImage?: string | null;
       isWinner?: boolean | null;
+      /** Format: int32 */
+      oppositionId?: number | null;
+      oppositionLogoUrl?: string | null;
+      /** Format: int32 */
+      venueId?: number | null;
     };
     StatsColumnDefinitionV1: {
       headerName?: string | null;
@@ -1934,6 +1958,10 @@ export interface components {
       latitude?: number | null;
       /** Format: double */
       longitude?: number | null;
+    };
+    VersionInfoV1: {
+      gitHash?: string | null;
+      envName?: string | null;
     };
     WicketV1: {
       bowler?: string | null;

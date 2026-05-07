@@ -42,6 +42,7 @@ export type OverV1 = components['schemas']['OverV1'];
 export type BallV1 = components['schemas']['BallV1'];
 
 // Scorecard editing types
+export type MatchDropV1 = components['schemas']['MatchDropV1'];
 export type InningsScoreCardV1 = components['schemas']['InningsScoreCardV1'];
 export type BattingCardV1 = components['schemas']['BattingCardV1'];
 export type BowlingCardV1 = components['schemas']['BowlingCardV1'];

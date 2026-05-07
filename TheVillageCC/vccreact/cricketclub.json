@@ -2065,6 +2065,25 @@
           }
         }
       }
+    },
+    "/api/Version": {
+      "get": {
+        "tags": [
+          "Version"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionInfoV1"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3181,6 +3200,20 @@
         },
         "additionalProperties": false
       },
+      "MatchDropV1": {
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "drops": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "MatchReportV1": {
         "type": "object",
         "properties": {
@@ -3213,6 +3246,13 @@
           },
           "matchReport": {
             "$ref": "#/components/schemas/MatchReportV1"
+          },
+          "drops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatchDropV1"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3831,6 +3871,20 @@
           "isWinner": {
             "type": "boolean",
             "nullable": true
+          },
+          "oppositionId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "oppositionLogoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "venueId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4168,6 +4222,20 @@
           "longitude": {
             "type": "number",
             "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VersionInfoV1": {
+        "type": "object",
+        "properties": {
+          "gitHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "envName": {
+            "type": "string",
             "nullable": true
           }
         },
