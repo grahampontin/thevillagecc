@@ -133,7 +133,7 @@ const Results: React.FC = () => {
     if (result.isTied) return 'Match tied';
     if (result.isDrawn) return 'Match drawn';
     if (result.WinningTeam && result.LosingTeam) {
-      const margin = result.ResultMargin ? ` by ${result.ResultMargin}` : '';
+      const margin = result.ResultMargin ? ` ${result.ResultMargin}` : '';
       return `${result.WinningTeam} beat ${result.LosingTeam}${margin}`;
     }
     return result.ResultText || '';

@@ -38,9 +38,9 @@ describe('Homepage', () => {
         isTied: false,
         isDrawn: false,
         isAbandoned: false,
-        venueName: null,
-        winningTeam: null,
-        losingTeam: null,
+        venueName: 'Test Ground',
+        winningTeam: 'The Village CC',
+        losingTeam: 'Opponents CC',
         margin: null,
         theirOversFaced: 0,
         theirWickets: 0,
@@ -66,8 +66,8 @@ describe('Homepage', () => {
         isDrawn: false,
         isAbandoned: false,
         venueName: null,
-        winningTeam: null,
-        losingTeam: null,
+        winningTeam: 'Team A',
+        losingTeam: 'The Village CC',
         margin: null,
         theirOversFaced: 0,
         theirWickets: 0,
@@ -86,8 +86,9 @@ describe('Homepage', () => {
     render(<Homepage />);
 
     // Wait for the match reports to be loaded and displayed
+    // New layout renders team names in separate rows, not as "Team A vs Team B"
     await waitFor(() => {
-      expect(screen.getByText(/The Village CC vs Opponents CC/i)).toBeInTheDocument();
+      expect(screen.getByText('Opponents CC')).toBeInTheDocument();
     });
 
     // Verify the API was called with correct parameters (now using /api/Results/recent)
@@ -96,10 +97,17 @@ describe('Homepage', () => {
         'Accept': 'application/json'
       })
     }));
-    
-    // Check that result text is displayed
-    expect(screen.getByText(/The Village CC won - by 50 runs/i)).toBeInTheDocument();
-    expect(screen.getByText(/Team A won - by 10 runs/i)).toBeInTheDocument();
+
+    // Check the scores are displayed
+    expect(screen.getByText('200/5')).toBeInTheDocument();
+    expect(screen.getByText('150/10')).toBeInTheDocument();
+
+    // Check result lines use new format: "Winner beat Loser by margin"
+    expect(screen.getByText(/The Village CC beat Opponents CC by 50 runs/i)).toBeInTheDocument();
+    expect(screen.getByText(/Team A beat The Village CC by 10 runs/i)).toBeInTheDocument();
+
+    // Check venue
+    expect(screen.getByText(/at Test Ground/i)).toBeInTheDocument();
   });
 
   test('displays error message when API call fails', async () => {

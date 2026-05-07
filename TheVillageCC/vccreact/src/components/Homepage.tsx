@@ -329,7 +329,7 @@ const Homepage: React.FC = () => {
                   else if (report.isTied) resultLine = 'Match tied';
                   else if (report.isDrawn) resultLine = 'Match drawn';
                   else if (report.winningTeam && report.losingTeam) {
-                    const margin = report.resultMargin ? ` by ${report.resultMargin}` : '';
+                    const margin = report.resultMargin ? ` ${report.resultMargin}` : '';
                     resultLine = `${report.winningTeam} beat ${report.losingTeam}${margin}`;
                   } else {
                     resultLine = report.resultText || '';
