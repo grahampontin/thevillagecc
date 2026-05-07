@@ -17,6 +17,16 @@ interface MatchReport {
   isTied: boolean;
   isDrawn: boolean;
   isAbandoned: boolean;
+  // New fields for the result card layout
+  homeTeamName: string;
+  homeTeamScore: string;
+  awayTeamName: string;
+  awayTeamScore: string;
+  venueName: string;
+  oppositionLogoUrl: string | null;
+  winningTeam: string;
+  losingTeam: string;
+  resultMargin: string;
 }
 
 const MAX_REPORT_PREVIEW_LENGTH = 200;
@@ -97,6 +107,15 @@ const Homepage: React.FC = () => {
             isTied: item.isTied ?? false,
             isDrawn: item.isDrawn ?? false,
             isAbandoned: item.isAbandoned ?? false,
+            homeTeamName: item.homeTeamName ?? '',
+            homeTeamScore: item.homeTeamScore ?? '',
+            awayTeamName: item.awayTeamName ?? '',
+            awayTeamScore: item.awayTeamScore ?? '',
+            venueName: item.venueName ?? '',
+            oppositionLogoUrl: item.oppositionLogoUrl ?? null,
+            winningTeam: item.winningTeam ?? '',
+            losingTeam: item.losingTeam ?? '',
+            resultMargin: item.resultMargin ?? item.margin ?? '',
           };
         });
 
@@ -297,40 +316,95 @@ const Homepage: React.FC = () => {
             {!isLoading && matchReports.length > 0 && (
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {matchReports.slice(0, 2).map((report, index) => {
-                  // Use shared utility to get badge
                   const { color: statusColor, text: statusText } = getResultBadge(report);
-                  
-                  // Safely parse the date
+
                   const matchDate = new Date(report.matchDate);
-                  const dateDisplay = !isNaN(matchDate.getTime()) 
+                  const dateDisplay = !isNaN(matchDate.getTime())
                     ? matchDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
                     : report.matchDate;
-                  
-                  // Safely extract opponent name
-                  const headingParts = report.heading.split(' vs ');
-                  const opponentName = headingParts.length > 1 ? headingParts[1] : report.heading;
+
+                  // Build result line
+                  let resultLine: string;
+                  if (report.isAbandoned) resultLine = 'Match abandoned';
+                  else if (report.isTied) resultLine = 'Match tied';
+                  else if (report.isDrawn) resultLine = 'Match drawn';
+                  else if (report.winningTeam && report.losingTeam) {
+                    const margin = report.resultMargin ? ` by ${report.resultMargin}` : '';
+                    resultLine = `${report.winningTeam} beat ${report.losingTeam}${margin}`;
+                  } else {
+                    resultLine = report.resultText || '';
+                  }
+
+                  const renderTeamRow = (teamName: string, score: string, logoUrl: string | null) => (
+                    <div className="flex items-center gap-2">
+                      {teamName === 'The Village CC' ? (
+                        <img
+                          src="/images/vcc_cricle_small.png"
+                          alt="The Village CC"
+                          className="h-6 w-6 flex-shrink-0 object-contain"
+                        />
+                      ) : logoUrl ? (
+                        <img
+                          src={logoUrl}
+                          alt={teamName}
+                          className="h-6 w-6 flex-shrink-0 rounded-full object-contain"
+                        />
+                      ) : (
+                        <div className="h-6 w-6 flex-shrink-0 rounded-full border-2 border-gray-300 flex items-center justify-center bg-gray-50">
+                          <span className="text-[9px] font-bold text-gray-500 leading-none">
+                            {teamName.substring(0, 2).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                      <span className="text-sm font-semibold text-villageText leading-tight flex-1 truncate">
+                        {teamName}
+                      </span>
+                      {score && (
+                        <span className="text-sm font-semibold text-villageText leading-tight ml-2 shrink-0">
+                          {score}
+                        </span>
+                      )}
+                    </div>
+                  );
+
+                  const oppLogoForTeam = (teamName: string) =>
+                    teamName === 'The Village CC' ? null : report.oppositionLogoUrl;
 
                   return (
                     <article key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-2">
+                      {/* Date + badge */}
                       <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span>{dateDisplay} · {opponentName}</span>
+                        <span>{dateDisplay}</span>
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full ${statusColor}`}>
                           {statusText}
                         </span>
                       </div>
-                      <div className="text-base font-semibold text-gray-800">
-                        {report.heading}
+
+                      {/* Team rows with scores */}
+                      <div className="flex flex-col gap-1.5">
+                        {renderTeamRow(report.homeTeamName, report.homeTeamScore, oppLogoForTeam(report.homeTeamName))}
+                        {renderTeamRow(report.awayTeamName, report.awayTeamScore, oppLogoForTeam(report.awayTeamName))}
                       </div>
-                      <div className="text-sm text-gray-600">
-                        {report.subText}
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        {report.text}
-                      </p>
+
+                      {/* Result line */}
+                      {resultLine && (
+                        <p className="text-xs text-gray-600">{resultLine}</p>
+                      )}
+
+                      {/* Venue */}
+                      {report.venueName && (
+                        <p className="text-xs text-gray-500">at {report.venueName}</p>
+                      )}
+
+                      {/* Match report preview */}
+                      {report.text && (
+                        <p className="text-sm text-gray-600">{report.text}</p>
+                      )}
+
                       {report.matchId && (
                         <a
                           href={`/scorecard/${report.matchId}`}
-                          className="text-sm font-medium text-villageGreen hover:underline mt-2"
+                          className="text-sm font-medium text-villageGreen hover:underline mt-1"
                         >
                           Read full report →
                         </a>

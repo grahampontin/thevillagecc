@@ -639,13 +639,12 @@ const DropsTab: React.FC<DropsTabProps> = ({ battingEntries, dropsState, onChang
     <div className="space-y-1">
       {battingEntries.map((entry, idx) => {
         const playerId = entry.playerId ?? idx;
-        const didNotBat = entry.modeOfDismissal === 'DidNotBat';
         const count = dropsState[playerId] ?? 0;
 
         return (
           <div
             key={playerId}
-            className={`flex items-center justify-between px-2 py-2 rounded ${didNotBat ? 'opacity-40' : ''}`}
+            className="flex items-center justify-between px-2 py-2 rounded"
           >
             <span className="text-sm text-gray-800 flex-1 truncate">{entry.playerName ?? '—'}</span>
             <div className="flex items-center gap-2 flex-shrink-0">
