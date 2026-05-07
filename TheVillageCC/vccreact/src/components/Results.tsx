@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import { getResultBadge } from '../utils/matchResultUtils';
@@ -31,6 +31,9 @@ interface MatchReport {
   TheirScore: number | null;
   TheirWickets: number | null;
   VenueName: string;
+  VenueId: number | null;
+  OppositionId: number | null;
+  OppositionLogoUrl: string | null;
 }
 
 const mapResultV1ToMatchReport = (r: ResultV1): MatchReport => ({
@@ -58,6 +61,9 @@ const mapResultV1ToMatchReport = (r: ResultV1): MatchReport => ({
   TheirWickets: r.theirWickets ?? null,
   // Handle potential venueName variations (backend inconsistency)
   VenueName: r.venueName ?? (r as any).venue ?? (r as any).VenueName ?? '',
+  VenueId: r.venueId ?? null,
+  OppositionId: r.oppositionId ?? null,
+  OppositionLogoUrl: r.oppositionLogoUrl ?? null,
 });
 
 const SKELETON_ITEMS_COUNT = 5;
@@ -171,6 +177,11 @@ const Results: React.FC = () => {
     return 'TBC';
   };
 
+  const getOppositionName = (result: MatchReport): string => {
+    if (result.HomeTeamName !== 'The Village CC') return result.HomeTeamName;
+    return result.AwayTeamName;
+  };
+
   return (
     <div className="font-sans text-villageText bg-gray-50 min-h-screen">
       <Header />
@@ -220,6 +231,8 @@ const Results: React.FC = () => {
             <div className="mt-8 grid gap-6 md:grid-cols-2">
               {results.map((result) => {
                 const status = getResultBadge(result);
+                const opponentName = getOppositionName(result);
+                const venueText = getVenueText(result);
 
                 return (
                   <a
@@ -228,22 +241,83 @@ const Results: React.FC = () => {
                     className="block"
                   >
                     <article className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:border-villageGreen transition">
-                      <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                        <span>{formatDate(result.MatchDate)} · {getVenueText(result)}</span>
-                        <span className={`px-2 py-0.5 rounded-full font-semibold text-[11px] ${status.color}`}>
+                      {/* Header row: date + result badge */}
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <span className="text-xs text-gray-500 truncate">
+                          {formatDate(result.MatchDate)}
+                        </span>
+                        <span className={`px-2 py-0.5 rounded-full font-semibold text-[11px] shrink-0 ${status.color}`}>
                           {status.text.toUpperCase()}
                         </span>
                       </div>
-                      <div className="text-sm font-semibold text-villageText">
-                        {getScorelineText(result)}
+
+                      {/* Teams */}
+                      <div className="flex flex-col gap-1.5 mb-2">
+                        {/* Village CC row */}
+                        <div className="flex items-center gap-2">
+                          <img
+                            src="/images/vcc_cricle_small.png"
+                            alt="The Village CC"
+                            className="h-6 w-6 flex-shrink-0 object-contain"
+                          />
+                          <span className="text-sm font-semibold text-villageText leading-tight">
+                            The Village CC
+                          </span>
+                        </div>
+
+                        {/* Opposition row */}
+                        <div className="flex items-center gap-2">
+                          {result.OppositionLogoUrl ? (
+                            <img
+                              src={result.OppositionLogoUrl}
+                              alt={opponentName}
+                              className="h-6 w-6 flex-shrink-0 rounded-full object-contain"
+                            />
+                          ) : (
+                            <div className="h-6 w-6 flex-shrink-0 rounded-full border-2 border-gray-300 flex items-center justify-center bg-gray-50">
+                              <span className="text-[9px] font-bold text-gray-500 leading-none">
+                                {opponentName.substring(0, 2).toUpperCase()}
+                              </span>
+                            </div>
+                          )}
+                          <span className="text-sm font-semibold text-villageText leading-tight">
+                            {result.OppositionId ? (
+                              <Link
+                                to={`/teams/${result.OppositionId}`}
+                                className="hover:underline text-villageGreen"
+                                onClick={e => e.stopPropagation()}
+                              >
+                                {opponentName}
+                              </Link>
+                            ) : (
+                              opponentName
+                            )}
+                          </span>
+                        </div>
                       </div>
-                      {result.isAbandoned ? (
-                        <p className="mt-1 text-sm text-gray-600 italic">Match abandoned</p>
-                      ) : result.ResultMargin && (
-                        <p className="mt-1 text-sm text-gray-600 italic">
-                          {result.ResultMargin}
-                        </p>
-                      )}
+
+                      {/* Scoreline */}
+                      <p className="text-xs text-gray-600 mb-1">{getScorelineText(result)}</p>
+
+                      {/* Venue + margin/abandoned */}
+                      <p className="text-xs text-gray-500 italic">
+                        {result.VenueId ? (
+                          <Link
+                            to={`/venues/${result.VenueId}`}
+                            className="hover:underline text-villageGreen"
+                            onClick={e => e.stopPropagation()}
+                          >
+                            {venueText}
+                          </Link>
+                        ) : (
+                          venueText
+                        )}
+                        {result.isAbandoned ? (
+                          <> · <span>Match abandoned</span></>
+                        ) : result.ResultMargin ? (
+                          <> · {result.ResultMargin}</>
+                        ) : null}
+                      </p>
                     </article>
                   </a>
                 );
