@@ -149,27 +149,89 @@ const AdminVenues: React.FC = () => {
                 />
               </div>
               <ul className="mt-3 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
-                {filteredVenues.map((v) => (
-                  <li key={v.id} className="flex items-center justify-between px-4 py-3">
-                    <span className="text-sm text-gray-800">{v.name}</span>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => openEdit(v)}
-                        className="text-gray-500 hover:text-villageGreen transition"
-                        aria-label={`Edit ${v.name}`}
-                      >
-                        <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
-                      </button>
-                      <button
-                        onClick={() => handleDelete(v)}
-                        className="text-gray-400 hover:text-red-600 transition"
-                        aria-label={`Delete ${v.name}`}
-                      >
-                        <span className="material-symbols-outlined text-[20px] leading-none">delete</span>
-                      </button>
-                    </div>
-                  </li>
-                ))}
+                {filteredVenues.map((v) => {
+                  const hasCoords = v.latitude != null && v.longitude != null;
+                  const hasMapUrl = !!v.mapUrl;
+                  const hasDescription = !!v.description;
+
+                  return (
+                    <li key={v.id} className="flex items-center justify-between px-4 py-3 gap-3">
+                      <span className="text-sm text-gray-800 flex-1 truncate">{v.name}</span>
+
+                      {/* Optional-attribute indicators */}
+                      <div className="flex items-center gap-1.5 shrink-0" aria-label="Venue attributes">
+                        {/* Coordinates */}
+                        <span
+                          title={hasCoords ? `Coordinates: ${v.latitude}, ${v.longitude}` : 'No coordinates'}
+                          className="relative inline-flex items-center justify-center"
+                        >
+                          <span className={`material-symbols-outlined text-[18px] leading-none transition ${hasCoords ? 'text-villageGreen' : 'text-gray-300'}`}>
+                            pin_drop
+                          </span>
+                          {!hasCoords && (
+                            <span className="absolute inset-0 pointer-events-none" aria-hidden="true">
+                              <svg viewBox="0 0 18 18" className="w-full h-full">
+                                <line x1="2" y1="2" x2="16" y2="16" stroke="#d1d5db" strokeWidth="1.5" strokeLinecap="round" />
+                              </svg>
+                            </span>
+                          )}
+                        </span>
+
+                        {/* Maps URL */}
+                        <span
+                          title={hasMapUrl ? 'Maps URL set' : 'No Maps URL'}
+                          className="relative inline-flex items-center justify-center"
+                        >
+                          <span className={`material-symbols-outlined text-[18px] leading-none transition ${hasMapUrl ? 'text-villageGreen' : 'text-gray-300'}`}>
+                            map
+                          </span>
+                          {!hasMapUrl && (
+                            <span className="absolute inset-0 pointer-events-none" aria-hidden="true">
+                              <svg viewBox="0 0 18 18" className="w-full h-full">
+                                <line x1="2" y1="2" x2="16" y2="16" stroke="#d1d5db" strokeWidth="1.5" strokeLinecap="round" />
+                              </svg>
+                            </span>
+                          )}
+                        </span>
+
+                        {/* Description */}
+                        <span
+                          title={hasDescription ? 'Description set' : 'No description'}
+                          className="relative inline-flex items-center justify-center"
+                        >
+                          <span className={`material-symbols-outlined text-[18px] leading-none transition ${hasDescription ? 'text-villageGreen' : 'text-gray-300'}`}>
+                            notes
+                          </span>
+                          {!hasDescription && (
+                            <span className="absolute inset-0 pointer-events-none" aria-hidden="true">
+                              <svg viewBox="0 0 18 18" className="w-full h-full">
+                                <line x1="2" y1="2" x2="16" y2="16" stroke="#d1d5db" strokeWidth="1.5" strokeLinecap="round" />
+                              </svg>
+                            </span>
+                          )}
+                        </span>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-3 shrink-0">
+                        <button
+                          onClick={() => openEdit(v)}
+                          className="text-gray-500 hover:text-villageGreen transition"
+                          aria-label={`Edit ${v.name}`}
+                        >
+                          <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(v)}
+                          className="text-gray-400 hover:text-red-600 transition"
+                          aria-label={`Delete ${v.name}`}
+                        >
+                          <span className="material-symbols-outlined text-[20px] leading-none">delete</span>
+                        </button>
+                      </div>
+                    </li>
+                  );
+                })}
                 {filteredVenues.length === 0 && (
                   <li className="px-4 py-6 text-sm text-gray-500 text-center">No venues found.</li>
                 )}
