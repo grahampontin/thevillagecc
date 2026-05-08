@@ -34,14 +34,47 @@ ChartJS.register(
 // ---------------------------------------------------------------------------
 
 const DropIcon: React.FC = () => (
-  <span
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 22"
+    width="0.75em"
+    height="1em"
+    display="inline-block"
     aria-label="Dropped catch"
-    title="Dropped catch"
     role="img"
-    style={{ fontSize: '1em', color: '#f59e0b', lineHeight: 1 }}
+    title="Dropped catch"
+    style={{ verticalAlign: '-0.15em', flexShrink: 0 }}
   >
-    🤲
-  </span>
+    {/* Cricket ball */}
+    <circle cx="8" cy="7.5" r="6" fill="#ef4444" />
+    {/* Seam — horizontal arc */}
+    <path
+      d="M2.5 6.5 Q8 11 13.5 6.5"
+      fill="none"
+      stroke="rgba(255,255,255,0.7)"
+      strokeWidth="1.1"
+      strokeLinecap="round"
+    />
+    {/* Seam — vertical arc */}
+    <path
+      d="M6.8 1.8 Q5 7.5 6.8 13.2"
+      fill="none"
+      stroke="rgba(255,255,255,0.7)"
+      strokeWidth="1.1"
+      strokeLinecap="round"
+    />
+    {/* Drop arrow — shaft */}
+    <line x1="8" y1="15" x2="8" y2="19.5" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" />
+    {/* Drop arrow — head */}
+    <polyline
+      points="5.2,17.2 8,20.5 10.8,17.2"
+      fill="none"
+      stroke="#f59e0b"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 );
 
 function dropsForPlayer(playerId: number | undefined, drops: MatchDropV1[] | null | undefined): number {
