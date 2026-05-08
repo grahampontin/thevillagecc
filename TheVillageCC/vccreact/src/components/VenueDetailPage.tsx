@@ -12,7 +12,28 @@ const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? '';
 // ── GoogleMapEmbed ─────────────────────────────────────────────────────────
 
 const GoogleMapEmbed: React.FC<{ lat: number; lng: number; name: string }> = ({ lat, lng, name }) => {
-  const { isLoaded } = useJsApiLoader({ googleMapsApiKey: GOOGLE_MAPS_API_KEY });
+  const { isLoaded, loadError } = useJsApiLoader({ googleMapsApiKey: GOOGLE_MAPS_API_KEY });
+
+  if (loadError) {
+    // Fallback when the Maps JS API fails to load (e.g. key not configured, billing not enabled)
+    const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+    return (
+      <div
+        className="mt-3 mb-1 rounded-lg border border-gray-200 bg-gray-50 flex flex-col items-center justify-center gap-2 text-sm text-gray-500"
+        style={{ height: 280 }}
+      >
+        <span>Map could not be loaded.</span>
+        <a
+          href={mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-villageGreen hover:underline text-sm"
+        >
+          📍 Open in Google Maps
+        </a>
+      </div>
+    );
+  }
 
   if (!isLoaded) {
     return (
