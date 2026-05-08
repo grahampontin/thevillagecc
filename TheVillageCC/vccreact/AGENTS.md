@@ -35,6 +35,19 @@ One file per page/feature. Admin components are prefixed `Admin`. AG Grid cell r
 | Full pre-commit check | `npm run verify` (generates types → checks imports → tests → build) |
 | Check no domain DTO imports | `npm run check:no-domain-dto-imports` |
 
+## Mandatory Pre-Completion Checklist
+
+Before declaring any coding task complete, you **must** run a full production build and confirm it succeeds:
+
+```
+npm run build
+```
+
+- If the build **fails**, fix all errors before ending your turn.
+- TypeScript type errors, missing imports, and invalid JSX props are **only caught at build time** — do not rely solely on IDE error checks or tests.
+- Run the build after every file edit that touches TSX/TS source files.
+- Warnings (e.g. ESLint, bundle size) are acceptable; **errors are not**.
+
 ## Dev Environment
 - Backend URL defaults to `http://localhost:5000`; override via `.env.development` → `REACT_APP_API_URL=http://localhost:8080`
 - Production static web app needs `REACT_APP_API_BASE_URL=https://<api-host>` set at build time (see `src/api/config.ts`)

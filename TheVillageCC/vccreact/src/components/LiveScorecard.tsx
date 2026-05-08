@@ -42,9 +42,9 @@ const DropIcon: React.FC = () => (
     display="inline-block"
     aria-label="Dropped catch"
     role="img"
-    title="Dropped catch"
     style={{ verticalAlign: '-0.15em', flexShrink: 0 }}
   >
+    <title>Dropped catch</title>
     {/* Cricket ball */}
     <circle cx="8" cy="7.5" r="6" fill="#ef4444" />
     {/* Seam — horizontal arc */}
