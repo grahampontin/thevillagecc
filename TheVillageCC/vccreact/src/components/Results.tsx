@@ -262,16 +262,18 @@ const Results: React.FC = () => {
                         <p className="text-xs text-gray-600 mb-1">{getResultLine(result)}</p>
                       )}
 
-                      {/* Venue */}
-                      {venueText && (
-                        <p className="text-xs text-gray-500">at {venueText}</p>
-                      )}
-
-                      {/* Toss */}
-                      {result.TossWinner && result.TossWinnerElectedTo && (
-                        <p className="text-xs text-gray-400 italic mt-0.5">
-                          {result.TossWinner} won the toss and elected to {result.TossWinnerElectedTo}
-                        </p>
+                      {/* Venue + toss — hidden for abandoned matches */}
+                      {!result.isAbandoned && (
+                        <>
+                          {venueText && (
+                            <p className="text-xs text-gray-500">at {venueText}</p>
+                          )}
+                          {result.TossWinner && result.TossWinnerElectedTo && (
+                            <p className="text-xs text-gray-400 italic mt-0.5">
+                              {result.TossWinner} won the toss and elected to {result.TossWinnerElectedTo}
+                            </p>
+                          )}
+                        </>
                       )}
                     </article>
                   </a>

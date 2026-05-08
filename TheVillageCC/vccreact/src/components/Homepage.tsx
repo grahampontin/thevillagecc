@@ -395,16 +395,18 @@ const Homepage: React.FC = () => {
                         <p className="text-xs text-gray-600">{resultLine}</p>
                       )}
 
-                      {/* Venue */}
-                      {report.venueName && (
-                        <p className="text-xs text-gray-500">at {report.venueName}</p>
-                      )}
-
-                      {/* Toss */}
-                      {report.tossWinner && report.tossWinnerElectedTo && (
-                        <p className="text-xs text-gray-400 italic">
-                          {report.tossWinner} won the toss and elected to {report.tossWinnerElectedTo}
-                        </p>
+                      {/* Venue + toss — hidden for abandoned matches */}
+                      {!report.isAbandoned && (
+                        <>
+                          {report.venueName && (
+                            <p className="text-xs text-gray-500">at {report.venueName}</p>
+                          )}
+                          {report.tossWinner && report.tossWinnerElectedTo && (
+                            <p className="text-xs text-gray-400 italic">
+                              {report.tossWinner} won the toss and elected to {report.tossWinnerElectedTo}
+                            </p>
+                          )}
+                        </>
                       )}
 
                       {/* Match report preview */}
