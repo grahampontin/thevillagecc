@@ -34,6 +34,8 @@ interface MatchReport {
   VenueId: number | null;
   OppositionId: number | null;
   OppositionLogoUrl: string | null;
+  TossWinner: string;
+  TossWinnerElectedTo: string;
 }
 
 const mapResultV1ToMatchReport = (r: ResultV1): MatchReport => ({
@@ -64,6 +66,8 @@ const mapResultV1ToMatchReport = (r: ResultV1): MatchReport => ({
   VenueId: r.venueId ?? null,
   OppositionId: r.oppositionId ?? null,
   OppositionLogoUrl: r.oppositionLogoUrl ?? null,
+  TossWinner: r.tossWinner ?? '',
+  TossWinnerElectedTo: r.tossWinnerElectedTo ?? '',
 });
 
 const SKELETON_ITEMS_COUNT = 5;
@@ -261,6 +265,13 @@ const Results: React.FC = () => {
                       {/* Venue */}
                       {venueText && (
                         <p className="text-xs text-gray-500">at {venueText}</p>
+                      )}
+
+                      {/* Toss */}
+                      {result.TossWinner && result.TossWinnerElectedTo && (
+                        <p className="text-xs text-gray-400 italic mt-0.5">
+                          {result.TossWinner} won the toss and elected to {result.TossWinnerElectedTo}
+                        </p>
                       )}
                     </article>
                   </a>

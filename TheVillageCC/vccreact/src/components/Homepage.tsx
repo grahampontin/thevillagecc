@@ -27,6 +27,8 @@ interface MatchReport {
   winningTeam: string;
   losingTeam: string;
   resultMargin: string;
+  tossWinner: string;
+  tossWinnerElectedTo: string;
 }
 
 const MAX_REPORT_PREVIEW_LENGTH = 200;
@@ -116,6 +118,8 @@ const Homepage: React.FC = () => {
             winningTeam: item.winningTeam ?? '',
             losingTeam: item.losingTeam ?? '',
             resultMargin: item.resultMargin ?? item.margin ?? '',
+            tossWinner: item.tossWinner ?? '',
+            tossWinnerElectedTo: item.tossWinnerElectedTo ?? '',
           };
         });
 
@@ -394,6 +398,13 @@ const Homepage: React.FC = () => {
                       {/* Venue */}
                       {report.venueName && (
                         <p className="text-xs text-gray-500">at {report.venueName}</p>
+                      )}
+
+                      {/* Toss */}
+                      {report.tossWinner && report.tossWinnerElectedTo && (
+                        <p className="text-xs text-gray-400 italic">
+                          {report.tossWinner} won the toss and elected to {report.tossWinnerElectedTo}
+                        </p>
                       )}
 
                       {/* Match report preview */}

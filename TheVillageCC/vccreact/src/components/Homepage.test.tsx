@@ -42,6 +42,8 @@ describe('Homepage', () => {
         winningTeam: 'The Village CC',
         losingTeam: 'Opponents CC',
         margin: null,
+        tossWinner: 'The Village CC',
+        tossWinnerElectedTo: 'bat',
         theirOversFaced: 0,
         theirWickets: 0,
         theirScore: 0,
@@ -69,6 +71,8 @@ describe('Homepage', () => {
         winningTeam: 'Team A',
         losingTeam: 'The Village CC',
         margin: null,
+        tossWinner: 'Team A',
+        tossWinnerElectedTo: 'bowl',
         theirOversFaced: 0,
         theirWickets: 0,
         theirScore: 0,
@@ -108,6 +112,9 @@ describe('Homepage', () => {
 
     // Check venue
     expect(screen.getByText(/at Test Ground/i)).toBeInTheDocument();
+
+    // Check toss line
+    expect(screen.getByText(/The Village CC won the toss and elected to bat/i)).toBeInTheDocument();
   });
 
   test('displays error message when API call fails', async () => {

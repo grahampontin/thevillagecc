@@ -1841,6 +1841,8 @@ export interface components {
       oppositionLogoUrl?: string | null;
       /** Format: int32 */
       venueId?: number | null;
+      tossWinner?: string | null;
+      tossWinnerElectedTo?: string | null;
     };
     StatsColumnDefinitionV1: {
       headerName?: string | null;
