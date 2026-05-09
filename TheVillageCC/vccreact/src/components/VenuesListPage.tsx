@@ -1,9 +1,12 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import Header from './Header';
 import Footer from './Footer';
 import { getVenueSummaries } from '../api/venuesApi';
 import { VenueSummaryV1 } from '../api/swaggerTypes';
+
+const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? '';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -143,6 +146,7 @@ const PITCH_FILTERS: { value: PitchFilter; label: string }[] = [
 // ── Main component ─────────────────────────────────────────────────────────
 
 const VenuesListPage: React.FC = () => {
+  const navigate = useNavigate();
   const [allVenues, setAllVenues] = useState<VenueSummaryV1[]>([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState<string | null>(null);
@@ -230,6 +234,27 @@ const VenuesListPage: React.FC = () => {
   // Derived: does any venue have noResult > 0?
   const hasNoResult = useMemo(() => allVenues.some(v => (v.stats?.noResult ?? 0) > 0), [allVenues]);
 
+  const mappableVenues = useMemo(
+    () => allVenues.filter(v => v.latitude != null && v.longitude != null),
+    [allVenues],
+  );
+
+  const mapCenter = useMemo(() => {
+    if (mappableVenues.length === 0) return null;
+    const totals = mappableVenues.reduce(
+      (acc, v) => ({ lat: acc.lat + (v.latitude ?? 0), lng: acc.lng + (v.longitude ?? 0) }),
+      { lat: 0, lng: 0 },
+    );
+    return {
+      lat: totals.lat / mappableVenues.length,
+      lng: totals.lng / mappableVenues.length,
+    };
+  }, [mappableVenues]);
+
+  const { isLoaded: isMapLoaded, loadError: mapLoadError } = useJsApiLoader({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  });
+
   function handleSort(field: SortField) {
     if (sortField === field) {
       setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
@@ -299,6 +324,51 @@ const VenuesListPage: React.FC = () => {
         )}
 
         {/* Table */}
+        {mappableVenues.length > 0 && (
+          <section className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">All venue locations</h2>
+              <p className="text-xs text-gray-500 mt-1">
+                Showing {mappableVenues.length} venue{mappableVenues.length !== 1 ? 's' : ''} with coordinates. Click a pin to open that venue.
+              </p>
+            </div>
+
+            {mapLoadError ? (
+              <div className="h-80 px-4 sm:px-6 py-4 text-sm text-gray-600 bg-gray-50 flex items-center">
+                Map could not be loaded right now. You can still open venue pages from the table below.
+              </div>
+            ) : !isMapLoaded || !mapCenter ? (
+              <div className="h-80 bg-gray-100 animate-pulse" aria-label="Loading venues map" />
+            ) : (
+              <div className="h-80">
+                <GoogleMap
+                  mapContainerStyle={{ width: '100%', height: '100%' }}
+                  center={mapCenter}
+                  zoom={9}
+                  options={{
+                    mapTypeControl: false,
+                    streetViewControl: false,
+                    fullscreenControl: true,
+                  }}
+                >
+                  {mappableVenues.map((venue) => (
+                    <Marker
+                      key={venue.id ?? `${venue.name}-${venue.latitude}-${venue.longitude}`}
+                      position={{ lat: venue.latitude!, lng: venue.longitude! }}
+                      title={venue.name ?? 'Venue'}
+                      onClick={() => {
+                        if (venue.id != null) {
+                          navigate(`/venues/${venue.id}`);
+                        }
+                      }}
+                    />
+                  ))}
+                </GoogleMap>
+              </div>
+            )}
+          </section>
+        )}
+
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
