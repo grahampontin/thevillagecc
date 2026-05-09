@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import Header from './Header';
@@ -147,6 +147,7 @@ const PITCH_FILTERS: { value: PitchFilter; label: string }[] = [
 
 const VenuesListPage: React.FC = () => {
   const navigate = useNavigate();
+  const mapRef = useRef<google.maps.Map | null>(null);
   const [allVenues, setAllVenues] = useState<VenueSummaryV1[]>([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState<string | null>(null);
@@ -255,6 +256,27 @@ const VenuesListPage: React.FC = () => {
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
   });
 
+  const fitMapToVenues = useCallback((map: google.maps.Map | null) => {
+    if (!map || mappableVenues.length === 0) return;
+
+    const bounds = new google.maps.LatLngBounds();
+    mappableVenues.forEach(venue => {
+      if (venue.latitude != null && venue.longitude != null) {
+        bounds.extend({ lat: venue.latitude, lng: venue.longitude });
+      }
+    });
+
+    map.fitBounds(bounds, 64);
+
+    if (mappableVenues.length === 1) {
+      map.setZoom(14);
+    }
+  }, [mappableVenues]);
+
+  useEffect(() => {
+    fitMapToVenues(mapRef.current);
+  }, [fitMapToVenues]);
+
   function handleSort(field: SortField) {
     if (sortField === field) {
       setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
@@ -343,12 +365,16 @@ const VenuesListPage: React.FC = () => {
               <div className="h-80">
                 <GoogleMap
                   mapContainerStyle={{ width: '100%', height: '100%' }}
-                  center={mapCenter}
-                  zoom={9}
+                  center={mapCenter ?? undefined}
+                  zoom={mapCenter ? 9 : undefined}
                   options={{
                     mapTypeControl: false,
                     streetViewControl: false,
                     fullscreenControl: true,
+                  }}
+                  onLoad={map => {
+                    mapRef.current = map;
+                    fitMapToVenues(map);
                   }}
                 >
                   {mappableVenues.map((venue) => (
