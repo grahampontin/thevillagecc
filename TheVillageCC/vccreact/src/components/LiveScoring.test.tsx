@@ -209,8 +209,8 @@ describe('LiveScoring', () => {
     await waitFor(() => {
       expect(screen.getByText('Over Details')).toBeInTheDocument();
     });
-    // Bowler list is shown
-    expect(screen.getByText('A Bowler')).toBeInTheDocument();
+    // Bowler list is shown (name may appear more than once: in picker + bowling figures table)
+    expect(screen.getAllByText('A Bowler').length).toBeGreaterThan(0);
   });
 
   it('shows batsman names on scoring screen', async () => {
@@ -238,8 +238,8 @@ describe('LiveScoring', () => {
     // Should land on New Over (BattingOver)
     await waitFor(() => screen.getByText('Over Details'));
 
-    // Select bowler and click Done
-    fireEvent.click(screen.getByText('A Bowler'));
+    // Select bowler and click Done (use getAllByText as bowler appears in picker + figures table)
+    fireEvent.click(screen.getAllByText('A Bowler')[0]);
     fireEvent.click(screen.getByLabelText('Done'));
 
     await waitFor(() => {
@@ -258,7 +258,7 @@ describe('LiveScoring', () => {
     await waitFor(() => screen.getByText('vs Test CC'));
     fireEvent.click(screen.getByText('vs Test CC'));
     await waitFor(() => screen.getByText('Over Details'));
-    fireEvent.click(screen.getByText('A Bowler'));
+    fireEvent.click(screen.getAllByText('A Bowler')[0]);
     fireEvent.click(screen.getByLabelText('Done'));
     await waitFor(() => screen.getByText('OUT!'));
 
@@ -281,7 +281,7 @@ describe('LiveScoring', () => {
     await waitFor(() => screen.getByText('vs Test CC'));
     fireEvent.click(screen.getByText('vs Test CC'));
     await waitFor(() => screen.getByText('Over Details'));
-    fireEvent.click(screen.getByText('A Bowler'));
+    fireEvent.click(screen.getAllByText('A Bowler')[0]);
     fireEvent.click(screen.getByLabelText('Done'));
     await waitFor(() => screen.getByText('OUT!'));
   };
@@ -332,7 +332,7 @@ describe('LiveScoring', () => {
     fireEvent.click(screen.getByLabelText('Done'));
 
     await waitFor(() => screen.getByText('Over Details'));
-    fireEvent.click(screen.getByText('A Bowler'));
+    fireEvent.click(screen.getAllByText('A Bowler')[0]);
     fireEvent.click(screen.getByLabelText('Done'));
     await waitFor(() => screen.getByText('OUT!'));
   };

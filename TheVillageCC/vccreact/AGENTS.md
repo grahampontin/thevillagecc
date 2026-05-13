@@ -37,16 +37,20 @@ One file per page/feature. Admin components are prefixed `Admin`. AG Grid cell r
 
 ## Mandatory Pre-Completion Checklist
 
-Before declaring any coding task complete, you **must** run a full production build and confirm it succeeds:
+Before declaring any coding task complete, you **must** run the full test suite **and** a production build, and confirm both succeed:
 
 ```
+npm test -- --watchAll=false
 npm run build
 ```
 
+Run them in this order — tests first, then build.
+
+- If **any test fails**, fix it before ending your turn. This includes tests you didn't author: your changes may have broken existing tests (e.g. by adding new DOM elements that conflict with `getByText` queries).
 - If the build **fails**, fix all errors before ending your turn.
 - TypeScript type errors, missing imports, and invalid JSX props are **only caught at build time** — do not rely solely on IDE error checks or tests.
-- Run the build after every file edit that touches TSX/TS source files.
-- Warnings (e.g. ESLint, bundle size) are acceptable; **errors are not**.
+- Run both checks after every file edit that touches TSX/TS source files.
+- Warnings (e.g. ESLint, bundle size) are acceptable; **errors and test failures are not**.
 
 ## Dev Environment
 - Backend URL defaults to `http://localhost:5000`; override via `.env.development` → `REACT_APP_API_URL=http://localhost:8080`
