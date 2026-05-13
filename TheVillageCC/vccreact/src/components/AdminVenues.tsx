@@ -79,6 +79,21 @@ const AdminVenues: React.FC = () => {
     }
   };
 
+  const handleCoordPaste = (field: 'latitude' | 'longitude') =>
+    (e: React.ClipboardEvent<HTMLInputElement>) => {
+      const pasted = e.clipboardData.getData('text');
+      const parts = pasted.split(',');
+      if (parts.length === 2) {
+        const lat = parts[0].trim();
+        const lon = parts[1].trim();
+        if (lat !== '' && lon !== '') {
+          e.preventDefault();
+          setForm(f => ({ ...f, latitude: lat, longitude: lon }));
+          return;
+        }
+      }
+    };
+
   const handleSave = async () => {
     if (!form.name.trim()) {
       setErrorMsg('Name is required.');
@@ -297,6 +312,7 @@ const AdminVenues: React.FC = () => {
                     type="text"
                     value={form.latitude}
                     onChange={e => setForm(f => ({ ...f, latitude: e.target.value }))}
+                    onPaste={handleCoordPaste('latitude')}
                     placeholder="51.5074"
                     className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
                   />
@@ -308,6 +324,7 @@ const AdminVenues: React.FC = () => {
                     type="text"
                     value={form.longitude}
                     onChange={e => setForm(f => ({ ...f, longitude: e.target.value }))}
+                    onPaste={handleCoordPaste('longitude')}
                     placeholder="-0.1278"
                     className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
                   />
