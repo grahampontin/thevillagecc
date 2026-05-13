@@ -3,15 +3,18 @@ import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import { getAllTeams, createTeam, updateTeam } from '../api/teamsApi';
-import { TeamV1 } from '../api/swaggerTypes';
+import { getAllVenues } from '../api/venuesApi';
+import { TeamV1, VenueV1 } from '../api/swaggerTypes';
 
 const AdminTeams: React.FC = () => {
   const [teams, setTeams] = useState<TeamV1[]>([]);
+  const [venues, setVenues] = useState<VenueV1[]>([]);
   const [listFilter, setListFilter] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<TeamV1 | null>(null);
   const [name, setName] = useState('');
+  const [homeVenueId, setHomeVenueId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -35,9 +38,19 @@ const AdminTeams: React.FC = () => {
 
   useEffect(() => { loadTeams(); }, [loadTeams]);
 
+  useEffect(() => {
+    getAllVenues()
+      .then(data => {
+        data.sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
+        setVenues(data);
+      })
+      .catch(err => console.error('Failed to load venues', err));
+  }, []);
+
   const openAdd = () => {
     setEditingTeam(null);
     setName('');
+    setHomeVenueId(null);
     setErrorMsg(null);
     setModalOpen(true);
   };
@@ -45,6 +58,7 @@ const AdminTeams: React.FC = () => {
   const openEdit = (t: TeamV1) => {
     setEditingTeam(t);
     setName(t.name ?? '');
+    setHomeVenueId(t.homeVenueId ?? null);
     setErrorMsg(null);
     setModalOpen(true);
   };
@@ -57,7 +71,11 @@ const AdminTeams: React.FC = () => {
     setSaving(true);
     setErrorMsg(null);
     try {
-      const payload: TeamV1 = { ...(editingTeam ?? {}), name: name.trim() };
+      const payload: TeamV1 = {
+        ...(editingTeam ?? {}),
+        name: name.trim(),
+        homeVenueId: homeVenueId ?? undefined,
+      };
       if (editingTeam?.id != null) {
         await updateTeam(payload);
       } else {
@@ -110,18 +128,26 @@ const AdminTeams: React.FC = () => {
                 />
               </div>
               <ul className="mt-3 divide-y divide-gray-200 bg-white border border-gray-200 rounded-lg shadow-sm">
-                {filteredTeams.map((t) => (
-                  <li key={t.id} className="flex items-center justify-between px-4 py-3">
-                    <span className="text-sm text-gray-800">{t.name}</span>
-                    <button
-                      onClick={() => openEdit(t)}
-                      className="text-gray-500 hover:text-villageGreen transition"
-                      aria-label={`Edit ${t.name}`}
-                    >
-                      <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
-                    </button>
-                  </li>
-                ))}
+                {filteredTeams.map((t) => {
+                  const venue = venues.find(v => v.id === t.homeVenueId);
+                  return (
+                    <li key={t.id} className="flex items-center justify-between px-4 py-3 gap-3">
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm text-gray-800">{t.name}</span>
+                        {venue && (
+                          <span className="ml-2 text-xs text-gray-400">{venue.name}</span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => openEdit(t)}
+                        className="text-gray-500 hover:text-villageGreen transition shrink-0"
+                        aria-label={`Edit ${t.name}`}
+                      >
+                        <span className="material-symbols-outlined text-[20px] leading-none">edit</span>
+                      </button>
+                    </li>
+                  );
+                })}
                 {filteredTeams.length === 0 && (
                   <li className="px-4 py-6 text-sm text-gray-500 text-center">No teams found.</li>
                 )}
@@ -156,6 +182,20 @@ const AdminTeams: React.FC = () => {
                   placeholder="A name by which to know them"
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="team-home-venue">Home venue</label>
+                <select
+                  id="team-home-venue"
+                  value={homeVenueId ?? ''}
+                  onChange={e => setHomeVenueId(e.target.value === '' ? null : Number(e.target.value))}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-villageGreen bg-white"
+                >
+                  <option value="">— None —</option>
+                  {venues.map(v => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
             <div className="px-5 py-4 border-t border-gray-200 flex justify-end gap-3">

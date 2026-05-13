@@ -1480,6 +1480,12 @@ const LiveScoring: React.FC = () => {
     const bowlers = matchState?.bowlers ?? [];
     const validationError = isNewOverValid();
 
+    // Score summary values (after over was submitted, matchState is up to date)
+    const newOverScore = matchState?.score ?? 0;
+    const newOverWickets = (matchState?.players ?? []).filter(p => p.state === 'Out').length;
+    const newOverOvers = matchState?.lastCompletedOver ?? 0;
+    const newOverBowlerDetails = matchState?.bowlerDetails ?? [];
+
     return (
       <div className="flex flex-col h-full">
         <NavBar
@@ -1500,6 +1506,22 @@ const LiveScoring: React.FC = () => {
         />
         <div className="flex-1 overflow-y-auto bg-gray-50">
           <div className="max-w-lg mx-auto p-4 space-y-4">
+            {/* Match score summary */}
+            {!isFirstOver && (
+              <div className="bg-villageGreen text-white rounded-xl px-4 py-3 flex items-center justify-between shadow-sm">
+                <div>
+                  <p className="text-xs font-medium opacity-75 uppercase tracking-wide">Score</p>
+                  <p className="text-2xl font-bold leading-tight">
+                    {newOverScore}<span className="text-lg font-semibold opacity-80">/{newOverWickets}</span>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-medium opacity-75 uppercase tracking-wide">Overs</p>
+                  <p className="text-2xl font-bold leading-tight">{newOverOvers}</p>
+                </div>
+              </div>
+            )}
+
             {/* Bowler selection */}
             <section>
               <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowler</h2>
@@ -1590,6 +1612,38 @@ const LiveScoring: React.FC = () => {
                       ))}
                     </select>
                   </div>
+                </div>
+              </section>
+            )}
+
+            {/* Bowling figures */}
+            {!isFirstOver && newOverBowlerDetails.length > 0 && (
+              <section>
+                <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowling Figures</h2>
+                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-gray-100 bg-gray-50 text-gray-500">
+                        <th className="text-left py-2 px-3 font-medium">Bowler</th>
+                        <th className="text-right py-2 px-2 font-medium">O</th>
+                        <th className="text-right py-2 px-2 font-medium">R</th>
+                        <th className="text-right py-2 px-3 font-medium">W</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {newOverBowlerDetails.map((bd, i) => (
+                        <tr
+                          key={bd.name ?? i}
+                          className={i < newOverBowlerDetails.length - 1 ? 'border-b border-gray-50' : ''}
+                        >
+                          <td className="py-2 px-3 font-medium text-gray-900 truncate max-w-[140px]">{bd.name}</td>
+                          <td className="py-2 px-2 text-right text-gray-600">{bd.details?.overs ?? 0}</td>
+                          <td className="py-2 px-2 text-right text-gray-600">{bd.details?.runs ?? 0}</td>
+                          <td className="py-2 px-3 text-right text-gray-600">{bd.details?.wickets ?? 0}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </section>
             )}
