@@ -153,6 +153,48 @@ function shouldSwitchStriker(ball: LocalBall): boolean {
   return shouldSwitch;
 }
 
+// ---------------------------------------------------------------------------
+// Format a LocalWicket into a human-readable dismissal string
+// ---------------------------------------------------------------------------
+
+function formatLocalWicket(wicket: LocalWicket): string {
+  const mode = wicket.modeOfDismissal;
+  if (mode === 'Caught') {
+    if (!wicket.fielder || wicket.fielder === wicket.bowler) {
+      return `c&b ${wicket.bowler}`.trim();
+    }
+    return `ct. ${wicket.fielder} b. ${wicket.bowler}`.trim();
+  }
+  if (mode === 'Bowled') return `b. ${wicket.bowler}`.trim();
+  if (mode === 'LBW') return `lbw b. ${wicket.bowler}`.trim();
+  if (mode === 'Stumped') return `st. ${wicket.fielder} b. ${wicket.bowler}`.trim();
+  if (mode === 'RunOut') return wicket.fielder ? `run out (${wicket.fielder})` : 'run out';
+  if (mode === 'HitWicket') return 'hit wicket';
+  if (mode === 'RetiredHurt') return 'retired hurt';
+  if (mode === 'Retired') return 'retired';
+  return 'out';
+}
+
+// ---------------------------------------------------------------------------
+// Build a rich description for a LocalBall (uses shot area if recorded)
+// ---------------------------------------------------------------------------
+
+function getLocalBallDescription(ball: LocalBall): string {
+  const area = ball.angle != null ? getScoringArea(ball.angle) : null;
+  if (ball.thing === '') {
+    if (ball.amount === 0) return 'Dot ball';
+    if (ball.amount === 4) return area ? `FOUR through ${area}` : 'FOUR!';
+    if (ball.amount === 6) return area ? `SIX! over ${area}` : 'SIX!';
+    if (ball.amount === 1) return area ? `Single to ${area}` : '1 run';
+    return area ? `${ball.amount} runs to ${area}` : `${ball.amount} run${ball.amount !== 1 ? 's' : ''}`;
+  }
+  if (ball.thing === 'wd') return ball.amount > 1 ? `${ball.amount} wides` : 'Wide';
+  if (ball.thing === 'nb') return ball.amount > 1 ? `No ball + ${ball.amount - 1} run${ball.amount - 1 !== 1 ? 's' : ''}` : 'No ball';
+  if (ball.thing === 'b') return ball.amount > 0 ? `${ball.amount} bye${ball.amount !== 1 ? 's' : ''}` : 'Bye';
+  if (ball.thing === 'lb') return ball.amount > 0 ? `${ball.amount} leg bye${ball.amount !== 1 ? 's' : ''}` : 'Leg bye';
+  return `${ball.amount} ${ball.thing}`;
+}
+
 function getBallLabel(ball: LocalBall): { label: string; className: string } {
   if (ball.wicket) return { label: 'W', className: 'bg-red-600 text-white' };
   if (ball.thing === 'wd') return { label: ball.amount > 1 ? `${ball.amount}Wd` : 'Wd', className: 'bg-yellow-400 text-gray-800' };
@@ -1700,32 +1742,23 @@ const LiveScoring: React.FC = () => {
             const legalCount = localBalls.slice(0, i + 1).filter(isLegalDelivery).length;
             const ballRef = isLegalDelivery(ball) ? `${overNum}.${legalCount}` : `${overNum}.${legalCount}*`;
             const { label, className: ballClass } = getBallLabel(ball);
-            let resultText = '';
-            if (ball.wicket) {
-              resultText = `OUT! ${ball.wicket.playerName} ${ball.wicket.modeOfDismissal}`;
-            } else if (ball.thing === 'wd') {
-              resultText = ball.amount > 1 ? `${ball.amount} wides` : 'Wide';
-            } else if (ball.thing === 'nb') {
-              resultText = ball.amount > 1 ? `No ball + ${ball.amount - 1} runs` : 'No ball';
-            } else if (ball.thing === 'b') {
-              resultText = ball.amount > 0 ? `${ball.amount} bye${ball.amount !== 1 ? 's' : ''}` : 'Bye';
-            } else if (ball.thing === 'lb') {
-              resultText = ball.amount > 0 ? `${ball.amount} leg bye${ball.amount !== 1 ? 's' : ''}` : 'Leg bye';
-            } else if (ball.amount === 0) {
-              resultText = 'Dot ball';
-            } else if (ball.amount === 4) {
-              resultText = 'FOUR!';
-            } else if (ball.amount === 6) {
-              resultText = 'SIX!';
-            } else {
-              resultText = `${ball.amount} run${ball.amount !== 1 ? 's' : ''}`;
-            }
             return (
-              <div key={i} className="flex items-center px-4 py-3 gap-3">
-                <span className="text-xs font-mono text-gray-400 w-9 flex-shrink-0">{ballRef}</span>
+              <div key={i} className="flex items-start px-4 py-3 gap-3 border-b border-gray-50 last:border-0">
+                <span className="text-xs font-mono text-gray-400 w-9 flex-shrink-0 pt-0.5">{ballRef}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-gray-400">{ball.bowlerName} → {ball.batsmanName}</p>
-                  <p className="text-sm font-medium text-gray-900">{resultText}</p>
+                  {ball.wicket ? (
+                    <>
+                      <p className="text-sm font-bold text-red-700">
+                        OUT! {ball.wicket.playerName} — {formatLocalWicket(ball.wicket)}
+                      </p>
+                      {ball.wicket.description && (
+                        <p className="text-xs text-gray-500 italic mt-0.5">{ball.wicket.description}</p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm font-medium text-gray-900">{getLocalBallDescription(ball)}</p>
+                  )}
                 </div>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold ${ballClass}`}>
                   {label}
@@ -1736,6 +1769,12 @@ const LiveScoring: React.FC = () => {
         </div>
       );
     };
+
+    // Map from dismissed playerId → LocalWicket for dismissal display in scorecard
+    const wicketMap = new Map<number, LocalWicket>();
+    localBalls.forEach(b => {
+      if (b.wicket) wicketMap.set(b.wicket.playerId, b.wicket);
+    });
 
     // ---- Right panel: Scorecard ----
     const renderScorecardPanel = () => (
@@ -1757,6 +1796,7 @@ const LiveScoring: React.FC = () => {
               {allBattersForScorecard.map((player) => {
                 const isOnStrike2 = player.playerId === strikerId && player.state === 'Batting';
                 const isOut2 = player.state === 'Out';
+                const dismissalWicket = isOut2 ? wicketMap.get(player.playerId!) : undefined;
                 return (
                   <tr
                     key={player.playerId}
@@ -1774,6 +1814,11 @@ const LiveScoring: React.FC = () => {
                           {player.playerName ?? '[?]'}
                         </span>
                       </div>
+                      {isOut2 && dismissalWicket && (
+                        <div className="text-xs text-gray-400 italic ml-5 truncate max-w-[130px]">
+                          {formatLocalWicket(dismissalWicket)}
+                        </div>
+                      )}
                     </td>
                     <td className="py-2 px-1 text-right font-semibold">{getLiveBatsmanRuns(player)}</td>
                     <td className="py-2 px-1 text-right text-gray-600">{getLiveBatsmanBalls(player)}</td>
@@ -1859,11 +1904,14 @@ const LiveScoring: React.FC = () => {
         {/* Main content: single column on mobile, split on md+ */}
         <div className="flex-1 flex overflow-hidden">
 
-          {/* LEFT: scoring panel – constrained to 30rem on wide screens */}
-          <div className="flex flex-col w-full md:w-[30rem] md:flex-shrink-0 bg-white overflow-hidden md:border-r md:border-gray-200">
+          {/* LEFT: scoring panel – constrained to 30rem on wide screens.
+               All content (info + buttons) scrolls together so buttons sit
+               immediately below the over strip rather than being pinned to
+               the bottom of the viewport with an empty gap. */}
+          <div className="w-full md:w-[30rem] md:flex-shrink-0 bg-white overflow-y-auto md:border-r md:border-gray-200">
 
-            {/* Scrollable info area */}
-            <div className="flex-1 overflow-y-auto min-h-0">
+            {/* Info area – no longer a separate scrollable flex-1 container */}
+            <div>
 
               {/* Team scores */}
               <div className="border-b border-gray-200 px-3 py-2">
@@ -1977,30 +2025,38 @@ const LiveScoring: React.FC = () => {
                 </table>
               </div>
 
-              {/* Current over balls strip */}
+              {/* Current over balls strip – shows recorded balls + placeholders for remaining deliveries */}
               <div className="border-b border-gray-200 px-3 py-2 flex gap-2 overflow-x-auto min-h-[52px] items-center">
-                {localBalls.length === 0 ? (
-                  <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center">
-                    <span className="text-gray-400 text-xs">·</span>
-                  </div>
-                ) : (
-                  localBalls.map((ball, i) => {
-                    const { label, className: ballClass } = getBallLabel(ball);
-                    return (
-                      <div
-                        key={i}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold flex-shrink-0 ${ballClass}`}
-                      >
-                        {label}
-                      </div>
-                    );
-                  })
+                {localBalls.map((ball, i) => {
+                  const { label, className: ballClass } = getBallLabel(ball);
+                  return (
+                    <div
+                      key={i}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold flex-shrink-0 ${ballClass}`}
+                    >
+                      {label}
+                    </div>
+                  );
+                })}
+                {/* Placeholders for remaining legal deliveries (6 − legal balls bowled so far).
+                    Wides and no-balls don't count as legal so each one adds an extra delivery
+                    that still needs to be bowled — the placeholder count naturally accounts for this. */}
+                {Array.from(
+                  { length: Math.max(0, 6 - localBalls.filter(isLegalDelivery).length) },
+                  (_, i) => (
+                    <div
+                      key={`ph-${i}`}
+                      className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center flex-shrink-0"
+                    >
+                      <span className="text-gray-400 text-xs">·</span>
+                    </div>
+                  ),
                 )}
               </div>
             </div>
 
-            {/* Pinned scoring buttons */}
-            <div className="flex-shrink-0 p-3 space-y-2 border-t border-gray-100">
+            {/* Scoring buttons – flow directly after the over strip */}
+            <div className="p-3 space-y-2 border-t border-gray-100">
               {/* Row 1: 0, 1/5, 2/7, 3/8, undo */}
               <div className="grid grid-cols-5 gap-2">
                 <RunCircleButton
