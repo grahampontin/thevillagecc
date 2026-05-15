@@ -513,6 +513,9 @@ const LiveScoring: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Wide-viewport right panel tab
+  const [rightPanelTab, setRightPanelTab] = useState<'currentOver' | 'scorecard'>('currentOver');
+
   // Abandon match dialog state
   const [showAbandonDialog, setShowAbandonDialog] = useState(false);
   const [abandonReason, setAbandonReason] = useState('');
@@ -1667,9 +1670,175 @@ const LiveScoring: React.FC = () => {
     const localLegalBalls = localBalls.filter(isLegalDelivery).length;
     const bowlerOversDisplay = `${bowlerOvers}.${localLegalBalls}`;
 
+    const overNum = (matchState?.lastCompletedOver ?? 0) + 1;
+
+    // All batters sorted by batting position (for right-panel scorecard)
+    const allBattersForScorecard = localPlayers
+      .filter(p => p.state === 'Batting' || p.state === 'Out')
+      .sort((a, b) => (a.position ?? 99) - (b.position ?? 99));
+    const waitingBattersForScorecard = localPlayers.filter(p => p.state === 'Waiting');
+
+    // ---- Right panel: Current Over ----
+    const renderCurrentOverPanel = () => {
+      if (localBalls.length === 0) {
+        return (
+          <div className="flex flex-col items-center justify-center h-full text-gray-400 p-8 text-center">
+            <span className="material-symbols-outlined text-4xl mb-2">sports_cricket</span>
+            <p className="text-sm">No balls recorded yet this over</p>
+          </div>
+        );
+      }
+      return (
+        <div className="divide-y divide-gray-100">
+          <div className="px-4 py-2 bg-gray-50 flex items-center justify-between flex-shrink-0">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Over {overNum}</span>
+            <span className="text-xs font-semibold text-villageGreen">
+              {liveOverScore} run{liveOverScore !== 1 ? 's' : ''} · {computeBowlerWicketsInOver(currentBowler, localBalls)} wkt
+            </span>
+          </div>
+          {localBalls.map((ball, i) => {
+            const legalCount = localBalls.slice(0, i + 1).filter(isLegalDelivery).length;
+            const ballRef = isLegalDelivery(ball) ? `${overNum}.${legalCount}` : `${overNum}.${legalCount}*`;
+            const { label, className: ballClass } = getBallLabel(ball);
+            let resultText = '';
+            if (ball.wicket) {
+              resultText = `OUT! ${ball.wicket.playerName} ${ball.wicket.modeOfDismissal}`;
+            } else if (ball.thing === 'wd') {
+              resultText = ball.amount > 1 ? `${ball.amount} wides` : 'Wide';
+            } else if (ball.thing === 'nb') {
+              resultText = ball.amount > 1 ? `No ball + ${ball.amount - 1} runs` : 'No ball';
+            } else if (ball.thing === 'b') {
+              resultText = ball.amount > 0 ? `${ball.amount} bye${ball.amount !== 1 ? 's' : ''}` : 'Bye';
+            } else if (ball.thing === 'lb') {
+              resultText = ball.amount > 0 ? `${ball.amount} leg bye${ball.amount !== 1 ? 's' : ''}` : 'Leg bye';
+            } else if (ball.amount === 0) {
+              resultText = 'Dot ball';
+            } else if (ball.amount === 4) {
+              resultText = 'FOUR!';
+            } else if (ball.amount === 6) {
+              resultText = 'SIX!';
+            } else {
+              resultText = `${ball.amount} run${ball.amount !== 1 ? 's' : ''}`;
+            }
+            return (
+              <div key={i} className="flex items-center px-4 py-3 gap-3">
+                <span className="text-xs font-mono text-gray-400 w-9 flex-shrink-0">{ballRef}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-gray-400">{ball.bowlerName} → {ball.batsmanName}</p>
+                  <p className="text-sm font-medium text-gray-900">{resultText}</p>
+                </div>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold ${ballClass}`}>
+                  {label}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    };
+
+    // ---- Right panel: Scorecard ----
+    const renderScorecardPanel = () => (
+      <div>
+        {/* Batting */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-gray-50 text-gray-500 border-b border-gray-200">
+                <th className="text-left py-2 px-3 font-medium">Batters</th>
+                <th className="text-right py-2 px-1 font-medium">R</th>
+                <th className="text-right py-2 px-1 font-medium">B</th>
+                <th className="text-right py-2 px-1 font-medium">4s</th>
+                <th className="text-right py-2 px-1 font-medium">6s</th>
+                <th className="text-right py-2 px-2 font-medium">SR</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allBattersForScorecard.map((player) => {
+                const isOnStrike2 = player.playerId === strikerId && player.state === 'Batting';
+                const isOut2 = player.state === 'Out';
+                return (
+                  <tr
+                    key={player.playerId}
+                    className={`border-b border-gray-50 ${isOut2 ? 'opacity-60' : 'cursor-pointer hover:bg-gray-50'}`}
+                    onClick={() => !isOut2 && handleSwitchStriker(player.playerId!)}
+                  >
+                    <td className="py-2 px-3">
+                      <div className="flex items-center gap-1.5">
+                        {isOnStrike2 ? (
+                          <span className="material-symbols-outlined text-sm leading-none text-villageGreen">sports_cricket</span>
+                        ) : (
+                          <span className="w-4 inline-block" />
+                        )}
+                        <span className={`font-medium truncate max-w-[130px] ${isOut2 ? 'text-gray-400' : 'text-gray-900'}`}>
+                          {player.playerName ?? '[?]'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-2 px-1 text-right font-semibold">{getLiveBatsmanRuns(player)}</td>
+                    <td className="py-2 px-1 text-right text-gray-600">{getLiveBatsmanBalls(player)}</td>
+                    <td className="py-2 px-1 text-right text-gray-600">{getLiveBatsmanFours(player)}</td>
+                    <td className="py-2 px-1 text-right text-gray-600">{getLiveBatsmanSixes(player)}</td>
+                    <td className="py-2 px-2 text-right text-gray-600">{getLiveBatsmanSR(player)}</td>
+                  </tr>
+                );
+              })}
+              {waitingBattersForScorecard.length > 0 && (
+                <tr className="border-b border-gray-50">
+                  <td colSpan={6} className="py-1.5 px-3 text-xs text-gray-400 italic">
+                    {waitingBattersForScorecard.length} yet to bat
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Bowlers */}
+        {(matchState?.bowlerDetails ?? []).length > 0 && (
+          <div className="overflow-x-auto border-t border-gray-100 mt-2">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-gray-50 text-gray-500 border-b border-gray-200">
+                  <th className="text-left py-2 px-3 font-medium">Bowler</th>
+                  <th className="text-right py-2 px-1 font-medium">O</th>
+                  <th className="text-right py-2 px-1 font-medium">M</th>
+                  <th className="text-right py-2 px-1 font-medium">R</th>
+                  <th className="text-right py-2 px-2 font-medium">W</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(matchState?.bowlerDetails ?? []).map((bd, i) => {
+                  const isCurrent2 = bd.name === currentBowler;
+                  const bdRuns = isCurrent2 ? bowlerRuns : (bd.details?.runs ?? 0);
+                  const bdWickets = isCurrent2 ? bowlerWickets : (bd.details?.wickets ?? 0);
+                  const bdOvers = isCurrent2 ? bowlerOversDisplay : String(bd.details?.overs ?? 0);
+                  const bdMaidens = isCurrent2 ? bowlerMaidens : (bd.details?.maidens ?? 0);
+                  return (
+                    <tr
+                      key={bd.name ?? i}
+                      className={`border-b border-gray-50 ${isCurrent2 ? 'bg-villageGreenLight' : ''}`}
+                    >
+                      <td className="py-2 px-3 font-medium text-gray-900 truncate max-w-[140px]">
+                        {bd.name}{isCurrent2 ? ' *' : ''}
+                      </td>
+                      <td className="py-2 px-1 text-right text-gray-600">{bdOvers}</td>
+                      <td className="py-2 px-1 text-right text-gray-600">{bdMaidens}</td>
+                      <td className="py-2 px-1 text-right text-gray-600">{bdRuns}</td>
+                      <td className="py-2 px-2 text-right text-gray-600">{bdWickets}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    );
+
     return (
       <div className="flex flex-col h-full relative">
-        {/* Bottom share toolbar equivalent */}
+        {/* Share toolbar */}
         <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-100 flex-shrink-0">
           <div className="w-8" />
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Live Scoring</span>
@@ -1687,245 +1856,289 @@ const LiveScoring: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-white">
-          {/* Team scores */}
-          <div className="border-b border-gray-200 px-3 py-2">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                <img src="/images/vcc_cricle_small.png" alt="VCC" className="w-full h-full object-cover" />
-              </div>
-              <span className="flex-1 text-sm font-semibold text-gray-900">The Village CC</span>
-              <span className="text-sm font-bold text-gray-900">
-                {liveTotalScore}/{liveWickets}
-                <span className="text-xs font-normal text-gray-500 ml-1">({liveOversString} ovs)</span>
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-xs font-bold">{oppAbbrev.slice(0, 3)}</span>
-              </div>
-              <span className="flex-1 text-sm font-medium text-gray-700">{oppName}</span>
-              <span className="text-sm font-medium text-gray-700">
-                {oppScore2}/{oppWicketsVal}
-              </span>
-            </div>
-          </div>
+        {/* Main content: single column on mobile, split on md+ */}
+        <div className="flex-1 flex overflow-hidden">
 
-          {/* Batting / Bowling table */}
-          <div className="overflow-x-auto border-b border-gray-200">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-gray-100 text-gray-500">
-                  <th className="text-left py-1.5 px-3 font-medium">Batters</th>
-                  <th className="text-right py-1.5 px-1 font-medium">R</th>
-                  <th className="text-right py-1.5 px-1 font-medium">B</th>
-                  <th className="text-right py-1.5 px-1 font-medium">4s</th>
-                  <th className="text-right py-1.5 px-1 font-medium">6s</th>
-                  <th className="text-right py-1.5 px-2 font-medium">SR</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[striker, nonStriker].map((player, idx) => {
-                  if (!player) return null;
-                  const isOnStrike = player.playerId === strikerId;
-                  return (
-                    <tr
-                      key={player.playerId ?? idx}
-                      className="border-b border-gray-50 cursor-pointer hover:bg-gray-50"
-                      onClick={() => handleSwitchStriker(player.playerId!)}
-                    >
+          {/* LEFT: scoring panel – constrained to 30rem on wide screens */}
+          <div className="flex flex-col w-full md:w-[30rem] md:flex-shrink-0 bg-white overflow-hidden md:border-r md:border-gray-200">
+
+            {/* Scrollable info area */}
+            <div className="flex-1 overflow-y-auto min-h-0">
+
+              {/* Team scores */}
+              <div className="border-b border-gray-200 px-3 py-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <img src="/images/vcc_cricle_small.png" alt="VCC" className="w-full h-full object-cover" />
+                  </div>
+                  <span className="flex-1 text-sm font-semibold text-gray-900">The Village CC</span>
+                  <span className="text-sm font-bold text-gray-900">
+                    {liveTotalScore}/{liveWickets}
+                    <span className="text-xs font-normal text-gray-500 ml-1">({liveOversString} ovs)</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xs font-bold">{oppAbbrev.slice(0, 3)}</span>
+                  </div>
+                  <span className="flex-1 text-sm font-medium text-gray-700">{oppName}</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    {oppScore2}/{oppWicketsVal}
+                  </span>
+                </div>
+              </div>
+
+              {/* Batting / Bowling table */}
+              <div className="overflow-x-auto border-b border-gray-200">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-gray-100 text-gray-500">
+                      <th className="text-left py-1.5 px-3 font-medium">Batters</th>
+                      <th className="text-right py-1.5 px-1 font-medium">R</th>
+                      <th className="text-right py-1.5 px-1 font-medium">B</th>
+                      <th className="text-right py-1.5 px-1 font-medium">4s</th>
+                      <th className="text-right py-1.5 px-1 font-medium">6s</th>
+                      <th className="text-right py-1.5 px-2 font-medium">SR</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[striker, nonStriker].map((player, idx) => {
+                      if (!player) return null;
+                      const isOnStrike = player.playerId === strikerId;
+                      return (
+                        <tr
+                          key={player.playerId ?? idx}
+                          className="border-b border-gray-50 cursor-pointer hover:bg-gray-50"
+                          onClick={() => handleSwitchStriker(player.playerId!)}
+                        >
+                          <td className="py-1.5 px-3">
+                            <div className="flex items-center gap-1.5">
+                              {isOnStrike ? (
+                                <span className="material-symbols-outlined text-sm leading-none text-villageGreen">
+                                  sports_cricket
+                                </span>
+                              ) : (
+                                <span className="w-4" />
+                              )}
+                              <span className="font-medium text-gray-900 truncate max-w-[120px]">
+                                {player.playerName ?? '[missing]'}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-1.5 px-1 text-right font-semibold">{getLiveBatsmanRuns(player)}</td>
+                          <td className="py-1.5 px-1 text-right text-gray-600">{getLiveBatsmanBalls(player)}</td>
+                          <td className="py-1.5 px-1 text-right text-gray-600">{getLiveBatsmanFours(player)}</td>
+                          <td className="py-1.5 px-1 text-right text-gray-600">{getLiveBatsmanSixes(player)}</td>
+                          <td className="py-1.5 px-2 text-right text-gray-600">{getLiveBatsmanSR(player)}</td>
+                        </tr>
+                      );
+                    })}
+                    {/* Partnership row */}
+                    <tr className="border-b border-gray-100">
                       <td className="py-1.5 px-3">
                         <div className="flex items-center gap-1.5">
-                          {isOnStrike ? (
-                            <span className="material-symbols-outlined text-sm leading-none text-villageGreen">
-                              sports_cricket
-                            </span>
-                          ) : (
-                            <span className="w-4" />
-                          )}
-                          <span className="font-medium text-gray-900 truncate max-w-[120px]">
-                            {player.playerName ?? '[missing]'}
-                          </span>
+                          <span className="material-symbols-outlined text-sm leading-none text-gray-400">group</span>
+                          <span className="text-gray-500 font-normal">Partnership</span>
                         </div>
                       </td>
-                      <td className="py-1.5 px-1 text-right font-semibold">{getLiveBatsmanRuns(player)}</td>
-                      <td className="py-1.5 px-1 text-right text-gray-600">{getLiveBatsmanBalls(player)}</td>
-                      <td className="py-1.5 px-1 text-right text-gray-600">{getLiveBatsmanFours(player)}</td>
-                      <td className="py-1.5 px-1 text-right text-gray-600">{getLiveBatsmanSixes(player)}</td>
-                      <td className="py-1.5 px-2 text-right text-gray-600">{getLiveBatsmanSR(player)}</td>
+                      <td className="py-1.5 px-1 text-right text-gray-500">{partnershipRuns}</td>
+                      <td className="py-1.5 px-1 text-right text-gray-500">{partnershipBalls}</td>
+                      <td className="py-1.5 px-1 text-right text-gray-500">{partnershipFours}</td>
+                      <td className="py-1.5 px-1 text-right text-gray-500">{partnershipSixes}</td>
+                      <td className="py-1.5 px-2 text-right" />
                     </tr>
-                  );
-                })}
-                {/* Partnership row */}
-                <tr className="border-b border-gray-100">
-                  <td className="py-1.5 px-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-sm leading-none text-gray-400">group</span>
-                      <span className="text-gray-500 font-normal">Partnership</span>
-                    </div>
-                  </td>
-                  <td className="py-1.5 px-1 text-right text-gray-500">{partnershipRuns}</td>
-                  <td className="py-1.5 px-1 text-right text-gray-500">{partnershipBalls}</td>
-                  <td className="py-1.5 px-1 text-right text-gray-500">{partnershipFours}</td>
-                  <td className="py-1.5 px-1 text-right text-gray-500">{partnershipSixes}</td>
-                  <td className="py-1.5 px-2 text-right" />
-                </tr>
-                {/* Bowler section */}
-                <tr className="border-b border-gray-50 bg-gray-50">
-                  <th className="text-left py-1.5 px-3 font-medium text-gray-500 text-xs" colSpan={1}>Bowler</th>
-                  <th className="text-right py-1.5 px-1 font-medium text-gray-500 text-xs">O</th>
-                  <th className="text-right py-1.5 px-1 font-medium text-gray-500 text-xs">M</th>
-                  <th className="text-right py-1.5 px-1 font-medium text-gray-500 text-xs">R</th>
-                  <th className="text-right py-1.5 px-1 font-medium text-gray-500 text-xs">W</th>
-                  <th className="text-right py-1.5 px-2" />
-                </tr>
-                <tr>
-                  <td className="py-1.5 px-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-sm leading-none text-gray-500">sports_baseball</span>
-                      <span className="font-medium text-gray-900 truncate max-w-[120px]">{currentBowler || '[none]'}</span>
-                    </div>
-                  </td>
-                  <td className="py-1.5 px-1 text-right text-gray-600">{bowlerOversDisplay}</td>
-                  <td className="py-1.5 px-1 text-right text-gray-600">{bowlerMaidens}</td>
-                  <td className="py-1.5 px-1 text-right text-gray-600">{bowlerRuns}</td>
-                  <td className="py-1.5 px-1 text-right text-gray-600">{bowlerWickets}</td>
-                  <td className="py-1.5 px-2 text-right">
-                    <button onClick={handleChangeBowler} className="text-gray-400 hover:text-villageGreen transition-colors">
-                      <span className="material-symbols-outlined text-base leading-none">edit</span>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Current over balls */}
-          <div className="border-b border-gray-200 px-3 py-2 flex gap-2 overflow-x-auto min-h-[52px] items-center">
-            {localBalls.length === 0 ? (
-              <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center">
-                <span className="text-gray-400 text-xs">·</span>
+                    {/* Bowler section */}
+                    <tr className="border-b border-gray-50 bg-gray-50">
+                      <th className="text-left py-1.5 px-3 font-medium text-gray-500 text-xs" colSpan={1}>Bowler</th>
+                      <th className="text-right py-1.5 px-1 font-medium text-gray-500 text-xs">O</th>
+                      <th className="text-right py-1.5 px-1 font-medium text-gray-500 text-xs">M</th>
+                      <th className="text-right py-1.5 px-1 font-medium text-gray-500 text-xs">R</th>
+                      <th className="text-right py-1.5 px-1 font-medium text-gray-500 text-xs">W</th>
+                      <th className="text-right py-1.5 px-2" />
+                    </tr>
+                    <tr>
+                      <td className="py-1.5 px-3">
+                        <div className="flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-sm leading-none text-gray-500">sports_baseball</span>
+                          <span className="font-medium text-gray-900 truncate max-w-[120px]">{currentBowler || '[none]'}</span>
+                        </div>
+                      </td>
+                      <td className="py-1.5 px-1 text-right text-gray-600">{bowlerOversDisplay}</td>
+                      <td className="py-1.5 px-1 text-right text-gray-600">{bowlerMaidens}</td>
+                      <td className="py-1.5 px-1 text-right text-gray-600">{bowlerRuns}</td>
+                      <td className="py-1.5 px-1 text-right text-gray-600">{bowlerWickets}</td>
+                      <td className="py-1.5 px-2 text-right">
+                        <button onClick={handleChangeBowler} className="text-gray-400 hover:text-villageGreen transition-colors">
+                          <span className="material-symbols-outlined text-base leading-none">edit</span>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-            ) : (
-              localBalls.map((ball, i) => {
-                const { label, className } = getBallLabel(ball);
-                return (
-                  <div
-                    key={i}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold flex-shrink-0 ${className}`}
-                  >
-                    {label}
+
+              {/* Current over balls strip */}
+              <div className="border-b border-gray-200 px-3 py-2 flex gap-2 overflow-x-auto min-h-[52px] items-center">
+                {localBalls.length === 0 ? (
+                  <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center">
+                    <span className="text-gray-400 text-xs">·</span>
                   </div>
-                );
-              })
-            )}
+                ) : (
+                  localBalls.map((ball, i) => {
+                    const { label, className: ballClass } = getBallLabel(ball);
+                    return (
+                      <div
+                        key={i}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold flex-shrink-0 ${ballClass}`}
+                      >
+                        {label}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            {/* Pinned scoring buttons */}
+            <div className="flex-shrink-0 p-3 space-y-2 border-t border-gray-100">
+              {/* Row 1: 0, 1/5, 2/7, 3/8, undo */}
+              <div className="grid grid-cols-5 gap-2">
+                <RunCircleButton
+                  value={0}
+                  label={<span className="material-symbols-outlined text-lg leading-none">brightness_1</span>}
+                  onClick={() => handleRunsButton(0)}
+                  variant="outline"
+                />
+                {!showFivePlus ? (
+                  <RunCircleButton value={1} label="1" onClick={() => handleRunsButton(1)} variant="outline"
+                    highlight={waitingForBallType} />
+                ) : (
+                  <RunCircleButton value={5} label="5" onClick={() => handleRunsButton(5)} variant="outline"
+                    highlight={waitingForBallType} />
+                )}
+                {!showFivePlus ? (
+                  <RunCircleButton value={2} label="2" onClick={() => handleRunsButton(2)} variant="outline"
+                    highlight={waitingForBallType} />
+                ) : (
+                  <RunCircleButton value={7} label="7" onClick={() => handleRunsButton(7)} variant="outline"
+                    highlight={waitingForBallType} />
+                )}
+                {!showFivePlus ? (
+                  <RunCircleButton value={3} label="3" onClick={() => handleRunsButton(3)} variant="outline"
+                    highlight={waitingForBallType} />
+                ) : (
+                  <RunCircleButton value={8} label="8" onClick={() => handleRunsButton(8)} variant="outline"
+                    highlight={waitingForBallType} />
+                )}
+                <RunCircleButton
+                  value={-1}
+                  label={<span className="material-symbols-outlined text-lg leading-none">undo</span>}
+                  onClick={handleUndo}
+                  variant="fill"
+                />
+              </div>
+
+              {/* Row 2: 4, 6, 5+/reset, Runs, End Over */}
+              <div className="grid grid-cols-5 gap-2">
+                <RunCircleButton value={4} label="4" onClick={() => handleRunsButton(4)} variant="outline"
+                  highlight={waitingForBallType} />
+                <RunCircleButton value={6} label="6" onClick={() => handleRunsButton(6)} variant="outline"
+                  highlight={waitingForBallType} />
+                {!showFivePlus ? (
+                  <RunCircleButton
+                    value={-2}
+                    label="5+"
+                    onClick={() => { setShowFivePlus(true); }}
+                    variant="outline"
+                  />
+                ) : (
+                  <RunCircleButton
+                    value={-2}
+                    label={<span className="material-symbols-outlined text-base leading-none">replay</span>}
+                    onClick={() => setShowFivePlus(false)}
+                    variant="outline"
+                  />
+                )}
+                <RunCircleButton
+                  value={-3}
+                  label="Runs"
+                  onClick={handleRunsConfirmed}
+                  variant="fill-blue"
+                  disabled={!waitingForBallType}
+                />
+                <RunCircleButton
+                  value={-4}
+                  label={<span className="material-symbols-outlined text-lg leading-none">done</span>}
+                  onClick={handleEndOverButton}
+                  variant="fill"
+                />
+              </div>
+
+              {/* Row 3: Wide, No Ball, Bye, Leg Bye, OUT! */}
+              <div className="grid grid-cols-5 gap-2">
+                <ExtrasCircleButton
+                  label="Wide"
+                  onClick={() => handleExtrasButton('wd')}
+                  highlight={waitingForBallType}
+                />
+                <ExtrasCircleButton
+                  label="No Ball"
+                  onClick={() => handleExtrasButton('nb')}
+                  highlight={waitingForBallType}
+                />
+                <ExtrasCircleButton
+                  label="Bye"
+                  onClick={() => handleExtrasButton('b')}
+                  highlight={waitingForBallType}
+                />
+                <ExtrasCircleButton
+                  label="Leg Bye"
+                  onClick={() => handleExtrasButton('lb')}
+                  highlight={waitingForBallType}
+                />
+                <button
+                  onClick={handleWicketButton}
+                  className="aspect-square rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center hover:bg-red-700 active:scale-95 transition-all shadow-sm"
+                >
+                  OUT!
+                </button>
+              </div>
+            </div>
           </div>
 
-          {/* Run buttons */}
-          <div className="p-3 space-y-2">
-            {/* Row 1: 0, 1/5, 2/7, 3/8, undo */}
-            <div className="grid grid-cols-5 gap-2">
-              <RunCircleButton
-                value={0}
-                label={<span className="material-symbols-outlined text-lg leading-none">brightness_1</span>}
-                onClick={() => handleRunsButton(0)}
-                variant="outline"
-              />
-              {!showFivePlus ? (
-                <RunCircleButton value={1} label="1" onClick={() => handleRunsButton(1)} variant="outline"
-                  highlight={waitingForBallType} />
-              ) : (
-                <RunCircleButton value={5} label="5" onClick={() => handleRunsButton(5)} variant="outline"
-                  highlight={waitingForBallType} />
-              )}
-              {!showFivePlus ? (
-                <RunCircleButton value={2} label="2" onClick={() => handleRunsButton(2)} variant="outline"
-                  highlight={waitingForBallType} />
-              ) : (
-                <RunCircleButton value={7} label="7" onClick={() => handleRunsButton(7)} variant="outline"
-                  highlight={waitingForBallType} />
-              )}
-              {!showFivePlus ? (
-                <RunCircleButton value={3} label="3" onClick={() => handleRunsButton(3)} variant="outline"
-                  highlight={waitingForBallType} />
-              ) : (
-                <RunCircleButton value={8} label="8" onClick={() => handleRunsButton(8)} variant="outline"
-                  highlight={waitingForBallType} />
-              )}
-              <RunCircleButton
-                value={-1}
-                label={<span className="material-symbols-outlined text-lg leading-none">undo</span>}
-                onClick={handleUndo}
-                variant="fill"
-              />
-            </div>
-
-            {/* Row 2: 4, 6, 5+/reset, Runs, End Over */}
-            <div className="grid grid-cols-5 gap-2">
-              <RunCircleButton value={4} label="4" onClick={() => handleRunsButton(4)} variant="outline"
-                highlight={waitingForBallType} />
-              <RunCircleButton value={6} label="6" onClick={() => handleRunsButton(6)} variant="outline"
-                highlight={waitingForBallType} />
-              {!showFivePlus ? (
-                <RunCircleButton
-                  value={-2}
-                  label="5+"
-                  onClick={() => { setShowFivePlus(true); }}
-                  variant="outline"
-                />
-              ) : (
-                <RunCircleButton
-                  value={-2}
-                  label={<span className="material-symbols-outlined text-base leading-none">replay</span>}
-                  onClick={() => setShowFivePlus(false)}
-                  variant="outline"
-                />
-              )}
-              <RunCircleButton
-                value={-3}
-                label="Runs"
-                onClick={handleRunsConfirmed}
-                variant="fill-blue"
-                disabled={!waitingForBallType}
-              />
-              <RunCircleButton
-                value={-4}
-                label={<span className="material-symbols-outlined text-lg leading-none">done</span>}
-                onClick={handleEndOverButton}
-                variant="fill"
-              />
-            </div>
-
-            {/* Row 3: Wide, No Ball, Bye, Leg Bye, OUT! */}
-            <div className="grid grid-cols-5 gap-2">
-              <ExtrasCircleButton
-                label="Wide"
-                onClick={() => handleExtrasButton('wd')}
-                highlight={waitingForBallType}
-              />
-              <ExtrasCircleButton
-                label="No Ball"
-                onClick={() => handleExtrasButton('nb')}
-                highlight={waitingForBallType}
-              />
-              <ExtrasCircleButton
-                label="Bye"
-                onClick={() => handleExtrasButton('b')}
-                highlight={waitingForBallType}
-              />
-              <ExtrasCircleButton
-                label="Leg Bye"
-                onClick={() => handleExtrasButton('lb')}
-                highlight={waitingForBallType}
-              />
+          {/* RIGHT: info panel – tablet/desktop only */}
+          <div className="hidden md:flex flex-1 flex-col bg-white overflow-hidden">
+            {/* Tab bar */}
+            <div className="flex border-b border-gray-200 bg-gray-50 flex-shrink-0">
               <button
-                onClick={handleWicketButton}
-                className="aspect-square rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center hover:bg-red-700 active:scale-95 transition-all shadow-sm"
+                onClick={() => setRightPanelTab('currentOver')}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  rightPanelTab === 'currentOver'
+                    ? 'text-villageGreen border-villageGreen bg-white'
+                    : 'text-gray-500 border-transparent hover:text-gray-700'
+                }`}
               >
-                OUT!
+                <span className="material-symbols-outlined text-base leading-none">sports_cricket</span>
+                Current Over
+              </button>
+              <button
+                onClick={() => setRightPanelTab('scorecard')}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  rightPanelTab === 'scorecard'
+                    ? 'text-villageGreen border-villageGreen bg-white'
+                    : 'text-gray-500 border-transparent hover:text-gray-700'
+                }`}
+              >
+                <span className="material-symbols-outlined text-base leading-none">table_chart</span>
+                Scorecard
               </button>
             </div>
+            {/* Tab content */}
+            <div className="flex-1 overflow-y-auto">
+              {rightPanelTab === 'currentOver' ? renderCurrentOverPanel() : renderScorecardPanel()}
+            </div>
           </div>
+
         </div>
 
         {/* Wagon Wheel Overlay */}
