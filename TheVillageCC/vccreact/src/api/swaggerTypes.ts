@@ -61,3 +61,4 @@ export type BallByBallMatchDescriptorV1 = components['schemas']['BallByBallMatch
 export type OppositionInningsDetailsV1 = components['schemas']['OppositionInningsDetailsV1'];
 export type InningsEndDetailsV1 = components['schemas']['InningsEndDetailsV1'];
 export type AbandonMatchV1 = components['schemas']['AbandonMatchV1'];
+export type YetToBatEntryV1 = components['schemas']['YetToBatEntryV1'];

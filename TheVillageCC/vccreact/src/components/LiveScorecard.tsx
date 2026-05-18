@@ -15,7 +15,7 @@ import { Line, Bar } from 'react-chartjs-2';
 import Header from './Header';
 import Footer from './Footer';
 import { getLiveScorecardData } from '../api/liveScoringApi';
-import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1, BallV1, MatchDropV1 } from '../api/swaggerTypes';
+import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1, BallV1, MatchDropV1, YetToBatEntryV1 } from '../api/swaggerTypes';
 import { getScoringArea } from '../utils/cricketUtils';
 
 ChartJS.register(
@@ -911,6 +911,17 @@ const LiveScorecard: React.FC = () => {
             </div>
           )}
 
+          {(data.yetToBat?.length ?? 0) > 0 && ourStatus === 'InProgress' && (
+            <div className="mt-4">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Yet to Bat</h3>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-gray-700">
+                {data.yetToBat!.map((entry: YetToBatEntryV1, i: number) => (
+                  <span key={i} className="whitespace-nowrap text-gray-600">{entry.playerName}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {bowlingRows.length > 0 && (
             <div className="mt-6 overflow-x-auto">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Bowling</h3>
@@ -1133,6 +1144,14 @@ const LiveScorecard: React.FC = () => {
                       Partnership: {data.currentPartnership.score ?? 0} runs
                       {data.currentPartnership.oversAsString && ` (${data.currentPartnership.oversAsString} ov)`}
                     </p>
+                  )}
+                  {(data.yetToBat?.length ?? 0) > 0 && (
+                    <div className="mt-3">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Yet to bat</p>
+                      <p className="text-xs text-gray-600">
+                        {data.yetToBat!.map((e: YetToBatEntryV1) => e.playerName).join(', ')}
+                      </p>
+                    </div>
                   )}
                 </div>
               )}
@@ -1471,8 +1490,20 @@ const LiveScorecard: React.FC = () => {
                       const barSize = (score: number) => (score / Math.max(highScore, 1)) * halfW;
                       const textPad = 6;
                       const minBarWidthForInsideLabel = 60;
+                      // Build name lookup: prefer finalScorecard entries, fall back to ball-by-ball data
                       const battingEntries = scorecardData.finalScorecard?.ourInnings?.batting?.entries ?? [];
-                      const getPlayerNameById = (id?: number) => battingEntries.find((e: BattingEntryV1) => e.playerId === id)?.playerName ?? undefined;
+                      const ballPlayerNames = new Map<number, string>();
+                      (data.completedOvers ?? []).forEach(o => {
+                        o.over?.balls?.forEach(b => {
+                          if (b.batsman != null && b.batsmanName) ballPlayerNames.set(b.batsman, b.batsmanName);
+                        });
+                      });
+                      const getPlayerNameById = (id?: number) => {
+                        if (id == null) return undefined;
+                        return battingEntries.find((e: BattingEntryV1) => e.playerId === id)?.playerName
+                          ?? ballPlayerNames.get(id)
+                          ?? undefined;
+                      };
                       return (
                         <svg
                           data-testid="partnerships-chart"

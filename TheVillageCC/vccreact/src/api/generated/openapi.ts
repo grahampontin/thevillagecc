@@ -1529,6 +1529,7 @@ export interface components {
       theirInningsCommentary?: string | null;
       liveBowlingCard?: components["schemas"]["BowlerInningsDetailsV1"][] | null;
       partnerships?: components["schemas"]["PartnershipV1"][] | null;
+      yetToBat?: components["schemas"]["YetToBatEntryV1"][] | null;
     };
     InningsEndDetailsV1: {
       commentary?: string | null;
@@ -1982,6 +1983,11 @@ export interface components {
       isHitWicket?: boolean;
       isRetired?: boolean;
       isRetiredHurt?: boolean;
+    };
+    YetToBatEntryV1: {
+      /** Format: int32 */
+      playerId?: number;
+      playerName?: string | null;
     };
   };
   responses: never;
