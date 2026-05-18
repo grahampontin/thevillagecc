@@ -1269,6 +1269,27 @@ const LiveScoring: React.FC = () => {
   const liveWickets = localPlayers.filter(p => p.state === 'Out').length;
   const liveOversString = getOverString(matchState?.lastCompletedOver ?? 0, localBalls);
 
+  // ── CRR / RRR for scoring screen ─────────────────────────────────────────
+  const liveLegalBallsCount = localBalls.filter(isLegalDelivery).length;
+  const totalBallsFacedLive = (matchState?.lastCompletedOver ?? 0) * 6 + liveLegalBallsCount;
+  const liveCRR = totalBallsFacedLive > 0 ? Math.round((liveTotalScore / totalBallsFacedLive) * 600) / 100 : 0;
+
+  const inPlayDataForRates = matchState?.liveScorecard?.inPlayData;
+  const totalMatchOvers = inPlayDataForRates?.overs ?? 0;
+  const isLimitedOversMatch = totalMatchOvers > 0 && !(inPlayDataForRates?.declarationGame ?? false);
+  const scoringWeAreChasing = isLimitedOversMatch &&
+    inPlayDataForRates?.ourInningsStatus === 'InProgress' &&
+    inPlayDataForRates?.theirInningsStatus === 'Completed';
+  const scoringTarget = scoringWeAreChasing ? (inPlayDataForRates?.theirScore ?? 0) + 1 : null;
+  const scoringRunsNeeded = scoringWeAreChasing && scoringTarget !== null ? scoringTarget - liveTotalScore : null;
+  const scoringBallsRemaining = isLimitedOversMatch
+    ? Math.max(0, totalMatchOvers * 6 - totalBallsFacedLive)
+    : 0;
+  const liveRRR = scoringWeAreChasing && scoringBallsRemaining > 0 && scoringRunsNeeded !== null && scoringRunsNeeded > 0
+    ? Math.round((scoringRunsNeeded / scoringBallsRemaining) * 600) / 100
+    : null;
+  // ─────────────────────────────────────────────────────────────────────────
+
   const partnershipFoursInOver = localBalls.filter(b => b.thing === '' && b.amount === 4).length;
   const partnershipSixesInOver = localBalls.filter(b => b.thing === '' && b.amount === 6).length;
   const partnershipRuns = (matchState?.partnership?.runs ?? 0) + computePartnershipRunsInOver(localBalls);
@@ -1974,6 +1995,49 @@ const LiveScoring: React.FC = () => {
                   </span>
                 </div>
               </div>
+
+              {/* CRR / RRR rates bar – shown whenever it's a limited-overs match */}
+              {isLimitedOversMatch && (
+                <div className="border-b border-gray-200 px-3 py-1.5 bg-gray-50 flex flex-wrap items-center gap-x-4 gap-y-0.5 text-xs">
+                  {/* CRR */}
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-500 font-medium">CRR</span>
+                    <span className="font-bold text-gray-900">{liveCRR.toFixed(2)}</span>
+                  </div>
+                  {/* RRR – only when chasing */}
+                  {liveRRR !== null && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-gray-500 font-medium">RRR</span>
+                      <span className={`font-bold ${liveRRR <= liveCRR ? 'text-green-700' : 'text-red-600'}`}>
+                        {liveRRR.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                  {/* Need X off Y */}
+                  {scoringWeAreChasing && scoringRunsNeeded !== null && scoringBallsRemaining > 0 && (
+                    <div className="text-gray-700">
+                      Need{' '}
+                      <span className="font-semibold text-gray-900">{scoringRunsNeeded}</span>
+                      {' '}off{' '}
+                      <span className="font-semibold text-gray-900">
+                        {Math.floor(scoringBallsRemaining / 6)}.{scoringBallsRemaining % 6}
+                      </span>{' '}ov
+                    </div>
+                  )}
+                  {/* Target */}
+                  {scoringTarget !== null && (
+                    <div className="text-gray-500 ml-auto">
+                      Target <span className="font-semibold text-gray-700">{scoringTarget}</span>
+                    </div>
+                  )}
+                  {/* Overs remaining (first innings – no target yet) */}
+                  {!scoringWeAreChasing && totalMatchOvers > 0 && scoringBallsRemaining > 0 && (
+                    <div className="text-gray-500 ml-auto">
+                      {Math.floor(scoringBallsRemaining / 6)}.{scoringBallsRemaining % 6} ov left
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Batting / Bowling table */}
               <div className="overflow-x-auto border-b border-gray-200">

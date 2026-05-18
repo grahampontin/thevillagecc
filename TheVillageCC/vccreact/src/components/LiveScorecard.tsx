@@ -1088,6 +1088,37 @@ const LiveScorecard: React.FC = () => {
 
     const recentOvers = completedOversForDisplay.slice(-5);
 
+    // ── CRR / RRR computations ──────────────────────────────────────────────
+    const isLimitedOversMatch = !data.declarationGame && (data.overs ?? 0) > 0;
+    const ourInningsActive = data.ourInningsStatus === 'InProgress';
+    const theirInningsActive = data.theirInningsStatus === 'InProgress';
+    const ourInningsDone  = data.ourInningsStatus === 'Completed';
+    const theirInningsDone = data.theirInningsStatus === 'Completed';
+
+    // We're chasing (batting second, their innings finished)
+    const weAreChasing  = isLimitedOversMatch && ourInningsActive  && theirInningsDone;
+    // They're chasing (bowling second, our innings finished)
+    const theyAreChasing = isLimitedOversMatch && theirInningsActive && ourInningsDone;
+
+    const ourTarget        = weAreChasing  ? (data.theirScore ?? 0) + 1 : null;
+    const ourRunsNeeded    = weAreChasing  && ourTarget !== null  ? ourTarget  - (data.score ?? 0) : null;
+    const ourOversRemaining = weAreChasing
+      ? (data.oversRemaining ?? Math.max(0, (data.overs ?? 0) - (data.ourLastCompletedOver ?? 0)))
+      : null;
+    const ourRRR = weAreChasing && ourOversRemaining != null && ourOversRemaining > 0 && ourRunsNeeded != null
+      ? Math.round(ourRunsNeeded / ourOversRemaining * 100) / 100
+      : null;
+
+    const theirTarget        = theyAreChasing ? (data.score ?? 0) + 1 : null;
+    const theirRunsNeeded    = theyAreChasing && theirTarget !== null ? theirTarget - (data.theirScore ?? 0) : null;
+    const theirOversRemaining = theyAreChasing && (data.overs ?? 0) > 0
+      ? Math.max(0, (data.overs ?? 0) - (data.theirOver ?? 0))
+      : null;
+    const theirRRR = theyAreChasing && theirOversRemaining != null && theirOversRemaining > 0 && theirRunsNeeded != null
+      ? Math.round(theirRunsNeeded / theirOversRemaining * 100) / 100
+      : null;
+    // ────────────────────────────────────────────────────────────────────────
+
     return (
       <section className="max-w-6xl mx-auto mt-2 sm:mt-6">
         <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-4 sm:px-6 py-4 sm:py-6">
@@ -1189,19 +1220,83 @@ const LiveScorecard: React.FC = () => {
             </div>
           )}
 
-          {/* Score bar */}
-          <div className="bg-gray-50 rounded-lg px-4 py-3 text-sm mb-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-              <div className="font-semibold text-gray-900">
-                {data.ourInningsStatus === 'InProgress' ? (
-                  <>The Village CC <span className="text-villageGreen">{data.score}/{data.wickets}</span> ({data.ourLastCompletedOver} ov) · CRR {(data.runRate ?? 0).toFixed(2)}</>
-                ) : data.theirInningsStatus === 'InProgress' ? (
-                  <>{data.opposition} <span className="text-villageGreen">{data.theirScore}/{data.theirWickets}</span> ({data.theirOver} ov) · CRR {(data.theirRunRate ?? 0).toFixed(2)}</>
-                ) : null}
-              </div>
-              {data.ourInningsStatus === 'Completed' && data.theirInningsStatus === 'InProgress' && (
-                <div className="text-gray-500 text-xs">
-                  Target: {(data.score ?? 0) + 1} runs
+          {/* Score bar with CRR / RRR */}
+          <div className="bg-gray-50 rounded-lg px-4 py-3 mb-4">
+            {/* Score headline */}
+            <div className="text-sm font-semibold text-gray-900 mb-2">
+              {ourInningsActive ? (
+                <>The Village CC{' '}
+                  <span className="text-villageGreen">{data.score}/{data.wickets}</span>
+                  {' '}({data.ourLastCompletedOver}{isLimitedOversMatch && data.overs ? `/${data.overs}` : ''} ov)
+                </>
+              ) : theirInningsActive ? (
+                <>{data.opposition}{' '}
+                  <span className="text-villageGreen">{data.theirScore}/{data.theirWickets}</span>
+                  {' '}({data.theirOver}{isLimitedOversMatch && data.overs ? `/${data.overs}` : ''} ov)
+                </>
+              ) : null}
+            </div>
+            {/* Stat chips: CRR · RRR · Need X off Y · Target */}
+            <div className="flex flex-wrap gap-x-5 gap-y-2 items-end">
+              {/* CRR */}
+              {(ourInningsActive || theirInningsActive) && (
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">CRR</span>
+                  <span className="text-xl font-bold text-gray-900">
+                    {ourInningsActive ? (data.runRate ?? 0).toFixed(2) : (data.theirRunRate ?? 0).toFixed(2)}
+                  </span>
+                </div>
+              )}
+              {/* RRR */}
+              {(ourRRR !== null || theirRRR !== null) && (() => {
+                const rrr = ourRRR ?? theirRRR!;
+                const crr = ourRRR !== null ? (data.runRate ?? 0) : (data.theirRunRate ?? 0);
+                const color = rrr <= crr ? 'text-green-700' : 'text-red-600';
+                return (
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">RRR</span>
+                    <span className={`text-xl font-bold ${color}`}>{rrr.toFixed(2)}</span>
+                  </div>
+                );
+              })()}
+              {/* "Need X off Y ov" – our chase */}
+              {weAreChasing && ourRunsNeeded !== null && ourOversRemaining !== null && ourOversRemaining > 0 && (
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Need</span>
+                  <span className="text-xl font-bold text-gray-900">
+                    {ourRunsNeeded} off {ourOversRemaining} ov
+                  </span>
+                </div>
+              )}
+              {/* "They need X off Y ov" – their chase */}
+              {theyAreChasing && theirRunsNeeded !== null && theirOversRemaining !== null && theirOversRemaining > 0 && (
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">They need</span>
+                  <span className="text-xl font-bold text-gray-900">
+                    {theirRunsNeeded} off {theirOversRemaining} ov
+                  </span>
+                </div>
+              )}
+              {/* Target */}
+              {ourTarget !== null && (
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Target</span>
+                  <span className="text-xl font-bold text-gray-900">{ourTarget}</span>
+                </div>
+              )}
+              {theirTarget !== null && (
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Target</span>
+                  <span className="text-xl font-bold text-gray-900">{theirTarget}</span>
+                </div>
+              )}
+              {/* Overs remaining (first innings, no target yet) */}
+              {ourInningsActive && !weAreChasing && isLimitedOversMatch && ourOversRemaining == null && data.overs && (
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Ov left</span>
+                  <span className="text-xl font-bold text-gray-900">
+                    {Math.max(0, (data.overs ?? 0) - (data.ourLastCompletedOver ?? 0))}
+                  </span>
                 </div>
               )}
             </div>
