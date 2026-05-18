@@ -297,14 +297,29 @@ interface WagonWheelInputProps {
   batsmanName: string;
   amount: number;
   isLeftHanded?: boolean;
+  bowlerView?: boolean;
+  onToggleBowlerView?: () => void;
   onConfirm: (angle: number | null) => void;
 }
 
-const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, isLeftHanded, onConfirm }) => {
+const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, isLeftHanded, bowlerView, onToggleBowlerView, onConfirm }) => {
   const [selectedAngle, setSelectedAngle] = useState<number | null>(null);
   const [lineEnd, setLineEnd] = useState<{ x: number; y: number } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
+
+  // Reset shot selection when the view flips so stale lines don't hang around
+  const prevBowlerView = useRef(bowlerView);
+  if (prevBowlerView.current !== bowlerView) {
+    prevBowlerView.current = bowlerView;
+    // Can't call setState during render; clear via a layout effect below
+  }
+
+  // Clear shot selection whenever the view perspective flips
+  useEffect(() => {
+    setSelectedAngle(null);
+    setLineEnd(null);
+  }, [bowlerView]);
 
   // Pitch is vertically centred in the field (inner oval centre = y 120).
   // Batter stands at the BOTTOM of the pitch; bowler comes from the TOP.
@@ -408,6 +423,18 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
           {amount} {amount === 1 ? 'run' : 'runs'} — drag the field to mark the shot
         </p>
       </div>
+
+      {/* Perspective toggle */}
+      <button
+        type="button"
+        onClick={onToggleBowlerView}
+        className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-300 text-gray-600 hover:border-villageGreen hover:text-villageGreen transition-colors"
+        aria-label="Toggle bowler/batter view"
+      >
+        <span className="material-symbols-outlined text-sm leading-none">swap_vert</span>
+        {bowlerView ? 'Bowler view (tap to switch)' : 'Batter view (tap to switch)'}
+      </button>
+
       <svg
         ref={svgRef}
         viewBox="0 0 300 260"
@@ -422,39 +449,49 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
         style={{ touchAction: 'none', cursor: 'crosshair' }}
         data-testid="wagon-wheel-input"
       >
-        {/* Field boundary */}
-        <ellipse cx={ellipseCx} cy={ellipseCy} rx={ellipseRx} ry={ellipseRy} fill="#4a8f3f" />
-        {/* 30-yard circle */}
-        <ellipse cx={ellipseCx} cy={ellipseCy} rx={67} ry={55}
-          fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
-        {/* Pitch */}
-        <rect x={stumpsX - 6} y={pitchTopY} width={12} height={70} fill="#c8a96e" rx="2" />
-        {/* Bowler direction arrow — pointing down toward the batter */}
-        <text x={stumpsX} y={pitchTopY - 22} textAnchor="middle" fill="rgba(255,255,255,0.75)" fontSize="9">Bowler</text>
-        <line x1={stumpsX} y1={pitchTopY - 18} x2={stumpsX} y2={pitchTopY - 6}
-          stroke="rgba(255,255,255,0.75)" strokeWidth="2" />
-        {/* Arrowhead */}
-        <polygon
-          points={`${stumpsX - 5},${pitchTopY - 6} ${stumpsX + 5},${pitchTopY - 6} ${stumpsX},${pitchTopY + 4}`}
-          fill="rgba(255,255,255,0.75)"
-        />
-        {/* Off / Leg labels — sit beside the batter's end of the pitch */}
-        <text x={offSideX} y={151} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
-        <text x={offSideX} y={164} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
-        <text x={legSideX} y={151} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
-        <text x={legSideX} y={164} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
-        {/* Shot line */}
-        {lineEnd && (
-          <line
-            x1={stumpsX} y1={stumpsY}
-            x2={lineEnd.x} y2={lineEnd.y}
-            stroke={ballColor}
-            strokeWidth={3}
-            strokeLinecap="round"
+        {/*
+          All field elements live inside this group. When bowlerView is true we
+          rotate the group 180° around the ellipse centre (150, 120) so the
+          bowler comes from the bottom. Because this is an SVG content transform
+          (not a CSS transform on the element), getScreenCTM() is unaffected and
+          all click-to-angle maths continues to work in the original user-space
+          coordinates, giving correct stored angles automatically.
+        */}
+        <g transform={bowlerView ? 'rotate(180 150 120)' : undefined}>
+          {/* Field boundary */}
+          <ellipse cx={ellipseCx} cy={ellipseCy} rx={ellipseRx} ry={ellipseRy} fill="#4a8f3f" />
+          {/* 30-yard circle */}
+          <ellipse cx={ellipseCx} cy={ellipseCy} rx={67} ry={55}
+            fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
+          {/* Pitch */}
+          <rect x={stumpsX - 6} y={pitchTopY} width={12} height={70} fill="#c8a96e" rx="2" />
+          {/* Bowler direction arrow — pointing down toward the batter */}
+          <text x={stumpsX} y={pitchTopY - 22} textAnchor="middle" fill="rgba(255,255,255,0.75)" fontSize="9">Bowler</text>
+          <line x1={stumpsX} y1={pitchTopY - 18} x2={stumpsX} y2={pitchTopY - 6}
+            stroke="rgba(255,255,255,0.75)" strokeWidth="2" />
+          {/* Arrowhead */}
+          <polygon
+            points={`${stumpsX - 5},${pitchTopY - 6} ${stumpsX + 5},${pitchTopY - 6} ${stumpsX},${pitchTopY + 4}`}
+            fill="rgba(255,255,255,0.75)"
           />
-        )}
-        {/* Batter's stumps marker */}
-        <circle cx={stumpsX} cy={stumpsY} r={5} fill="white" />
+          {/* Off / Leg labels — sit beside the batter's end of the pitch */}
+          <text x={offSideX} y={151} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
+          <text x={offSideX} y={164} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+          <text x={legSideX} y={151} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
+          <text x={legSideX} y={164} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+          {/* Shot line */}
+          {lineEnd && (
+            <line
+              x1={stumpsX} y1={stumpsY}
+              x2={lineEnd.x} y2={lineEnd.y}
+              stroke={ballColor}
+              strokeWidth={3}
+              strokeLinecap="round"
+            />
+          )}
+          {/* Batter's stumps marker */}
+          <circle cx={stumpsX} cy={stumpsY} r={5} fill="white" />
+        </g>
       </svg>
       {shotDescription && (
         <p className="text-sm font-semibold text-gray-800 text-center" data-testid="shot-description">
@@ -503,6 +540,8 @@ const LiveScoring: React.FC = () => {
   const [showFivePlus, setShowFivePlus] = useState(false);
   // Whether to show the wagon wheel shot-location overlay
   const [showWagonWheel, setShowWagonWheel] = useState(false);
+  // Wagon wheel perspective — persists for the scoring session
+  const [wagonWheelBowlerView, setWagonWheelBowlerView] = useState(false);
 
   // Choose match screen
   const [matchesList, setMatchesList] = useState<LiveScoringMatchSummaryV1[]>([]);
@@ -2208,12 +2247,14 @@ const LiveScoring: React.FC = () => {
                 <h2 className="text-sm font-semibold text-gray-700 text-center mb-3 uppercase tracking-wide">
                   Shot Location
                 </h2>
-                <WagonWheelInput
-                  batsmanName={lastBall?.batsmanName ?? ''}
-                  amount={lastBall?.amount ?? 0}
-                  isLeftHanded={isLeftHanded}
-                  onConfirm={handleWagonWheelSet}
-                />
+                 <WagonWheelInput
+                   batsmanName={lastBall?.batsmanName ?? ''}
+                   amount={lastBall?.amount ?? 0}
+                   isLeftHanded={isLeftHanded}
+                   bowlerView={wagonWheelBowlerView}
+                   onToggleBowlerView={() => setWagonWheelBowlerView(v => !v)}
+                   onConfirm={handleWagonWheelSet}
+                 />
               </div>
             </div>
           );
