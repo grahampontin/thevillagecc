@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Chart as ChartJS,
@@ -96,9 +96,13 @@ const LiveScorecard: React.FC = () => {
   const [playerAnalysisExpanded, setPlayerAnalysisExpanded] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [activePlayerAnalysisTab, setActivePlayerAnalysisTab] = useState<'worm' | 'wagon'>('worm');
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [flashKeys, setFlashKeys] = useState<Set<string>>(new Set());
+  const prevDataRef = useRef<LiveScorecardV1 | null>(null);
+  const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const fetchScorecardData = async () => {
+    const fetchScorecardData = async (isPolling = false) => {
       if (!matchId) {
         setError('No match ID provided');
         setIsLoading(false);
@@ -106,13 +110,63 @@ const LiveScorecard: React.FC = () => {
       }
 
       try {
-        setIsLoading(true);
+        if (!isPolling) setIsLoading(true);
         const data = await getLiveScorecardData(matchId);
+
+        // Detect what changed on subsequent polls and build flash key set
+        if (isPolling && prevDataRef.current) {
+          const prev = prevDataRef.current.inPlayData;
+          const next = data.inPlayData;
+          const keys = new Set<string>();
+          if (prev && next) {
+            if (prev.score !== next.score || prev.wickets !== next.wickets) {
+              keys.add('our-score');
+            }
+            if (prev.theirScore !== next.theirScore || prev.theirWickets !== next.theirWickets) {
+              keys.add('their-score');
+            }
+            if (
+              prev.onStrikeBatsman?.score !== next.onStrikeBatsman?.score ||
+              prev.onStrikeBatsman?.balls !== next.onStrikeBatsman?.balls
+            ) {
+              keys.add('striker');
+            }
+            if (
+              prev.otherBatsman?.score !== next.otherBatsman?.score ||
+              prev.otherBatsman?.balls !== next.otherBatsman?.balls
+            ) {
+              keys.add('non-striker');
+            }
+            if ((prev.completedOvers?.length ?? 0) !== (next.completedOvers?.length ?? 0)) {
+              keys.add('new-over');
+            }
+            if (
+              prev.bowlerOneDetails?.details?.runs !== next.bowlerOneDetails?.details?.runs ||
+              prev.bowlerOneDetails?.details?.wickets !== next.bowlerOneDetails?.details?.wickets
+            ) {
+              keys.add('bowler-1');
+            }
+            if (
+              prev.bowlerTwoDetails?.details?.runs !== next.bowlerTwoDetails?.details?.runs ||
+              prev.bowlerTwoDetails?.details?.wickets !== next.bowlerTwoDetails?.details?.wickets
+            ) {
+              keys.add('bowler-2');
+            }
+          }
+          if (keys.size > 0) {
+            if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
+            setFlashKeys(keys);
+            flashTimeoutRef.current = setTimeout(() => setFlashKeys(new Set()), 2200);
+          }
+        }
+
+        prevDataRef.current = data;
         setScorecardData(data);
+        setLastUpdated(new Date());
 
         const inPlay = data.inPlayData;
-        // Auto-select the innings that's in progress or most recent
-        if (inPlay) {
+        // Auto-select the innings that's in progress or most recent (initial load only)
+        if (!isPolling && inPlay) {
           if (inPlay.ourInningsStatus === 'InProgress') {
             setActiveInnings('our');
           } else if (inPlay.theirInningsStatus === 'InProgress') {
@@ -127,14 +181,31 @@ const LiveScorecard: React.FC = () => {
         setError(null);
       } catch (err) {
         console.error('Error fetching scorecard data:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load scorecard');
-        setScorecardData(null);
+        if (!isPolling) {
+          setError(err instanceof Error ? err.message : 'Failed to load scorecard');
+          setScorecardData(null);
+        }
       } finally {
-        setIsLoading(false);
+        if (!isPolling) setIsLoading(false);
       }
     };
 
-    fetchScorecardData();
+    fetchScorecardData(false);
+
+    const intervalId = setInterval(() => {
+      const d = prevDataRef.current;
+      const isMatchLive =
+        d?.inPlayData?.ourInningsStatus === 'InProgress' ||
+        d?.inPlayData?.theirInningsStatus === 'InProgress';
+      if (isMatchLive) {
+        fetchScorecardData(true);
+      }
+    }, 30_000);
+
+    return () => {
+      clearInterval(intervalId);
+      if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
+    };
   }, [matchId]);
 
   const formatDate = (dateString?: string): string => {
@@ -1202,7 +1273,7 @@ const LiveScorecard: React.FC = () => {
                     </thead>
                     <tbody>
                       {[data.bowlerOneDetails, data.bowlerTwoDetails].filter(Boolean).map((bowler, i, arr) => (
-                        <tr key={i} className={i < arr.length - 1 ? 'border-b border-gray-50' : ''}>
+                        <tr key={i} className={`${i < arr.length - 1 ? 'border-b border-gray-50' : ''} ${flashKeys.has(i === 0 ? 'bowler-1' : 'bowler-2') ? 'live-flash' : ''}`}>
                           <td className="py-1.5 font-medium">{bowler!.name}</td>
                           <td className="py-1.5 text-right text-gray-600">{bowler!.details?.overs ?? '-'}</td>
                           <td className="py-1.5 text-right text-gray-600">{bowler!.details?.maidens ?? 0}</td>
@@ -1221,7 +1292,7 @@ const LiveScorecard: React.FC = () => {
           )}
 
           {/* Score bar with CRR / RRR */}
-          <div className="bg-gray-50 rounded-lg px-4 py-3 mb-4">
+          <div className={`bg-gray-50 rounded-lg px-4 py-3 mb-4 ${flashKeys.has('our-score') || flashKeys.has('their-score') || flashKeys.has('new-over') ? 'live-flash' : ''}`}>
             {/* Score headline */}
             <div className="text-sm font-semibold text-gray-900 mb-2">
               {ourInningsActive ? (
@@ -1306,7 +1377,7 @@ const LiveScorecard: React.FC = () => {
           {hasOversDisplay && (
             <div className="overflow-x-auto">
               <div
-                className="flex items-center gap-0 text-sm font-mono whitespace-nowrap py-1"
+                className={`flex items-center gap-0 text-sm font-mono whitespace-nowrap py-1 ${flashKeys.has('new-over') ? 'live-flash' : ''}`}
                 data-testid="horizontal-overs"
               >
                 {[...recentOvers].reverse().map((overData, idx) => {

@@ -138,3 +138,16 @@ body {
   padding-top: 2px;
   padding-bottom: 2px;
 }
+
+/* Live scorecard — flash highlight when a value updates */
+@keyframes live-flash {
+  0%   { background-color: rgba(34, 197, 94, 0.45); }
+  60%  { background-color: rgba(34, 197, 94, 0.15); }
+  100% { background-color: transparent; }
+}
+
+.live-flash {
+  animation: live-flash 2s ease-out forwards;
+  border-radius: 4px;
+}
+
