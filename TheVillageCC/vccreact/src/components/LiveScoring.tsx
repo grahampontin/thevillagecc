@@ -309,11 +309,6 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
   const svgRef = useRef<SVGSVGElement>(null);
 
   // Reset shot selection when the view flips so stale lines don't hang around
-  const prevBowlerView = useRef(bowlerView);
-  if (prevBowlerView.current !== bowlerView) {
-    prevBowlerView.current = bowlerView;
-    // Can't call setState during render; clear via a layout effect below
-  }
 
   // Clear shot selection whenever the view perspective flips
   useEffect(() => {
@@ -333,6 +328,11 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
   const ellipseRy = 110;
   const isBoundaryShot = amount >= 4;
 
+  // In bowler view the batter is visually at the TOP of the pitch (pitchTopY).
+  // All touch/angle maths uses this as the origin; the boundary-point helper is
+  // called with the same origin so shot lines radiate correctly from there.
+  const activeStumpsY = bowlerView ? pitchTopY : stumpsY;
+
   const computeAngleAndEnd = (clientX: number, clientY: number): { angle: number; end: { x: number; y: number } } | null => {
     if (!svgRef.current) return null;
     const pt = svgRef.current.createSVGPoint();
@@ -342,14 +342,18 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
     if (!ctm) return null;
     const cursorPoint = pt.matrixTransform(ctm.inverse());
     const dx = cursorPoint.x - stumpsX;
-    const dy = cursorPoint.y - stumpsY;
+    const dy = cursorPoint.y - activeStumpsY;
     let angle = Math.atan2(dy, dx) + Math.PI / 2;
     if (angle < 0) angle += 2 * Math.PI;
     if (angle >= 2 * Math.PI) angle -= 2 * Math.PI;
+    // In bowler view the raw angle is 180° shifted relative to the batter's frame
+    // (because the origin is at the opposite end of the pitch).  Convert back so
+    // the stored value always represents the batter's perspective.
+    const storedAngle = bowlerView ? (angle + Math.PI) % (2 * Math.PI) : angle;
     const end = isBoundaryShot
-      ? getBoundaryPoint(stumpsX, stumpsY, angle, ellipseCx, ellipseCy, ellipseRx, ellipseRy)
+      ? getBoundaryPoint(stumpsX, activeStumpsY, angle, ellipseCx, ellipseCy, ellipseRx, ellipseRy)
       : cursorPoint;
-    return { angle, end };
+    return { angle: storedAngle, end };
   };
 
   const applyPoint = (clientX: number, clientY: number) => {
