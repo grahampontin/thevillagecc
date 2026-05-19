@@ -302,109 +302,103 @@ interface WagonWheelInputProps {
   onConfirm: (angle: number | null) => void;
 }
 
-const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, isLeftHanded, bowlerView, onToggleBowlerView, onConfirm }) => {
+const WagonWheelInput: React.FC<WagonWheelInputProps> = ({
+  batsmanName, amount, isLeftHanded, bowlerView, onToggleBowlerView, onConfirm,
+}) => {
   const [selectedAngle, setSelectedAngle] = useState<number | null>(null);
   const [lineEnd, setLineEnd] = useState<{ x: number; y: number } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  // Reset shot selection when the view flips so stale lines don't hang around
-
-  // Clear shot selection whenever the view perspective flips
+  // Clear the shot line whenever the view flips so no stale arrow is shown.
   useEffect(() => {
     setSelectedAngle(null);
     setLineEnd(null);
   }, [bowlerView]);
 
-  // Pitch is vertically centred in the field (inner oval centre = y 120).
-  // Batter stands at the BOTTOM of the pitch; bowler comes from the TOP.
-  const stumpsX = 150;
-  const pitchHeight = 70;
-  const pitchTopY = 120 - pitchHeight / 2;  // = 85, bowler's end
-  const stumpsY = pitchTopY + pitchHeight;   // = 155, batter's end
+  // ── SVG geometry constants ─────────────────────────────────────────────────
+  const stumpsX  = 150;
+  const pitchTopY = 85;   // bowler's end (120 − 35)
+  const stumpsY   = 155;  // batter's end  (120 + 35)
   const ellipseCx = 150;
   const ellipseCy = 120;
   const ellipseRx = 135;
   const ellipseRy = 110;
   const isBoundaryShot = amount >= 4;
 
-  // In bowler view the batter is visually at the TOP of the pitch (pitchTopY).
-  // All touch/angle maths uses this as the origin; the boundary-point helper is
-  // called with the same origin so shot lines radiate correctly from there.
-  const activeStumpsY = bowlerView ? pitchTopY : stumpsY;
+  // ── Active origin ──────────────────────────────────────────────────────────
+  // In batter view shots radiate from the batter's end (bottom of pitch).
+  // In bowler view they radiate from the bowler's end (top of pitch) so the
+  // diagram feels natural when the person holding the phone is the bowler.
+  // No SVG rotation is applied — only the origin point and a ±180° angle
+  // correction change between the two views, keeping all labels upright and
+  // the touch-to-SVG mapping completely unaffected.
+  const originY = bowlerView ? pitchTopY : stumpsY;
 
-  const computeAngleAndEnd = (clientX: number, clientY: number): { angle: number; end: { x: number; y: number } } | null => {
+  // ── Coordinate → angle helper ──────────────────────────────────────────────
+  const computeAngleAndEnd = (
+    clientX: number, clientY: number,
+  ): { storedAngle: number; end: { x: number; y: number } } | null => {
     if (!svgRef.current) return null;
     const pt = svgRef.current.createSVGPoint();
     pt.x = clientX;
     pt.y = clientY;
     const ctm = svgRef.current.getScreenCTM();
     if (!ctm) return null;
-    const cursorPoint = pt.matrixTransform(ctm.inverse());
-    const dx = cursorPoint.x - stumpsX;
-    const dy = cursorPoint.y - activeStumpsY;
-    let angle = Math.atan2(dy, dx) + Math.PI / 2;
-    if (angle < 0) angle += 2 * Math.PI;
-    if (angle >= 2 * Math.PI) angle -= 2 * Math.PI;
-    // In bowler view the raw angle is 180° shifted relative to the batter's frame
-    // (because the origin is at the opposite end of the pitch).  Convert back so
-    // the stored value always represents the batter's perspective.
-    const storedAngle = bowlerView ? (angle + Math.PI) % (2 * Math.PI) : angle;
+    const svgPt = pt.matrixTransform(ctm.inverse());
+
+    const dx = svgPt.x - stumpsX;
+    const dy = svgPt.y - originY;
+    // Raw angle in the SVG user-space from the active origin.
+    let rawAngle = Math.atan2(dy, dx) + Math.PI / 2;
+    if (rawAngle < 0) rawAngle += 2 * Math.PI;
+    if (rawAngle >= 2 * Math.PI) rawAngle -= 2 * Math.PI;
+
+    // In bowler view the raw angle is the mirror of the batter's convention
+    // (the origin is at the other end of the pitch, so every direction is
+    // exactly 180° away).  Flip it so we always store the batter's angle.
+    const storedAngle = bowlerView
+      ? (rawAngle + Math.PI) % (2 * Math.PI)
+      : rawAngle;
+
+    // The visual endpoint of the shot line uses rawAngle so it points in the
+    // direction the user actually dragged, regardless of storage convention.
     const end = isBoundaryShot
-      ? getBoundaryPoint(stumpsX, activeStumpsY, angle, ellipseCx, ellipseCy, ellipseRx, ellipseRy)
-      : cursorPoint;
-    return { angle: storedAngle, end };
+      ? getBoundaryPoint(stumpsX, originY, rawAngle, ellipseCx, ellipseCy, ellipseRx, ellipseRy)
+      : svgPt;
+
+    return { storedAngle, end };
   };
 
   const applyPoint = (clientX: number, clientY: number) => {
     const result = computeAngleAndEnd(clientX, clientY);
     if (!result) return;
-    setSelectedAngle(result.angle);
+    setSelectedAngle(result.storedAngle);
     setLineEnd(result.end);
   };
 
-  const handleMouseDown = (e: React.MouseEvent<SVGSVGElement>) => {
-    setIsDragging(true);
-    applyPoint(e.clientX, e.clientY);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
-    if (!isDragging) return;
-    applyPoint(e.clientX, e.clientY);
-  };
-
-  const handleMouseUp = (e: React.MouseEvent<SVGSVGElement>) => {
-    if (isDragging) {
-      applyPoint(e.clientX, e.clientY);
-      setIsDragging(false);
-    }
-  };
+  // ── Event handlers ─────────────────────────────────────────────────────────
+  const handleMouseDown = (e: React.MouseEvent<SVGSVGElement>) => { setIsDragging(true); applyPoint(e.clientX, e.clientY); };
+  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => { if (isDragging) applyPoint(e.clientX, e.clientY); };
+  const handleMouseUp   = (e: React.MouseEvent<SVGSVGElement>) => { if (isDragging) { applyPoint(e.clientX, e.clientY); setIsDragging(false); } };
 
   const handleTouchStart = (e: React.TouchEvent<SVGSVGElement>) => {
     e.preventDefault();
-    if (e.touches.length === 0) return;
-    const touch = e.touches[0];
-    applyPoint(touch.clientX, touch.clientY);
+    if (e.touches.length > 0) applyPoint(e.touches[0].clientX, e.touches[0].clientY);
   };
-
   const handleTouchMove = (e: React.TouchEvent<SVGSVGElement>) => {
     e.preventDefault();
-    if (e.touches.length === 0) return;
-    const touch = e.touches[0];
-    applyPoint(touch.clientX, touch.clientY);
+    if (e.touches.length > 0) applyPoint(e.touches[0].clientX, e.touches[0].clientY);
   };
-
   const handleTouchEnd = (e: React.TouchEvent<SVGSVGElement>) => {
     e.preventDefault();
-    if (e.changedTouches.length === 0) return;
-    const touch = e.changedTouches[0];
-    applyPoint(touch.clientX, touch.clientY);
+    if (e.changedTouches.length > 0) applyPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
   };
 
+  // ── Derived display values ─────────────────────────────────────────────────
   const ballColor = amount >= 6 ? '#f97316' : amount >= 4 ? '#3b82f6' : '#2196f3';
 
   const shotDescription = selectedAngle !== null ? (() => {
-    // Mirror angle for left-handed batsman before computing zone
     const zoneAngle = isLeftHanded
       ? (2 * Math.PI - selectedAngle) % (2 * Math.PI)
       : selectedAngle;
@@ -415,10 +409,19 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
     return `${amount} to ${area}`;
   })() : null;
 
-  // For a right-hander: leg side = LEFT (x=80), off side = RIGHT (x=220). Mirrored for left-handers.
-  const offSideX = isLeftHanded ? 80 : 220;
-  const legSideX = isLeftHanded ? 220 : 80;
+  // Off side / Leg side label x-positions.
+  // For a right-hander: off = RIGHT (x=220), leg = LEFT (x=80).
+  // In bowler view looking at the batter, left and right are swapped.
+  const baseOffX = isLeftHanded ? 80 : 220;
+  const baseLegX = isLeftHanded ? 220 : 80;
+  const offX = bowlerView ? baseLegX : baseOffX;
+  const legX = bowlerView ? baseOffX : baseLegX;
 
+  // Labels sit just above the active origin (batter marker).
+  const labelY1 = originY - 4;
+  const labelY2 = originY + 9;
+
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="text-center">
@@ -453,50 +456,57 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({ batsmanName, amount, 
         style={{ touchAction: 'none', cursor: 'crosshair' }}
         data-testid="wagon-wheel-input"
       >
-        {/*
-          All field elements live inside this group. When bowlerView is true we
-          rotate the group 180° around the ellipse centre (150, 120) so the
-          bowler comes from the bottom. Because this is an SVG content transform
-          (not a CSS transform on the element), getScreenCTM() is unaffected and
-          all click-to-angle maths continues to work in the original user-space
-          coordinates, giving correct stored angles automatically.
-        */}
-        <g transform={bowlerView ? 'rotate(180 150 120)' : undefined}>
-          {/* Field boundary */}
-          <ellipse cx={ellipseCx} cy={ellipseCy} rx={ellipseRx} ry={ellipseRy} fill="#4a8f3f" />
-          {/* 30-yard circle */}
-          <ellipse cx={ellipseCx} cy={ellipseCy} rx={67} ry={55}
-            fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
-          {/* Pitch */}
-          <rect x={stumpsX - 6} y={pitchTopY} width={12} height={70} fill="#c8a96e" rx="2" />
-          {/* Bowler direction arrow — pointing down toward the batter */}
-          <text x={stumpsX} y={pitchTopY - 22} textAnchor="middle" fill="rgba(255,255,255,0.75)" fontSize="9">Bowler</text>
-          <line x1={stumpsX} y1={pitchTopY - 18} x2={stumpsX} y2={pitchTopY - 6}
-            stroke="rgba(255,255,255,0.75)" strokeWidth="2" />
-          {/* Arrowhead */}
-          <polygon
-            points={`${stumpsX - 5},${pitchTopY - 6} ${stumpsX + 5},${pitchTopY - 6} ${stumpsX},${pitchTopY + 4}`}
-            fill="rgba(255,255,255,0.75)"
+        {/* ── Field ── */}
+        <ellipse cx={ellipseCx} cy={ellipseCy} rx={ellipseRx} ry={ellipseRy} fill="#4a8f3f" />
+        <ellipse cx={ellipseCx} cy={ellipseCy} rx={67} ry={55}
+          fill="#3a7f2f" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 3" />
+        {/* ── Pitch ── */}
+        <rect x={stumpsX - 6} y={pitchTopY} width={12} height={70} fill="#c8a96e" rx="2" />
+
+        {/* ── Bowler indicator ──
+            Batter view: bowler arrow at TOP pointing down toward batter.
+            Bowler view: bowler arrow at BOTTOM pointing up toward batter. */}
+        {!bowlerView ? (
+          <>
+            <text x={stumpsX} y={pitchTopY - 22} textAnchor="middle"
+              fill="rgba(255,255,255,0.75)" fontSize="9">Bowler</text>
+            <line x1={stumpsX} y1={pitchTopY - 18} x2={stumpsX} y2={pitchTopY - 6}
+              stroke="rgba(255,255,255,0.75)" strokeWidth="2" />
+            <polygon
+              points={`${stumpsX - 5},${pitchTopY - 6} ${stumpsX + 5},${pitchTopY - 6} ${stumpsX},${pitchTopY + 4}`}
+              fill="rgba(255,255,255,0.75)" />
+          </>
+        ) : (
+          <>
+            <text x={stumpsX} y={stumpsY + 24} textAnchor="middle"
+              fill="rgba(255,255,255,0.75)" fontSize="9">Bowler</text>
+            <line x1={stumpsX} y1={stumpsY + 20} x2={stumpsX} y2={stumpsY + 8}
+              stroke="rgba(255,255,255,0.75)" strokeWidth="2" />
+            {/* Arrowhead points UP toward the batter at pitchTopY */}
+            <polygon
+              points={`${stumpsX - 5},${stumpsY + 8} ${stumpsX + 5},${stumpsY + 8} ${stumpsX},${stumpsY - 2}`}
+              fill="rgba(255,255,255,0.75)" />
+          </>
+        )}
+
+        {/* ── Off / Leg labels — beside the active batter marker ── */}
+        <text x={offX} y={labelY1} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
+        <text x={offX} y={labelY2} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+        <text x={legX} y={labelY1} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
+        <text x={legX} y={labelY2} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
+
+        {/* ── Shot line — from the active origin outward ── */}
+        {lineEnd && (
+          <line
+            x1={stumpsX} y1={originY}
+            x2={lineEnd.x} y2={lineEnd.y}
+            stroke={ballColor} strokeWidth={3} strokeLinecap="round"
           />
-          {/* Off / Leg labels — sit beside the batter's end of the pitch */}
-          <text x={offSideX} y={151} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Off</text>
-          <text x={offSideX} y={164} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
-          <text x={legSideX} y={151} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Leg</text>
-          <text x={legSideX} y={164} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">Side</text>
-          {/* Shot line */}
-          {lineEnd && (
-            <line
-              x1={stumpsX} y1={stumpsY}
-              x2={lineEnd.x} y2={lineEnd.y}
-              stroke={ballColor}
-              strokeWidth={3}
-              strokeLinecap="round"
-            />
-          )}
-          {/* Batter's stumps marker */}
-          <circle cx={stumpsX} cy={stumpsY} r={5} fill="white" />
-        </g>
+        )}
+        {/* ── Batter marker ── */}
+        <circle cx={stumpsX} cy={originY} r={5} fill="white" />
       </svg>
+
       {shotDescription && (
         <p className="text-sm font-semibold text-gray-800 text-center" data-testid="shot-description">
           {shotDescription}
