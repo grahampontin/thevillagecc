@@ -1458,6 +1458,11 @@ const LiveScorecard: React.FC = () => {
                     LIVE
                   </span>
                   <span className="h-2 w-2 bg-green-600 rounded-full animate-pulse"></span>
+                  {lastUpdated && (
+                    <span className="text-[10px] text-gray-400 whitespace-nowrap">
+                      {lastUpdated.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </span>
+                  )}
                 </>
               ) : completed ? (
                 <>
