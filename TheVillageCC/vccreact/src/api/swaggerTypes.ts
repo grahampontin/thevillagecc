@@ -62,3 +62,7 @@ export type OppositionInningsDetailsV1 = components['schemas']['OppositionInning
 export type InningsEndDetailsV1 = components['schemas']['InningsEndDetailsV1'];
 export type AbandonMatchV1 = components['schemas']['AbandonMatchV1'];
 export type YetToBatEntryV1 = components['schemas']['YetToBatEntryV1'];
+
+// Player summary (lightweight career stats for mini-profiles)
+export type PlayerSummaryV1 = components['schemas']['PlayerSummaryV1'];
+

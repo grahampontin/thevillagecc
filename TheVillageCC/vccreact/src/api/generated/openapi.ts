@@ -792,6 +792,29 @@ export interface paths {
       };
     };
   };
+  "/api/Stats/player/{playerId}/summary": {
+    get: {
+      parameters: {
+        path: {
+          playerId: number;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["PlayerSummaryV1"];
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
   "/api/Stats/player/{playerId}/{statsType}": {
     get: {
       parameters: {
@@ -1768,6 +1791,26 @@ export interface components {
       strikeRate?: number;
       /** Format: int32 */
       asOfOver?: number;
+    };
+    PlayerSummaryV1: {
+      /** Format: int32 */
+      playerId?: number;
+      firstName?: string | null;
+      surname?: string | null;
+      playingRole?: string | null;
+      imageUrl?: string | null;
+      /** Format: int32 */
+      matches?: number | null;
+      /** Format: int32 */
+      careerRuns?: number | null;
+      /** Format: double */
+      battingAverage?: number | null;
+      highScore?: string | null;
+      /** Format: int32 */
+      careerWickets?: number | null;
+      bestBowling?: string | null;
+      /** Format: int32 */
+      debutYear?: number | null;
     };
     PlayerV1: {
       /** Format: int32 */

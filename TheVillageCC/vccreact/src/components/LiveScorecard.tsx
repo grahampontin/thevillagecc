@@ -15,7 +15,8 @@ import { Line, Bar } from 'react-chartjs-2';
 import Header from './Header';
 import Footer from './Footer';
 import { getLiveScorecardData } from '../api/liveScoringApi';
-import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1, BallV1, MatchDropV1, YetToBatEntryV1 } from '../api/swaggerTypes';
+import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1, BallV1, MatchDropV1, YetToBatEntryV1, PlayerSummaryV1 } from '../api/swaggerTypes';
+import { getPlayerSummary } from '../api/statsApi';
 import { getScoringArea } from '../utils/cricketUtils';
 
 ChartJS.register(
@@ -82,6 +83,86 @@ function dropsForPlayer(playerId: number | undefined, drops: MatchDropV1[] | nul
   return drops.find(d => d.playerId === playerId)?.drops ?? 0;
 }
 
+// ---------------------------------------------------------------------------
+// BatterMiniProfile — expandable career stats row shown beneath a batter row
+// ---------------------------------------------------------------------------
+
+const BatterMiniProfile: React.FC<{ profile: PlayerSummaryV1; colSpan?: number }> = ({
+  profile,
+  colSpan = 7,
+}) => {
+  const avg = profile.battingAverage != null ? profile.battingAverage.toFixed(2) : '-';
+  const chips: { label: string; value: string | number }[] = [
+    { label: 'Caps', value: profile.matches ?? '-' },
+    { label: 'Runs', value: profile.careerRuns ?? '-' },
+    { label: 'Avg', value: avg },
+    ...(profile.highScore != null ? [{ label: 'HS', value: profile.highScore }] : []),
+    { label: 'Wkts', value: profile.careerWickets ?? '-' },
+    ...(profile.bestBowling != null ? [{ label: 'BB', value: profile.bestBowling }] : []),
+    ...(profile.debutYear != null ? [{ label: 'Debut', value: profile.debutYear }] : []),
+  ];
+  return (
+    <tr className="bg-green-50 border-b border-green-100">
+      <td colSpan={colSpan} className="px-3 py-3">
+        <div className="flex items-center gap-3">
+          {profile.imageUrl && (
+            <img
+              src={profile.imageUrl}
+              alt={`${profile.firstName ?? ''} ${profile.surname ?? ''}`.trim()}
+              className="w-14 h-14 rounded-full object-cover object-top flex-shrink-0 border-2 border-green-200"
+            />
+          )}
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-gray-800 truncate">
+              {`${profile.firstName ?? ''} ${profile.surname ?? ''}`.trim()}
+            </p>
+            {profile.playingRole && (
+              <p className="text-xs text-gray-500 mb-1">{profile.playingRole}</p>
+            )}
+            <div className="flex flex-wrap gap-1.5 mt-1">
+              {chips.map(c => (
+                <span
+                  key={c.label}
+                  className="inline-flex flex-col items-center bg-white border border-green-200 rounded px-1.5 py-0.5 text-center"
+                >
+                  <span className="text-xs font-semibold text-gray-800 leading-none">{c.value}</span>
+                  <span className="text-[10px] text-gray-400 leading-none mt-0.5">{c.label}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  );
+};
+
+const ChevronDownIcon: React.FC<{ expanded: boolean }> = ({ expanded }) => (
+  <svg
+    className={`inline-block w-3 h-3 ml-1 text-gray-400 transition-transform flex-shrink-0 ${expanded ? 'rotate-180' : ''}`}
+    fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+  </svg>
+);
+
+const LoadingProfileRow: React.FC<{ colSpan?: number }> = ({ colSpan = 7 }) => (
+  <tr className="bg-green-50 border-b border-green-100">
+    <td colSpan={colSpan} className="px-3 py-3">
+      <div className="flex items-center gap-3 animate-pulse">
+        <div className="w-14 h-14 rounded-full bg-gray-200 flex-shrink-0" />
+        <div className="flex-1 space-y-1.5">
+          <div className="h-3 bg-gray-200 rounded w-1/3" />
+          <div className="h-2 bg-gray-200 rounded w-1/4" />
+          <div className="flex gap-1.5 mt-1">
+            {[1,2,3,4,5].map(i => <div key={i} className="h-7 w-10 bg-gray-200 rounded" />)}
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+);
+
 const LiveScorecard: React.FC = () => {
   const { matchId } = useParams<{ matchId: string }>();
   const [scorecardData, setScorecardData] = useState<LiveScorecardV1 | null>(null);
@@ -100,6 +181,32 @@ const LiveScorecard: React.FC = () => {
   const [flashKeys, setFlashKeys] = useState<Set<string>>(new Set());
   const prevDataRef = useRef<LiveScorecardV1 | null>(null);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Mini-profile expand state
+  const [expandedBatterIds, setExpandedBatterIds] = useState<Set<number>>(new Set());
+  const [batterProfiles, setBatterProfiles] = useState<Map<number, PlayerSummaryV1>>(new Map());
+  const [loadingBatterIds, setLoadingBatterIds] = useState<Set<number>>(new Set());
+
+  const toggleBatterProfile = async (playerId: number) => {
+    const wasExpanded = expandedBatterIds.has(playerId);
+    setExpandedBatterIds(prev => {
+      const next = new Set(prev);
+      if (next.has(playerId)) { next.delete(playerId); } else { next.add(playerId); }
+      return next;
+    });
+    if (!wasExpanded && !batterProfiles.has(playerId)) {
+      setLoadingBatterIds(prev => new Set(prev).add(playerId));
+      try {
+        const profile = await getPlayerSummary(playerId);
+        setBatterProfiles(prev => new Map(prev).set(playerId, profile));
+      } catch {
+        // Non-VCC player or API error — silently collapse
+        setExpandedBatterIds(prev => { const n = new Set(prev); n.delete(playerId); return n; });
+      } finally {
+        setLoadingBatterIds(prev => { const n = new Set(prev); n.delete(playerId); return n; });
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchScorecardData = async (isPolling = false) => {
@@ -338,31 +445,45 @@ const LiveScorecard: React.FC = () => {
         <tbody className="text-gray-800">
           {entries.map((entry, index) => {
             const dropCount = dropsForPlayer(entry.playerId, drops);
+            const isExpandable = !!entry.playerId;
+            const isExpanded = isExpandable && expandedBatterIds.has(entry.playerId!);
+            const isLoadingProfile = isExpandable && loadingBatterIds.has(entry.playerId!);
+            const profile = isExpandable ? batterProfiles.get(entry.playerId!) : undefined;
             return (
-              <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="py-2 pr-2 font-medium">
-                  <span>{entry.playerName}</span>
-                  {dropCount > 0 && (
-                    <span
-                      className="ml-1 inline-flex gap-0.5"
-                      title={`Dropped ${dropCount} ${dropCount === 1 ? 'catch' : 'catches'}`}
-                      aria-label={`Dropped ${dropCount} ${dropCount === 1 ? 'catch' : 'catches'}`}
-                    >
-                      {Array.from({ length: dropCount }).map((_, i) => (
-                        <DropIcon key={i} />
-                      ))}
+              <React.Fragment key={index}>
+                <tr
+                  className={`border-b border-gray-100 ${isExpandable ? 'cursor-pointer hover:bg-gray-50 select-none' : 'hover:bg-gray-50'}`}
+                  onClick={isExpandable ? () => toggleBatterProfile(entry.playerId!) : undefined}
+                >
+                  <td className="py-2 pr-2 font-medium">
+                    <span className="inline-flex items-center gap-0.5">
+                      {entry.playerName}
+                      {isExpandable && <ChevronDownIcon expanded={isExpanded} />}
                     </span>
-                  )}
-                </td>
-                <td className="py-2 text-sm text-gray-500">{formatDismissal(entry)}</td>
-                <td className="py-2 text-right font-medium">{entry.runs ?? 0}</td>
-                <td className="py-2 text-right text-gray-600">{entry.ballsFaced ?? 0}</td>
-                <td className="py-2 text-right text-gray-600">{entry.fours ?? 0}</td>
-                <td className="py-2 text-right text-gray-600">{entry.sixes ?? 0}</td>
-                <td className="py-2 text-right text-gray-600">
-                  {entry.ballsFaced ? ((entry.runs ?? 0) / entry.ballsFaced * 100).toFixed(1) : '-'}
-                </td>
-              </tr>
+                    {dropCount > 0 && (
+                      <span
+                        className="ml-1 inline-flex gap-0.5"
+                        title={`Dropped ${dropCount} ${dropCount === 1 ? 'catch' : 'catches'}`}
+                        aria-label={`Dropped ${dropCount} ${dropCount === 1 ? 'catch' : 'catches'}`}
+                      >
+                        {Array.from({ length: dropCount }).map((_, i) => (
+                          <DropIcon key={i} />
+                        ))}
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-2 text-sm text-gray-500">{formatDismissal(entry)}</td>
+                  <td className="py-2 text-right font-medium">{entry.runs ?? 0}</td>
+                  <td className="py-2 text-right text-gray-600">{entry.ballsFaced ?? 0}</td>
+                  <td className="py-2 text-right text-gray-600">{entry.fours ?? 0}</td>
+                  <td className="py-2 text-right text-gray-600">{entry.sixes ?? 0}</td>
+                  <td className="py-2 text-right text-gray-600">
+                    {entry.ballsFaced ? ((entry.runs ?? 0) / entry.ballsFaced * 100).toFixed(1) : '-'}
+                  </td>
+                </tr>
+                {isExpanded && isLoadingProfile && <LoadingProfileRow colSpan={7} />}
+                {isExpanded && !isLoadingProfile && profile && <BatterMiniProfile profile={profile} colSpan={7} />}
+              </React.Fragment>
             );
           })}
           {extras && (
@@ -937,24 +1058,38 @@ const LiveScorecard: React.FC = () => {
                   const isOnStrike = row.id === onStrikeId;
                   const isOther = row.id === otherBatsmanId;
                   const isBatting = isOnStrike || isOther;
+                  const isExpandable = !!row.id;
+                  const isExpanded = isExpandable && expandedBatterIds.has(row.id);
+                  const isLoadingProfile = isExpandable && loadingBatterIds.has(row.id);
+                  const profile = isExpandable ? batterProfiles.get(row.id) : undefined;
                   return (
-                    <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-2 pr-2 font-medium">
-                        {row.name}
-                        {isOnStrike && <span className="ml-1 text-villageGreen text-xs font-bold">*</span>}
-                        {isBatting && !row.isOut && (
-                          <span className="ml-1" role="img" aria-label="batting">🏏</span>
-                        )}
-                      </td>
-                      <td className="py-2 text-sm text-gray-500">{row.dismissal ?? ''}</td>
-                      <td className="py-2 text-right font-medium">{row.runs}</td>
-                      <td className="py-2 text-right text-gray-600">{row.balls}</td>
-                      <td className="py-2 text-right text-gray-600">{row.fours}</td>
-                      <td className="py-2 text-right text-gray-600">{row.sixes}</td>
-                      <td className="py-2 text-right text-gray-600">
-                        {row.balls > 0 ? (row.runs / row.balls * 100).toFixed(1) : '-'}
-                      </td>
-                    </tr>
+                    <React.Fragment key={idx}>
+                      <tr
+                        className={`border-b border-gray-100 ${isExpandable ? 'cursor-pointer hover:bg-gray-50 select-none' : 'hover:bg-gray-50'}`}
+                        onClick={isExpandable ? () => toggleBatterProfile(row.id) : undefined}
+                      >
+                        <td className="py-2 pr-2 font-medium">
+                          <span className="inline-flex items-center gap-0.5">
+                            {row.name}
+                            {isOnStrike && <span className="ml-1 text-villageGreen text-xs font-bold">*</span>}
+                            {isBatting && !row.isOut && (
+                              <span className="ml-1" role="img" aria-label="batting">🏏</span>
+                            )}
+                            {isExpandable && <ChevronDownIcon expanded={isExpanded} />}
+                          </span>
+                        </td>
+                        <td className="py-2 text-sm text-gray-500">{row.dismissal ?? ''}</td>
+                        <td className="py-2 text-right font-medium">{row.runs}</td>
+                        <td className="py-2 text-right text-gray-600">{row.balls}</td>
+                        <td className="py-2 text-right text-gray-600">{row.fours}</td>
+                        <td className="py-2 text-right text-gray-600">{row.sixes}</td>
+                        <td className="py-2 text-right text-gray-600">
+                          {row.balls > 0 ? (row.runs / row.balls * 100).toFixed(1) : '-'}
+                        </td>
+                      </tr>
+                      {isExpanded && isLoadingProfile && <LoadingProfileRow colSpan={7} />}
+                      {isExpanded && !isLoadingProfile && profile && <BatterMiniProfile profile={profile} colSpan={7} />}
+                    </React.Fragment>
                   );
                 })}
                 {battingRows.length === 0 && (
@@ -1212,33 +1347,69 @@ const LiveScorecard: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.onStrikeBatsman && (
-                        <tr className="border-b border-gray-50">
-                          <td className="py-1.5 font-medium">
-                            {data.onStrikeBatsman.name}
-                            <span className="ml-1 text-villageGreen text-xs font-bold">*</span>
-                          </td>
-                          <td className="py-1.5 text-right font-medium">{data.onStrikeBatsman.score ?? 0}</td>
-                          <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.balls ?? 0}</td>
-                          <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.fours ?? 0}</td>
-                          <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman.sixes ?? 0}</td>
-                          <td className="py-1.5 text-right text-gray-600">
-                            {data.onStrikeBatsman.strikeRate != null ? data.onStrikeBatsman.strikeRate.toFixed(1) : '-'}
-                          </td>
-                        </tr>
-                      )}
-                      {data.otherBatsman && (
-                        <tr>
-                          <td className="py-1.5 font-medium">{data.otherBatsman.name}</td>
-                          <td className="py-1.5 text-right font-medium">{data.otherBatsman.score ?? 0}</td>
-                          <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.balls ?? 0}</td>
-                          <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.fours ?? 0}</td>
-                          <td className="py-1.5 text-right text-gray-600">{data.otherBatsman.sixes ?? 0}</td>
-                          <td className="py-1.5 text-right text-gray-600">
-                            {data.otherBatsman.strikeRate != null ? data.otherBatsman.strikeRate.toFixed(1) : '-'}
-                          </td>
-                        </tr>
-                      )}
+                      {data.onStrikeBatsman && (() => {
+                        const pid = data.onStrikeBatsman.playerId;
+                        const isExpandable = !!pid;
+                        const isExpanded = isExpandable && expandedBatterIds.has(pid!);
+                        const isLoadingProfile = isExpandable && loadingBatterIds.has(pid!);
+                        const profile = isExpandable ? batterProfiles.get(pid!) : undefined;
+                        return (
+                          <React.Fragment>
+                            <tr
+                              className={`border-b border-gray-50 ${isExpandable ? 'cursor-pointer select-none' : ''}`}
+                              onClick={isExpandable ? () => toggleBatterProfile(pid!) : undefined}
+                            >
+                              <td className="py-1.5 font-medium">
+                                <span className="inline-flex items-center gap-0.5">
+                                  {data.onStrikeBatsman!.name}
+                                  <span className="ml-1 text-villageGreen text-xs font-bold">*</span>
+                                  {isExpandable && <ChevronDownIcon expanded={isExpanded} />}
+                                </span>
+                              </td>
+                              <td className="py-1.5 text-right font-medium">{data.onStrikeBatsman!.score ?? 0}</td>
+                              <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman!.balls ?? 0}</td>
+                              <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman!.fours ?? 0}</td>
+                              <td className="py-1.5 text-right text-gray-600">{data.onStrikeBatsman!.sixes ?? 0}</td>
+                              <td className="py-1.5 text-right text-gray-600">
+                                {data.onStrikeBatsman!.strikeRate != null ? data.onStrikeBatsman!.strikeRate.toFixed(1) : '-'}
+                              </td>
+                            </tr>
+                            {isExpanded && isLoadingProfile && <LoadingProfileRow colSpan={6} />}
+                            {isExpanded && !isLoadingProfile && profile && <BatterMiniProfile profile={profile} colSpan={6} />}
+                          </React.Fragment>
+                        );
+                      })()}
+                      {data.otherBatsman && (() => {
+                        const pid = data.otherBatsman.playerId;
+                        const isExpandable = !!pid;
+                        const isExpanded = isExpandable && expandedBatterIds.has(pid!);
+                        const isLoadingProfile = isExpandable && loadingBatterIds.has(pid!);
+                        const profile = isExpandable ? batterProfiles.get(pid!) : undefined;
+                        return (
+                          <React.Fragment>
+                            <tr
+                              className={isExpandable ? 'cursor-pointer select-none' : ''}
+                              onClick={isExpandable ? () => toggleBatterProfile(pid!) : undefined}
+                            >
+                              <td className="py-1.5 font-medium">
+                                <span className="inline-flex items-center gap-0.5">
+                                  {data.otherBatsman!.name}
+                                  {isExpandable && <ChevronDownIcon expanded={isExpanded} />}
+                                </span>
+                              </td>
+                              <td className="py-1.5 text-right font-medium">{data.otherBatsman!.score ?? 0}</td>
+                              <td className="py-1.5 text-right text-gray-600">{data.otherBatsman!.balls ?? 0}</td>
+                              <td className="py-1.5 text-right text-gray-600">{data.otherBatsman!.fours ?? 0}</td>
+                              <td className="py-1.5 text-right text-gray-600">{data.otherBatsman!.sixes ?? 0}</td>
+                              <td className="py-1.5 text-right text-gray-600">
+                                {data.otherBatsman!.strikeRate != null ? data.otherBatsman!.strikeRate.toFixed(1) : '-'}
+                              </td>
+                            </tr>
+                            {isExpanded && isLoadingProfile && <LoadingProfileRow colSpan={6} />}
+                            {isExpanded && !isLoadingProfile && profile && <BatterMiniProfile profile={profile} colSpan={6} />}
+                          </React.Fragment>
+                        );
+                      })()}
                     </tbody>
                   </table>
                   {data.currentPartnership && (

@@ -70,6 +70,17 @@ export async function getPlayerDetail(playerId: number): Promise<PlayerDetailV1>
 }
 
 /**
+ * Fetches lightweight player career summary for mini-profiles.
+ * Uses GET /api/Stats/player/{playerId}/summary
+ *
+ * @param playerId - The player ID
+ * @returns Promise resolving to player summary data
+ */
+export async function getPlayerSummary(playerId: number): Promise<import('./swaggerTypes').PlayerSummaryV1> {
+  return getJson<import('./swaggerTypes').PlayerSummaryV1>(apiUrl(`/api/Stats/player/${playerId}/summary`));
+}
+
+/**
  * Fetches player chart data.
  * Uses GET /api/Stats/chart/{playerId}/{chartType}
  * 
