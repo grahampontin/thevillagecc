@@ -39,10 +39,10 @@ function formatDismissal(entry: BattingEntryV1): string {
   switch (mode) {
     case 'NotOut': return 'not out';
     case 'Bowled': return `b ${entry.bowlerName ?? ''}`;
-    case 'Caught': return `ct ${entry.fielderName ?? ''} b ${entry.bowlerName ?? ''}`;
+    case 'Caught': return `ct ${entry.fielderName || 'unknown'} b ${entry.bowlerName ?? ''}`;
     case 'LBW': return `lbw b ${entry.bowlerName ?? ''}`;
-    case 'RunOut': return `run out (${entry.fielderName ?? ''})`;
-    case 'Stumped': return `st ${entry.fielderName ?? ''} b ${entry.bowlerName ?? ''}`;
+    case 'RunOut': return `run out (${entry.fielderName || 'unknown'})`;
+    case 'Stumped': return `st ${entry.fielderName || 'unknown'} b ${entry.bowlerName ?? ''}`;
     case 'HitWicket': return 'hit wicket';
     case 'DidNotBat': return 'did not bat';
     case 'Retired': return 'retired (out)';

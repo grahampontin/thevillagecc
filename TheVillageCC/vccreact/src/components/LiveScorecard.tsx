@@ -342,11 +342,11 @@ const LiveScorecard: React.FC = () => {
     const wicket = entry.wicket;
     if (!wicket) return 'not out';
     if (wicket.isCaughtAndBowled) return `c&b ${wicket.bowler ?? ''}`.trim();
-    if (wicket.isCaught) return `ct. ${wicket.fielder ?? ''} b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isCaught) return `ct. ${wicket.fielder || 'unknown'} b. ${wicket.bowler ?? ''}`.trim();
     if (wicket.isBowled) return `b. ${wicket.bowler ?? ''}`.trim();
     if (wicket.isLbw) return `lbw b. ${wicket.bowler ?? ''}`.trim();
-    if (wicket.isStumped) return `st. ${wicket.fielder ?? ''} b. ${wicket.bowler ?? ''}`.trim();
-    if (wicket.isRunOut) return wicket.fielder ? `run out (${wicket.fielder})` : 'run out';
+    if (wicket.isStumped) return `st. ${wicket.fielder || 'unknown'} b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isRunOut) return `run out (${wicket.fielder || 'unknown'})`;
     if (wicket.isHitWicket) return 'hit wicket';
     if (wicket.isRetiredHurt) return 'retired hurt';
     if (wicket.isRetired) return 'retired';
@@ -355,11 +355,11 @@ const LiveScorecard: React.FC = () => {
 
   const formatWicketDismissal = (wicket: NonNullable<BallV1['wicket']>): string => {
     if (wicket.isCaughtAndBowled) return `c&b ${wicket.bowler ?? ''}`.trim();
-    if (wicket.isCaught) return `ct. ${wicket.fielder ?? ''} b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isCaught) return `ct. ${wicket.fielder || 'unknown'} b. ${wicket.bowler ?? ''}`.trim();
     if (wicket.isBowled) return `b. ${wicket.bowler ?? ''}`.trim();
     if (wicket.isLbw) return `lbw b. ${wicket.bowler ?? ''}`.trim();
-    if (wicket.isStumped) return `st. ${wicket.fielder ?? ''} b. ${wicket.bowler ?? ''}`.trim();
-    if (wicket.isRunOut) return wicket.fielder ? `run out (${wicket.fielder})` : 'run out';
+    if (wicket.isStumped) return `st. ${wicket.fielder || 'unknown'} b. ${wicket.bowler ?? ''}`.trim();
+    if (wicket.isRunOut) return `run out (${wicket.fielder || 'unknown'})`;
     if (wicket.isHitWicket) return 'hit wicket';
     if (wicket.isRetiredHurt) return 'retired hurt';
     if (wicket.isRetired) return 'retired';
@@ -1077,8 +1077,10 @@ const LiveScorecard: React.FC = () => {
                             )}
                             {isExpandable && <ChevronDownIcon expanded={isExpanded} />}
                           </span>
+                          {row.isOut && row.dismissal && (
+                            <span className="block text-xs text-gray-400 font-normal mt-0.5">{row.dismissal}</span>
+                          )}
                         </td>
-                        <td className="py-2 text-sm text-gray-500">{row.dismissal ?? ''}</td>
                         <td className="py-2 text-right font-medium">{row.runs}</td>
                         <td className="py-2 text-right text-gray-600">{row.balls}</td>
                         <td className="py-2 text-right text-gray-600">{row.fours}</td>
