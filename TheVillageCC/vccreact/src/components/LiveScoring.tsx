@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   getLiveScoringMatches,
   getLiveScoringMatchState,
@@ -536,6 +537,8 @@ const WagonWheelInput: React.FC<WagonWheelInputProps> = ({
 // ---------------------------------------------------------------------------
 
 const LiveScoring: React.FC = () => {
+  const navigate = useNavigate();
+
   // Screen state
   const [screen, setScreen] = useState<Screen>('chooseMatch');
 
@@ -1336,7 +1339,12 @@ const LiveScoring: React.FC = () => {
 
     return (
       <div className="flex flex-col h-full">
-        <NavBar title="Live Scoring" />
+        <NavBar title="Live Scoring" onBack={() => navigate('/admin')} />
+        <div className="px-4 py-1.5 bg-white border-b border-gray-100 flex items-center gap-1.5 text-xs text-gray-400">
+          <span>Admin</span>
+          <span className="material-symbols-outlined text-[14px] leading-none">chevron_right</span>
+          <span className="text-gray-600 font-medium">Live Scoring</span>
+        </div>
         <div className="flex-1 overflow-y-auto bg-gray-50 relative">
           {renderLoadingOverlay()}
           <div className="max-w-lg mx-auto p-4 space-y-4">
@@ -2500,14 +2508,24 @@ const LiveScoring: React.FC = () => {
         title="End Over"
         onBack={() => setScreen('scoring')}
         rightContent={
-          <button
-            onClick={handleEndOverConfirm}
-            disabled={isLoading}
-            className="p-1 rounded-full hover:bg-white/20 transition-colors disabled:opacity-50"
-            aria-label="Done"
-          >
-            <span className="material-symbols-outlined text-xl leading-none">done</span>
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => { setAbandonReason(''); setAbandonError(null); setShowAbandonDialog(true); }}
+              className="p-1 rounded-full hover:bg-white/20 transition-colors"
+              aria-label="Abandon match"
+              title="Abandon match"
+            >
+              <span className="material-symbols-outlined text-xl leading-none text-amber-300">dangerous</span>
+            </button>
+            <button
+              onClick={handleEndOverConfirm}
+              disabled={isLoading}
+              className="p-1 rounded-full hover:bg-white/20 transition-colors disabled:opacity-50"
+              aria-label="Done"
+            >
+              <span className="material-symbols-outlined text-xl leading-none">done</span>
+            </button>
+          </div>
         }
       />
       <div className="flex-1 overflow-y-auto bg-gray-50 relative">
@@ -2549,14 +2567,6 @@ const LiveScoring: React.FC = () => {
               className="w-full text-sm text-gray-900 outline-none resize-none"
             />
           </div>
-
-          {/* Abandon Match */}
-          <button
-            onClick={() => { setAbandonReason(''); setAbandonError(null); setShowAbandonDialog(true); }}
-            className="w-full py-3 rounded-xl border-2 border-amber-500 text-amber-600 font-semibold text-sm hover:bg-amber-50 active:scale-95 transition-all"
-          >
-            Abandon Match
-          </button>
         </div>
       </div>
     </div>
@@ -2617,14 +2627,24 @@ const LiveScoring: React.FC = () => {
       <NavBar
         title="Opposition Score"
         rightContent={
-          <button
-            onClick={handleOppositionScoringConfirm}
-            disabled={isLoading}
-            className="p-1 rounded-full hover:bg-white/20 transition-colors disabled:opacity-50"
-            aria-label="Done"
-          >
-            <span className="material-symbols-outlined text-xl leading-none">done</span>
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => { setAbandonReason(''); setAbandonError(null); setShowAbandonDialog(true); }}
+              className="p-1 rounded-full hover:bg-white/20 transition-colors"
+              aria-label="Abandon match"
+              title="Abandon match"
+            >
+              <span className="material-symbols-outlined text-xl leading-none text-amber-300">dangerous</span>
+            </button>
+            <button
+              onClick={handleOppositionScoringConfirm}
+              disabled={isLoading}
+              className="p-1 rounded-full hover:bg-white/20 transition-colors disabled:opacity-50"
+              aria-label="Done"
+            >
+              <span className="material-symbols-outlined text-xl leading-none">done</span>
+            </button>
+          </div>
         }
       />
       <div className="flex-1 overflow-y-auto bg-gray-50 relative">
@@ -2676,14 +2696,6 @@ const LiveScoring: React.FC = () => {
               />
             </div>
           </div>
-
-          {/* Abandon Match */}
-          <button
-            onClick={() => { setAbandonReason(''); setAbandonError(null); setShowAbandonDialog(true); }}
-            className="w-full py-3 rounded-xl border-2 border-amber-500 text-amber-600 font-semibold text-sm hover:bg-amber-50 active:scale-95 transition-all"
-          >
-            Abandon Match
-          </button>
         </div>
       </div>
     </div>
@@ -2697,14 +2709,22 @@ const LiveScoring: React.FC = () => {
         <span className="material-symbols-outlined text-6xl text-villageGreen mb-4">emoji_events</span>
         <h2 className="text-2xl font-bold text-villageText mb-2">Match Complete!</h2>
         <p className="text-gray-500 mb-8">Thanks for scoring. Bye!</p>
-        {selectedMatchId && (
-          <a
-            href={`/scorecard/${selectedMatchId}`}
-            className="bg-villageGreen text-white px-6 py-3 rounded-full font-medium hover:opacity-90 transition-opacity"
+        <div className="flex flex-col items-center gap-3 w-full max-w-xs">
+          {selectedMatchId && (
+            <a
+              href={`/scorecard/${selectedMatchId}`}
+              className="w-full text-center bg-villageGreen text-white px-6 py-3 rounded-full font-medium hover:opacity-90 transition-opacity"
+            >
+              View Scorecard
+            </a>
+          )}
+          <button
+            onClick={() => navigate('/admin')}
+            className="w-full text-center bg-white border border-gray-200 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-gray-50 transition-colors"
           >
-            View Scorecard
-          </a>
-        )}
+            Back to Admin
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -89,7 +89,8 @@ describe('LiveScoring', () => {
 
   it('shows loading spinner initially on choose match screen', () => {
     renderLiveScoring();
-    expect(screen.getByText('Live Scoring')).toBeInTheDocument();
+    // "Live Scoring" appears in both the NavBar title and the breadcrumb
+    expect(screen.getAllByText('Live Scoring').length).toBeGreaterThan(0);
   });
 
   it('loads and displays matches list', async () => {
