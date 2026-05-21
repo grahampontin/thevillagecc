@@ -296,7 +296,7 @@ describe('LiveScorecard', () => {
     fireEvent.click(screen.getByRole('button', { name: /Scorecards/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('ct. Smith b. Jones')).toBeInTheDocument();
+      expect(screen.getAllByText('ct. Smith b. Jones')[0]).toBeInTheDocument();
     });
   });
 
@@ -363,16 +363,16 @@ describe('LiveScorecard', () => {
     fireEvent.click(screen.getByRole('button', { name: /Scorecards/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('b. Bowler1')).toBeInTheDocument();
+      expect(screen.getAllByText('b. Bowler1')[0]).toBeInTheDocument();
     });
-    expect(screen.getByText('lbw b. Bowler2')).toBeInTheDocument();
-    expect(screen.getByText('c&b Bowler3')).toBeInTheDocument();
-    expect(screen.getByText('st. Keeper1 b. Bowler4')).toBeInTheDocument();
-    expect(screen.getByText('run out (Fielder1)')).toBeInTheDocument();
-    expect(screen.getByText('hit wicket')).toBeInTheDocument();
-    expect(screen.getByText('retired hurt')).toBeInTheDocument();
-    expect(screen.getByText('retired')).toBeInTheDocument();
-    expect(screen.getByText('not out')).toBeInTheDocument();
+    expect(screen.getAllByText('lbw b. Bowler2')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('c&b Bowler3')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('st. Keeper1 b. Bowler4')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('run out (Fielder1)')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('hit wicket')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('retired hurt')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('retired')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('not out')[0]).toBeInTheDocument();
   });
 
   test('displays match report for completed match', async () => {

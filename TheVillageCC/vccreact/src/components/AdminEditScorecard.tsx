@@ -447,7 +447,7 @@ const BattingTable: React.FC<BattingTableProps> = ({
           <thead>
             <tr className="bg-gray-100 text-left">
               <th className="px-2 py-2 font-medium text-gray-600">Batsman</th>
-              <th className="px-2 py-2 font-medium text-gray-600">Dismissal</th>
+              <th className="px-2 py-2 font-medium text-gray-600 hidden sm:table-cell">Dismissal</th>
               <th className="px-2 py-2 font-medium text-gray-600 text-right">R</th>
               <th className="px-2 py-2 font-medium text-gray-600 text-right">B</th>
               <th className="px-2 py-2 font-medium text-gray-600 text-right">4s</th>
@@ -458,8 +458,11 @@ const BattingTable: React.FC<BattingTableProps> = ({
           <tbody className="divide-y divide-gray-100">
             {entries.map((e, idx) => (
               <tr key={idx} className="hover:bg-gray-50">
-                <td className="px-2 py-2">{e.playerName ?? '—'}</td>
-                <td className="px-2 py-2 text-gray-500">{formatDismissal(e)}</td>
+                <td className="px-2 py-2">
+                  {e.playerName ?? '—'}
+                  <span className="block text-xs text-gray-400 sm:hidden">{formatDismissal(e)}</span>
+                </td>
+                <td className="px-2 py-2 text-gray-500 hidden sm:table-cell">{formatDismissal(e)}</td>
                 <td className="px-2 py-2 text-right">{e.runs ?? 0}</td>
                 <td className="px-2 py-2 text-right">{e.ballsFaced ?? 0}</td>
                 <td className="px-2 py-2 text-right">{e.fours ?? 0}</td>

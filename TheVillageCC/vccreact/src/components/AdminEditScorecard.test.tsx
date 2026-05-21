@@ -132,7 +132,7 @@ describe('AdminEditScorecard', () => {
     await userEvent.click(screen.getByRole('button', { name: /Village CC/i }));
 
     expect(await screen.findByText('Alice Smith')).toBeInTheDocument();
-    expect(screen.getByText(/ct T Brown b J Doe/)).toBeInTheDocument();
+    expect(screen.getAllByText(/ct T Brown b J Doe/)[0]).toBeInTheDocument();
   });
 
   test('save button calls POST to scorecard endpoint', async () => {
@@ -224,7 +224,7 @@ describe('AdminEditScorecard', () => {
     await userEvent.click(screen.getByRole('button', { name: /Opposition/i }));
 
     expect(await screen.findByText('Opp Batsman')).toBeInTheDocument();
-    expect(screen.getByText(/b Alice Smith/)).toBeInTheDocument();
+    expect(screen.getAllByText(/b Alice Smith/)[0]).toBeInTheDocument();
   });
 
   test('Village CC bowling sub-tab shows their innings bowling entries', async () => {

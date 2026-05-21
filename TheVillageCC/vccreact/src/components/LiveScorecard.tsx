@@ -434,7 +434,7 @@ const LiveScorecard: React.FC = () => {
         <thead>
           <tr className="border-b-2 border-gray-200 text-left text-xs text-gray-500 uppercase tracking-wide">
             <th className="py-2 pr-2">Batter</th>
-            <th className="py-2 text-gray-400 font-normal"></th>
+            <th className="py-2 text-gray-400 font-normal hidden sm:table-cell"></th>
             <th className="py-2 text-right">R</th>
             <th className="py-2 text-right">B</th>
             <th className="py-2 text-right">4s</th>
@@ -471,8 +471,9 @@ const LiveScorecard: React.FC = () => {
                         ))}
                       </span>
                     )}
+                    <span className="block text-xs text-gray-400 sm:hidden">{formatDismissal(entry)}</span>
                   </td>
-                  <td className="py-2 text-sm text-gray-500">{formatDismissal(entry)}</td>
+                  <td className="py-2 text-sm text-gray-500 hidden sm:table-cell">{formatDismissal(entry)}</td>
                   <td className="py-2 text-right font-medium">{entry.runs ?? 0}</td>
                   <td className="py-2 text-right text-gray-600">{entry.ballsFaced ?? 0}</td>
                   <td className="py-2 text-right text-gray-600">{entry.fours ?? 0}</td>
