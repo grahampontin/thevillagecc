@@ -21,6 +21,7 @@ const Header: React.FC = () => {
           <a href="/fixtures" className="text-gray-700 hover:text-villageGreen transition">Fixtures</a>
           <a href="/results" className="text-gray-700 hover:text-villageGreen transition">Results</a>
           <a href="/stats" className="text-gray-700 hover:text-villageGreen transition">Stats</a>
+          <a href="/players" className="text-gray-700 hover:text-villageGreen transition">Players</a>
           <a href="/committee" className="text-gray-700 hover:text-villageGreen transition">Committee</a>
           <a href="/awards" className="text-gray-700 hover:text-villageGreen transition">Awards</a>
           <a href="/tours" className="text-gray-700 hover:text-villageGreen transition">Tours</a>
@@ -51,6 +52,7 @@ const Header: React.FC = () => {
           <a href="/fixtures" className="py-1 text-gray-700 hover:text-villageGreen transition">Fixtures</a>
           <a href="/results" className="py-1 text-gray-700 hover:text-villageGreen transition">Results</a>
           <a href="/stats" className="py-1 text-gray-700 hover:text-villageGreen transition">Stats</a>
+          <a href="/players" className="py-1 text-gray-700 hover:text-villageGreen transition">Players</a>
           <a href="/committee" className="py-1 text-gray-700 hover:text-villageGreen transition">Committee</a>
           <a href="/awards" className="py-1 text-gray-700 hover:text-villageGreen transition">Awards</a>
           <a href="/tours" className="py-1 text-gray-700 hover:text-villageGreen transition">Tours</a>

@@ -22,6 +22,7 @@ import AdminCommittee from './components/AdminCommittee';
 import AdminScorecards from './components/AdminScorecards';
 import AdminEditScorecard from './components/AdminEditScorecard';
 import Tours from './components/Tours';
+import PlayersPage from './components/PlayersPage';
 import Teams from './components/Teams';
 import TeamDetail from './components/TeamDetail';
 import VenuesListPage from './components/VenuesListPage';
@@ -39,6 +40,7 @@ function App() {
         <Route path="/results" element={<Results />} />
         <Route path="/stats" element={<Stats />} />
         <Route path="/player/:playerId" element={<PlayerDetail />} />
+        <Route path="/players" element={<PlayersPage />} />
         <Route path="/scorecard/:matchId" element={<LiveScorecard />} />
         <Route path="/tours" element={<Tours />} />
         <Route path="/teams" element={<Teams />} />
