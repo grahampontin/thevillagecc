@@ -136,6 +136,21 @@ describe('PlayersPage', () => {
     ).toBeInTheDocument();
   });
 
+  test('shows zoom controls in family tree view', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockPlayers,
+    });
+    renderWithRouter(<PlayersPage />);
+    await screen.findByText('Alice Smith');
+
+    fireEvent.click(screen.getByRole('button', { name: /family tree/i }));
+
+    expect(screen.getByRole('button', { name: /zoom out family tree/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /reset family tree zoom/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /zoom in family tree/i })).toBeInTheDocument();
+  });
+
   test('displays player stats columns in list view', async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,

@@ -18,6 +18,9 @@ const NODE_H = 80;
 const H_GAP = 28;   // horizontal gap between sibling subtrees
 const V_GAP = 56;   // vertical gap between levels
 const TREE_PADDING = 40;
+const MIN_TREE_ZOOM = 0.5;
+const MAX_TREE_ZOOM = 2.5;
+const TREE_ZOOM_STEP = 0.15;
 
 interface TreeNode {
   player: PlayerV1;
@@ -179,6 +182,7 @@ const PlayersPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [search, setSearch] = useState('');
   const [showInactive, setShowInactive] = useState(false);
+  const [treeZoom, setTreeZoom] = useState(1);
 
   // List sort state
   const [sortField, setSortField] = useState<SortField>('name');
@@ -186,6 +190,103 @@ const PlayersPage: React.FC = () => {
 
   // Tree scroll container ref
   const treeContainerRef = useRef<HTMLDivElement>(null);
+  const treeZoomRef = useRef(1);
+  const pinchRef = useRef<{ startDistance: number; startZoom: number } | null>(null);
+
+  useEffect(() => {
+    treeZoomRef.current = treeZoom;
+  }, [treeZoom]);
+
+  const clampTreeZoom = useCallback((zoom: number): number => {
+    return Math.max(MIN_TREE_ZOOM, Math.min(MAX_TREE_ZOOM, zoom));
+  }, []);
+
+  const applyTreeZoomAtPoint = useCallback((nextZoom: number, clientX: number, clientY: number) => {
+    const container = treeContainerRef.current;
+    if (!container) {
+      setTreeZoom(nextZoom);
+      return;
+    }
+
+    const prevZoom = treeZoomRef.current;
+    const rect = container.getBoundingClientRect();
+    const pointX = clientX - rect.left;
+    const pointY = clientY - rect.top;
+    const contentX = (container.scrollLeft + pointX) / prevZoom;
+    const contentY = (container.scrollTop + pointY) / prevZoom;
+
+    setTreeZoom(nextZoom);
+
+    requestAnimationFrame(() => {
+      const latestContainer = treeContainerRef.current;
+      if (!latestContainer) return;
+      latestContainer.scrollLeft = contentX * nextZoom - pointX;
+      latestContainer.scrollTop = contentY * nextZoom - pointY;
+    });
+  }, []);
+
+  const zoomTreeByStep = useCallback((delta: number) => {
+    const currentZoom = treeZoomRef.current;
+    const nextZoom = clampTreeZoom(currentZoom + delta);
+    if (nextZoom === currentZoom) return;
+
+    const container = treeContainerRef.current;
+    if (!container) {
+      setTreeZoom(nextZoom);
+      return;
+    }
+
+    const rect = container.getBoundingClientRect();
+    applyTreeZoomAtPoint(
+      nextZoom,
+      rect.left + container.clientWidth / 2,
+      rect.top + container.clientHeight / 2,
+    );
+  }, [applyTreeZoomAtPoint, clampTreeZoom]);
+
+  const handleTreeWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    e.preventDefault();
+
+    const currentZoom = treeZoomRef.current;
+    const nextZoom = clampTreeZoom(currentZoom + (e.deltaY < 0 ? TREE_ZOOM_STEP : -TREE_ZOOM_STEP));
+    if (nextZoom === currentZoom) return;
+    applyTreeZoomAtPoint(nextZoom, e.clientX, e.clientY);
+  }, [applyTreeZoomAtPoint, clampTreeZoom]);
+
+  const handleTreeTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length !== 2) {
+      pinchRef.current = null;
+      return;
+    }
+
+    const [t1, t2] = [e.touches[0], e.touches[1]];
+    pinchRef.current = {
+      startDistance: Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY),
+      startZoom: treeZoomRef.current,
+    };
+  }, []);
+
+  const handleTreeTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length !== 2 || !pinchRef.current) return;
+
+    const [t1, t2] = [e.touches[0], e.touches[1]];
+    const distance = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+    if (pinchRef.current.startDistance < 1) return;
+
+    e.preventDefault();
+
+    const nextZoom = clampTreeZoom(
+      pinchRef.current.startZoom * (distance / pinchRef.current.startDistance),
+    );
+    const midX = (t1.clientX + t2.clientX) / 2;
+    const midY = (t1.clientY + t2.clientY) / 2;
+    applyTreeZoomAtPoint(nextZoom, midX, midY);
+  }, [applyTreeZoomAtPoint, clampTreeZoom]);
+
+  const handleTreeTouchEnd = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length < 2) pinchRef.current = null;
+  }, []);
 
   // ── Data fetch ─────────────────────────────────────────────────────────────
 
@@ -536,6 +637,36 @@ const PlayersPage: React.FC = () => {
               Players at the top joined without a referral — they're the originals.
             </p>
 
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => zoomTreeByStep(-TREE_ZOOM_STEP)}
+                className="px-3 py-1.5 text-sm border border-gray-200 rounded-md bg-white text-gray-700 hover:bg-gray-50"
+                aria-label="Zoom out family tree"
+              >
+                -
+              </button>
+              <button
+                type="button"
+                onClick={() => setTreeZoom(1)}
+                className="px-3 py-1.5 text-sm border border-gray-200 rounded-md bg-white text-gray-700 hover:bg-gray-50"
+                aria-label="Reset family tree zoom"
+              >
+                {Math.round(treeZoom * 100)}%
+              </button>
+              <button
+                type="button"
+                onClick={() => zoomTreeByStep(TREE_ZOOM_STEP)}
+                className="px-3 py-1.5 text-sm border border-gray-200 rounded-md bg-white text-gray-700 hover:bg-gray-50"
+                aria-label="Zoom in family tree"
+              >
+                +
+              </button>
+              <p className="text-xs text-gray-500">
+                Pinch on touch. Use Ctrl/Cmd + mouse wheel on desktop.
+              </p>
+            </div>
+
             {treeNodes.length === 0 ? (
               <p className="p-8 text-center text-gray-500 text-sm bg-white border border-gray-200 rounded-xl shadow-sm">
                 No players to display.
@@ -547,97 +678,114 @@ const PlayersPage: React.FC = () => {
                 style={{ maxHeight: '70vh' }}
                 role="img"
                 aria-label="Family tree showing player connections"
+                onWheel={handleTreeWheel}
               >
-                <div style={{ position: 'relative', width: svgW, height: svgH }}>
-
-                  {/* SVG edges */}
-                  <svg
-                    style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
-                    width={svgW}
-                    height={svgH}
-                    aria-hidden="true"
+                <div
+                  style={{ position: 'relative', width: svgW * treeZoom, height: svgH * treeZoom }}
+                  onTouchStart={handleTreeTouchStart}
+                  onTouchMove={handleTreeTouchMove}
+                  onTouchEnd={handleTreeTouchEnd}
+                  onTouchCancel={handleTreeTouchEnd}
+                >
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: svgW,
+                      height: svgH,
+                      transform: `scale(${treeZoom})`,
+                      transformOrigin: 'top left',
+                    }}
                   >
-                    <defs>
-                      <marker
-                        id="arrowhead"
-                        markerWidth="6"
-                        markerHeight="6"
-                        refX="3"
-                        refY="3"
-                        orient="auto"
-                      >
-                        <path d="M0,0 L0,6 L6,3 z" fill="#d1d5db" />
-                      </marker>
-                    </defs>
-                    {treeEdges.map((edge, i) => {
-                      const midY = (edge.y1 + edge.y2) / 2;
+
+                    {/* SVG edges */}
+                    <svg
+                      style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
+                      width={svgW}
+                      height={svgH}
+                      aria-hidden="true"
+                    >
+                      <defs>
+                        <marker
+                          id="arrowhead"
+                          markerWidth="6"
+                          markerHeight="6"
+                          refX="3"
+                          refY="3"
+                          orient="auto"
+                        >
+                          <path d="M0,0 L0,6 L6,3 z" fill="#d1d5db" />
+                        </marker>
+                      </defs>
+                      {treeEdges.map((edge, i) => {
+                        const midY = (edge.y1 + edge.y2) / 2;
+                        return (
+                          <path
+                            key={i}
+                            d={`M ${edge.x1} ${edge.y1} C ${edge.x1} ${midY}, ${edge.x2} ${midY}, ${edge.x2} ${edge.y2}`}
+                            fill="none"
+                            stroke="#d1d5db"
+                            strokeWidth={1.5}
+                            markerEnd="url(#arrowhead)"
+                          />
+                        );
+                      })}
+                    </svg>
+
+                    {/* Player cards */}
+                    {treeNodes.map(node => {
+                      const p = node.player;
+                      const highlighted = isHighlighted(p);
+                      const dimmed = treeSearchQ !== '' && !highlighted;
                       return (
-                        <path
-                          key={i}
-                          d={`M ${edge.x1} ${edge.y1} C ${edge.x1} ${midY}, ${edge.x2} ${midY}, ${edge.x2} ${edge.y2}`}
-                          fill="none"
-                          stroke="#d1d5db"
-                          strokeWidth={1.5}
-                          markerEnd="url(#arrowhead)"
-                        />
+                        <div
+                          key={p.playerId}
+                          style={{
+                            position: 'absolute',
+                            left: node.x - NODE_W / 2,
+                            top: node.y,
+                            width: NODE_W,
+                            height: NODE_H,
+                            opacity: dimmed ? 0.25 : 1,
+                            transition: 'opacity 0.2s',
+                          }}
+                        >
+                          <Link
+                            to={`/player/${p.playerId}`}
+                            className={`flex items-center gap-2.5 w-full h-full px-3 rounded-xl border shadow-sm bg-white hover:shadow-md hover:border-villageGreen transition-all ${
+                              p.isActive ? 'border-gray-200' : 'border-dashed border-gray-300'
+                            } ${highlighted && treeSearchQ ? 'ring-2 ring-villageGreen ring-offset-1' : ''}`}
+                            title={`${p.firstName} ${p.surname}${p.clubConnection ? ` · introduced by ${p.clubConnection.firstName ?? ''} ${p.clubConnection.surname ?? ''}` : ' · founder member'}`}
+                          >
+                            {/* Avatar */}
+                            <span
+                              className={`inline-flex items-center justify-center w-9 h-9 rounded-full text-white text-xs font-bold flex-shrink-0 ${avatarColour(p.playerId ?? undefined)} ${p.isActive ? '' : 'opacity-60'}`}
+                              aria-hidden="true"
+                            >
+                              {initials(p.firstName, p.surname)}
+                            </span>
+
+                            {/* Name + meta */}
+                            <div className="min-w-0 flex-1">
+                              <div className="font-semibold text-gray-900 text-sm truncate leading-tight">
+                                {p.firstName} {p.surname}
+                              </div>
+                              <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                                {p.playingRole && (
+                                  <span className={`text-xs px-1.5 py-0 rounded-full font-medium ${roleBadgeClass(p.playingRole)}`}>
+                                    {p.playingRole}
+                                  </span>
+                                )}
+                                <span className="text-xs text-gray-400">{p.matches ?? 0}m</span>
+                                {!p.isActive && (
+                                  <span className="text-xs text-gray-400 italic">former</span>
+                                )}
+                              </div>
+                            </div>
+                          </Link>
+                        </div>
                       );
                     })}
-                  </svg>
-
-                  {/* Player cards */}
-                  {treeNodes.map(node => {
-                    const p = node.player;
-                    const highlighted = isHighlighted(p);
-                    const dimmed = treeSearchQ !== '' && !highlighted;
-                    return (
-                      <div
-                        key={p.playerId}
-                        style={{
-                          position: 'absolute',
-                          left: node.x - NODE_W / 2,
-                          top: node.y,
-                          width: NODE_W,
-                          height: NODE_H,
-                          opacity: dimmed ? 0.25 : 1,
-                          transition: 'opacity 0.2s',
-                        }}
-                      >
-                        <Link
-                          to={`/player/${p.playerId}`}
-                          className={`flex items-center gap-2.5 w-full h-full px-3 rounded-xl border shadow-sm bg-white hover:shadow-md hover:border-villageGreen transition-all ${
-                            p.isActive ? 'border-gray-200' : 'border-dashed border-gray-300'
-                          } ${highlighted && treeSearchQ ? 'ring-2 ring-villageGreen ring-offset-1' : ''}`}
-                          title={`${p.firstName} ${p.surname}${p.clubConnection ? ` · introduced by ${p.clubConnection.firstName ?? ''} ${p.clubConnection.surname ?? ''}` : ' · founder member'}`}
-                        >
-                          {/* Avatar */}
-                          <span
-                            className={`inline-flex items-center justify-center w-9 h-9 rounded-full text-white text-xs font-bold flex-shrink-0 ${avatarColour(p.playerId ?? undefined)} ${p.isActive ? '' : 'opacity-60'}`}
-                            aria-hidden="true"
-                          >
-                            {initials(p.firstName, p.surname)}
-                          </span>
-
-                          {/* Name + meta */}
-                          <div className="min-w-0 flex-1">
-                            <div className="font-semibold text-gray-900 text-sm truncate leading-tight">
-                              {p.firstName} {p.surname}
-                            </div>
-                            <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                              {p.playingRole && (
-                                <span className={`text-xs px-1.5 py-0 rounded-full font-medium ${roleBadgeClass(p.playingRole)}`}>
-                                  {p.playingRole}
-                                </span>
-                              )}
-                              <span className="text-xs text-gray-400">{p.matches ?? 0}m</span>
-                              {!p.isActive && (
-                                <span className="text-xs text-gray-400 italic">former</span>
-                              )}
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    );
-                  })}
+                  </div>
                 </div>
               </div>
             )}
