@@ -224,6 +224,70 @@ function getNextStateScreen(nextState: string | null | undefined): Screen {
 }
 
 // ---------------------------------------------------------------------------
+// Format a WicketV1 (server type) into a human-readable dismissal string
+// (used to display historical dismissals from liveScorecard)
+// ---------------------------------------------------------------------------
+
+function formatWicketV1(wicket: components['schemas']['WicketV1']): string {
+  const mode = wicket.modeOfDismissal;
+  if (mode === 'CaughtAndBowled') return `c&b ${wicket.bowler ?? ''}`.trim();
+  if (mode === 'Caught') {
+    if (!wicket.fielder || wicket.fielder === wicket.bowler) return `c&b ${wicket.bowler ?? ''}`.trim();
+    return `ct. ${wicket.fielder} b. ${wicket.bowler ?? ''}`.trim();
+  }
+  if (mode === 'Bowled') return `b. ${wicket.bowler ?? ''}`.trim();
+  if (mode === 'LBW') return `lbw b. ${wicket.bowler ?? ''}`.trim();
+  if (mode === 'Stumped') return `st. ${wicket.fielder ?? ''} b. ${wicket.bowler ?? ''}`.trim();
+  if (mode === 'RunOut') return wicket.fielder ? `run out (${wicket.fielder})` : 'run out';
+  if (mode === 'HitWicket') return 'hit wicket';
+  if (mode === 'RetiredHurt') return 'retired hurt';
+  if (mode === 'Retired') return 'retired';
+  return 'out';
+}
+
+// ---------------------------------------------------------------------------
+// Recompute local player + striker state from a fresh set of over balls.
+// Used when a ball is edited to recalculate state from scratch.
+// ---------------------------------------------------------------------------
+
+function recomputeOverState(
+  startPlayers: PlayerStateV1[],
+  startStrikerId: number | null,
+  balls: LocalBall[],
+): { players: PlayerStateV1[]; onStrikeBatsmanId: number | null } {
+  let players = startPlayers.map(p => ({ ...p }));
+  let strikerId = startStrikerId;
+
+  for (const ball of balls) {
+    if (ball.wicket) {
+      const maxPos = Math.max(...players.map(pp => pp.position ?? 0), 0);
+      players = players.map(p => {
+        if (p.playerId === ball.wicket!.playerId) return { ...p, state: 'Out' };
+        if (p.playerId === ball.wicket!.nextManInId && ball.wicket!.nextManInId > 0)
+          return { ...p, state: 'Batting', position: maxPos + 1 };
+        return p;
+      });
+    }
+
+    if (shouldSwitchStriker(ball)) {
+      if (ball.wicket && ball.wicket.nextManInId > 0 && strikerId === ball.wicket.playerId) {
+        strikerId = ball.wicket.nextManInId;
+      } else if (!ball.wicket) {
+        const battingNow = players.filter(p => p.state === 'Batting');
+        const other = battingNow.find(p => p.playerId !== strikerId);
+        if (other) strikerId = other.playerId ?? null;
+      }
+    } else if (ball.wicket) {
+      if (strikerId === ball.wicket.playerId && ball.wicket.nextManInId > 0) {
+        strikerId = ball.wicket.nextManInId;
+      }
+    }
+  }
+
+  return { players, onStrikeBatsmanId: strikerId };
+}
+
+// ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
 
@@ -611,8 +675,29 @@ const LiveScoring: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Wide-viewport right panel tab
-  const [rightPanelTab, setRightPanelTab] = useState<'currentOver' | 'scorecard'>('currentOver');
+  // Wide-viewport right panel tab ('endOver' replaces full-screen endOver on md+)
+  const [rightPanelTab, setRightPanelTab] = useState<'currentOver' | 'scorecard' | 'endOver'>('currentOver');
+
+  // Mobile tab – switches between scoring input, current over detail, and scorecard
+  const [mobileTab, setMobileTab] = useState<'scoring' | 'currentOver' | 'scorecard'>('scoring');
+
+  // State snapshot at the start of the current over (for ball-edit recomputation)
+  const [overStartPlayers, setOverStartPlayers] = useState<PlayerStateV1[]>([]);
+  const [overStartStrikerId, setOverStartStrikerId] = useState<number | null>(null);
+
+  // Ball editing state
+  const [editingBallIndex, setEditingBallIndex] = useState<number | null>(null);
+  const [editAmount, setEditAmount] = useState<string>('0');
+  const [editThing, setEditThing] = useState<string>('');
+  const [editWicketCode, setEditWicketCode] = useState<string>('');
+  const [editWicketFielder, setEditWicketFielder] = useState<string>('');
+  const [editWicketCrossed, setEditWicketCrossed] = useState<boolean>(false);
+  const [editWicketOutId, setEditWicketOutId] = useState<number | null>(null);
+  const [editWicketNextManId, setEditWicketNextManId] = useState<number>(-1);
+  const [editWicketDesc, setEditWicketDesc] = useState<string>('');
+
+  // Viewport detection (true when viewport is md+ / ≥768 px)
+  const [isWide, setIsWide] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 768);
 
   // Abandon match dialog state
   const [showAbandonDialog, setShowAbandonDialog] = useState(false);
@@ -673,6 +758,9 @@ const LiveScoring: React.FC = () => {
     setWaitingForBallType(false);
     setShowFivePlus(false);
     setShowWagonWheel(false);
+    setOverStartPlayers([]);
+    setOverStartStrikerId(null);
+    setRightPanelTab('currentOver');
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -838,6 +926,16 @@ const LiveScoring: React.FC = () => {
     setWaitingForBallType(false);
     setShowFivePlus(false);
     setShowWagonWheel(false);
+
+    // Snapshot the over-start state so ball edits can recompute correctly
+    setOverStartPlayers(newPlayers.map(p => ({ ...p })));
+    const startStriker = (showBatsmanSelects && strikerBatsmanId)
+      ? strikerBatsmanId
+      : (matchState?.onStrikeBatsmanId ?? null);
+    setOverStartStrikerId(startStriker);
+
+    setRightPanelTab('currentOver');
+    setMobileTab('scoring');
     setScreen('scoring');
   }, [isNewOverValid, showToast, matchState, showBatsmanSelects, strikerBatsmanId, nonStrikerBatsmanId, selectedBowler]);
 
@@ -981,7 +1079,9 @@ const LiveScoring: React.FC = () => {
           if (batters.length >= 2) {
             const currentStriker = localOnStrikeBatsmanId;
             const other = batters.find(p => p.playerId !== currentStriker);
-            if (other) setLocalOnStrikeBatsmanId(other.playerId ?? null);
+            if (other) {
+              setLocalOnStrikeBatsmanId(other.playerId ?? null);
+            }
           }
           return prev2;
         });
@@ -1019,8 +1119,13 @@ const LiveScoring: React.FC = () => {
       return;
     }
     setEndOverCommentary('');
-    setScreen('endOver');
-  }, [waitingForBallType, showToast]);
+    if (isWide) {
+      // On wide viewports keep the scoring layout; show end-over form in right panel
+      setRightPanelTab('endOver');
+    } else {
+      setScreen('endOver');
+    }
+  }, [waitingForBallType, showToast, isWide]);
 
   const handleSwitchStriker = useCallback((playerId: number) => {
     if (playerId === localOnStrikeBatsmanId) return;
@@ -1037,6 +1142,75 @@ const LiveScoring: React.FC = () => {
     setShowBatsmanSelects(false);
     setScreen('newOver');
   }, [matchState]);
+
+  // ---------------------------------------------------------------------------
+  // Ball editing handlers
+  // ---------------------------------------------------------------------------
+
+  const handleOpenBallEdit = useCallback((index: number) => {
+    const ball = localBalls[index];
+    setEditingBallIndex(index);
+    setEditAmount(String(ball.amount));
+    setEditThing(ball.thing);
+    if (ball.wicket) {
+      const mode = DISMISSAL_MODES.find(m => m.value === ball.wicket!.modeOfDismissal);
+      setEditWicketCode(mode?.code ?? '');
+      setEditWicketFielder(ball.wicket.fielder ?? '');
+      setEditWicketCrossed(ball.wicket.batsmenCrossed);
+      setEditWicketOutId(ball.wicket.playerId);
+      setEditWicketNextManId(ball.wicket.nextManInId);
+      setEditWicketDesc(ball.wicket.description ?? '');
+    } else {
+      setEditWicketCode('');
+      setEditWicketFielder('');
+      setEditWicketCrossed(false);
+      setEditWicketOutId(null);
+      setEditWicketNextManId(-1);
+      setEditWicketDesc('');
+    }
+  }, [localBalls]);
+
+  const handleSaveBallEdit = useCallback(() => {
+    if (editingBallIndex === null) return;
+    const original = localBalls[editingBallIndex];
+    const amount = parseInt(editAmount, 10);
+    const safeAmount = isNaN(amount) ? 0 : Math.max(0, amount);
+
+    let wicket: LocalWicket | null = original.wicket ?? null;
+    if (wicket && editWicketCode) {
+      const mode = DISMISSAL_MODES.find(m => m.code === editWicketCode);
+      if (mode) {
+        wicket = {
+          ...wicket,
+          modeOfDismissal: mode.value,
+          fielder: editWicketFielder,
+          batsmenCrossed: editWicketCrossed,
+          nextManInId: editWicketNextManId,
+          description: editWicketDesc,
+        };
+      }
+    }
+
+    const newBall: LocalBall = { ...original, amount: safeAmount, thing: editThing, wicket };
+    const newBalls = [...localBalls];
+    newBalls[editingBallIndex] = newBall;
+
+    // Recompute full over state from the snapshot taken at over start
+    const { players: newPlayers, onStrikeBatsmanId: newStrikerId } = recomputeOverState(
+      overStartPlayers,
+      overStartStrikerId,
+      newBalls,
+    );
+
+    setLocalBalls(newBalls);
+    setLocalPlayers(newPlayers);
+    setLocalOnStrikeBatsmanId(newStrikerId);
+    setEditingBallIndex(null);
+  }, [
+    editingBallIndex, localBalls, editAmount, editThing,
+    editWicketCode, editWicketFielder, editWicketCrossed, editWicketNextManId, editWicketDesc,
+    overStartPlayers, overStartStrikerId,
+  ]);
 
   // ---------------------------------------------------------------------------
   // Wicket screen handlers
@@ -1079,6 +1253,7 @@ const LiveScoring: React.FC = () => {
     };
 
     addBall(runsForBall, runType, wicket);
+    setMobileTab('scoring');
     setScreen('scoring');
   }, [
     isWicketValid, showToast, localPlayers, wicketBatterOutId, wicketDismissalCode,
@@ -1247,6 +1422,19 @@ const LiveScoring: React.FC = () => {
       setIsAbandoning(false);
     }
   }, [selectedMatchId, abandonReason]);
+
+  // ---------------------------------------------------------------------------
+  // Viewport detection
+  // ---------------------------------------------------------------------------
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(min-width: 768px)');
+    setIsWide(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsWide(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   // ---------------------------------------------------------------------------
   // Computed values for scoring screen
@@ -1845,6 +2033,13 @@ const LiveScoring: React.FC = () => {
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${label.length >= 3 ? 'text-[9px]' : 'text-xs'} font-bold ${ballClass}`}>
                   {label}
                 </div>
+                <button
+                  onClick={() => handleOpenBallEdit(i)}
+                  className="flex-shrink-0 p-1 text-gray-300 hover:text-villageGreen transition-colors mt-0.5"
+                  aria-label={`Edit ball ${ballRef}`}
+                >
+                  <span className="material-symbols-outlined text-base leading-none">edit</span>
+                </button>
               </div>
             );
           })}
@@ -1878,7 +2073,16 @@ const LiveScoring: React.FC = () => {
               {allBattersForScorecard.map((player) => {
                 const isOnStrike2 = player.playerId === strikerId && player.state === 'Batting';
                 const isOut2 = player.state === 'Out';
-                const dismissalWicket = isOut2 ? wicketMap.get(player.playerId!) : undefined;
+                // Dismissal: first check current-over wickets, then historical from liveScorecard
+                const currentOverWicket = isOut2 ? wicketMap.get(player.playerId!) : undefined;
+                const historicEntry = isOut2 && !currentOverWicket
+                  ? matchState?.liveScorecard?.inPlayData?.liveBattingCard?.players?.[String(player.playerId!)]
+                  : undefined;
+                const dismissalText = currentOverWicket
+                  ? formatLocalWicket(currentOverWicket)
+                  : historicEntry?.wicket
+                    ? formatWicketV1(historicEntry.wicket)
+                    : null;
                 return (
                   <tr
                     key={player.playerId}
@@ -1896,9 +2100,9 @@ const LiveScoring: React.FC = () => {
                           {player.playerName ?? '[?]'}
                         </span>
                       </div>
-                      {isOut2 && dismissalWicket && (
+                      {isOut2 && dismissalText && (
                         <div className="text-xs text-gray-400 italic ml-5 truncate max-w-[130px]">
-                          {formatLocalWicket(dismissalWicket)}
+                          {dismissalText}
                         </div>
                       )}
                     </td>
@@ -1952,7 +2156,12 @@ const LiveScoring: React.FC = () => {
                       <td className="py-2 px-1 text-right text-gray-600">{bdOvers}</td>
                       <td className="py-2 px-1 text-right text-gray-600">{bdMaidens}</td>
                       <td className="py-2 px-1 text-right text-gray-600">{bdRuns}</td>
-                      <td className="py-2 px-2 text-right text-gray-600">{bdWickets}</td>
+                      <td className="py-2 px-1 text-right text-gray-600">{bdWickets}</td>
+                      <td className="py-2 px-2 text-right">
+                        <button onClick={handleChangeBowler} className="text-gray-400 hover:text-villageGreen transition-colors">
+                          <span className="material-symbols-outlined text-base leading-none">edit</span>
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -1960,6 +2169,87 @@ const LiveScoring: React.FC = () => {
             </table>
           </div>
         )}
+      </div>
+    );
+
+    // ---- End Over panel (shown in right panel on md+) ----
+    const renderEndOverPanel = () => (
+      <div className="flex flex-col h-full">
+        <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            End of Over {overNum}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => { setAbandonReason(''); setAbandonError(null); setShowAbandonDialog(true); }}
+              className="p-1 rounded hover:bg-amber-50 transition-colors"
+              aria-label="Abandon match"
+              title="Abandon match"
+            >
+              <span className="material-symbols-outlined text-xl leading-none text-amber-400">dangerous</span>
+            </button>
+            <button
+              onClick={() => setRightPanelTab('currentOver')}
+              className="p-1 rounded hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
+              aria-label="Cancel end over"
+            >
+              <span className="material-symbols-outlined text-xl leading-none">close</span>
+            </button>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto relative">
+          {renderLoadingOverlay()}
+          <div className="p-4 space-y-4">
+            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              {localBalls.map((ball, i) => {
+                const legalCount3 = localBalls.slice(0, i + 1).filter(isLegalDelivery).length;
+                const ballLabel3 = isLegalDelivery(ball) ? `${overNum}.${legalCount3}` : `${overNum}.${legalCount3}*`;
+                const { label: lbl } = getBallLabel(ball);
+                return (
+                  <div key={i} className={`flex items-center px-4 py-2.5 ${i < localBalls.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                    <span className="text-xs font-mono text-gray-400 w-10 flex-shrink-0">{ballLabel3}</span>
+                    <div className="flex-1 ml-2">
+                      <p className="text-xs text-gray-500">{ball.bowlerName} → {ball.batsmanName}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {ball.wicket
+                          ? <span className="text-red-600 font-bold">OUT! {ball.wicket.playerName}</span>
+                          : `${lbl === '·' ? 'No run' : lbl + (ball.thing ? ` (${ball.thing})` : ' runs')}`}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => { setRightPanelTab('currentOver'); handleOpenBallEdit(i); }}
+                      className="p-1 text-gray-300 hover:text-villageGreen transition-colors flex-shrink-0"
+                      aria-label="Edit ball"
+                    >
+                      <span className="material-symbols-outlined text-base leading-none">edit</span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 block">Commentary</label>
+              <textarea
+                placeholder="Talk us through it champ..."
+                value={endOverCommentary}
+                onChange={e => setEndOverCommentary(e.target.value)}
+                rows={3}
+                className="w-full text-sm text-gray-900 outline-none resize-none"
+              />
+            </div>
+            <button
+              onClick={handleEndOverConfirm}
+              disabled={isLoading}
+              className="w-full py-3 bg-villageGreen text-white rounded-xl font-semibold text-sm hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Submitting…</>
+              ) : (
+                <><span className="material-symbols-outlined text-lg leading-none">done</span>Submit Over</>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
     );
 
@@ -2060,6 +2350,46 @@ const LiveScoring: React.FC = () => {
                   )}
                 </div>
               )}
+
+              {/* ── Mobile tab strip (hidden on md+) ── */}
+              <div className="md:hidden flex border-b border-gray-200 bg-gray-50">
+                {(['scoring', 'currentOver', 'scorecard'] as const).map(tab => {
+                  const icons = { scoring: 'sports_cricket', currentOver: 'format_list_bulleted', scorecard: 'table_chart' };
+                  const labels = { scoring: 'Score', currentOver: 'Over', scorecard: 'Card' };
+                  const isActive = mobileTab === tab;
+                  return (
+                    <button
+                      key={tab}
+                      onClick={() => setMobileTab(tab)}
+                      className={`flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-[10px] font-medium border-b-2 transition-colors ${
+                        isActive
+                          ? 'text-villageGreen border-villageGreen bg-white'
+                          : 'text-gray-400 border-transparent hover:text-gray-600'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-base leading-none">{icons[tab]}</span>
+                      {labels[tab]}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* ── Mobile: current over panel ── */}
+              {mobileTab === 'currentOver' && (
+                <div className="md:hidden">
+                  {renderCurrentOverPanel()}
+                </div>
+              )}
+
+              {/* ── Mobile: scorecard panel ── */}
+              {mobileTab === 'scorecard' && (
+                <div className="md:hidden">
+                  {renderScorecardPanel()}
+                </div>
+              )}
+
+              {/* ── Scoring content (always on md+, mobile 'scoring' tab only) ── */}
+              <div className={mobileTab !== 'scoring' ? 'hidden md:block' : ''}>
 
               {/* Batting / Bowling table */}
               <div className="overflow-x-auto border-b border-gray-200">
@@ -2178,10 +2508,11 @@ const LiveScoring: React.FC = () => {
                   ),
                 )}
               </div>
+              </div>{/* end scoring content wrapper */}
             </div>
 
             {/* Scoring buttons – flow directly after the over strip */}
-            <div className="p-3 space-y-2 border-t border-gray-100">
+            <div className={`p-3 space-y-2 border-t border-gray-100 ${mobileTab !== 'scoring' ? 'hidden md:block' : ''}`}>
               {/* Row 1: 0, 1/5, 2/7, 3/8, undo */}
               <div className="grid grid-cols-5 gap-2">
                 <RunCircleButton
@@ -2291,36 +2622,193 @@ const LiveScoring: React.FC = () => {
           <div className="hidden md:flex flex-1 flex-col bg-white overflow-hidden">
             {/* Tab bar */}
             <div className="flex border-b border-gray-200 bg-gray-50 flex-shrink-0">
-              <button
-                onClick={() => setRightPanelTab('currentOver')}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium border-b-2 transition-colors ${
-                  rightPanelTab === 'currentOver'
-                    ? 'text-villageGreen border-villageGreen bg-white'
-                    : 'text-gray-500 border-transparent hover:text-gray-700'
-                }`}
-              >
-                <span className="material-symbols-outlined text-base leading-none">sports_cricket</span>
-                Current Over
-              </button>
-              <button
-                onClick={() => setRightPanelTab('scorecard')}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium border-b-2 transition-colors ${
-                  rightPanelTab === 'scorecard'
-                    ? 'text-villageGreen border-villageGreen bg-white'
-                    : 'text-gray-500 border-transparent hover:text-gray-700'
-                }`}
-              >
-                <span className="material-symbols-outlined text-base leading-none">table_chart</span>
-                Scorecard
-              </button>
+              {rightPanelTab !== 'endOver' ? (
+                <>
+                  <button
+                    onClick={() => setRightPanelTab('currentOver')}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium border-b-2 transition-colors ${
+                      rightPanelTab === 'currentOver'
+                        ? 'text-villageGreen border-villageGreen bg-white'
+                        : 'text-gray-500 border-transparent hover:text-gray-700'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-base leading-none">sports_cricket</span>
+                    Current Over
+                  </button>
+                  <button
+                    onClick={() => setRightPanelTab('scorecard')}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium border-b-2 transition-colors ${
+                      rightPanelTab === 'scorecard'
+                        ? 'text-villageGreen border-villageGreen bg-white'
+                        : 'text-gray-500 border-transparent hover:text-gray-700'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-base leading-none">table_chart</span>
+                    Scorecard
+                  </button>
+                </>
+              ) : (
+                <div className="flex-1 flex items-center justify-center py-3 gap-2">
+                  <span className="material-symbols-outlined text-base leading-none text-villageGreen">done_all</span>
+                  <span className="text-sm font-semibold text-villageGreen">End of Over {overNum}</span>
+                </div>
+              )}
             </div>
             {/* Tab content */}
             <div className="flex-1 overflow-y-auto">
-              {rightPanelTab === 'currentOver' ? renderCurrentOverPanel() : renderScorecardPanel()}
+              {rightPanelTab === 'currentOver' && renderCurrentOverPanel()}
+              {rightPanelTab === 'scorecard' && renderScorecardPanel()}
+              {rightPanelTab === 'endOver' && renderEndOverPanel()}
             </div>
           </div>
 
         </div>
+
+        {/* Ball edit modal */}
+        {editingBallIndex !== null && (() => {
+          const editingBall = localBalls[editingBallIndex];
+          const editDismissalMode = DISMISSAL_MODES.find(m => m.code === editWicketCode);
+          const battingForEdit = localPlayers.filter(p => p.state === 'Batting' || (p.state === 'Out'));
+          const waitingForEdit = localPlayers.filter(p => p.state === 'Waiting');
+          const legalCount2 = localBalls.slice(0, editingBallIndex + 1).filter(isLegalDelivery).length;
+          const ballRef2 = isLegalDelivery(editingBall) ? `${overNum}.${legalCount2}` : `${overNum}.${legalCount2}*`;
+          return (
+            <div className="absolute inset-0 bg-black/60 z-30 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+                <div className="flex items-center px-4 py-3 bg-villageGreen text-white flex-shrink-0">
+                  <span className="flex-1 text-sm font-semibold">Edit Ball {ballRef2}</span>
+                  <button onClick={() => setEditingBallIndex(null)} className="p-1 hover:bg-white/20 rounded-full transition-colors">
+                    <span className="material-symbols-outlined text-lg leading-none">close</span>
+                  </button>
+                </div>
+                <div className="overflow-y-auto flex-1">
+                  <div className="divide-y divide-gray-100">
+                    {/* Runs */}
+                    <div className="flex items-center px-4 py-3">
+                      <label className="w-28 text-sm text-gray-600 flex-shrink-0">Runs / Amount</label>
+                      <input
+                        type="number"
+                        min={0}
+                        max={9}
+                        value={editAmount}
+                        onChange={e => setEditAmount(e.target.value)}
+                        className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                      />
+                    </div>
+                    {/* Type */}
+                    <div className="flex items-center px-4 py-3">
+                      <label className="w-28 text-sm text-gray-600 flex-shrink-0">Type</label>
+                      <select
+                        value={editThing}
+                        onChange={e => setEditThing(e.target.value)}
+                        className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                      >
+                        <option value="">Normal runs</option>
+                        <option value="wd">Wide</option>
+                        <option value="nb">No Ball</option>
+                        <option value="b">Bye</option>
+                        <option value="lb">Leg Bye</option>
+                      </select>
+                    </div>
+                    {/* Wicket fields (only when ball already has a wicket) */}
+                    {editingBall.wicket && (
+                      <>
+                        <div className="px-4 py-2 bg-red-50">
+                          <p className="text-xs font-semibold text-red-600 uppercase tracking-wide">Wicket Details</p>
+                        </div>
+                        <div className="flex items-center px-4 py-3">
+                          <label className="w-28 text-sm text-gray-600 flex-shrink-0">Batsman out</label>
+                          <select
+                            value={editWicketOutId ?? ''}
+                            onChange={e => setEditWicketOutId(e.target.value ? Number(e.target.value) : null)}
+                            className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                          >
+                            {battingForEdit.map(p => (
+                              <option key={p.playerId} value={p.playerId!}>{p.playerName}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="flex items-center px-4 py-3">
+                          <label className="w-28 text-sm text-gray-600 flex-shrink-0">Dismissal</label>
+                          <select
+                            value={editWicketCode}
+                            onChange={e => setEditWicketCode(e.target.value)}
+                            className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                          >
+                            <option value="">Select…</option>
+                            {DISMISSAL_MODES.map(m => (
+                              <option key={m.code} value={m.code}>{m.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                        {editDismissalMode?.hasFielder && (
+                          <div className="flex items-center px-4 py-3">
+                            <label className="w-28 text-sm text-gray-600 flex-shrink-0">Fielder</label>
+                            <input
+                              type="text"
+                              value={editWicketFielder}
+                              onChange={e => setEditWicketFielder(e.target.value)}
+                              className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                            />
+                          </div>
+                        )}
+                        {editDismissalMode?.hasCrossed && (
+                          <div className="flex items-center px-4 py-3">
+                            <label className="w-28 text-sm text-gray-600 flex-shrink-0">Crossed?</label>
+                            <select
+                              value={editWicketCrossed ? 'true' : 'false'}
+                              onChange={e => setEditWicketCrossed(e.target.value === 'true')}
+                              className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                            >
+                              <option value="false">No</option>
+                              <option value="true">Yes</option>
+                            </select>
+                          </div>
+                        )}
+                        <div className="flex items-center px-4 py-3">
+                          <label className="w-28 text-sm text-gray-600 flex-shrink-0">Next in</label>
+                          <select
+                            value={editWicketNextManId}
+                            onChange={e => setEditWicketNextManId(Number(e.target.value))}
+                            className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                          >
+                            <option value={-1}>{waitingForEdit.length === 0 ? 'Last wicket' : 'Select…'}</option>
+                            {waitingForEdit.map(p => (
+                              <option key={p.playerId} value={p.playerId!}>{p.playerName}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="flex items-start px-4 py-3">
+                          <label className="w-28 text-sm text-gray-600 flex-shrink-0 pt-0.5">Note</label>
+                          <textarea
+                            value={editWicketDesc}
+                            onChange={e => setEditWicketDesc(e.target.value)}
+                            rows={2}
+                            className="flex-1 text-sm text-gray-900 bg-transparent outline-none resize-none"
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-3 p-4 border-t border-gray-100 flex-shrink-0">
+                  <button
+                    onClick={() => setEditingBallIndex(null)}
+                    className="flex-1 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveBallEdit}
+                    className="flex-1 py-2.5 bg-villageGreen text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Wagon Wheel Overlay */}
         {showWagonWheel && (() => {
@@ -2333,14 +2821,14 @@ const LiveScoring: React.FC = () => {
                 <h2 className="text-sm font-semibold text-gray-700 text-center mb-3 uppercase tracking-wide">
                   Shot Location
                 </h2>
-                 <WagonWheelInput
-                   batsmanName={lastBall?.batsmanName ?? ''}
-                   amount={lastBall?.amount ?? 0}
-                   isLeftHanded={isLeftHanded}
-                   bowlerView={wagonWheelBowlerView}
-                   onToggleBowlerView={() => setWagonWheelBowlerView(v => !v)}
-                   onConfirm={handleWagonWheelSet}
-                 />
+                <WagonWheelInput
+                  batsmanName={lastBall?.batsmanName ?? ''}
+                  amount={lastBall?.amount ?? 0}
+                  isLeftHanded={isLeftHanded}
+                  bowlerView={wagonWheelBowlerView}
+                  onToggleBowlerView={() => setWagonWheelBowlerView(v => !v)}
+                  onConfirm={handleWagonWheelSet}
+                />
               </div>
             </div>
           );
@@ -2377,7 +2865,6 @@ const LiveScoring: React.FC = () => {
         <div className="flex-1 overflow-y-auto bg-gray-50">
           <div className="max-w-lg mx-auto p-4">
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden space-y-0">
-              {/* Batsman out */}
               <div className="flex items-center px-4 py-3 border-b border-gray-100">
                 <label className="w-32 text-sm text-gray-600 flex-shrink-0">Batsman out</label>
                 <select
@@ -2390,8 +2877,6 @@ const LiveScoring: React.FC = () => {
                   ))}
                 </select>
               </div>
-
-              {/* Dismissal type */}
               <div className="flex items-center px-4 py-3 border-b border-gray-100">
                 <label className="w-32 text-sm text-gray-600 flex-shrink-0">Dismissal</label>
                 <select
@@ -2405,8 +2890,6 @@ const LiveScoring: React.FC = () => {
                   ))}
                 </select>
               </div>
-
-              {/* Fielder (for caught, run out, stumped) */}
               {selectedDismissalMode?.hasFielder && (
                 <div className="flex items-center px-4 py-3 border-b border-gray-100">
                   <label className="w-32 text-sm text-gray-600 flex-shrink-0">Fielder</label>
@@ -2419,8 +2902,6 @@ const LiveScoring: React.FC = () => {
                   />
                 </div>
               )}
-
-              {/* Runs (for run out) */}
               {selectedDismissalMode?.hasRuns && (
                 <>
                   <div className="flex items-center px-4 py-3 border-b border-gray-100">
@@ -2452,8 +2933,6 @@ const LiveScoring: React.FC = () => {
                   )}
                 </>
               )}
-
-              {/* Batsmen crossed (for caught) */}
               {selectedDismissalMode?.hasCrossed && (
                 <div className="flex items-center px-4 py-3 border-b border-gray-100">
                   <label className="w-32 text-sm text-gray-600 flex-shrink-0">Batsmen crossed?</label>
@@ -2467,8 +2946,6 @@ const LiveScoring: React.FC = () => {
                   </select>
                 </div>
               )}
-
-              {/* Next batsman in */}
               <div className="flex items-center px-4 py-3 border-b border-gray-100">
                 <label className="w-32 text-sm text-gray-600 flex-shrink-0">Next in</label>
                 <select
@@ -2482,8 +2959,6 @@ const LiveScoring: React.FC = () => {
                   ))}
                 </select>
               </div>
-
-              {/* Commentary */}
               <div className="flex items-start px-4 py-3">
                 <span className="material-symbols-outlined text-gray-400 text-lg mr-3 mt-0.5">comment</span>
                 <textarea
@@ -2501,7 +2976,7 @@ const LiveScoring: React.FC = () => {
     );
   };
 
-  // ---- End Over ----
+  // ---- End Over (full-screen - used on mobile; wide viewports use the right panel) ----
   const renderEndOver = () => (
     <div className="flex flex-col h-full">
       <NavBar
@@ -2531,13 +3006,12 @@ const LiveScoring: React.FC = () => {
       <div className="flex-1 overflow-y-auto bg-gray-50 relative">
         {renderLoadingOverlay()}
         <div className="max-w-lg mx-auto p-4 space-y-4">
-          {/* Ball list */}
           <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
             {localBalls.map((ball, i) => {
               const legalCount = localBalls.slice(0, i + 1).filter(isLegalDelivery).length;
-              const overNum = (matchState?.lastCompletedOver ?? 0) + 1;
-              const ballLabel2 = isLegalDelivery(ball) ? `${overNum}.${legalCount}` : `${overNum}.${legalCount}*`;
-              const { label } = getBallLabel(ball);
+              const endOverOverNum = (matchState?.lastCompletedOver ?? 0) + 1;
+              const ballLabel2 = isLegalDelivery(ball) ? `${endOverOverNum}.${legalCount}` : `${endOverOverNum}.${legalCount}*`;
+              const { label, className: ballClass } = getBallLabel(ball);
               return (
                 <div key={i} className={`flex items-center px-4 py-3 ${i < localBalls.length - 1 ? 'border-b border-gray-100' : ''}`}>
                   <div className="w-10 flex-shrink-0">
@@ -2548,15 +3022,13 @@ const LiveScoring: React.FC = () => {
                   <div className="flex-1 ml-3">
                     <p className="text-xs text-gray-500">{ball.bowlerName} to {ball.batsmanName}</p>
                     <p className="text-sm font-medium text-gray-900">
-                      {ball.wicket ? 'OUT!' : `${label === '·' ? 'No run' : label + (ball.thing ? ` (${ball.thing})` : ' runs')}`}
+                      {ball.wicket ? 'OUT!' : `${label === '\u00b7' ? 'No run' : label + (ball.thing ? ` (${ball.thing})` : ' runs')}`}
                     </p>
                   </div>
                 </div>
               );
             })}
           </div>
-
-          {/* Commentary */}
           <div className="bg-white border border-gray-200 rounded-xl p-4">
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 block">Commentary</label>
             <textarea
@@ -2764,7 +3236,7 @@ const LiveScoring: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 flex flex-col gap-4">
             <h2 className="text-lg font-bold text-gray-900">Abandon this match?</h2>
             <p className="text-sm text-gray-600">
-              The match will be marked as abandoned and any ball‑by‑ball data recorded so far will be
+              The match will be marked as abandoned and any ball-by-ball data recorded so far will be
               saved to the scorecard. This cannot be undone.
             </p>
             <div className="flex flex-col gap-1">
@@ -2801,7 +3273,7 @@ const LiveScoring: React.FC = () => {
                 {isAbandoning ? (
                   <>
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Abandoning…
+                    Abandoning...
                   </>
                 ) : (
                   'Abandon Match'
@@ -2876,3 +3348,4 @@ const ExtrasCircleButton: React.FC<ExtrasCircleButtonProps> = ({ label, onClick,
 );
 
 export default LiveScoring;
+
