@@ -441,7 +441,7 @@ describe('LiveScoring', () => {
     );
     fireEvent.click(doneButton!);
 
-    await waitFor(() => screen.getByText('End Over'));
+    await waitFor(() => screen.getByText(/End of Over/i));
 
     // Submit the over
     const endOverDoneButton = screen.getAllByRole('button').find(

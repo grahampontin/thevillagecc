@@ -678,8 +678,8 @@ const LiveScoring: React.FC = () => {
   // Wide-viewport right panel tab ('endOver' replaces full-screen endOver on md+)
   const [rightPanelTab, setRightPanelTab] = useState<'currentOver' | 'scorecard' | 'endOver'>('currentOver');
 
-  // Mobile tab – switches between scoring input, current over detail, and scorecard
-  const [mobileTab, setMobileTab] = useState<'scoring' | 'currentOver' | 'scorecard'>('scoring');
+  // Mobile tab – switches between scoring input, current over detail, scorecard, and end-over form
+  const [mobileTab, setMobileTab] = useState<'scoring' | 'currentOver' | 'scorecard' | 'endOver'>('scoring');
 
   // State snapshot at the start of the current over (for ball-edit recomputation)
   const [overStartPlayers, setOverStartPlayers] = useState<PlayerStateV1[]>([]);
@@ -761,6 +761,7 @@ const LiveScoring: React.FC = () => {
     setOverStartPlayers([]);
     setOverStartStrikerId(null);
     setRightPanelTab('currentOver');
+    setMobileTab('scoring');
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -1123,7 +1124,8 @@ const LiveScoring: React.FC = () => {
       // On wide viewports keep the scoring layout; show end-over form in right panel
       setRightPanelTab('endOver');
     } else {
-      setScreen('endOver');
+      // On narrow viewports show the end-over panel in-line (same content as wide right panel)
+      setMobileTab('endOver');
     }
   }, [waitingForBallType, showToast, isWide]);
 
@@ -2353,25 +2355,50 @@ const LiveScoring: React.FC = () => {
 
               {/* ── Mobile tab strip (hidden on md+) ── */}
               <div className="md:hidden flex border-b border-gray-200 bg-gray-50">
-                {(['scoring', 'currentOver', 'scorecard'] as const).map(tab => {
-                  const icons = { scoring: 'sports_cricket', currentOver: 'format_list_bulleted', scorecard: 'table_chart' };
-                  const labels = { scoring: 'Score', currentOver: 'Over', scorecard: 'Card' };
-                  const isActive = mobileTab === tab;
-                  return (
+                {mobileTab === 'endOver' ? (
+                  /* End-over mode: show header + abandon/cancel controls */
+                  <>
+                    <div className="flex-1 flex items-center justify-center py-2 gap-2 px-4">
+                      <span className="material-symbols-outlined text-base leading-none text-villageGreen">done_all</span>
+                      <span className="text-sm font-semibold text-villageGreen">End of Over {overNum}</span>
+                    </div>
                     <button
-                      key={tab}
-                      onClick={() => setMobileTab(tab)}
-                      className={`flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-[10px] font-medium border-b-2 transition-colors ${
-                        isActive
-                          ? 'text-villageGreen border-villageGreen bg-white'
-                          : 'text-gray-400 border-transparent hover:text-gray-600'
-                      }`}
+                      onClick={() => { setAbandonReason(''); setAbandonError(null); setShowAbandonDialog(true); }}
+                      className="p-2 hover:bg-amber-50 transition-colors"
+                      aria-label="Abandon match"
                     >
-                      <span className="material-symbols-outlined text-base leading-none">{icons[tab]}</span>
-                      {labels[tab]}
+                      <span className="material-symbols-outlined text-xl leading-none text-amber-400">dangerous</span>
                     </button>
-                  );
-                })}
+                    <button
+                      onClick={() => setMobileTab('scoring')}
+                      className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                      aria-label="Cancel end over"
+                    >
+                      <span className="material-symbols-outlined text-xl leading-none">close</span>
+                    </button>
+                  </>
+                ) : (
+                  /* Normal scoring tabs */
+                  (['scoring', 'currentOver', 'scorecard'] as const).map(tab => {
+                    const icons = { scoring: 'sports_cricket', currentOver: 'format_list_bulleted', scorecard: 'table_chart' };
+                    const labels = { scoring: 'Score', currentOver: 'Over', scorecard: 'Card' };
+                    const isActive = mobileTab === tab;
+                    return (
+                      <button
+                        key={tab}
+                        onClick={() => setMobileTab(tab)}
+                        className={`flex-1 flex flex-row items-center justify-center py-1.5 gap-1 text-[11px] font-medium border-b-2 transition-colors ${
+                          isActive
+                            ? 'text-villageGreen border-villageGreen bg-white'
+                            : 'text-gray-400 border-transparent hover:text-gray-600'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-sm leading-none">{icons[tab]}</span>
+                        {labels[tab]}
+                      </button>
+                    );
+                  })
+                )}
               </div>
 
               {/* ── Mobile: current over panel ── */}
@@ -2385,6 +2412,63 @@ const LiveScoring: React.FC = () => {
               {mobileTab === 'scorecard' && (
                 <div className="md:hidden">
                   {renderScorecardPanel()}
+                </div>
+              )}
+
+              {/* ── Mobile: end-over panel (same content as wide right panel) ── */}
+              {mobileTab === 'endOver' && (
+                <div className="md:hidden flex-1 overflow-y-auto relative">
+                  {renderLoadingOverlay()}
+                  <div className="p-4 space-y-4">
+                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                      {localBalls.map((ball, i) => {
+                        const legalCount3 = localBalls.slice(0, i + 1).filter(isLegalDelivery).length;
+                        const ballLabel3 = isLegalDelivery(ball) ? `${overNum}.${legalCount3}` : `${overNum}.${legalCount3}*`;
+                        const { label: lbl } = getBallLabel(ball);
+                        return (
+                          <div key={i} className={`flex items-center px-4 py-2.5 ${i < localBalls.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                            <span className="text-xs font-mono text-gray-400 w-10 flex-shrink-0">{ballLabel3}</span>
+                            <div className="flex-1 ml-2">
+                              <p className="text-xs text-gray-500">{ball.bowlerName} → {ball.batsmanName}</p>
+                              <p className="text-sm font-medium text-gray-900">
+                                {ball.wicket
+                                  ? <span className="text-red-600 font-bold">OUT! {ball.wicket.playerName}</span>
+                                  : `${lbl === '·' ? 'No run' : lbl + (ball.thing ? ` (${ball.thing})` : ' runs')}`}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => { setMobileTab('scoring'); handleOpenBallEdit(i); }}
+                              className="p-1 text-gray-300 hover:text-villageGreen transition-colors flex-shrink-0"
+                              aria-label="Edit ball"
+                            >
+                              <span className="material-symbols-outlined text-base leading-none">edit</span>
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="bg-white border border-gray-200 rounded-xl p-4">
+                      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 block">Commentary</label>
+                      <textarea
+                        placeholder="Talk us through it champ..."
+                        value={endOverCommentary}
+                        onChange={e => setEndOverCommentary(e.target.value)}
+                        rows={3}
+                        className="w-full text-sm text-gray-900 outline-none resize-none"
+                      />
+                    </div>
+                    <button
+                      onClick={handleEndOverConfirm}
+                      disabled={isLoading}
+                      className="w-full py-3 bg-villageGreen text-white rounded-xl font-semibold text-sm hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center gap-2"
+                    >
+                      {isLoading ? (
+                        <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Submitting…</>
+                      ) : (
+                        <><span className="material-symbols-outlined text-lg leading-none">done</span>Submit Over</>
+                      )}
+                    </button>
+                  </div>
                 </div>
               )}
 
