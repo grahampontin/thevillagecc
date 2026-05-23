@@ -97,9 +97,9 @@ const LiveScoring: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   // Wide-viewport right panel tab
-  const [rightPanelTab, setRightPanelTab] = useState<'currentOver' | 'scorecard' | 'endOver' | 'newOver'>('currentOver');
+  const [rightPanelTab, setRightPanelTab] = useState<'currentOver' | 'scorecard' | 'endOver' | 'newOver' | 'wicket'>('currentOver');
   // Mobile tab
-  const [mobileTab, setMobileTab] = useState<'scoring' | 'currentOver' | 'scorecard' | 'endOver' | 'newOver'>('scoring');
+  const [mobileTab, setMobileTab] = useState<'scoring' | 'currentOver' | 'scorecard' | 'endOver' | 'newOver' | 'wicket'>('scoring');
   // State snapshot at the start of the current over (for ball-edit recomputation)
   const [overStartPlayers, setOverStartPlayers] = useState<PlayerStateV1[]>([]);
   const [overStartStrikerId, setOverStartStrikerId] = useState<number | null>(null);
@@ -495,8 +495,10 @@ const LiveScoring: React.FC = () => {
     setWicketNextBatterInId(waitingPlayers.length > 0 ? (waitingPlayers[0].playerId ?? -1) : -1);
     setWicketBatsmenCrossed(false);
     setWicketCommentary('');
-    setScreen('wicket');
-  }, [waitingForBallType, localPlayers, localOnStrikeBatsmanId, showToast]);
+    // Open the wicket form inline rather than navigating away.
+    if (isWide) setRightPanelTab('wicket');
+    else setMobileTab('wicket');
+  }, [waitingForBallType, localPlayers, localOnStrikeBatsmanId, showToast, isWide]);
   const handleEndOverButton = useCallback(() => {
     if (waitingForBallType) {
       showToast('What was the last ball? Runs? Extras?');
@@ -618,8 +620,8 @@ const LiveScoring: React.FC = () => {
       batsmenCrossed: wicketBatsmenCrossed,
     };
     addBall(runsForBall, runType, wicket);
+    setRightPanelTab('currentOver');
     setMobileTab('scoring');
-    setScreen('scoring');
   }, [
     isWicketValid, showToast, localPlayers, wicketBatterOutId, wicketDismissalCode,
     wicketFielder, wicketRuns, wicketRunsType, wicketCommentary, wicketNextBatterInId,
@@ -916,6 +918,24 @@ const LiveScoring: React.FC = () => {
           onToggleBowlerView={() => setWagonWheelBowlerView(v => !v)}
           onUndo={handleUndo}
           onWicketButton={handleWicketButton}
+          wicketBatterOutId={wicketBatterOutId}
+          setWicketBatterOutId={setWicketBatterOutId}
+          wicketDismissalCode={wicketDismissalCode}
+          setWicketDismissalCode={setWicketDismissalCode}
+          wicketFielder={wicketFielder}
+          setWicketFielder={setWicketFielder}
+          wicketRuns={wicketRuns}
+          setWicketRuns={setWicketRuns}
+          wicketRunsType={wicketRunsType}
+          setWicketRunsType={setWicketRunsType}
+          wicketNextBatterInId={wicketNextBatterInId}
+          setWicketNextBatterInId={setWicketNextBatterInId}
+          wicketBatsmenCrossed={wicketBatsmenCrossed}
+          setWicketBatsmenCrossed={setWicketBatsmenCrossed}
+          wicketCommentary={wicketCommentary}
+          setWicketCommentary={setWicketCommentary}
+          isWicketValid={isWicketValid}
+          onWicketConfirm={handleWicketConfirm}
           onEndOverButton={handleEndOverButton}
           onSwitchStriker={handleSwitchStriker}
           onChangeBowler={handleChangeBowler}

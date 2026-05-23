@@ -13,6 +13,7 @@ import {
 import { WagonWheelInput } from './WagonWheelInput';
 import { NewOverFormContent } from './NewOverFormContent';
 import { EndOverFormContent } from './EndOverFormContent';
+import { WicketFormContent } from './WicketFormContent';
 import { RunCircleButton, ExtrasCircleButton } from './CircleButtons';
 export interface ScoringScreenProps {
   matchState: MatchStateV1 | null;
@@ -26,10 +27,10 @@ export interface ScoringScreenProps {
   showWagonWheel: boolean;
   wagonWheelBowlerView: boolean;
   allPlayers: PlayerV1[];
-  rightPanelTab: 'currentOver' | 'scorecard' | 'endOver' | 'newOver';
-  setRightPanelTab: (tab: 'currentOver' | 'scorecard' | 'endOver' | 'newOver') => void;
-  mobileTab: 'scoring' | 'currentOver' | 'scorecard' | 'endOver' | 'newOver';
-  setMobileTab: (tab: 'scoring' | 'currentOver' | 'scorecard' | 'endOver' | 'newOver') => void;
+  rightPanelTab: 'currentOver' | 'scorecard' | 'endOver' | 'newOver' | 'wicket';
+  setRightPanelTab: (tab: 'currentOver' | 'scorecard' | 'endOver' | 'newOver' | 'wicket') => void;
+  mobileTab: 'scoring' | 'currentOver' | 'scorecard' | 'endOver' | 'newOver' | 'wicket';
+  setMobileTab: (tab: 'scoring' | 'currentOver' | 'scorecard' | 'endOver' | 'newOver' | 'wicket') => void;
   endOverCommentary: string;
   setEndOverCommentary: (v: string) => void;
   selectedBowler: string;
@@ -71,6 +72,25 @@ export interface ScoringScreenProps {
   onToggleBowlerView: () => void;
   onUndo: () => void;
   onWicketButton: () => void;
+  // Wicket inline panel props
+  wicketBatterOutId: number | null;
+  setWicketBatterOutId: (v: number | null) => void;
+  wicketDismissalCode: string;
+  setWicketDismissalCode: (v: string) => void;
+  wicketFielder: string;
+  setWicketFielder: (v: string) => void;
+  wicketRuns: string;
+  setWicketRuns: (v: string) => void;
+  wicketRunsType: string;
+  setWicketRunsType: (v: string) => void;
+  wicketNextBatterInId: number;
+  setWicketNextBatterInId: (v: number) => void;
+  wicketBatsmenCrossed: boolean;
+  setWicketBatsmenCrossed: (v: boolean) => void;
+  wicketCommentary: string;
+  setWicketCommentary: (v: string) => void;
+  isWicketValid: () => string | null;
+  onWicketConfirm: () => void;
   onEndOverButton: () => void;
   onSwitchStriker: (playerId: number) => void;
   onChangeBowler: () => void;
@@ -101,6 +121,15 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
     onWagonWheelSet, onToggleBowlerView, onUndo, onWicketButton, onEndOverButton,
     onSwitchStriker, onChangeBowler, onOpenBallEdit, onSaveBallEdit,
     onEndOverConfirm, onNewOverDone, onAddNewBowler, onAbandon,
+    wicketBatterOutId, setWicketBatterOutId,
+    wicketDismissalCode, setWicketDismissalCode,
+    wicketFielder, setWicketFielder,
+    wicketRuns, setWicketRuns,
+    wicketRunsType, setWicketRunsType,
+    wicketNextBatterInId, setWicketNextBatterInId,
+    wicketBatsmenCrossed, setWicketBatsmenCrossed,
+    wicketCommentary, setWicketCommentary,
+    isWicketValid, onWicketConfirm,
   } = props;  const battingPlayers = getBattingPlayers(localPlayers);
   const strikerId = localOnStrikeBatsmanId ?? matchState?.onStrikeBatsmanId ?? -1;
   const striker = battingPlayers.find(p => p.playerId === strikerId) ?? battingPlayers[0];
@@ -339,8 +368,32 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
     </div>
   );
   // ---- New Over Panel (wide right panel / mobile tab) ----
-  const renderNewOverPanel = (radioGroupName: string) => (
+  const renderWicketPanel = () => (
     <div className="bg-gray-50 min-h-full">
+      <div className="max-w-lg mx-auto p-4">
+        <WicketFormContent
+          localPlayers={localPlayers}
+          wicketBatterOutId={wicketBatterOutId}
+          setWicketBatterOutId={setWicketBatterOutId}
+          wicketDismissalCode={wicketDismissalCode}
+          setWicketDismissalCode={setWicketDismissalCode}
+          wicketFielder={wicketFielder}
+          setWicketFielder={setWicketFielder}
+          wicketRuns={wicketRuns}
+          setWicketRuns={setWicketRuns}
+          wicketRunsType={wicketRunsType}
+          setWicketRunsType={setWicketRunsType}
+          wicketNextBatterInId={wicketNextBatterInId}
+          setWicketNextBatterInId={setWicketNextBatterInId}
+          wicketBatsmenCrossed={wicketBatsmenCrossed}
+          setWicketBatsmenCrossed={setWicketBatsmenCrossed}
+          wicketCommentary={wicketCommentary}
+          setWicketCommentary={setWicketCommentary}
+        />
+      </div>
+    </div>
+  );
+  const renderNewOverPanel = (radioGroupName: string) => (    <div className="bg-gray-50 min-h-full">
       <div className="max-w-lg mx-auto p-4">
         <NewOverFormContent
           matchState={matchState}
@@ -392,7 +445,7 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
       <div className="flex-1 flex overflow-hidden">
         {/* LEFT: scoring panel */}
         <div className={`w-full md:w-[30rem] md:flex-shrink-0 bg-white overflow-y-auto md:border-r md:border-gray-200 transition-opacity ${
-          (rightPanelTab === 'endOver' || rightPanelTab === 'newOver') ? 'md:opacity-40 md:pointer-events-none md:select-none' : ''
+          (rightPanelTab === 'endOver' || rightPanelTab === 'newOver' || rightPanelTab === 'wicket') ? 'md:opacity-40 md:pointer-events-none md:select-none' : ''
         }`}>
           <div>
             {/* Team scores */}
@@ -471,6 +524,23 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
                     <span className="material-symbols-outlined text-xl leading-none">close</span>
                   </button>
                 </>
+              ) : mobileTab === 'wicket' ? (
+                <>
+                  <div className="flex-1 flex items-center justify-center py-2 gap-2 px-4">
+                    <span className="material-symbols-outlined text-base leading-none text-red-600">sports_cricket</span>
+                    <span className="text-sm font-semibold text-red-600">Wicket!</span>
+                  </div>
+                  {isWicketValid() ? (
+                    <span className="p-2 flex items-center"><span className="material-symbols-outlined text-xl leading-none text-red-400">block</span></span>
+                  ) : (
+                    <button onClick={onWicketConfirm} className="p-2 text-villageGreen hover:bg-green-50 transition-colors" aria-label="Done">
+                      <span className="material-symbols-outlined text-xl leading-none">done</span>
+                    </button>
+                  )}
+                  <button onClick={() => setMobileTab('scoring')} className="p-2 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Cancel wicket">
+                    <span className="material-symbols-outlined text-xl leading-none">close</span>
+                  </button>
+                </>
               ) : (
                 (['scoring', 'currentOver', 'scorecard'] as const).map(tab => {
                   const icons = { scoring: 'sports_cricket', currentOver: 'format_list_bulleted', scorecard: 'table_chart' };
@@ -515,6 +585,12 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
             {mobileTab === 'newOver' && (
               <div className="md:hidden flex-1 overflow-y-auto relative">
                 {renderNewOverPanel('mob-bowler-radio')}
+              </div>
+            )}
+            {/* Mobile: wicket panel */}
+            {mobileTab === 'wicket' && (
+              <div className="md:hidden flex-1 overflow-y-auto">
+                {renderWicketPanel()}
               </div>
             )}
             {/* Scoring content (always on md+, mobile 'scoring' tab only) */}
@@ -655,7 +731,7 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
         {/* RIGHT: info panel (tablet/desktop only) */}
         <div className="hidden md:flex flex-1 flex-col bg-white overflow-hidden">
           <div className="flex border-b border-gray-200 bg-gray-50 flex-shrink-0">
-            {rightPanelTab !== 'endOver' && rightPanelTab !== 'newOver' ? (
+            {rightPanelTab !== 'endOver' && rightPanelTab !== 'newOver' && rightPanelTab !== 'wicket' ? (
               <>
                 <button onClick={() => setRightPanelTab('currentOver')} className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium border-b-2 transition-colors ${rightPanelTab === 'currentOver' ? 'text-villageGreen border-villageGreen bg-white' : 'text-gray-500 border-transparent hover:text-gray-700'}`}>
                   <span className="material-symbols-outlined text-base leading-none">sports_cricket</span>
@@ -671,7 +747,7 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
                 <span className="material-symbols-outlined text-base leading-none text-villageGreen">done_all</span>
                 <span className="text-sm font-semibold text-villageGreen">End of Over {overNum}</span>
               </div>
-            ) : (
+            ) : rightPanelTab === 'newOver' ? (
               <div className="flex items-center px-4 py-3 w-full">
                 <div className="flex items-center gap-2 flex-1">
                   <span className="material-symbols-outlined text-base leading-none text-villageGreen">sports_cricket</span>
@@ -685,6 +761,24 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
                   </button>
                 )}
               </div>
+            ) : (
+              /* wicket */
+              <div className="flex items-center px-4 py-3 w-full">
+                <div className="flex items-center gap-2 flex-1">
+                  <span className="material-symbols-outlined text-base leading-none text-red-600">sports_cricket</span>
+                  <span className="text-sm font-semibold text-red-600">Wicket!</span>
+                </div>
+                {isWicketValid() ? (
+                  <span className="material-symbols-outlined text-xl leading-none text-red-400">block</span>
+                ) : (
+                  <button onClick={onWicketConfirm} className="p-1 rounded-full hover:bg-green-50 transition-colors text-villageGreen" aria-label="Done">
+                    <span className="material-symbols-outlined text-xl leading-none">done</span>
+                  </button>
+                )}
+                <button onClick={() => setRightPanelTab('currentOver')} className="ml-1 p-1 rounded hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600" aria-label="Cancel wicket">
+                  <span className="material-symbols-outlined text-xl leading-none">close</span>
+                </button>
+              </div>
             )}
           </div>
           <div className="flex-1 overflow-y-auto">
@@ -692,6 +786,7 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
             {rightPanelTab === 'scorecard' && renderScorecardPanel()}
             {rightPanelTab === 'endOver' && renderEndOverPanel()}
             {rightPanelTab === 'newOver' && renderNewOverPanel('wide-bowler-radio')}
+            {rightPanelTab === 'wicket' && renderWicketPanel()}
           </div>
         </div>
       </div>
