@@ -675,11 +675,11 @@ const LiveScoring: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Wide-viewport right panel tab ('endOver' replaces full-screen endOver on md+)
-  const [rightPanelTab, setRightPanelTab] = useState<'currentOver' | 'scorecard' | 'endOver'>('currentOver');
+  // Wide-viewport right panel tab ('endOver'/'newOver' replace full-screen forms on md+)
+  const [rightPanelTab, setRightPanelTab] = useState<'currentOver' | 'scorecard' | 'endOver' | 'newOver'>('currentOver');
 
-  // Mobile tab – switches between scoring input, current over detail, scorecard, and end-over form
-  const [mobileTab, setMobileTab] = useState<'scoring' | 'currentOver' | 'scorecard' | 'endOver'>('scoring');
+  // Mobile tab – switches between scoring input, current over detail, scorecard, end-over, and new-over form
+  const [mobileTab, setMobileTab] = useState<'scoring' | 'currentOver' | 'scorecard' | 'endOver' | 'newOver'>('scoring');
 
   // State snapshot at the start of the current over (for ball-edit recomputation)
   const [overStartPlayers, setOverStartPlayers] = useState<PlayerStateV1[]>([]);
@@ -698,6 +698,12 @@ const LiveScoring: React.FC = () => {
 
   // Viewport detection (true when viewport is md+ / ≥768 px)
   const [isWide, setIsWide] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 768);
+
+  // Refs so callbacks can always read the latest screen/isWide without stale-closure issues
+  const screenRef = useRef(screen);
+  screenRef.current = screen;
+  const isWideRef = useRef(isWide);
+  isWideRef.current = isWide;
 
   // Abandon match dialog state
   const [showAbandonDialog, setShowAbandonDialog] = useState(false);
@@ -738,7 +744,7 @@ const LiveScoring: React.FC = () => {
   const navigateToNextState = useCallback((state: MatchStateV1) => {
     const nextScreen = getNextStateScreen(state.nextState);
     if (nextScreen === 'newOver') {
-      // Pre-fill bowler if available
+      // Pre-fill bowler state
       setSelectedBowler('');
       setNewBowlerInput('');
       setShowNewBowlerInput(false);
@@ -746,6 +752,13 @@ const LiveScoring: React.FC = () => {
       setShowBatsmanSelects(batters.length === 0);
       setStrikerBatsmanId(null);
       setNonStrikerBatsmanId(null);
+
+      // When transitioning from the scoring screen, keep the layout and show inline
+      if (screenRef.current === 'scoring') {
+        if (isWideRef.current) setRightPanelTab('newOver');
+        else setMobileTab('newOver');
+        return; // stay on scoring screen
+      }
     }
     if (nextScreen === 'endInnings') {
       // Determine innings type from nextState
@@ -2299,7 +2312,9 @@ const LiveScoring: React.FC = () => {
                All content (info + buttons) scrolls together so buttons sit
                immediately below the over strip rather than being pinned to
                the bottom of the viewport with an empty gap. */}
-          <div className="w-full md:w-[30rem] md:flex-shrink-0 bg-white overflow-y-auto md:border-r md:border-gray-200">
+          <div className={`w-full md:w-[30rem] md:flex-shrink-0 bg-white overflow-y-auto md:border-r md:border-gray-200 transition-opacity ${
+            (rightPanelTab === 'endOver' || rightPanelTab === 'newOver') ? 'md:opacity-40 md:pointer-events-none md:select-none' : ''
+          }`}>
 
             {/* Info area – no longer a separate scrollable flex-1 container */}
             <div>
@@ -2372,7 +2387,28 @@ const LiveScoring: React.FC = () => {
 
               {/* ── Mobile tab strip (hidden on md+) ── */}
               <div className="md:hidden flex border-b border-gray-200 bg-gray-50">
-                {mobileTab === 'endOver' ? (
+                {mobileTab === 'newOver' ? (
+                  /* New-over mode: show header + done/blocked button */
+                  <>
+                    <div className="flex-1 flex items-center justify-center py-2 gap-2 px-4">
+                      <span className="material-symbols-outlined text-base leading-none text-villageGreen">sports_cricket</span>
+                      <span className="text-sm font-semibold text-villageGreen">Over Details</span>
+                    </div>
+                    {isNewOverValid() ? (
+                      <span className="p-2 flex items-center">
+                        <span className="material-symbols-outlined text-xl leading-none text-red-400">block</span>
+                      </span>
+                    ) : (
+                      <button
+                        onClick={handleNewOverDone}
+                        className="p-2 text-villageGreen hover:bg-green-50 transition-colors"
+                        aria-label="Done"
+                      >
+                        <span className="material-symbols-outlined text-xl leading-none">done</span>
+                      </button>
+                    )}
+                  </>
+                ) : mobileTab === 'endOver' ? (
                   /* End-over mode: show header + abandon/cancel controls */
                   <>
                     <div className="flex-1 flex items-center justify-center py-2 gap-2 px-4">
@@ -2488,6 +2524,142 @@ const LiveScoring: React.FC = () => {
                   </div>
                 </div>
               )}
+
+              {/* ── Mobile: new-over panel ── */}
+              {mobileTab === 'newOver' && (() => {
+                const isFirstOver2 = localPlayers.filter(p => p.state === 'Batting').length === 0;
+                const bowlers2 = matchState?.bowlers ?? [];
+                const newOverBowlerDetails2 = matchState?.bowlerDetails ?? [];
+                return (
+                  <div className="md:hidden flex-1 overflow-y-auto bg-gray-50 relative">
+                    {renderLoadingOverlay()}
+                    <div className="max-w-lg mx-auto p-4 space-y-4">
+                      {/* Bowler selection */}
+                      <section>
+                        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowler</h2>
+                        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                          {bowlers2.map((bowler, i) => (
+                            <label
+                              key={bowler}
+                              className={`flex items-center gap-3 px-4 py-3 cursor-pointer ${
+                                i < bowlers2.length - 1 ? 'border-b border-gray-100' : ''
+                              } ${selectedBowler === bowler ? 'bg-villageGreenLight' : 'hover:bg-gray-50'}`}
+                            >
+                              <input
+                                type="radio"
+                                name="mob-bowler-radio"
+                                checked={selectedBowler === bowler}
+                                onChange={() => setSelectedBowler(bowler)}
+                                className="w-4 h-4 accent-villageGreen"
+                              />
+                              <span className="flex-1 text-sm font-medium text-gray-900">{bowler}</span>
+                              {matchState?.previousBowler === bowler && (
+                                <span className="text-xs text-gray-400">Last over</span>
+                              )}
+                            </label>
+                          ))}
+                        </div>
+                        {showNewBowlerInput ? (
+                          <div className="mt-3 flex gap-2">
+                            <input
+                              type="text"
+                              placeholder="Bowler name"
+                              value={newBowlerInput}
+                              onChange={e => setNewBowlerInput(e.target.value)}
+                              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-villageGreen"
+                              onKeyDown={e => e.key === 'Enter' && handleAddNewBowler()}
+                            />
+                            <button
+                              onClick={handleAddNewBowler}
+                              className="bg-villageGreen text-white px-4 py-2 rounded-lg text-sm font-medium"
+                            >
+                              Add
+                            </button>
+                            <button
+                              onClick={() => { setShowNewBowlerInput(false); setNewBowlerInput(''); }}
+                              className="text-gray-500 px-3 py-2 rounded-lg text-sm"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setShowNewBowlerInput(true)}
+                            className="mt-3 w-full flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-xl py-3 text-sm font-medium text-villageGreen hover:bg-villageGreenLight transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-lg leading-none">person_add</span>
+                            New Bowler
+                          </button>
+                        )}
+                      </section>
+
+                      {/* Batsmen (first over only) */}
+                      {isFirstOver2 && (
+                        <section>
+                          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Batsmen</h2>
+                          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                            <div className="flex items-center px-4 py-3 border-b border-gray-100">
+                              <label className="w-24 text-sm text-gray-600 flex-shrink-0">Striker</label>
+                              <select
+                                value={strikerBatsmanId ?? ''}
+                                onChange={e => setStrikerBatsmanId(e.target.value ? Number(e.target.value) : null)}
+                                className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                              >
+                                <option value="">Select...</option>
+                                {localPlayers.filter(p => p.state === 'Waiting').map(p => (
+                                  <option key={p.playerId} value={p.playerId!}>{p.playerName}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="flex items-center px-4 py-3">
+                              <label className="w-24 text-sm text-gray-600 flex-shrink-0">Non-Striker</label>
+                              <select
+                                value={nonStrikerBatsmanId ?? ''}
+                                onChange={e => setNonStrikerBatsmanId(e.target.value ? Number(e.target.value) : null)}
+                                className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                              >
+                                <option value="">Select...</option>
+                                {localPlayers.filter(p => p.state === 'Waiting').map(p => (
+                                  <option key={p.playerId} value={p.playerId!}>{p.playerName}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        </section>
+                      )}
+
+                      {/* Bowling figures */}
+                      {!isFirstOver2 && newOverBowlerDetails2.length > 0 && (
+                        <section>
+                          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowling Figures</h2>
+                          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                            <table className="w-full text-xs">
+                              <thead>
+                                <tr className="border-b border-gray-100 bg-gray-50 text-gray-500">
+                                  <th className="text-left py-2 px-3 font-medium">Bowler</th>
+                                  <th className="text-right py-2 px-2 font-medium">O</th>
+                                  <th className="text-right py-2 px-2 font-medium">R</th>
+                                  <th className="text-right py-2 px-3 font-medium">W</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {newOverBowlerDetails2.map((bd, i) => (
+                                  <tr key={bd.name ?? i} className={i < newOverBowlerDetails2.length - 1 ? 'border-b border-gray-50' : ''}>
+                                    <td className="py-2 px-3 font-medium text-gray-900 truncate max-w-[140px]">{bd.name}</td>
+                                    <td className="py-2 px-2 text-right text-gray-600">{bd.details?.overs ?? 0}</td>
+                                    <td className="py-2 px-2 text-right text-gray-600">{bd.details?.runs ?? 0}</td>
+                                    <td className="py-2 px-3 text-right text-gray-600">{bd.details?.wickets ?? 0}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </section>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* ── Scoring content (always on md+, mobile 'scoring' tab only) ── */}
               <div className={mobileTab !== 'scoring' ? 'hidden md:block' : ''}>
@@ -2723,7 +2895,7 @@ const LiveScoring: React.FC = () => {
           <div className="hidden md:flex flex-1 flex-col bg-white overflow-hidden">
             {/* Tab bar */}
             <div className="flex border-b border-gray-200 bg-gray-50 flex-shrink-0">
-              {rightPanelTab !== 'endOver' ? (
+              {rightPanelTab !== 'endOver' && rightPanelTab !== 'newOver' ? (
                 <>
                   <button
                     onClick={() => setRightPanelTab('currentOver')}
@@ -2748,10 +2920,29 @@ const LiveScoring: React.FC = () => {
                     Scorecard
                   </button>
                 </>
-              ) : (
+              ) : rightPanelTab === 'endOver' ? (
                 <div className="flex-1 flex items-center justify-center py-3 gap-2">
                   <span className="material-symbols-outlined text-base leading-none text-villageGreen">done_all</span>
                   <span className="text-sm font-semibold text-villageGreen">End of Over {overNum}</span>
+                </div>
+              ) : (
+                /* newOver */
+                <div className="flex items-center px-4 py-3 w-full">
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="material-symbols-outlined text-base leading-none text-villageGreen">sports_cricket</span>
+                    <span className="text-sm font-semibold text-villageGreen">Over Details</span>
+                  </div>
+                  {isNewOverValid() ? (
+                    <span className="material-symbols-outlined text-xl leading-none text-red-400">block</span>
+                  ) : (
+                    <button
+                      onClick={handleNewOverDone}
+                      className="p-1 rounded-full hover:bg-green-50 transition-colors text-villageGreen"
+                      aria-label="Done"
+                    >
+                      <span className="material-symbols-outlined text-xl leading-none">done</span>
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -2760,6 +2951,129 @@ const LiveScoring: React.FC = () => {
               {rightPanelTab === 'currentOver' && renderCurrentOverPanel()}
               {rightPanelTab === 'scorecard' && renderScorecardPanel()}
               {rightPanelTab === 'endOver' && renderEndOverPanel()}
+              {rightPanelTab === 'newOver' && (() => {
+                const isFirstOver2 = localPlayers.filter(p => p.state === 'Batting').length === 0;
+                const bowlers2 = matchState?.bowlers ?? [];
+                const newOverBowlerDetails2 = matchState?.bowlerDetails ?? [];
+                return (
+                  <div className="bg-gray-50 min-h-full">
+                    <div className="max-w-lg mx-auto p-4 space-y-4">
+                      {/* Bowler selection */}
+                      <section>
+                        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowler</h2>
+                        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                          {bowlers2.map((bowler, i) => (
+                            <label
+                              key={bowler}
+                              className={`flex items-center gap-3 px-4 py-3 cursor-pointer ${
+                                i < bowlers2.length - 1 ? 'border-b border-gray-100' : ''
+                              } ${selectedBowler === bowler ? 'bg-villageGreenLight' : 'hover:bg-gray-50'}`}
+                            >
+                              <input
+                                type="radio"
+                                name="wide-bowler-radio"
+                                checked={selectedBowler === bowler}
+                                onChange={() => setSelectedBowler(bowler)}
+                                className="w-4 h-4 accent-villageGreen"
+                              />
+                              <span className="flex-1 text-sm font-medium text-gray-900">{bowler}</span>
+                              {matchState?.previousBowler === bowler && (
+                                <span className="text-xs text-gray-400">Last over</span>
+                              )}
+                            </label>
+                          ))}
+                        </div>
+                        {showNewBowlerInput ? (
+                          <div className="mt-3 flex gap-2">
+                            <input
+                              type="text"
+                              placeholder="Bowler name"
+                              value={newBowlerInput}
+                              onChange={e => setNewBowlerInput(e.target.value)}
+                              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-villageGreen"
+                              onKeyDown={e => e.key === 'Enter' && handleAddNewBowler()}
+                            />
+                            <button onClick={handleAddNewBowler} className="bg-villageGreen text-white px-4 py-2 rounded-lg text-sm font-medium">Add</button>
+                            <button onClick={() => { setShowNewBowlerInput(false); setNewBowlerInput(''); }} className="text-gray-500 px-3 py-2 rounded-lg text-sm">Cancel</button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setShowNewBowlerInput(true)}
+                            className="mt-3 w-full flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-xl py-3 text-sm font-medium text-villageGreen hover:bg-villageGreenLight transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-lg leading-none">person_add</span>
+                            New Bowler
+                          </button>
+                        )}
+                      </section>
+
+                      {/* Batsmen (first over only) */}
+                      {isFirstOver2 && (
+                        <section>
+                          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Batsmen</h2>
+                          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                            <div className="flex items-center px-4 py-3 border-b border-gray-100">
+                              <label className="w-24 text-sm text-gray-600 flex-shrink-0">Striker</label>
+                              <select
+                                value={strikerBatsmanId ?? ''}
+                                onChange={e => setStrikerBatsmanId(e.target.value ? Number(e.target.value) : null)}
+                                className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                              >
+                                <option value="">Select...</option>
+                                {localPlayers.filter(p => p.state === 'Waiting').map(p => (
+                                  <option key={p.playerId} value={p.playerId!}>{p.playerName}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="flex items-center px-4 py-3">
+                              <label className="w-24 text-sm text-gray-600 flex-shrink-0">Non-Striker</label>
+                              <select
+                                value={nonStrikerBatsmanId ?? ''}
+                                onChange={e => setNonStrikerBatsmanId(e.target.value ? Number(e.target.value) : null)}
+                                className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                              >
+                                <option value="">Select...</option>
+                                {localPlayers.filter(p => p.state === 'Waiting').map(p => (
+                                  <option key={p.playerId} value={p.playerId!}>{p.playerName}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        </section>
+                      )}
+
+                      {/* Bowling figures */}
+                      {!isFirstOver2 && newOverBowlerDetails2.length > 0 && (
+                        <section>
+                          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowling Figures</h2>
+                          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                            <table className="w-full text-xs">
+                              <thead>
+                                <tr className="border-b border-gray-100 bg-gray-50 text-gray-500">
+                                  <th className="text-left py-2 px-3 font-medium">Bowler</th>
+                                  <th className="text-right py-2 px-2 font-medium">O</th>
+                                  <th className="text-right py-2 px-2 font-medium">R</th>
+                                  <th className="text-right py-2 px-3 font-medium">W</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {newOverBowlerDetails2.map((bd, i) => (
+                                  <tr key={bd.name ?? i} className={i < newOverBowlerDetails2.length - 1 ? 'border-b border-gray-50' : ''}>
+                                    <td className="py-2 px-3 font-medium text-gray-900 truncate max-w-[140px]">{bd.name}</td>
+                                    <td className="py-2 px-2 text-right text-gray-600">{bd.details?.overs ?? 0}</td>
+                                    <td className="py-2 px-2 text-right text-gray-600">{bd.details?.runs ?? 0}</td>
+                                    <td className="py-2 px-3 text-right text-gray-600">{bd.details?.wickets ?? 0}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </section>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
 
