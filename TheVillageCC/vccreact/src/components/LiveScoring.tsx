@@ -105,6 +105,7 @@ const LiveScoring: React.FC = () => {
   const [overStartStrikerId, setOverStartStrikerId] = useState<number | null>(null);
   // Ball editing state
   const [editingBallIndex, setEditingBallIndex] = useState<number | null>(null);
+  const [editBatsmanId, setEditBatsmanId] = useState<number>(-1);
   const [editAmount, setEditAmount] = useState<string>('0');
   const [editThing, setEditThing] = useState<string>('');
   const [editWicketCode, setEditWicketCode] = useState<string>('');
@@ -533,6 +534,7 @@ const LiveScoring: React.FC = () => {
   const handleOpenBallEdit = useCallback((index: number) => {
     const ball = localBalls[index];
     setEditingBallIndex(index);
+    setEditBatsmanId(ball.batsmanId ?? -1);
     setEditAmount(String(ball.amount));
     setEditThing(ball.thing);
     if (ball.wicket) {
@@ -571,7 +573,16 @@ const LiveScoring: React.FC = () => {
         };
       }
     }
-    const newBall: LocalBall = { ...original, amount: safeAmount, thing: editThing, wicket };
+    const newBall: LocalBall = {
+      ...original,
+      amount: safeAmount,
+      thing: editThing,
+      wicket,
+      batsmanId: editBatsmanId !== -1 ? editBatsmanId : original.batsmanId,
+      batsmanName: editBatsmanId !== -1
+        ? (localPlayers.find(p => p.playerId === editBatsmanId)?.playerName ?? original.batsmanName)
+        : original.batsmanName,
+    };
     const newBalls = [...localBalls];
     newBalls[editingBallIndex] = newBall;
     const { players: newPlayers, onStrikeBatsmanId: newStrikerId } = recomputeOverState(
@@ -584,7 +595,7 @@ const LiveScoring: React.FC = () => {
     setLocalOnStrikeBatsmanId(newStrikerId);
     setEditingBallIndex(null);
   }, [
-    editingBallIndex, localBalls, editAmount, editThing,
+    editingBallIndex, localBalls, editBatsmanId, localPlayers, editAmount, editThing,
     editWicketCode, editWicketFielder, editWicketCrossed, editWicketNextManId, editWicketDesc,
     overStartPlayers, overStartStrikerId,
   ]);
@@ -892,6 +903,8 @@ const LiveScoring: React.FC = () => {
           showBatsmanSelects={showBatsmanSelects}
           editingBallIndex={editingBallIndex}
           setEditingBallIndex={setEditingBallIndex}
+          editBatsmanId={editBatsmanId}
+          setEditBatsmanId={setEditBatsmanId}
           editAmount={editAmount}
           setEditAmount={setEditAmount}
           editThing={editThing}

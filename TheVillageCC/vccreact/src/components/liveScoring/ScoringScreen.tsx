@@ -46,6 +46,8 @@ export interface ScoringScreenProps {
   showBatsmanSelects: boolean;
   editingBallIndex: number | null;
   setEditingBallIndex: (v: number | null) => void;
+  editBatsmanId: number;
+  setEditBatsmanId: (v: number) => void;
   editAmount: string;
   setEditAmount: (v: string) => void;
   editThing: string;
@@ -112,7 +114,7 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
     showNewBowlerInput, setShowNewBowlerInput,
     strikerBatsmanId, setStrikerBatsmanId, nonStrikerBatsmanId, setNonStrikerBatsmanId,
     showBatsmanSelects,
-    editingBallIndex, setEditingBallIndex, editAmount, setEditAmount,
+    editingBallIndex, setEditingBallIndex, editBatsmanId, setEditBatsmanId, editAmount, setEditAmount,
     editThing, setEditThing, editWicketCode, setEditWicketCode,
     editWicketFielder, setEditWicketFielder, editWicketCrossed, setEditWicketCrossed,
     editWicketOutId, setEditWicketOutId, editWicketNextManId, setEditWicketNextManId,
@@ -800,8 +802,14 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
                 <span className="material-symbols-outlined text-lg leading-none">close</span>
               </button>
             </div>
-            <div className="overflow-y-auto flex-1">
+              <div className="overflow-y-auto flex-1">
               <div className="divide-y divide-gray-100">
+                <div className="flex items-center px-4 py-3">
+                  <label className="w-28 text-sm text-gray-600 flex-shrink-0">Batter</label>
+                  <select value={editBatsmanId} onChange={e => setEditBatsmanId(Number(e.target.value))} className="flex-1 text-sm text-gray-900 bg-transparent outline-none">
+                    {battingForEdit.map(p => <option key={p.playerId} value={p.playerId!}>{p.playerName}</option>)}
+                  </select>
+                </div>
                 <div className="flex items-center px-4 py-3">
                   <label className="w-28 text-sm text-gray-600 flex-shrink-0">Runs / Amount</label>
                   <input type="number" min={0} max={9} value={editAmount} onChange={e => setEditAmount(e.target.value)} className="flex-1 text-sm text-gray-900 bg-transparent outline-none" />
