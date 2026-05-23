@@ -706,6 +706,23 @@ const LiveScoring: React.FC = () => {
   const [abandonError, setAbandonError] = useState<string | null>(null);
 
   // ---------------------------------------------------------------------------
+  // Prevent pull-to-refresh while a match is active
+  // Pull-to-refresh on mobile would destroy all unsaved local scoring state.
+  // Disabling overscroll on the body prevents the browser gesture entirely.
+  // ---------------------------------------------------------------------------
+
+  useEffect(() => {
+    if (screen === 'chooseMatch') {
+      document.body.style.overscrollBehavior = '';
+      return;
+    }
+    document.body.style.overscrollBehavior = 'none';
+    return () => {
+      document.body.style.overscrollBehavior = '';
+    };
+  }, [screen]);
+
+  // ---------------------------------------------------------------------------
   // Toast helper
   // ---------------------------------------------------------------------------
 
