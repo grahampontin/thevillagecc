@@ -158,11 +158,12 @@ const LiveScoring: React.FC = () => {
       setShowBatsmanSelects(batters.length === 0);
       setStrikerBatsmanId(null);
       setNonStrikerBatsmanId(null);
-      if (screenRef.current === 'scoring') {
-        if (isWideRef.current) setRightPanelTab('newOver');
-        else setMobileTab('newOver');
-        return;
-      }
+      // Always use the inline panel inside ScoringScreen (right panel on wide,
+      // mobile tab on narrow) rather than the standalone NewOverScreen.
+      if (isWideRef.current) setRightPanelTab('newOver');
+      else setMobileTab('newOver');
+      setScreen('scoring');
+      return;
     }
     if (nextScreen === 'endInnings') {
       const type = state.nextState === 'EndOfBattingInnings' ? 'batting' : 'bowling';
@@ -520,8 +521,10 @@ const LiveScoring: React.FC = () => {
     setShowNewBowlerInput(false);
     setNewBowlerInput('');
     setShowBatsmanSelects(false);
-    setScreen('newOver');
-  }, [matchState]);
+    // Stay on the scoring screen and surface the inline newOver panel.
+    if (isWide) setRightPanelTab('newOver');
+    else setMobileTab('newOver');
+  }, [matchState, isWide]);
   // ---------------------------------------------------------------------------
   // Ball editing handlers
   // ---------------------------------------------------------------------------
