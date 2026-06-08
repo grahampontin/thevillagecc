@@ -34,6 +34,7 @@ import { WicketScreen } from './liveScoring/WicketScreen';
 import { EndOverScreen } from './liveScoring/EndOverScreen';
 import { EndInningsScreen } from './liveScoring/EndInningsScreen';
 import { OppositionScoringScreen } from './liveScoring/OppositionScoringScreen';
+import { OppositionBallByBallScreen } from './liveScoring/OppositionBallByBallScreen';
 import { EndMatchScreen } from './liveScoring/EndMatchScreen';
 // ---------------------------------------------------------------------------
 // Main component
@@ -742,6 +743,11 @@ const LiveScoring: React.FC = () => {
     if (wickets > 10) return 'More than ten wickets down probably means the end of the innings.';
     return null;
   }, [oppOvers, oppScore, oppWickets]);
+  const handleOppositionBallByBallStarted = useCallback((newState: MatchStateV1) => {
+    applyMatchState(newState);
+    navigateToNextState(newState);
+  }, [applyMatchState, navigateToNextState]);
+
   const handleOppositionScoringConfirm = useCallback(async () => {
     const error = isOppositionScoringValid();
     if (error) { showToast(error); return; }
@@ -1018,6 +1024,8 @@ const LiveScoring: React.FC = () => {
     case 'oppositionScoring':
       content = (
         <OppositionScoringScreen
+          matchState={matchState}
+          selectedMatchId={selectedMatchId}
           oppScore={oppScore}
           setOppScore={setOppScore}
           oppOvers={oppOvers}
@@ -1029,6 +1037,21 @@ const LiveScoring: React.FC = () => {
           isLoading={isLoading}
           onConfirm={handleOppositionScoringConfirm}
           onAbandon={openAbandonDialog}
+          onBallByBallStarted={handleOppositionBallByBallStarted}
+        />
+      );
+      break;
+    case 'oppositionBallByBall':
+      content = (
+        <OppositionBallByBallScreen
+          matchState={matchState}
+          selectedMatchId={selectedMatchId}
+          onMatchStateUpdate={(newState) => {
+            applyMatchState(newState);
+            navigateToNextState(newState);
+          }}
+          onAbandon={openAbandonDialog}
+          showToast={showToast}
         />
       );
       break;

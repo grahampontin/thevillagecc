@@ -1,4 +1,4 @@
-import { getJson, postJson } from './http';
+import { getJson, postJson, deleteJson } from './http';
 import {
   LiveScorecardV1,
   LiveScoringMatchSummaryV1,
@@ -91,5 +91,37 @@ export async function endInnings(matchId: number, payload: InningsEndDetailsV1):
  */
 export async function abandonMatch(matchId: number, payload: AbandonMatchV1): Promise<void> {
   return postJson<void>(apiUrl(`/api/LiveScoring/${matchId}/abandon`), payload);
+}
+
+/**
+ * Starts ball-by-ball opposition innings scoring with the opening pair.
+ * @param matchId - The match ID
+ * @param payload - Opening batsman names
+ * @returns Promise resolving to MatchStateV1 (nextState becomes OppositionBattingOver)
+ */
+export async function startOppositionBallByBall(
+  matchId: number,
+  payload: { batsmanNames: string[] },
+): Promise<MatchStateV1> {
+  return postJson<MatchStateV1>(apiUrl(`/api/LiveScoring/${matchId}/start-opposition-ball-by-ball`), payload);
+}
+
+/**
+ * Submits a completed opposition over in ball-by-ball mode.
+ * @param matchId - The match ID
+ * @param payload - Opposition innings update (over + player stats snapshot)
+ * @returns Promise resolving to MatchStateV1
+ */
+export async function submitOppositionOver(matchId: number, payload: unknown): Promise<MatchStateV1> {
+  return postJson<MatchStateV1>(apiUrl(`/api/LiveScoring/${matchId}/opposition-over`), payload);
+}
+
+/**
+ * Undoes the last submitted opposition over.
+ * @param matchId - The match ID
+ * @returns Promise resolving to MatchStateV1
+ */
+export async function deleteLastOppositionOver(matchId: number): Promise<MatchStateV1> {
+  return deleteJson<MatchStateV1>(apiUrl(`/api/LiveScoring/${matchId}/last-opposition-over`));
 }
 

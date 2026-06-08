@@ -132,6 +132,7 @@ export function getNextStateScreen(nextState: string | null | undefined): Screen
   switch (nextState) {
     case 'BattingOver': return 'newOver';
     case 'BowlingOver': return 'oppositionScoring';
+    case 'OppositionBattingOver': return 'oppositionBallByBall';
     case 'EndOfBattingInnings': return 'endInnings';
     case 'EndOfBowlingInnings': return 'endInnings';
     case 'EndOfMatch': return 'endMatch';

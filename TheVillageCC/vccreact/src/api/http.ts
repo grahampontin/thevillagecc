@@ -104,3 +104,20 @@ export async function deleteRequest(url: string): Promise<void> {
 
   await handleResponse<void>(response);
 }
+
+/**
+ * Performs a DELETE request and returns a JSON response body.
+ *
+ * @param url - The URL to delete
+ * @returns Promise resolving to typed JSON response
+ */
+export async function deleteJson<T>(url: string): Promise<T> {
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Accept': 'application/json',
+    },
+  });
+
+  return handleResponse<T>(response);
+}
