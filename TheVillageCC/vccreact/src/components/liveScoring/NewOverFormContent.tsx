@@ -1,5 +1,5 @@
-﻿import React from 'react';
-import { MatchStateV1, PlayerStateV1 } from '../../api/swaggerTypes';
+import React from 'react';
+import { MatchStateV1, PlayerStateV1, PlayerV1 } from '../../api/swaggerTypes';
 export interface NewOverFormContentProps {
   matchState: MatchStateV1 | null;
   localPlayers: PlayerStateV1[];
@@ -16,6 +16,11 @@ export interface NewOverFormContentProps {
   setNonStrikerBatsmanId: (v: number | null) => void;
   onAddNewBowler: () => void;
   radioGroupName: string;
+  // Opposition ball-by-ball mode
+  isOppBallByBall?: boolean;
+  ourPlayers?: PlayerV1[];
+  oppSelectedBowlerPlayerId?: number | null;
+  setOppSelectedBowlerPlayerId?: (v: number | null) => void;
 }
 export const NewOverFormContent: React.FC<NewOverFormContentProps> = ({
   matchState, localPlayers, showBatsmanSelects,
@@ -25,10 +30,43 @@ export const NewOverFormContent: React.FC<NewOverFormContentProps> = ({
   strikerBatsmanId, setStrikerBatsmanId,
   nonStrikerBatsmanId, setNonStrikerBatsmanId,
   onAddNewBowler, radioGroupName,
+  isOppBallByBall, ourPlayers, oppSelectedBowlerPlayerId, setOppSelectedBowlerPlayerId,
 }) => {
   const bowlers = matchState?.bowlers ?? [];
   const bowlerDetails = matchState?.bowlerDetails ?? [];
   const waitingPlayers = localPlayers.filter(p => p.state === 'Waiting');
+
+  if (isOppBallByBall) {
+    return (
+      <div className="space-y-4">
+        <section>
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Bowler</h2>
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <div className="flex items-center px-4 py-3">
+              <label className="w-24 text-sm text-gray-600 flex-shrink-0">Bowler</label>
+              <select
+                value={oppSelectedBowlerPlayerId ?? ''}
+                onChange={e => {
+                  const id = e.target.value ? Number(e.target.value) : null;
+                  setOppSelectedBowlerPlayerId?.(id);
+                  const player = (ourPlayers ?? []).find(p => p.playerId === id);
+                  if (player?.name) setSelectedBowler(player.name);
+                  else setSelectedBowler('');
+                }}
+                className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+              >
+                <option value="">Select bowler…</option>
+                {(ourPlayers ?? []).map(p => (
+                  <option key={p.playerId} value={p.playerId!}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {/* Bowler selection */}

@@ -132,7 +132,7 @@ export function getNextStateScreen(nextState: string | null | undefined): Screen
   switch (nextState) {
     case 'BattingOver': return 'newOver';
     case 'BowlingOver': return 'oppositionScoring';
-    case 'OppositionBattingOver': return 'oppositionBallByBall';
+    case 'OppositionBattingOver': return 'newOver';
     case 'EndOfBattingInnings': return 'endInnings';
     case 'EndOfBowlingInnings': return 'endInnings';
     case 'EndOfMatch': return 'endMatch';
@@ -173,14 +173,14 @@ export function recomputeOverState(
       const maxPos = Math.max(...players.map(pp => pp.position ?? 0), 0);
       players = players.map(p => {
         if (p.playerId === ball.wicket!.playerId) return { ...p, state: 'Out' };
-        if (p.playerId === ball.wicket!.nextManInId && ball.wicket!.nextManInId > 0)
+        if (p.playerId === ball.wicket!.nextManInId && ball.wicket!.nextManInId !== -1)
           return { ...p, state: 'Batting', position: maxPos + 1 };
         return p;
       });
     }
 
     if (shouldSwitchStriker(ball)) {
-      if (ball.wicket && ball.wicket.nextManInId > 0 && strikerId === ball.wicket.playerId) {
+      if (ball.wicket && ball.wicket.nextManInId !== -1 && strikerId === ball.wicket.playerId) {
         strikerId = ball.wicket.nextManInId;
       } else if (!ball.wicket) {
         const battingNow = players.filter(p => p.state === 'Batting');
@@ -188,7 +188,7 @@ export function recomputeOverState(
         if (other) strikerId = other.playerId ?? null;
       }
     } else if (ball.wicket) {
-      if (strikerId === ball.wicket.playerId && ball.wicket.nextManInId > 0) {
+      if (strikerId === ball.wicket.playerId && ball.wicket.nextManInId !== -1) {
         strikerId = ball.wicket.nextManInId;
       }
     }

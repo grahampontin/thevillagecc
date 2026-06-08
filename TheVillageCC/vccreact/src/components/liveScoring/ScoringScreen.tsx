@@ -103,6 +103,15 @@ export interface ScoringScreenProps {
   onAddNewBowler: () => void;
   onAbandon: () => void;
   showToast: (msg: string) => void;
+  // Opposition ball-by-ball mode
+  isOppBallByBall?: boolean;
+  oppSelectedBowlerPlayerId?: number | null;
+  setOppSelectedBowlerPlayerId?: (v: number | null) => void;
+  wicketNewBatsmanName?: string;
+  setWicketNewBatsmanName?: (v: string) => void;
+  wicketOppFielderPlayerId?: number | null;
+  setWicketOppFielderPlayerId?: (v: number | null) => void;
+  onUndoLastOppOver?: () => void;
 }
 export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
   const {
@@ -132,7 +141,15 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
     wicketBatsmenCrossed, setWicketBatsmenCrossed,
     wicketCommentary, setWicketCommentary,
     isWicketValid, onWicketConfirm,
-  } = props;  const battingPlayers = getBattingPlayers(localPlayers);
+  } = props;
+  const {
+    isOppBallByBall,
+    oppSelectedBowlerPlayerId, setOppSelectedBowlerPlayerId,
+    wicketNewBatsmanName, setWicketNewBatsmanName,
+    wicketOppFielderPlayerId, setWicketOppFielderPlayerId,
+    onUndoLastOppOver,
+  } = props;
+  const battingPlayers = getBattingPlayers(localPlayers);
   const strikerId = localOnStrikeBatsmanId ?? matchState?.onStrikeBatsmanId ?? -1;
   const striker = battingPlayers.find(p => p.playerId === strikerId) ?? battingPlayers[0];
   const nonStriker = battingPlayers.find(p => p.playerId !== strikerId) ?? battingPlayers[1];
@@ -151,11 +168,19 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
     return Math.round((getLiveBatsmanRuns(player) / balls) * 1000) / 10;
   };
   const currentBowlerDetails = (matchState?.bowlerDetails ?? []).find(d => d.name === currentBowler);
+  const extMatchState = matchState as (typeof matchState & { oppositionLastCompletedOver?: number }) | null;
+  const oppLastCompleted = extMatchState?.oppositionLastCompletedOver ?? 0;
   const liveOverScore = computeLiveScoreFromBalls(localBalls);
-  const liveTotalScore = (matchState?.score ?? 0) + liveOverScore;
+  const liveTotalScore = isOppBallByBall
+    ? (matchState?.oppositionScore ?? 0) + liveOverScore
+    : (matchState?.score ?? 0) + liveOverScore;
   const liveWickets = localPlayers.filter(p => p.state === 'Out').length;
-  const liveOversString = getOverString(matchState?.lastCompletedOver ?? 0, localBalls);
-  const overNum = (matchState?.lastCompletedOver ?? 0) + 1;
+  const liveOversString = isOppBallByBall
+    ? getOverString(oppLastCompleted, localBalls)
+    : getOverString(matchState?.lastCompletedOver ?? 0, localBalls);
+  const overNum = isOppBallByBall
+    ? oppLastCompleted + 1
+    : (matchState?.lastCompletedOver ?? 0) + 1;
   const bowlerOvers = currentBowlerDetails?.details?.overs ?? 0;
   const bowlerMaidens = currentBowlerDetails?.details?.maidens ?? 0;
   const bowlerRuns = (currentBowlerDetails?.details?.runs ?? 0) + computeBowlerRunsInOver(currentBowler, localBalls);
@@ -369,7 +394,7 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
       </div>
     </div>
   );
-  // ---- New Over Panel (wide right panel / mobile tab) ----
+  // ---- Wicket Panel ----
   const renderWicketPanel = () => (
     <div className="bg-gray-50 min-h-full">
       <div className="max-w-lg mx-auto p-4">
@@ -391,11 +416,18 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
           setWicketBatsmenCrossed={setWicketBatsmenCrossed}
           wicketCommentary={wicketCommentary}
           setWicketCommentary={setWicketCommentary}
+          isOppBallByBall={isOppBallByBall}
+          ourPlayers={allPlayers}
+          wicketOppFielderPlayerId={wicketOppFielderPlayerId}
+          setWicketOppFielderPlayerId={setWicketOppFielderPlayerId}
+          wicketNewBatsmanName={wicketNewBatsmanName}
+          setWicketNewBatsmanName={setWicketNewBatsmanName}
         />
       </div>
     </div>
   );
-  const renderNewOverPanel = (radioGroupName: string) => (    <div className="bg-gray-50 min-h-full">
+  const renderNewOverPanel = (radioGroupName: string) => (
+    <div className="bg-gray-50 min-h-full">
       <div className="max-w-lg mx-auto p-4">
         <NewOverFormContent
           matchState={matchState}
@@ -413,6 +445,10 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
           setNonStrikerBatsmanId={setNonStrikerBatsmanId}
           onAddNewBowler={onAddNewBowler}
           radioGroupName={radioGroupName}
+          isOppBallByBall={isOppBallByBall}
+          ourPlayers={allPlayers}
+          oppSelectedBowlerPlayerId={oppSelectedBowlerPlayerId}
+          setOppSelectedBowlerPlayerId={setOppSelectedBowlerPlayerId}
         />
       </div>
     </div>
@@ -430,19 +466,33 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
       {/* Share toolbar */}
       <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-100 flex-shrink-0">
         <div className="w-8" />
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Live Scoring</span>
-        <button
-          className="p-1 hover:text-villageGreen transition-colors"
-          onClick={() => {
-            if (selectedMatchId) {
-              const url = `${window.location.origin}/scorecard/${selectedMatchId}`;
-              navigator.clipboard.writeText(url).then(() => props.showToast('Link copied to clipboard'));
-            }
-          }}
-          aria-label="Share"
-        >
-          <span className="material-symbols-outlined text-xl leading-none text-gray-500">share</span>
-        </button>
+        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+          {isOppBallByBall ? 'Opposition Innings' : 'Live Scoring'}
+        </span>
+        <div className="flex items-center gap-1">
+          {isOppBallByBall && onUndoLastOppOver && localBalls.length === 0 && oppLastCompleted > 0 && (
+            <button
+              className="p-1 hover:text-villageGreen transition-colors"
+              onClick={onUndoLastOppOver}
+              aria-label="Undo last opposition over"
+              title="Undo last over"
+            >
+              <span className="material-symbols-outlined text-xl leading-none text-gray-500">undo</span>
+            </button>
+          )}
+          <button
+            className="p-1 hover:text-villageGreen transition-colors"
+            onClick={() => {
+              if (selectedMatchId) {
+                const url = `${window.location.origin}/scorecard/${selectedMatchId}`;
+                navigator.clipboard.writeText(url).then(() => props.showToast('Link copied to clipboard'));
+              }
+            }}
+            aria-label="Share"
+          >
+            <span className="material-symbols-outlined text-xl leading-none text-gray-500">share</span>
+          </button>
+        </div>
       </div>
       <div className="flex-1 flex overflow-hidden">
         {/* LEFT: scoring panel */}
@@ -452,26 +502,52 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
           <div>
             {/* Team scores */}
             <div className="border-b border-gray-200 px-3 py-2">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                  <img src="/images/vcc_cricle_small.png" alt="VCC" className="w-full h-full object-cover" />
-                </div>
-                <span className="flex-1 text-sm font-semibold text-gray-900">The Village CC</span>
-                <span className="text-sm font-bold text-gray-900">
-                  {liveTotalScore}/{liveWickets}
-                  <span className="text-xs font-normal text-gray-500 ml-1">({liveOversString} ovs)</span>
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-xs font-bold">{oppAbbrev.slice(0, 3)}</span>
-                </div>
-                <span className="flex-1 text-sm font-medium text-gray-700">{oppName}</span>
-                <span className="text-sm font-medium text-gray-700">{oppScore2}/{oppWicketsVal}</span>
-              </div>
+              {isOppBallByBall ? (
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                      <span className="text-white text-xs font-bold">{oppAbbrev.slice(0, 3)}</span>
+                    </div>
+                    <span className="flex-1 text-sm font-semibold text-gray-900">{oppName}</span>
+                    <span className="text-sm font-bold text-gray-900">
+                      {liveTotalScore}/{liveWickets}
+                      <span className="text-xs font-normal text-gray-500 ml-1">({liveOversString} ovs)</span>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <img src="/images/vcc_cricle_small.png" alt="VCC" className="w-full h-full object-cover" />
+                    </div>
+                    <span className="flex-1 text-sm font-medium text-gray-700">The Village CC</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      {matchState?.score ?? 0}/{(matchState?.players ?? []).filter(p => p.state === 'Out').length}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <img src="/images/vcc_cricle_small.png" alt="VCC" className="w-full h-full object-cover" />
+                    </div>
+                    <span className="flex-1 text-sm font-semibold text-gray-900">The Village CC</span>
+                    <span className="text-sm font-bold text-gray-900">
+                      {liveTotalScore}/{liveWickets}
+                      <span className="text-xs font-normal text-gray-500 ml-1">({liveOversString} ovs)</span>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                      <span className="text-white text-xs font-bold">{oppAbbrev.slice(0, 3)}</span>
+                    </div>
+                    <span className="flex-1 text-sm font-medium text-gray-700">{oppName}</span>
+                    <span className="text-sm font-medium text-gray-700">{oppScore2}/{oppWicketsVal}</span>
+                  </div>
+                </>
+              )}
             </div>
             {/* CRR / RRR rates bar */}
-            {isLimitedOversMatch && (
+            {isLimitedOversMatch && !isOppBallByBall && (
               <div className="border-b border-gray-200 px-3 py-1.5 bg-gray-50 flex flex-wrap items-center gap-x-4 gap-y-0.5 text-xs">
                 <div className="flex items-center gap-1">
                   <span className="text-gray-500 font-medium">CRR</span>

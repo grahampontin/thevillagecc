@@ -1,5 +1,5 @@
-﻿import React from 'react';
-import { PlayerStateV1 } from '../../api/swaggerTypes';
+import React from 'react';
+import { PlayerStateV1, PlayerV1 } from '../../api/swaggerTypes';
 import { DISMISSAL_MODES } from '../../utils/liveScoringTypes';
 
 export interface WicketFormContentProps {
@@ -20,6 +20,13 @@ export interface WicketFormContentProps {
   setWicketBatsmenCrossed: (v: boolean) => void;
   wicketCommentary: string;
   setWicketCommentary: (v: string) => void;
+  // Opposition ball-by-ball mode
+  isOppBallByBall?: boolean;
+  ourPlayers?: PlayerV1[];
+  wicketOppFielderPlayerId?: number | null;
+  setWicketOppFielderPlayerId?: (v: number | null) => void;
+  wicketNewBatsmanName?: string;
+  setWicketNewBatsmanName?: (v: string) => void;
 }
 
 export const WicketFormContent: React.FC<WicketFormContentProps> = ({
@@ -32,6 +39,9 @@ export const WicketFormContent: React.FC<WicketFormContentProps> = ({
   wicketNextBatterInId, setWicketNextBatterInId,
   wicketBatsmenCrossed, setWicketBatsmenCrossed,
   wicketCommentary, setWicketCommentary,
+  isOppBallByBall, ourPlayers,
+  wicketOppFielderPlayerId, setWicketOppFielderPlayerId,
+  wicketNewBatsmanName, setWicketNewBatsmanName,
 }) => {
   const battingPlayers = localPlayers.filter(p => p.state === 'Batting');
   const waitingPlayers = localPlayers.filter(p => p.state === 'Waiting');
@@ -67,13 +77,31 @@ export const WicketFormContent: React.FC<WicketFormContentProps> = ({
       {selectedDismissalMode?.hasFielder && (
         <div className="flex items-center px-4 py-3 border-b border-gray-100">
           <label className="w-32 text-sm text-gray-600 flex-shrink-0">Fielder</label>
-          <input
-            type="text"
-            placeholder="Add name..."
-            value={wicketFielder}
-            onChange={e => setWicketFielder(e.target.value)}
-            className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
-          />
+          {isOppBallByBall ? (
+            <select
+              value={wicketOppFielderPlayerId ?? ''}
+              onChange={e => {
+                const id = e.target.value ? Number(e.target.value) : null;
+                setWicketOppFielderPlayerId?.(id);
+                const player = (ourPlayers ?? []).find(p => p.playerId === id);
+                setWicketFielder(player?.name ?? '');
+              }}
+              className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+            >
+              <option value="">— (c&b if caught)</option>
+              {(ourPlayers ?? []).map(p => (
+                <option key={p.playerId} value={p.playerId!}>{p.name}</option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type="text"
+              placeholder="Add name..."
+              value={wicketFielder}
+              onChange={e => setWicketFielder(e.target.value)}
+              className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+            />
+          )}
         </div>
       )}
       {selectedDismissalMode?.hasRuns && (
@@ -107,7 +135,7 @@ export const WicketFormContent: React.FC<WicketFormContentProps> = ({
           )}
         </>
       )}
-      {selectedDismissalMode?.hasCrossed && (
+      {selectedDismissalMode?.hasCrossed && !isOppBallByBall && (
         <div className="flex items-center px-4 py-3 border-b border-gray-100">
           <label className="w-32 text-sm text-gray-600 flex-shrink-0">Batsmen crossed?</label>
           <select
@@ -120,19 +148,32 @@ export const WicketFormContent: React.FC<WicketFormContentProps> = ({
           </select>
         </div>
       )}
-      <div className="flex items-center px-4 py-3 border-b border-gray-100">
-        <label className="w-32 text-sm text-gray-600 flex-shrink-0">Next in</label>
-        <select
-          value={wicketNextBatterInId}
-          onChange={e => setWicketNextBatterInId(Number(e.target.value))}
-          className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
-        >
-          <option value={-1}>{waitingPlayers.length === 0 ? 'Last wicket' : 'Select...'}</option>
-          {waitingPlayers.map(p => (
-            <option key={p.playerId} value={p.playerId!}>{p.playerName}</option>
-          ))}
-        </select>
-      </div>
+      {isOppBallByBall ? (
+        <div className="flex items-center px-4 py-3 border-b border-gray-100">
+          <label className="w-32 text-sm text-gray-600 flex-shrink-0">Next batsman</label>
+          <input
+            type="text"
+            placeholder="Name… (leave blank if last wicket)"
+            value={wicketNewBatsmanName ?? ''}
+            onChange={e => setWicketNewBatsmanName?.(e.target.value)}
+            className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+          />
+        </div>
+      ) : (
+        <div className="flex items-center px-4 py-3 border-b border-gray-100">
+          <label className="w-32 text-sm text-gray-600 flex-shrink-0">Next in</label>
+          <select
+            value={wicketNextBatterInId}
+            onChange={e => setWicketNextBatterInId(Number(e.target.value))}
+            className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+          >
+            <option value={-1}>{waitingPlayers.length === 0 ? 'Last wicket' : 'Select...'}</option>
+            {waitingPlayers.map(p => (
+              <option key={p.playerId} value={p.playerId!}>{p.playerName}</option>
+            ))}
+          </select>
+        </div>
+      )}
       <div className="flex items-start px-4 py-3">
         <span className="material-symbols-outlined text-gray-400 text-lg mr-3 mt-0.5">comment</span>
         <textarea
@@ -146,4 +187,3 @@ export const WicketFormContent: React.FC<WicketFormContentProps> = ({
     </div>
   );
 };
-

@@ -14,7 +14,6 @@ export type Screen =
   | 'endOver'
   | 'endInnings'
   | 'oppositionScoring'
-  | 'oppositionBallByBall'
   | 'endMatch';
 
 // ---------------------------------------------------------------------------
@@ -37,6 +36,7 @@ export interface LocalWicket {
   modeOfDismissal: components['schemas']['ModesOfDismissalV1'];
   bowler: string;
   fielder: string;
+  fielderPlayerId?: number | null;
   description: string;
   notOutPlayerId: number;
   notOutPlayerName: string;

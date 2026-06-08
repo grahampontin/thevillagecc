@@ -6,6 +6,8 @@ import {
   startLiveScoringMatch,
   submitOver,
   submitOppositionScore,
+  submitOppositionOver,
+  deleteLastOppositionOver,
   endInnings,
   abandonMatch,
 } from '../api/liveScoringApi';
@@ -23,6 +25,10 @@ import {
   getNextStateScreen,
   shouldSwitchStriker,
   recomputeOverState,
+  computeBatsmanRunsInOver,
+  computeBatsmanBallsInOver,
+  computeBatsmanFoursInOver,
+  computeBatsmanSixesInOver,
 } from '../utils/liveScoringUtils';
 import { ErrorToast } from './liveScoring/NavBar';
 import { ChooseMatchScreen } from './liveScoring/ChooseMatchScreen';
@@ -34,7 +40,6 @@ import { WicketScreen } from './liveScoring/WicketScreen';
 import { EndOverScreen } from './liveScoring/EndOverScreen';
 import { EndInningsScreen } from './liveScoring/EndInningsScreen';
 import { OppositionScoringScreen } from './liveScoring/OppositionScoringScreen';
-import { OppositionBallByBallScreen } from './liveScoring/OppositionBallByBallScreen';
 import { EndMatchScreen } from './liveScoring/EndMatchScreen';
 // ---------------------------------------------------------------------------
 // Main component
@@ -101,6 +106,11 @@ const LiveScoring: React.FC = () => {
   const [rightPanelTab, setRightPanelTab] = useState<'currentOver' | 'scorecard' | 'endOver' | 'newOver' | 'wicket'>('currentOver');
   // Mobile tab
   const [mobileTab, setMobileTab] = useState<'scoring' | 'currentOver' | 'scorecard' | 'endOver' | 'newOver' | 'wicket'>('scoring');
+  // Opposition ball-by-ball mode
+  const [isOppBallByBall, setIsOppBallByBall] = useState(false);
+  const [oppSelectedBowlerPlayerId, setOppSelectedBowlerPlayerId] = useState<number | null>(null);
+  const [wicketNewBatsmanName, setWicketNewBatsmanName] = useState('');
+  const [wicketOppFielderPlayerId, setWicketOppFielderPlayerId] = useState<number | null>(null);
   // State snapshot at the start of the current over (for ball-edit recomputation)
   const [overStartPlayers, setOverStartPlayers] = useState<PlayerStateV1[]>([]);
   const [overStartStrikerId, setOverStartStrikerId] = useState<number | null>(null);
@@ -156,8 +166,34 @@ const LiveScoring: React.FC = () => {
       setSelectedBowler('');
       setNewBowlerInput('');
       setShowNewBowlerInput(false);
-      const batters = (state.players ?? []).filter(p => p.state === 'Batting');
-      setShowBatsmanSelects(batters.length === 0);
+      setOppSelectedBowlerPlayerId(null);
+      const isOpp = state.nextState === 'OppositionBattingOver';
+      setIsOppBallByBall(isOpp);
+      if (isOpp) {
+        // Build fake PlayerStateV1 objects for opposition batsmen (negative IDs)
+        const extState = state as typeof state & {
+          oppositionPlayers?: Array<{ batsmanName: string; state: string; position?: number; currentScore?: number; ballsFaced?: number; fours?: number; sixes?: number }>;
+          oppositionOnStrikeBatsmanName?: string | null;
+        };
+        const oppPlayers = extState.oppositionPlayers ?? [];
+        const fakePlayers: PlayerStateV1[] = oppPlayers.map((op, i) => ({
+          playerId: -(i + 2),
+          playerName: op.batsmanName,
+          state: op.state as 'Batting' | 'Out' | 'Waiting',
+          position: op.position ?? (i + 1),
+          currentScore: op.currentScore ?? 0,
+          ballsFaced: op.ballsFaced ?? 0,
+          fours: op.fours ?? 0,
+          sixes: op.sixes ?? 0,
+        }));
+        const onStrikePlayer = fakePlayers.find(p => p.playerName === extState.oppositionOnStrikeBatsmanName);
+        setLocalPlayers(fakePlayers);
+        setLocalOnStrikeBatsmanId(onStrikePlayer?.playerId ?? (fakePlayers.find(p => p.state === 'Batting')?.playerId ?? null));
+        setShowBatsmanSelects(false);
+      } else {
+        const batters = (state.players ?? []).filter(p => p.state === 'Batting');
+        setShowBatsmanSelects(batters.length === 0);
+      }
       setStrikerBatsmanId(null);
       setNonStrikerBatsmanId(null);
       // Always use the inline panel inside ScoringScreen (right panel on wide,
@@ -305,16 +341,16 @@ const LiveScoring: React.FC = () => {
   // ---------------------------------------------------------------------------
   const isNewOverValid = useCallback((): string | null => {
     if (!selectedBowler) return 'Who is bowling this over?';
-    if (matchState && selectedBowler === matchState.previousBowler) {
+    if (!isOppBallByBall && matchState && selectedBowler === matchState.previousBowler) {
       return `${selectedBowler} bowled the last over. You're not really allowed to bowl two in a row...`;
     }
-    if (showBatsmanSelects) {
+    if (!isOppBallByBall && showBatsmanSelects) {
       if (!strikerBatsmanId) return 'We need two batsmen before we can start.';
       if (!nonStrikerBatsmanId) return 'We need two batsmen before we can start.';
       if (strikerBatsmanId === nonStrikerBatsmanId) return 'It would be swell if we had a different batsman at each end.';
     }
     return null;
-  }, [selectedBowler, matchState, showBatsmanSelects, strikerBatsmanId, nonStrikerBatsmanId]);
+  }, [selectedBowler, isOppBallByBall, matchState, showBatsmanSelects, strikerBatsmanId, nonStrikerBatsmanId]);
   const handleAddNewBowler = useCallback(() => {
     const name = newBowlerInput.trim();
     if (!name) { showToast("That isn't a name now is it?"); return; }
@@ -330,14 +366,25 @@ const LiveScoring: React.FC = () => {
   const handleNewOverDone = useCallback(() => {
     const error = isNewOverValid();
     if (error) { showToast(error); return; }
-    const newPlayers = [...(matchState?.players ?? []).map(p => ({ ...p }))];
-    if (showBatsmanSelects && strikerBatsmanId && nonStrikerBatsmanId) {
-      let pos = 1;
-      newPlayers.forEach(p => {
-        if (p.playerId === strikerBatsmanId) { p.state = 'Batting'; p.position = pos++; }
-        else if (p.playerId === nonStrikerBatsmanId) { p.state = 'Batting'; p.position = pos++; }
-      });
-      setLocalOnStrikeBatsmanId(strikerBatsmanId);
+    let newPlayers: PlayerStateV1[];
+    let startStriker: number | null;
+    if (isOppBallByBall) {
+      // Keep the fake opposition players from navigation; just snapshot them for ball-edit
+      newPlayers = localPlayers.map(p => ({ ...p }));
+      startStriker = localOnStrikeBatsmanId;
+    } else {
+      newPlayers = [...(matchState?.players ?? []).map(p => ({ ...p }))];
+      if (showBatsmanSelects && strikerBatsmanId && nonStrikerBatsmanId) {
+        let pos = 1;
+        newPlayers.forEach(p => {
+          if (p.playerId === strikerBatsmanId) { p.state = 'Batting'; p.position = pos++; }
+          else if (p.playerId === nonStrikerBatsmanId) { p.state = 'Batting'; p.position = pos++; }
+        });
+        setLocalOnStrikeBatsmanId(strikerBatsmanId);
+      }
+      startStriker = (showBatsmanSelects && strikerBatsmanId)
+        ? strikerBatsmanId
+        : (matchState?.onStrikeBatsmanId ?? null);
     }
     setLocalPlayers(newPlayers);
     setCurrentBowler(selectedBowler);
@@ -346,18 +393,20 @@ const LiveScoring: React.FC = () => {
     setShowFivePlus(false);
     setShowWagonWheel(false);
     setOverStartPlayers(newPlayers.map(p => ({ ...p })));
-    const startStriker = (showBatsmanSelects && strikerBatsmanId)
-      ? strikerBatsmanId
-      : (matchState?.onStrikeBatsmanId ?? null);
     setOverStartStrikerId(startStriker);
     setRightPanelTab('currentOver');
     setMobileTab('scoring');
     setScreen('scoring');
-  }, [isNewOverValid, showToast, matchState, showBatsmanSelects, strikerBatsmanId, nonStrikerBatsmanId, selectedBowler]);
+  }, [isNewOverValid, showToast, isOppBallByBall, localPlayers, localOnStrikeBatsmanId,
+      matchState, showBatsmanSelects, strikerBatsmanId, nonStrikerBatsmanId, selectedBowler]);
   // ---------------------------------------------------------------------------
   // Scoring screen handlers
   // ---------------------------------------------------------------------------
-  const addBall = useCallback((amount: number, thing: string, wicket?: LocalWicket | null) => {
+  const addBall = useCallback((
+    amount: number, thing: string,
+    wicket?: LocalWicket | null,
+    extraPlayers?: PlayerStateV1[],
+  ) => {
     const strikerId = localOnStrikeBatsmanId ?? matchState?.onStrikeBatsmanId ?? -1;
     const strikerPlayer = localPlayers.find(p => p.playerId === strikerId);
     const ball: LocalBall = {
@@ -371,11 +420,12 @@ const LiveScoring: React.FC = () => {
     setLocalBalls(prev => [...prev, ball]);
     if (wicket) {
       setLocalPlayers(prev => {
-        const updated = prev.map(p => {
-          if (p.playerId === wicket.playerId) return { ...p, state: 'Out' };
-          if (p.playerId === wicket.nextManInId && wicket.nextManInId > 0) {
-            const maxPos = Math.max(...prev.map(pp => pp.position ?? 0), 0);
-            return { ...p, state: 'Batting', position: maxPos + 1 };
+        const base = extraPlayers?.length ? [...prev, ...extraPlayers] : prev;
+        const updated = base.map(p => {
+          if (p.playerId === wicket.playerId) return { ...p, state: 'Out' as const };
+          if (p.playerId === wicket.nextManInId && wicket.nextManInId !== -1) {
+            const maxPos = Math.max(...base.map(pp => pp.position ?? 0), 0);
+            return { ...p, state: 'Batting' as const, position: maxPos + 1 };
           }
           return p;
         });
@@ -383,7 +433,7 @@ const LiveScoring: React.FC = () => {
       });
     }
     if (shouldSwitchStriker(ball)) {
-      if (wicket && wicket.nextManInId > 0 && localOnStrikeBatsmanId === wicket.playerId) {
+      if (wicket && wicket.nextManInId !== -1 && localOnStrikeBatsmanId === wicket.playerId) {
         setLocalOnStrikeBatsmanId(wicket.nextManInId);
       } else if (!wicket) {
         const battingPlayers = localPlayers.filter(p => p.state === 'Batting');
@@ -396,7 +446,7 @@ const LiveScoring: React.FC = () => {
         }
       }
     } else if (wicket) {
-      if (localOnStrikeBatsmanId === wicket.playerId && wicket.nextManInId > 0) {
+      if (localOnStrikeBatsmanId === wicket.playerId && wicket.nextManInId !== -1) {
         setLocalOnStrikeBatsmanId(wicket.nextManInId);
       }
     }
@@ -456,11 +506,19 @@ const LiveScoring: React.FC = () => {
       const removedBall = prev[prev.length - 1];
       const next = prev.slice(0, -1);
       if (removedBall.wicket) {
-        setLocalPlayers(players => players.map(p => {
-          if (p.playerId === removedBall.wicket!.playerId) return { ...p, state: 'Batting' };
-          if (p.playerId === removedBall.wicket!.nextManInId) return { ...p, state: 'Waiting' };
-          return p;
-        }));
+        if (isOppBallByBall && removedBall.wicket.nextManInId !== -1) {
+          // Remove the newly-added fake batsman entirely on undo
+          setLocalPlayers(players => players
+            .filter(p => p.playerId !== removedBall.wicket!.nextManInId)
+            .map(p => p.playerId === removedBall.wicket!.playerId ? { ...p, state: 'Batting' as const } : p)
+          );
+        } else {
+          setLocalPlayers(players => players.map(p => {
+            if (p.playerId === removedBall.wicket!.playerId) return { ...p, state: 'Batting' as const };
+            if (p.playerId === removedBall.wicket!.nextManInId) return { ...p, state: 'Waiting' as const };
+            return p;
+          }));
+        }
         setLocalOnStrikeBatsmanId(removedBall.batsmanId);
       } else if (shouldSwitchStriker(removedBall)) {
         setLocalPlayers(prev2 => {
@@ -479,7 +537,7 @@ const LiveScoring: React.FC = () => {
     });
     setWaitingForBallType(false);
     setShowFivePlus(false);
-  }, [localOnStrikeBatsmanId]);
+  }, [isOppBallByBall, localOnStrikeBatsmanId]);
   const handleWicketButton = useCallback(() => {
     if (waitingForBallType) {
       showToast('What was the last ball? Runs? Extras?');
@@ -497,6 +555,8 @@ const LiveScoring: React.FC = () => {
     setWicketNextBatterInId(waitingPlayers.length > 0 ? (waitingPlayers[0].playerId ?? -1) : -1);
     setWicketBatsmenCrossed(false);
     setWicketCommentary('');
+    setWicketNewBatsmanName('');
+    setWicketOppFielderPlayerId(null);
     // Open the wicket form inline rather than navigating away.
     if (isWide) setRightPanelTab('wicket');
     else setMobileTab('wicket');
@@ -525,6 +585,7 @@ const LiveScoring: React.FC = () => {
     setShowNewBowlerInput(false);
     setNewBowlerInput('');
     setShowBatsmanSelects(false);
+    setOppSelectedBowlerPlayerId(null);
     // Stay on the scoring screen and surface the inline newOver panel.
     if (isWide) setRightPanelTab('newOver');
     else setMobileTab('newOver');
@@ -619,6 +680,41 @@ const LiveScoring: React.FC = () => {
     const notOutPlayer = notOutBatters[0];
     const runsForBall = parseInt(wicketRuns, 10) || 0;
     const runType = runsForBall > 0 ? wicketRunsType : '';
+
+    if (isOppBallByBall) {
+      // Compute next fake player ID (below all existing negative IDs)
+      const minId = localPlayers.reduce((m, p) => Math.min(m, p.playerId ?? 0), -1);
+      const nextFakeId = wicketNewBatsmanName.trim() ? (minId - 1) : -1;
+      const maxPos = localPlayers.reduce((m, p) => Math.max(m, p.position ?? 0), 0);
+      const extraPlayers: PlayerStateV1[] = wicketNewBatsmanName.trim() ? [{
+        playerId: nextFakeId,
+        playerName: wicketNewBatsmanName.trim(),
+        state: 'Waiting' as const,
+        position: maxPos + 1,
+        currentScore: 0,
+        ballsFaced: 0,
+        fours: 0,
+        sixes: 0,
+      }] : [];
+      const wicket: LocalWicket = {
+        playerId: wicketBatterOutId!,
+        playerName: batterOut?.playerName ?? '',
+        modeOfDismissal: dismissalMode.value,
+        bowler: currentBowler,
+        fielder: wicketFielder,
+        fielderPlayerId: wicketOppFielderPlayerId,
+        description: wicketCommentary,
+        notOutPlayerId: notOutPlayer?.playerId ?? -1,
+        notOutPlayerName: notOutPlayer?.playerName ?? '',
+        nextManInId: nextFakeId,
+        batsmenCrossed: false,
+      };
+      addBall(runsForBall, runType, wicket, extraPlayers);
+      setRightPanelTab('currentOver');
+      setMobileTab('scoring');
+      return;
+    }
+
     const wicket: LocalWicket = {
       playerId: wicketBatterOutId!,
       playerName: batterOut?.playerName ?? '',
@@ -635,9 +731,10 @@ const LiveScoring: React.FC = () => {
     setRightPanelTab('currentOver');
     setMobileTab('scoring');
   }, [
-    isWicketValid, showToast, localPlayers, wicketBatterOutId, wicketDismissalCode,
-    wicketFielder, wicketRuns, wicketRunsType, wicketCommentary, wicketNextBatterInId,
-    wicketBatsmenCrossed, currentBowler, addBall,
+    isWicketValid, showToast, isOppBallByBall, localPlayers, wicketBatterOutId,
+    wicketDismissalCode, wicketFielder, wicketOppFielderPlayerId, wicketRuns, wicketRunsType,
+    wicketCommentary, wicketNewBatsmanName, wicketNextBatterInId, wicketBatsmenCrossed,
+    currentBowler, addBall,
   ]);
   // ---------------------------------------------------------------------------
   // End Over screen handlers
@@ -649,6 +746,95 @@ const LiveScoring: React.FC = () => {
       showToast('No legal deliveries recorded for this over.');
       return;
     }
+
+    if (isOppBallByBall) {
+      if (!oppSelectedBowlerPlayerId) {
+        showToast('No bowler selected for this over.');
+        return;
+      }
+      const extMs = matchState as typeof matchState & { oppositionLastCompletedOver?: number };
+      const oppLastCompleted = extMs.oppositionLastCompletedOver ?? 0;
+      const currentOverNumber = oppLastCompleted + 1;
+
+      const mapDismissal = (mode: string, fielder: string, bowler: string): string => {
+        if (mode === 'Caught' && (!fielder || fielder === bowler)) return 'c&b';
+        const M: Record<string, string> = {
+          'Bowled': 'bowled', 'Caught': 'caught', 'LBW': 'lbw',
+          'RunOut': 'run out', 'Stumped': 'stumped', 'HitWicket': 'hit wicket',
+          'Retired': 'retired', 'RetiredHurt': 'retired hurt',
+        };
+        return M[mode] ?? mode.toLowerCase();
+      };
+
+      const balls = localBalls.map((b, i) => ({
+        ballNumber: i + 1,
+        batsmanName: b.batsmanName,
+        bowlerPlayerId: oppSelectedBowlerPlayerId,
+        thing: b.thing,
+        amount: b.amount,
+        angle: b.angle ?? null,
+        isWide: b.thing === 'wd',
+        isNoBall: b.thing === 'nb',
+        isBoundary: (b.thing === '' && b.amount === 4) || (b.thing === 'nb' && b.amount === 5),
+        isSix: (b.thing === '' && b.amount === 6) || (b.thing === 'nb' && b.amount === 7),
+        wicket: b.wicket ? {
+          batsmanName: b.wicket.playerName,
+          bowlerPlayerId: oppSelectedBowlerPlayerId,
+          fielderPlayerId: b.wicket.fielderPlayerId ??
+            ((!b.wicket.fielder || b.wicket.fielder === b.wicket.bowler) ? oppSelectedBowlerPlayerId : null),
+          modeOfDismissal: mapDismissal(b.wicket.modeOfDismissal, b.wicket.fielder, b.wicket.bowler),
+          description: b.wicket.description || null,
+        } : null,
+      }));
+
+      const onStrikeName = localPlayers.find(p => p.playerId === localOnStrikeBatsmanId)?.playerName ?? '';
+      const allOppBatters = localPlayers.filter(p => p.state === 'Batting' || p.state === 'Out' || p.state === 'Waiting');
+      const players = allOppBatters.map(p => {
+        const r = (p.currentScore ?? 0) + computeBatsmanRunsInOver(p.playerId!, localBalls);
+        const b2 = (p.ballsFaced ?? 0) + computeBatsmanBallsInOver(p.playerId!, localBalls);
+        const fours = (p.fours ?? 0) + computeBatsmanFoursInOver(p.playerId!, localBalls);
+        const sixes = (p.sixes ?? 0) + computeBatsmanSixesInOver(p.playerId!, localBalls);
+        const wicketBall = localBalls.find(ball => ball.wicket?.playerId === p.playerId);
+        return {
+          batsmanName: p.playerName ?? '',
+          position: p.position ?? 0,
+          state: p.state,
+          currentScore: r,
+          ballsFaced: b2,
+          fours,
+          sixes,
+          strikeRate: b2 > 0 ? Math.round((r / b2) * 1000) / 10 : 0,
+          wicket: wicketBall?.wicket ? {
+            batsmanName: wicketBall.wicket.playerName,
+            bowlerPlayerId: oppSelectedBowlerPlayerId,
+            fielderPlayerId: wicketBall.wicket.fielderPlayerId ??
+              ((!wicketBall.wicket.fielder || wicketBall.wicket.fielder === wicketBall.wicket.bowler) ? oppSelectedBowlerPlayerId : null),
+            modeOfDismissal: mapDismissal(wicketBall.wicket.modeOfDismissal, wicketBall.wicket.fielder, wicketBall.wicket.bowler),
+            description: wicketBall.wicket.description || null,
+          } : undefined,
+        };
+      });
+
+      const payload = {
+        lastCompletedOver: oppLastCompleted,
+        onStrikeBatsmanName: onStrikeName,
+        over: { overNumber: currentOverNumber, balls, commentary: endOverCommentary || null },
+        players,
+      };
+
+      setIsLoading(true);
+      try {
+        const newState = await submitOppositionOver(selectedMatchId, payload);
+        applyMatchState(newState);
+        navigateToNextState(newState);
+      } catch (err) {
+        showToast(err instanceof Error ? err.message : 'Failed to submit opposition over');
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
     const overBalls = localBalls.map((b, i) => ({
       ballNumber: i + 1,
       amount: b.amount,
@@ -706,7 +892,8 @@ const LiveScoring: React.FC = () => {
     }
   }, [
     selectedMatchId, matchState, localBalls, localOnStrikeBatsmanId, currentBowler,
-    endOverCommentary, localPlayers, applyMatchState, navigateToNextState, showToast,
+    endOverCommentary, localPlayers, isOppBallByBall, oppSelectedBowlerPlayerId,
+    applyMatchState, navigateToNextState, showToast,
   ]);
   // ---------------------------------------------------------------------------
   // End Innings screen handlers
@@ -747,6 +934,20 @@ const LiveScoring: React.FC = () => {
     applyMatchState(newState);
     navigateToNextState(newState);
   }, [applyMatchState, navigateToNextState]);
+
+  const handleUndoLastOppOver = useCallback(async () => {
+    if (!selectedMatchId) return;
+    setIsLoading(true);
+    try {
+      const newState = await deleteLastOppositionOver(selectedMatchId);
+      applyMatchState(newState);
+      navigateToNextState(newState);
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Failed to undo last opposition over');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [selectedMatchId, applyMatchState, navigateToNextState, showToast]);
 
   const handleOppositionScoringConfirm = useCallback(async () => {
     const error = isOppositionScoringValid();
@@ -965,6 +1166,14 @@ const LiveScoring: React.FC = () => {
           onAddNewBowler={handleAddNewBowler}
           onAbandon={openAbandonDialog}
           showToast={showToast}
+          isOppBallByBall={isOppBallByBall}
+          oppSelectedBowlerPlayerId={oppSelectedBowlerPlayerId}
+          setOppSelectedBowlerPlayerId={setOppSelectedBowlerPlayerId}
+          wicketNewBatsmanName={wicketNewBatsmanName}
+          setWicketNewBatsmanName={setWicketNewBatsmanName}
+          wicketOppFielderPlayerId={wicketOppFielderPlayerId}
+          setWicketOppFielderPlayerId={setWicketOppFielderPlayerId}
+          onUndoLastOppOver={isOppBallByBall ? handleUndoLastOppOver : undefined}
         />
       );
       break;
@@ -1038,20 +1247,6 @@ const LiveScoring: React.FC = () => {
           onConfirm={handleOppositionScoringConfirm}
           onAbandon={openAbandonDialog}
           onBallByBallStarted={handleOppositionBallByBallStarted}
-        />
-      );
-      break;
-    case 'oppositionBallByBall':
-      content = (
-        <OppositionBallByBallScreen
-          matchState={matchState}
-          selectedMatchId={selectedMatchId}
-          onMatchStateUpdate={(newState) => {
-            applyMatchState(newState);
-            navigateToNextState(newState);
-          }}
-          onAbandon={openAbandonDialog}
-          showToast={showToast}
         />
       );
       break;
