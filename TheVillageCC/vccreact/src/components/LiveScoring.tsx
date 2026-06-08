@@ -294,6 +294,10 @@ const LiveScoring: React.FC = () => {
   // Match Conditions screen handlers
   // ---------------------------------------------------------------------------
   const selectedPlayers = allPlayers.filter(p => selectedPlayerIds.includes(p.playerId!));
+  // When allPlayers hasn't been fetched (match resumed mid-session), derive our XI from matchState.players
+  const ourXIPlayers: PlayerV1[] = allPlayers.length > 0
+    ? allPlayers
+    : (matchState?.players ?? []).map(p => ({ playerId: p.playerId, name: p.playerName ?? '' }));
   const isMatchConditionsValid = useCallback((): boolean => {
     if (!captainId) { showToast('Every team needs a captain.'); return false; }
     if (!keeperId) { showToast('Not having a wicket keeper seems pretty village, even for us.'); return false; }
@@ -1090,7 +1094,7 @@ const LiveScoring: React.FC = () => {
           showFivePlus={showFivePlus}
           showWagonWheel={showWagonWheel}
           wagonWheelBowlerView={wagonWheelBowlerView}
-          allPlayers={allPlayers}
+          allPlayers={ourXIPlayers}
           rightPanelTab={rightPanelTab}
           setRightPanelTab={setRightPanelTab}
           mobileTab={mobileTab}
