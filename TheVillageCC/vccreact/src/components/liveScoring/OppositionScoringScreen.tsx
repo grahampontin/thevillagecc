@@ -27,7 +27,7 @@ export interface OppositionScoringScreenProps {
   isLoading: boolean;
   onConfirm: () => void;
   onAbandon: () => void;
-  onBallByBallStarted: (state: MatchStateV1) => void;
+  onBallByBallStarted: (state: MatchStateV1, batterNames: string[]) => void;
 }
 
 export const OppositionScoringScreen: React.FC<OppositionScoringScreenProps> = ({
@@ -60,7 +60,7 @@ export const OppositionScoringScreen: React.FC<OppositionScoringScreenProps> = (
       const newState = await startOppositionBallByBall(selectedMatchId, {
         batsmanNames: [batter1.trim(), batter2.trim()],
       });
-      onBallByBallStarted(newState);
+      onBallByBallStarted(newState, [batter1.trim(), batter2.trim()]);
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : 'Failed to start ball-by-ball scoring');
     } finally {

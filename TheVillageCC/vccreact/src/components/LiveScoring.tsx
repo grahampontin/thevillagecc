@@ -160,7 +160,13 @@ const LiveScoring: React.FC = () => {
   // ---------------------------------------------------------------------------
   // Navigate to next state
   // ---------------------------------------------------------------------------
-  const navigateToNextState = useCallback((state: MatchStateV1) => {
+  const navigateToNextState = useCallback((
+    state: MatchStateV1,
+    opts?: {
+      initialOppBatters?: string[];
+      preservedOppState?: { players: PlayerStateV1[]; strikerId: number | null };
+    },
+  ) => {
     const nextScreen = getNextStateScreen(state.nextState);
     if (nextScreen === 'newOver') {
       setSelectedBowler('');
@@ -170,25 +176,49 @@ const LiveScoring: React.FC = () => {
       const isOpp = state.nextState === 'OppositionBattingOver';
       setIsOppBallByBall(isOpp);
       if (isOpp) {
-        // Build fake PlayerStateV1 objects for opposition batsmen (negative IDs)
         const extState = state as typeof state & {
           oppositionPlayers?: Array<{ batsmanName: string; state: string; position?: number; currentScore?: number; ballsFaced?: number; fours?: number; sixes?: number }>;
           oppositionOnStrikeBatsmanName?: string | null;
         };
         const oppPlayers = extState.oppositionPlayers ?? [];
-        const fakePlayers: PlayerStateV1[] = oppPlayers.map((op, i) => ({
-          playerId: -(i + 2),
-          playerName: op.batsmanName,
-          state: op.state as 'Batting' | 'Out' | 'Waiting',
-          position: op.position ?? (i + 1),
-          currentScore: op.currentScore ?? 0,
-          ballsFaced: op.ballsFaced ?? 0,
-          fours: op.fours ?? 0,
-          sixes: op.sixes ?? 0,
-        }));
-        const onStrikePlayer = fakePlayers.find(p => p.playerName === extState.oppositionOnStrikeBatsmanName);
+        let fakePlayers: PlayerStateV1[];
+        let newStrikerId: number | null;
+
+        if (oppPlayers.length > 0) {
+          // Server returned opposition players
+          fakePlayers = oppPlayers.map((op, i) => ({
+            playerId: -(i + 2),
+            playerName: op.batsmanName,
+            state: op.state as 'Batting' | 'Out' | 'Waiting',
+            position: op.position ?? (i + 1),
+            currentScore: op.currentScore ?? 0,
+            ballsFaced: op.ballsFaced ?? 0,
+            fours: op.fours ?? 0,
+            sixes: op.sixes ?? 0,
+          }));
+          const onStrikePlayer = fakePlayers.find(p => p.playerName === extState.oppositionOnStrikeBatsmanName);
+          newStrikerId = onStrikePlayer?.playerId ?? (fakePlayers.find(p => p.state === 'Batting')?.playerId ?? null);
+        } else if (opts?.initialOppBatters && opts.initialOppBatters.length > 0) {
+          // First over: build from opening batter names entered in the UI
+          fakePlayers = opts.initialOppBatters.map((name, i) => ({
+            playerId: -(i + 2),
+            playerName: name,
+            state: 'Batting' as const,
+            position: i + 1,
+            currentScore: 0, ballsFaced: 0, fours: 0, sixes: 0,
+          }));
+          newStrikerId = fakePlayers[0]?.playerId ?? null;
+        } else if (opts?.preservedOppState && opts.preservedOppState.players.length > 0) {
+          // Subsequent overs: restore snapshot taken before applyMatchState reset
+          fakePlayers = opts.preservedOppState.players.map(p => ({ ...p }));
+          newStrikerId = opts.preservedOppState.strikerId;
+        } else {
+          fakePlayers = [];
+          newStrikerId = null;
+        }
+
         setLocalPlayers(fakePlayers);
-        setLocalOnStrikeBatsmanId(onStrikePlayer?.playerId ?? (fakePlayers.find(p => p.state === 'Batting')?.playerId ?? null));
+        setLocalOnStrikeBatsmanId(newStrikerId);
         setShowBatsmanSelects(false);
       } else {
         const batters = (state.players ?? []).filter(p => p.state === 'Batting');
@@ -826,11 +856,16 @@ const LiveScoring: React.FC = () => {
         players,
       };
 
+      // Snapshot opp players now — applyMatchState will reset localPlayers to our XI
+      const snapshotOppPlayers = localPlayers.map(p => ({ ...p }));
+      const snapshotOppStrikerId = localOnStrikeBatsmanId;
       setIsLoading(true);
       try {
         const newState = await submitOppositionOver(selectedMatchId, payload);
         applyMatchState(newState);
-        navigateToNextState(newState);
+        navigateToNextState(newState, {
+          preservedOppState: { players: snapshotOppPlayers, strikerId: snapshotOppStrikerId },
+        });
       } catch (err) {
         showToast(err instanceof Error ? err.message : 'Failed to submit opposition over');
       } finally {
@@ -934,9 +969,9 @@ const LiveScoring: React.FC = () => {
     if (wickets > 10) return 'More than ten wickets down probably means the end of the innings.';
     return null;
   }, [oppOvers, oppScore, oppWickets]);
-  const handleOppositionBallByBallStarted = useCallback((newState: MatchStateV1) => {
+  const handleOppositionBallByBallStarted = useCallback((newState: MatchStateV1, batterNames: string[]) => {
     applyMatchState(newState);
-    navigateToNextState(newState);
+    navigateToNextState(newState, { initialOppBatters: batterNames });
   }, [applyMatchState, navigateToNextState]);
 
   const handleUndoLastOppOver = useCallback(async () => {
