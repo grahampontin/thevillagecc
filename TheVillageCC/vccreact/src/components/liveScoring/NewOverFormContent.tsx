@@ -21,6 +21,11 @@ export interface NewOverFormContentProps {
   ourPlayers?: PlayerV1[];
   oppSelectedBowlerPlayerId?: number | null;
   setOppSelectedBowlerPlayerId?: (v: number | null) => void;
+  // Opposition batter names (used when joining mid-innings with no known batters)
+  oppStrikerName?: string;
+  setOppStrikerName?: (v: string) => void;
+  oppNonStrikerName?: string;
+  setOppNonStrikerName?: (v: string) => void;
 }
 export const NewOverFormContent: React.FC<NewOverFormContentProps> = ({
   matchState, localPlayers, showBatsmanSelects,
@@ -31,6 +36,7 @@ export const NewOverFormContent: React.FC<NewOverFormContentProps> = ({
   nonStrikerBatsmanId, setNonStrikerBatsmanId,
   onAddNewBowler, radioGroupName,
   isOppBallByBall, ourPlayers, oppSelectedBowlerPlayerId, setOppSelectedBowlerPlayerId,
+  oppStrikerName, setOppStrikerName, oppNonStrikerName, setOppNonStrikerName,
 }) => {
   const bowlers = matchState?.bowlers ?? [];
   const bowlerDetails = matchState?.bowlerDetails ?? [];
@@ -63,6 +69,33 @@ export const NewOverFormContent: React.FC<NewOverFormContentProps> = ({
             </div>
           </div>
         </section>
+        {showBatsmanSelects && (
+          <section>
+            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Batsmen</h2>
+            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <div className="flex items-center px-4 py-3 border-b border-gray-100">
+                <label className="w-28 text-sm text-gray-600 flex-shrink-0">Striker</label>
+                <input
+                  type="text"
+                  placeholder="Batter name…"
+                  value={oppStrikerName ?? ''}
+                  onChange={e => setOppStrikerName?.(e.target.value)}
+                  className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                />
+              </div>
+              <div className="flex items-center px-4 py-3">
+                <label className="w-28 text-sm text-gray-600 flex-shrink-0">Non-Striker</label>
+                <input
+                  type="text"
+                  placeholder="Batter name…"
+                  value={oppNonStrikerName ?? ''}
+                  onChange={e => setOppNonStrikerName?.(e.target.value)}
+                  className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
+                />
+              </div>
+            </div>
+          </section>
+        )}
       </div>
     );
   }

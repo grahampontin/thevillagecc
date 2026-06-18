@@ -111,6 +111,9 @@ const LiveScoring: React.FC = () => {
   const [oppSelectedBowlerPlayerId, setOppSelectedBowlerPlayerId] = useState<number | null>(null);
   const [wicketNewBatsmanName, setWicketNewBatsmanName] = useState('');
   const [wicketOppFielderPlayerId, setWicketOppFielderPlayerId] = useState<number | null>(null);
+  // Opposition batter names (used when joining mid-innings with no known batters)
+  const [oppStrikerName, setOppStrikerName] = useState('');
+  const [oppNonStrikerName, setOppNonStrikerName] = useState('');
   // State snapshot at the start of the current over (for ball-edit recomputation)
   const [overStartPlayers, setOverStartPlayers] = useState<PlayerStateV1[]>([]);
   const [overStartStrikerId, setOverStartStrikerId] = useState<number | null>(null);
@@ -219,7 +222,13 @@ const LiveScoring: React.FC = () => {
 
         setLocalPlayers(fakePlayers);
         setLocalOnStrikeBatsmanId(newStrikerId);
-        setShowBatsmanSelects(false);
+        // Show the batter name prompt if we have no known batting players
+        const hasBatters = fakePlayers.some(p => p.state === 'Batting');
+        setShowBatsmanSelects(!hasBatters);
+        if (!hasBatters) {
+          setOppStrikerName('');
+          setOppNonStrikerName('');
+        }
       } else {
         const batters = (state.players ?? []).filter(p => p.state === 'Batting');
         setShowBatsmanSelects(batters.length === 0);
@@ -383,8 +392,13 @@ const LiveScoring: React.FC = () => {
       if (!nonStrikerBatsmanId) return 'We need two batsmen before we can start.';
       if (strikerBatsmanId === nonStrikerBatsmanId) return 'It would be swell if we had a different batsman at each end.';
     }
+    if (isOppBallByBall && showBatsmanSelects) {
+      if (!oppStrikerName.trim()) return "Who is on strike? We need the batter's name.";
+      if (!oppNonStrikerName.trim()) return "Who is the non-striker? We need their name too.";
+      if (oppStrikerName.trim() === oppNonStrikerName.trim()) return 'The striker and non-striker should be different people.';
+    }
     return null;
-  }, [selectedBowler, isOppBallByBall, matchState, showBatsmanSelects, strikerBatsmanId, nonStrikerBatsmanId]);
+  }, [selectedBowler, isOppBallByBall, matchState, showBatsmanSelects, strikerBatsmanId, nonStrikerBatsmanId, oppStrikerName, oppNonStrikerName]);
   const handleAddNewBowler = useCallback(() => {
     const name = newBowlerInput.trim();
     if (!name) { showToast("That isn't a name now is it?"); return; }
@@ -403,9 +417,20 @@ const LiveScoring: React.FC = () => {
     let newPlayers: PlayerStateV1[];
     let startStriker: number | null;
     if (isOppBallByBall) {
-      // Keep the fake opposition players from navigation; just snapshot them for ball-edit
-      newPlayers = localPlayers.map(p => ({ ...p }));
-      startStriker = localOnStrikeBatsmanId;
+      if (showBatsmanSelects && oppStrikerName.trim() && oppNonStrikerName.trim()) {
+        // Joining mid-innings: build fake players from the entered batter names
+        newPlayers = [
+          { playerId: -2, playerName: oppStrikerName.trim(), state: 'Batting' as const, position: 1, currentScore: 0, ballsFaced: 0, fours: 0, sixes: 0 },
+          { playerId: -3, playerName: oppNonStrikerName.trim(), state: 'Batting' as const, position: 2, currentScore: 0, ballsFaced: 0, fours: 0, sixes: 0 },
+        ];
+        startStriker = -2;
+        setLocalPlayers(newPlayers);
+        setLocalOnStrikeBatsmanId(startStriker);
+      } else {
+        // Keep the fake opposition players from navigation; just snapshot them for ball-edit
+        newPlayers = localPlayers.map(p => ({ ...p }));
+        startStriker = localOnStrikeBatsmanId;
+      }
     } else {
       newPlayers = [...(matchState?.players ?? []).map(p => ({ ...p }))];
       if (showBatsmanSelects && strikerBatsmanId && nonStrikerBatsmanId) {
@@ -432,7 +457,8 @@ const LiveScoring: React.FC = () => {
     setMobileTab('scoring');
     setScreen('scoring');
   }, [isNewOverValid, showToast, isOppBallByBall, localPlayers, localOnStrikeBatsmanId,
-      matchState, showBatsmanSelects, strikerBatsmanId, nonStrikerBatsmanId, selectedBowler]);
+      matchState, showBatsmanSelects, strikerBatsmanId, nonStrikerBatsmanId, selectedBowler,
+      oppStrikerName, oppNonStrikerName]);
   // ---------------------------------------------------------------------------
   // Scoring screen handlers
   // ---------------------------------------------------------------------------
@@ -1213,6 +1239,10 @@ const LiveScoring: React.FC = () => {
           wicketOppFielderPlayerId={wicketOppFielderPlayerId}
           setWicketOppFielderPlayerId={setWicketOppFielderPlayerId}
           onUndoLastOppOver={isOppBallByBall ? handleUndoLastOppOver : undefined}
+          oppStrikerName={oppStrikerName}
+          setOppStrikerName={setOppStrikerName}
+          oppNonStrikerName={oppNonStrikerName}
+          setOppNonStrikerName={setOppNonStrikerName}
         />
       );
       break;

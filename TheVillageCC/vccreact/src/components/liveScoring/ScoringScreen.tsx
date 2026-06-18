@@ -112,6 +112,11 @@ export interface ScoringScreenProps {
   wicketOppFielderPlayerId?: number | null;
   setWicketOppFielderPlayerId?: (v: number | null) => void;
   onUndoLastOppOver?: () => void;
+  // Opposition batter names (when joining with no known batters)
+  oppStrikerName?: string;
+  setOppStrikerName?: (v: string) => void;
+  oppNonStrikerName?: string;
+  setOppNonStrikerName?: (v: string) => void;
 }
 export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
   const {
@@ -148,6 +153,8 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
     wicketNewBatsmanName, setWicketNewBatsmanName,
     wicketOppFielderPlayerId, setWicketOppFielderPlayerId,
     onUndoLastOppOver,
+    oppStrikerName, setOppStrikerName,
+    oppNonStrikerName, setOppNonStrikerName,
   } = props;
   const battingPlayers = getBattingPlayers(localPlayers);
   const strikerId = localOnStrikeBatsmanId ?? matchState?.onStrikeBatsmanId ?? -1;
@@ -449,6 +456,10 @@ export const ScoringScreen: React.FC<ScoringScreenProps> = (props) => {
           ourPlayers={allPlayers}
           oppSelectedBowlerPlayerId={oppSelectedBowlerPlayerId}
           setOppSelectedBowlerPlayerId={setOppSelectedBowlerPlayerId}
+          oppStrikerName={oppStrikerName}
+          setOppStrikerName={setOppStrikerName}
+          oppNonStrikerName={oppNonStrikerName}
+          setOppNonStrikerName={setOppNonStrikerName}
         />
       </div>
     </div>
