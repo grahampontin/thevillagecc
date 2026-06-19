@@ -63,6 +63,17 @@ export type InningsEndDetailsV1 = components['schemas']['InningsEndDetailsV1'];
 export type AbandonMatchV1 = components['schemas']['AbandonMatchV1'];
 export type YetToBatEntryV1 = components['schemas']['YetToBatEntryV1'];
 
+// Opposition ball-by-ball innings types
+export type OppositionBatterScorecardLineV1 = components['schemas']['OppositionBatterScorecardLineV1'];
+export type OppositionBatterStateV1 = components['schemas']['OppositionBatterStateV1'];
+export type OppositionBowlerDetailsV1 = components['schemas']['OppositionBowlerDetailsV1'];
+export type OppositionFallOfWicketV1 = components['schemas']['OppositionFallOfWicketV1'];
+export type OppositionPartnershipV1 = components['schemas']['OppositionPartnershipV1'];
+export type OppositionOverSummaryV1 = components['schemas']['OppositionOverSummaryV1'];
+export type OppositionOverV1 = components['schemas']['OppositionOverV1'];
+export type OppositionBallV1 = components['schemas']['OppositionBallV1'];
+export type OppositionWicketV1 = components['schemas']['OppositionWicketV1'];
+
 // Player summary (lightweight career stats for mini-profiles)
 export type PlayerSummaryV1 = components['schemas']['PlayerSummaryV1'];
 

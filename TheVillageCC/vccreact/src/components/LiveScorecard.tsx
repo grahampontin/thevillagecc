@@ -15,7 +15,10 @@ import { Line, Bar } from 'react-chartjs-2';
 import Header from './Header';
 import Footer from './Footer';
 import { getLiveScorecardData } from '../api/liveScoringApi';
-import { LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1, BallV1, MatchDropV1, YetToBatEntryV1, PlayerSummaryV1 } from '../api/swaggerTypes';
+import {
+  LiveScorecardV1, BattingEntryV1, BowlingEntryV1, FoWEntryV1, BallV1, MatchDropV1, YetToBatEntryV1, PlayerSummaryV1,
+  OppositionWicketV1, OppositionBowlerDetailsV1, OppositionBallV1,
+} from '../api/swaggerTypes';
 import { getPlayerSummary } from '../api/statsApi';
 import { getScoringArea } from '../utils/cricketUtils';
 
@@ -175,6 +178,11 @@ const LiveScorecard: React.FC = () => {
   const [scorecardExpanded, setScorecardExpanded] = useState(false);
   const [analysisExpanded, setAnalysisExpanded] = useState(false);
   const [playerAnalysisExpanded, setPlayerAnalysisExpanded] = useState(false);
+  // Opposition innings collapsible panels
+  const [theirBattingExpanded, setTheirBattingExpanded] = useState(false);
+  const [theirFowExpanded, setTheirFowExpanded] = useState(false);
+  const [theirOverByOverExpanded, setTheirOverByOverExpanded] = useState(false);
+  const [theirPartnershipsExpanded, setTheirPartnershipsExpanded] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [activePlayerAnalysisTab, setActivePlayerAnalysisTab] = useState<'worm' | 'wagon'>('worm');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -364,6 +372,54 @@ const LiveScorecard: React.FC = () => {
     if (wicket.isRetiredHurt) return 'retired hurt';
     if (wicket.isRetired) return 'retired';
     return 'out';
+  };
+
+  /**
+   * Format an OppositionWicketV1 dismissal using the VCC player map for name resolution.
+   * bowlerPlayerId and fielderPlayerId are resolved from vccPlayerMap.
+   */
+  const formatOppositionDismissal = (
+    wicket: OppositionWicketV1 | null | undefined,
+    playerMap: Map<number, string>,
+    inningsComplete: boolean,
+  ): string => {
+    if (!wicket) return inningsComplete ? 'not out' : 'batting';
+    const bowler = wicket.bowlerPlayerId != null
+      ? (playerMap.get(wicket.bowlerPlayerId) ?? undefined)
+      : undefined;
+    const fielder = wicket.fielderPlayerId != null
+      ? (playerMap.get(wicket.fielderPlayerId) ?? undefined)
+      : undefined;
+    const mode = (wicket.modeOfDismissal ?? '').toLowerCase();
+    switch (mode) {
+      case 'bowled':      return `b ${bowler ?? ''}`.trim();
+      case 'caught':      return fielder ? `c ${fielder} b ${bowler ?? ''}` : `c&b ${bowler ?? ''}`;
+      case 'c&b':         return `c&b ${bowler ?? ''}`.trim();
+      case 'lbw':         return `lbw b ${bowler ?? ''}`.trim();
+      case 'stumped':     return fielder ? `st ${fielder} b ${bowler ?? ''}` : `st b ${bowler ?? ''}`;
+      case 'run out':     return fielder ? `run out (${fielder})` : 'run out';
+      case 'hit wicket':  return bowler ? `hit wicket b ${bowler}` : 'hit wicket';
+      case 'retired':     return 'retired';
+      case 'retired hurt': return 'retired hurt';
+      default: return wicket.description ?? 'out';
+    }
+  };
+
+  const getOppositionBallBlob = (ball: OppositionBallV1): { label: string; className: string } => {
+    if (ball.wicket) return { label: 'W', className: 'bg-red-600 text-white' };
+    if (ball.isWide) {
+      const amount = ball.amount ?? 0;
+      return { label: amount > 1 ? `${amount}Wd` : 'Wd', className: 'bg-yellow-400 text-gray-800' };
+    }
+    if (ball.isNoBall) {
+      const amount = ball.amount ?? 0;
+      return { label: amount > 1 ? `${amount}Nb` : 'Nb', className: 'bg-yellow-400 text-gray-800' };
+    }
+    const amount = ball.amount ?? 0;
+    if (amount === 0) return { label: '·', className: 'bg-gray-300 text-gray-600' };
+    if (ball.isSix || amount === 6) return { label: '6', className: 'bg-orange-500 text-white' };
+    if ((ball.isBoundary && !ball.isSix) || amount === 4) return { label: '4', className: 'bg-blue-500 text-white' };
+    return { label: String(amount), className: 'bg-gray-200 text-gray-700' };
   };
 
   const getBallDescription = (ball: BallV1): string => {
@@ -1174,35 +1230,477 @@ const LiveScorecard: React.FC = () => {
           </div>
         );
       }
-      return (
-        <div>
-          <div className="mb-4 p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
-            <span className="font-semibold">{data.opposition ?? 'Opposition'}</span>
-            {': '}
-            <span className="font-semibold text-gray-900">
-              {data.theirScore ?? 0}/{data.theirWickets ?? 0}
-            </span>
-            {data.theirOver != null && data.theirOver > 0 && (
-              <span className="text-gray-500"> ({data.theirOver} ov)</span>
+
+      const theirInningsComplete = theirStatus === 'Completed';
+
+      // Build VCC player ID → name map from all available bowling data
+      const vccPlayerMap = new Map<number, string>();
+      const addPlayerToMap = (b: OppositionBowlerDetailsV1 | null | undefined) => {
+        if (b?.playerId != null && b.playerName) vccPlayerMap.set(b.playerId, b.playerName);
+      };
+      (data.theirLiveBowlingCard ?? []).forEach(addPlayerToMap);
+      addPlayerToMap(data.theirBowlerOneDetails);
+      addPlayerToMap(data.theirBowlerTwoDetails);
+
+      const isBBB = data.theirInningsIsBallByBall === true;
+
+      const scoreHeader = (
+        <div className="mb-4 p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
+          <span className="font-semibold">{data.opposition ?? 'Opposition'}</span>
+          {': '}
+          <span className="font-semibold text-gray-900">
+            {data.theirScore ?? 0}/{data.theirWickets ?? 0}
+          </span>
+          {isBBB && (data.theirLastCompletedOver ?? 0) > 0 && (
+            <span className="text-gray-500"> ({data.theirLastCompletedOver} ov)</span>
+          )}
+          {!isBBB && (data.theirOver ?? 0) > 0 && (
+            <span className="text-gray-500"> ({data.theirOver} ov)</span>
+          )}
+          {(data.theirRunRate ?? 0) > 0 && (
+            <span className="text-gray-500"> · RR {(data.theirRunRate ?? 0).toFixed(2)}</span>
+          )}
+          {theirStatus === 'InProgress' && (
+            <span className="ml-2 text-xs text-green-600 font-semibold">In progress</span>
+          )}
+        </div>
+      );
+
+      if (!isBBB) {
+        return (
+          <div>
+            {scoreHeader}
+            {(data.theirCompletedOvers?.length ?? 0) > 0 && (
+              <div className="text-xs text-gray-500 mt-2">
+                <p className="font-semibold uppercase tracking-wide mb-1">Over summary</p>
+                <div className="flex flex-wrap gap-x-2 gap-y-1">
+                  {data.theirCompletedOvers!.map((ov, i) => (
+                    <span key={i} className="whitespace-nowrap">
+                      Ov {ov.over ?? (i + 1)}: {ov.score ?? 0}/{ov.wickets ?? 0}
+                    </span>
+                  ))}
+                </div>
+              </div>
             )}
-            {theirStatus === 'InProgress' && (
-              <span className="ml-2 text-xs text-green-600 font-semibold">In progress</span>
+            {(data.theirCompletedOvers?.length ?? 0) === 0 && theirStatus === 'InProgress' && (
+              <p className="text-sm text-gray-500">Detailed ball-by-ball data not available for opposition innings.</p>
             )}
           </div>
-          {(data.theirCompletedOvers?.length ?? 0) > 0 && (
-            <div className="text-xs text-gray-500 mt-2">
-              <p className="font-semibold uppercase tracking-wide mb-1">Over summary</p>
-              <div className="flex flex-wrap gap-x-2 gap-y-1">
-                {data.theirCompletedOvers!.map((ov, i) => (
-                  <span key={i} className="whitespace-nowrap">
-                    Ov {ov.over ?? (i + 1)}: {ov.score ?? 0}/{ov.wickets ?? 0}
-                  </span>
-                ))}
-              </div>
+        );
+      }
+
+      // ── Ball-by-ball mode: full opposition innings scorecard ──────────────
+
+      return (
+        <div>
+          {scoreHeader}
+
+          {/* Change 1 — At the crease */}
+          {(data.theirOnStrikeBatsman || data.theirOtherBatsman) && (
+            <div className="mb-4 p-3 bg-white border border-gray-200 rounded-lg">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">At the crease</h3>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-xs text-gray-500 border-b border-gray-100">
+                    <th className="pb-1.5 text-left font-normal">Batter</th>
+                    <th className="pb-1.5 text-right font-normal">R</th>
+                    <th className="pb-1.5 text-right font-normal">B</th>
+                    <th className="pb-1.5 text-right font-normal">4s</th>
+                    <th className="pb-1.5 text-right font-normal">6s</th>
+                    <th className="pb-1.5 text-right font-normal">SR</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.theirOnStrikeBatsman && (
+                    <tr className="border-b border-gray-50">
+                      <td className="py-1.5 font-medium">
+                        {data.theirOnStrikeBatsman.batsmanName}
+                        <span className="ml-1 text-villageGreen text-xs font-bold">*</span>
+                      </td>
+                      <td className="py-1.5 text-right font-medium">{data.theirOnStrikeBatsman.score ?? 0}</td>
+                      <td className="py-1.5 text-right text-gray-600">{data.theirOnStrikeBatsman.ballsFaced ?? 0}</td>
+                      <td className="py-1.5 text-right text-gray-600">{data.theirOnStrikeBatsman.fours ?? 0}</td>
+                      <td className="py-1.5 text-right text-gray-600">{data.theirOnStrikeBatsman.sixes ?? 0}</td>
+                      <td className="py-1.5 text-right text-gray-600">
+                        {data.theirOnStrikeBatsman.strikeRate != null
+                          ? data.theirOnStrikeBatsman.strikeRate.toFixed(1)
+                          : '-'}
+                      </td>
+                    </tr>
+                  )}
+                  {data.theirOtherBatsman && (
+                    <tr>
+                      <td className="py-1.5 font-medium">{data.theirOtherBatsman.batsmanName}</td>
+                      <td className="py-1.5 text-right font-medium">{data.theirOtherBatsman.score ?? 0}</td>
+                      <td className="py-1.5 text-right text-gray-600">{data.theirOtherBatsman.ballsFaced ?? 0}</td>
+                      <td className="py-1.5 text-right text-gray-600">{data.theirOtherBatsman.fours ?? 0}</td>
+                      <td className="py-1.5 text-right text-gray-600">{data.theirOtherBatsman.sixes ?? 0}</td>
+                      <td className="py-1.5 text-right text-gray-600">
+                        {data.theirOtherBatsman.strikeRate != null
+                          ? data.theirOtherBatsman.strikeRate.toFixed(1)
+                          : '-'}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+              {data.theirLastBatsmanOut && (
+                <p className="mt-2 text-xs text-gray-500 border-t border-gray-100 pt-2">
+                  Last wicket:{' '}
+                  <span className="font-medium text-gray-700">{data.theirLastBatsmanOut.batsmanName}</span>
+                  {' '}{data.theirLastBatsmanOut.score ?? 0} ({data.theirLastBatsmanOut.ballsFaced ?? 0})
+                  {' · '}{formatOppositionDismissal(data.theirLastBatsmanOut.wicket, vccPlayerMap, theirInningsComplete)}
+                </p>
+              )}
             </div>
           )}
-          {(data.theirCompletedOvers?.length ?? 0) === 0 && theirStatus === 'InProgress' && (
-            <p className="text-sm text-gray-500">Detailed ball-by-ball data not available for opposition innings.</p>
+
+          {/* Change 2 — Current partnership */}
+          {data.theirCurrentPartnership && (
+            <div className="mb-4 p-3 bg-white border border-gray-200 rounded-lg">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Current partnership</h3>
+              <p className="text-sm text-gray-800">
+                <span className="font-medium">
+                  {data.theirCurrentPartnership.batsmanOneName} / {data.theirCurrentPartnership.batsmanTwoName}
+                </span>
+                {'  '}Runs: <span className="font-semibold">{data.theirCurrentPartnership.score ?? 0}</span>
+                {'  '}Balls: {data.theirCurrentPartnership.ballCount ?? 0}
+                {'  '}RR: {data.theirCurrentPartnership.runRate != null
+                  ? data.theirCurrentPartnership.runRate.toFixed(1) : '-'}
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                ({data.theirCurrentPartnership.batsmanOneName} {data.theirCurrentPartnership.batsmanOneScore ?? 0},{' '}
+                {data.theirCurrentPartnership.batsmanTwoName} {data.theirCurrentPartnership.batsmanTwoScore ?? 0})
+              </p>
+              {data.theirPreviousPartnership && (
+                <p className="mt-1 text-xs text-gray-400 italic">
+                  Previous: {data.theirPreviousPartnership.batsmanOneName} / {data.theirPreviousPartnership.batsmanTwoName}
+                  {'  '}{data.theirPreviousPartnership.score ?? 0} runs ({data.theirPreviousPartnership.ballCount ?? 0} balls)
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Change 6 — Bowling panel with current/previous bowler + full card */}
+          {(data.theirBowlerOneDetails || (data.theirLiveBowlingCard?.length ?? 0) > 0) && (
+            <div className="mb-4 p-3 bg-white border border-gray-200 rounded-lg">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Bowling</h3>
+              {(data.theirBowlerOneDetails || data.theirBowlerTwoDetails) && (
+                <table className="w-full text-sm mb-3">
+                  <tbody>
+                    {[data.theirBowlerOneDetails, data.theirBowlerTwoDetails]
+                      .filter((b): b is OppositionBowlerDetailsV1 => !!b)
+                      .map((b, i) => (
+                        <tr key={i} className={i === 0 ? '' : 'border-t border-gray-50'}>
+                          <td className="py-1 font-medium">
+                            {b.playerName}
+                            {i === 0 && <span className="ml-1 text-villageGreen text-sm">►</span>}
+                          </td>
+                          <td className="py-1 text-right text-gray-600 text-xs tabular-nums">
+                            {b.overs ?? 0}-{b.maidens ?? 0}-{b.runs ?? 0}-{b.wickets ?? 0}
+                          </td>
+                          <td className="py-1 text-right text-gray-500 text-xs">
+                            Econ {b.economy != null ? b.economy.toFixed(1) : '-'}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )}
+              {(data.theirLiveBowlingCard?.length ?? 0) > 0 && (
+                <details>
+                  <summary className="cursor-pointer text-xs text-villageGreen hover:underline select-none">
+                    Full bowling card ▼
+                  </summary>
+                  <table className="w-full text-sm mt-2">
+                    <thead>
+                      <tr className="border-b border-gray-100 text-xs text-gray-500">
+                        <th className="py-1 text-left font-normal">Bowler</th>
+                        <th className="py-1 text-right font-normal">O</th>
+                        <th className="py-1 text-right font-normal">M</th>
+                        <th className="py-1 text-right font-normal">R</th>
+                        <th className="py-1 text-right font-normal">W</th>
+                        <th className="py-1 text-right font-normal">Econ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.theirLiveBowlingCard!.map((b, i) => (
+                        <tr key={i} className="border-b border-gray-50 hover:bg-gray-50">
+                          <td className="py-1 font-medium">{b.playerName}</td>
+                          <td className="py-1 text-right text-gray-600">{b.overs ?? 0}</td>
+                          <td className="py-1 text-right text-gray-600">{b.maidens ?? 0}</td>
+                          <td className="py-1 text-right text-gray-600">{b.runs ?? 0}</td>
+                          <td className="py-1 text-right font-medium">{b.wickets ?? 0}</td>
+                          <td className="py-1 text-right text-gray-600">
+                            {b.economy != null ? b.economy.toFixed(2) : '-'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </details>
+              )}
+            </div>
+          )}
+
+          {/* Change 3 — Their batting card (collapsible) */}
+          {(data.theirLiveBattingCard?.length ?? 0) > 0 && (
+            <div className="mb-3 border border-gray-200 rounded-lg overflow-hidden">
+              <button
+                type="button"
+                className="w-full flex justify-between items-center px-3 py-2 text-left bg-white"
+                onClick={() => setTheirBattingExpanded(p => !p)}
+                aria-expanded={theirBattingExpanded}
+              >
+                <span className="text-sm font-semibold text-gray-700">Their batting card</span>
+                <svg
+                  className={`w-4 h-4 text-gray-400 transition-transform ${theirBattingExpanded ? 'rotate-180' : ''}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {theirBattingExpanded && (
+                <div className="border-t border-gray-100 px-3 py-3">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b-2 border-gray-200 text-left text-xs text-gray-500 uppercase tracking-wide">
+                          <th className="py-2 pr-1 text-center">#</th>
+                          <th className="py-2 pr-2">Batter</th>
+                          <th className="py-2 text-gray-400 font-normal hidden sm:table-cell">Dismissal</th>
+                          <th className="py-2 text-right">R</th>
+                          <th className="py-2 text-right">B</th>
+                          <th className="py-2 text-right">4s</th>
+                          <th className="py-2 text-right">6s</th>
+                          <th className="py-2 text-right">SR</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-gray-800">
+                        {data.theirLiveBattingCard!.map((entry, idx) => {
+                          const dismissalText = formatOppositionDismissal(
+                            entry.wicket, vccPlayerMap, theirInningsComplete
+                          );
+                          return (
+                            <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+                              <td className="py-2 pr-1 text-center text-gray-400 text-xs">{idx + 1}</td>
+                              <td className="py-2 pr-2 font-medium">
+                                {entry.batsmanName}
+                                <span className="block text-xs text-gray-400 font-normal sm:hidden mt-0.5">
+                                  {dismissalText}
+                                </span>
+                              </td>
+                              <td className="py-2 text-sm text-gray-500 hidden sm:table-cell">{dismissalText}</td>
+                              <td className="py-2 text-right font-medium">{entry.score ?? 0}</td>
+                              <td className="py-2 text-right text-gray-600">{entry.ballsFaced ?? 0}</td>
+                              <td className="py-2 text-right text-gray-600">{entry.fours ?? 0}</td>
+                              <td className="py-2 text-right text-gray-600">{entry.sixes ?? 0}</td>
+                              <td className="py-2 text-right text-gray-600">
+                                {entry.strikeRate != null
+                                  ? entry.strikeRate.toFixed(1)
+                                  : (entry.ballsFaced
+                                    ? ((entry.score ?? 0) / entry.ballsFaced * 100).toFixed(1)
+                                    : '-')}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {(data.theirYetToBat?.length ?? 0) > 0 && (
+                          <>
+                            <tr className="border-t border-gray-200">
+                              <td colSpan={8} className="pt-2 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                                Yet to bat
+                              </td>
+                            </tr>
+                            {data.theirYetToBat!.map((entry, idx) => (
+                              <tr key={`ytb-${idx}`} className="border-b border-gray-50">
+                                <td colSpan={8} className="py-1 text-sm text-gray-500">{entry.batsmanName}</td>
+                              </tr>
+                            ))}
+                          </>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Change 4 — Fall of wickets (collapsible) */}
+          {(data.theirFallOfWickets?.length ?? 0) > 0 && (
+            <div className="mb-3 border border-gray-200 rounded-lg overflow-hidden">
+              <button
+                type="button"
+                className="w-full flex justify-between items-center px-3 py-2 text-left bg-white"
+                onClick={() => setTheirFowExpanded(p => !p)}
+                aria-expanded={theirFowExpanded}
+              >
+                <span className="text-sm font-semibold text-gray-700">Fall of wickets</span>
+                <svg
+                  className={`w-4 h-4 text-gray-400 transition-transform ${theirFowExpanded ? 'rotate-180' : ''}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {theirFowExpanded && (
+                <div className="border-t border-gray-100 px-3 py-3">
+                  <div className="space-y-1.5">
+                    {data.theirFallOfWickets!.map((fow, i) => (
+                      <div key={i} className="text-sm text-gray-700 flex flex-wrap gap-x-2">
+                        <span className="font-mono font-semibold whitespace-nowrap">
+                          {fow.wicketNumber}-{fow.teamScore}
+                        </span>
+                        <span className="text-gray-500 whitespace-nowrap">
+                          ({fow.outgoingBatsmanName} {fow.outgoingBatsmanScore}, {fow.overAsString} ov)
+                        </span>
+                        <span className="text-gray-600">
+                          {formatOppositionDismissal(fow.wicket, vccPlayerMap, true)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Change 5 — Over by over (collapsible) */}
+          {(data.theirBallByBallCompletedOvers?.length ?? 0) > 0 && (
+            <div className="mb-3 border border-gray-200 rounded-lg overflow-hidden">
+              <button
+                type="button"
+                className="w-full flex justify-between items-center px-3 py-2 text-left bg-white"
+                onClick={() => setTheirOverByOverExpanded(p => !p)}
+                aria-expanded={theirOverByOverExpanded}
+              >
+                <span className="text-sm font-semibold text-gray-700">Over by over</span>
+                <svg
+                  className={`w-4 h-4 text-gray-400 transition-transform ${theirOverByOverExpanded ? 'rotate-180' : ''}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {theirOverByOverExpanded && (
+                <div className="border-t border-gray-100 px-3 py-3">
+                  <div className="space-y-3">
+                    {data.theirBallByBallCompletedOvers!.map((overSummary, i) => {
+                      const overNum = overSummary.over?.overNumber ?? (i + 1);
+                      const runsThisOver = overSummary.scoreForThisOver ?? 0;
+                      const prevWickets = i === 0
+                        ? 0
+                        : (data.theirBallByBallCompletedOvers![i - 1].wicketsAtEndOfOver ?? 0);
+                      const wicketsThisOver = (overSummary.wicketsAtEndOfOver ?? 0) - prevWickets;
+                      const balls = overSummary.over?.balls ?? [];
+                      return (
+                        <div key={i} className="text-sm">
+                          <div className="flex items-start gap-3">
+                            <span className="text-xs font-semibold text-gray-500 w-10 flex-shrink-0 pt-1">
+                              Ov {overNum}
+                            </span>
+                            <div className="flex-1">
+                              <div className="flex flex-wrap items-center gap-1 mb-1">
+                                {balls.map((ball, bi) => {
+                                  const { label, className: blobCls } = getOppositionBallBlob(ball);
+                                  return (
+                                    <span
+                                      key={bi}
+                                      className={`inline-flex items-center justify-center w-6 h-6 rounded-full font-bold flex-shrink-0 ${label.length >= 3 ? 'text-[9px]' : 'text-xs'} ${blobCls}`}
+                                    >
+                                      {label}
+                                    </span>
+                                  );
+                                })}
+                                <span className="text-xs text-gray-500 ml-1">
+                                  {runsThisOver} run{runsThisOver !== 1 ? 's' : ''}
+                                  {wicketsThisOver > 0 && ` · ${wicketsThisOver} wkt${wicketsThisOver !== 1 ? 's' : ''}`}
+                                  {' '}(Total: {overSummary.scoreAtEndOfOver ?? 0}-{overSummary.wicketsAtEndOfOver ?? 0})
+                                </span>
+                              </div>
+                              {overSummary.over?.commentary && (
+                                <p className="text-xs text-gray-400 italic">{overSummary.over.commentary}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Change 7 — Partnerships (collapsible) */}
+          {(data.theirPartnerships?.length ?? 0) > 0 && (
+            <div className="mb-3 border border-gray-200 rounded-lg overflow-hidden">
+              <button
+                type="button"
+                className="w-full flex justify-between items-center px-3 py-2 text-left bg-white"
+                onClick={() => setTheirPartnershipsExpanded(p => !p)}
+                aria-expanded={theirPartnershipsExpanded}
+              >
+                <span className="text-sm font-semibold text-gray-700">Partnerships</span>
+                <svg
+                  className={`w-4 h-4 text-gray-400 transition-transform ${theirPartnershipsExpanded ? 'rotate-180' : ''}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {theirPartnershipsExpanded && (
+                <div className="border-t border-gray-100 px-3 py-3">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-gray-200 text-xs text-gray-500">
+                          <th className="py-1.5 text-left font-normal">#</th>
+                          <th className="py-1.5 text-left font-normal">Batters</th>
+                          <th className="py-1.5 text-right font-normal">Runs</th>
+                          <th className="py-1.5 text-right font-normal">Balls</th>
+                          <th className="py-1.5 text-right font-normal">RR</th>
+                          <th className="py-1.5 text-right font-normal">Ended at</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.theirPartnerships!.map((p, i) => {
+                          const isOngoing = i === data.theirPartnerships!.length - 1
+                            && theirStatus === 'InProgress';
+                          const fowEntry = data.theirFallOfWickets?.[i];
+                          return (
+                            <tr key={i} className="border-b border-gray-100 hover:bg-gray-50">
+                              <td className="py-1.5 text-gray-400 text-xs">{toOrdinal(i + 1)}</td>
+                              <td className="py-1.5 font-medium">
+                                {p.batsmanOneName} / {p.batsmanTwoName}
+                                {isOngoing && (
+                                  <span className="ml-1.5 text-xs bg-green-100 text-green-700 px-1 py-0.5 rounded font-semibold">
+                                    ongoing
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-1.5 text-right">{p.score ?? 0}</td>
+                              <td className="py-1.5 text-right text-gray-600">{p.ballCount ?? 0}</td>
+                              <td className="py-1.5 text-right text-gray-600">
+                                {p.runRate != null ? p.runRate.toFixed(1) : '-'}
+                              </td>
+                              <td className="py-1.5 text-right text-gray-500 text-xs">
+                                {isOngoing
+                                  ? '—'
+                                  : fowEntry
+                                    ? `${fowEntry.wicketNumber}-${fowEntry.teamScore}`
+                                    : '—'}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       );

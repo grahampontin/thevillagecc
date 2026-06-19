@@ -402,6 +402,85 @@ export interface paths {
       };
     };
   };
+  "/api/LiveScoring/{matchId}/start-opposition-ball-by-ball": {
+    post: {
+      parameters: {
+        path: {
+          matchId: number;
+        };
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["StartOppositionBallByBallInningsV1"];
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchStateV1"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/LiveScoring/{matchId}/opposition-over": {
+    post: {
+      parameters: {
+        path: {
+          matchId: number;
+        };
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["OppositionInningsUpdateV1"];
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchStateV1"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
+  "/api/LiveScoring/{matchId}/last-opposition-over": {
+    delete: {
+      parameters: {
+        path: {
+          matchId: number;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["MatchStateV1"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"];
+          };
+        };
+      };
+    };
+  };
   "/api/LiveScoring/{matchId}/abandon": {
     post: {
       parameters: {
@@ -1553,6 +1632,22 @@ export interface components {
       liveBowlingCard?: components["schemas"]["BowlerInningsDetailsV1"][] | null;
       partnerships?: components["schemas"]["PartnershipV1"][] | null;
       yetToBat?: components["schemas"]["YetToBatEntryV1"][] | null;
+      theirInningsIsBallByBall?: boolean;
+      theirOnStrikeBatsman?: components["schemas"]["OppositionBatterScorecardLineV1"];
+      theirOtherBatsman?: components["schemas"]["OppositionBatterScorecardLineV1"];
+      theirLastBatsmanOut?: components["schemas"]["OppositionBatterScorecardLineV1"];
+      theirYetToBat?: components["schemas"]["OppositionBatterStateV1"][] | null;
+      theirLiveBattingCard?: components["schemas"]["OppositionBatterScorecardLineV1"][] | null;
+      theirLiveBowlingCard?: components["schemas"]["OppositionBowlerDetailsV1"][] | null;
+      /** Format: int32 */
+      theirLastCompletedOver?: number;
+      theirBowlerOneDetails?: components["schemas"]["OppositionBowlerDetailsV1"];
+      theirBowlerTwoDetails?: components["schemas"]["OppositionBowlerDetailsV1"];
+      theirBallByBallCompletedOvers?: components["schemas"]["OppositionOverSummaryV1"][] | null;
+      theirCurrentPartnership?: components["schemas"]["OppositionPartnershipV1"];
+      theirPreviousPartnership?: components["schemas"]["OppositionPartnershipV1"];
+      theirPartnerships?: components["schemas"]["OppositionPartnershipV1"][] | null;
+      theirFallOfWickets?: components["schemas"]["OppositionFallOfWicketV1"][] | null;
     };
     InningsEndDetailsV1: {
       commentary?: string | null;
@@ -1698,6 +1793,11 @@ export interface components {
       oppositionShortName?: string | null;
       bowlerDetails?: components["schemas"]["BowlerInningsDetailsV1"][] | null;
       liveScorecard?: components["schemas"]["LiveScorecardV1"];
+      theirInningsIsBallByBall?: boolean;
+      oppositionPlayers?: components["schemas"]["OppositionBatterStateV1"][] | null;
+      oppositionOnStrikeBatsmanName?: string | null;
+      /** Format: int32 */
+      oppositionLastCompletedOver?: number;
     };
     MatchV1: {
       isHome?: boolean;
@@ -1710,6 +1810,90 @@ export interface components {
     };
     /** @enum {string} */
     ModesOfDismissalV1: "NotOut" | "Bowled" | "Stumped" | "RunOut" | "Caught" | "CaughtAndBowled" | "LBW" | "HitWicket" | "DidNotBat" | "Retired" | "RetiredHurt";
+    OppositionBallV1: {
+      /** Format: int32 */
+      ballNumber?: number;
+      batsmanName?: string | null;
+      /** Format: int32 */
+      bowlerPlayerId?: number;
+      thing?: string | null;
+      /** Format: int32 */
+      amount?: number;
+      wicket?: components["schemas"]["OppositionWicketV1"];
+      /** Format: double */
+      angle?: number | null;
+      isWide?: boolean;
+      isNoBall?: boolean;
+      isBoundary?: boolean;
+      isSix?: boolean;
+    };
+    OppositionBatterScorecardLineV1: {
+      batsmanName?: string | null;
+      /** Format: int32 */
+      score?: number;
+      /** Format: int32 */
+      ballsFaced?: number;
+      /** Format: int32 */
+      fours?: number;
+      /** Format: int32 */
+      sixes?: number;
+      /** Format: double */
+      strikeRate?: number;
+      wicket?: components["schemas"]["OppositionWicketV1"];
+    };
+    OppositionBatterStateV1: {
+      batsmanName?: string | null;
+      /** Format: int32 */
+      position?: number;
+      state?: string | null;
+      /** Format: int32 */
+      currentScore?: number;
+      /** Format: int32 */
+      ballsFaced?: number;
+      /** Format: int32 */
+      fours?: number;
+      /** Format: int32 */
+      sixes?: number;
+      /** Format: double */
+      strikeRate?: number;
+    };
+    OppositionBowlerDetailsV1: {
+      /** Format: int32 */
+      playerId?: number;
+      playerName?: string | null;
+      /** Format: int32 */
+      overs?: number;
+      /** Format: int32 */
+      maidens?: number;
+      /** Format: int32 */
+      runs?: number;
+      /** Format: int32 */
+      wickets?: number;
+      /** Format: int32 */
+      wides?: number;
+      /** Format: int32 */
+      noBalls?: number;
+      /** Format: double */
+      economy?: number;
+    };
+    OppositionFallOfWicketV1: {
+      /** Format: int32 */
+      wicketNumber?: number;
+      /** Format: int32 */
+      teamScore?: number;
+      overAsString?: string | null;
+      /** Format: int32 */
+      bowlerPlayerId?: number;
+      bowlerName?: string | null;
+      outgoingBatsmanName?: string | null;
+      /** Format: int32 */
+      outgoingBatsmanScore?: number;
+      notOutBatsmanName?: string | null;
+      /** Format: int32 */
+      notOutBatsmanScore?: number;
+      wicket?: components["schemas"]["OppositionWicketV1"];
+      partnership?: components["schemas"]["OppositionPartnershipV1"];
+    };
     OppositionInningsDetailsV1: {
       /** Format: int32 */
       over?: number;
@@ -1718,6 +1902,56 @@ export interface components {
       /** Format: int32 */
       wickets?: number;
       commentary?: string | null;
+    };
+    OppositionInningsUpdateV1: {
+      /** Format: int32 */
+      lastCompletedOver?: number;
+      onStrikeBatsmanName?: string | null;
+      over?: components["schemas"]["OppositionOverV1"];
+      players?: components["schemas"]["OppositionBatterStateV1"][] | null;
+    };
+    OppositionOverSummaryV1: {
+      over?: components["schemas"]["OppositionOverV1"];
+      /** Format: int32 */
+      scoreAtEndOfOver?: number;
+      /** Format: int32 */
+      wicketsAtEndOfOver?: number;
+      /** Format: int32 */
+      scoreForThisOver?: number;
+    };
+    OppositionOverV1: {
+      /** Format: int32 */
+      overNumber?: number;
+      balls?: components["schemas"]["OppositionBallV1"][] | null;
+      commentary?: string | null;
+    };
+    OppositionPartnershipV1: {
+      batsmanOneName?: string | null;
+      batsmanTwoName?: string | null;
+      /** Format: int32 */
+      score?: number;
+      /** Format: int32 */
+      ballCount?: number;
+      /** Format: int32 */
+      batsmanOneScore?: number;
+      /** Format: int32 */
+      batsmanTwoScore?: number;
+      /** Format: int32 */
+      fours?: number;
+      /** Format: int32 */
+      sixes?: number;
+      /** Format: double */
+      runRate?: number;
+      oversAsString?: string | null;
+    };
+    OppositionWicketV1: {
+      batsmanName?: string | null;
+      /** Format: int32 */
+      bowlerPlayerId?: number;
+      /** Format: int32 */
+      fielderPlayerId?: number | null;
+      modeOfDismissal?: string | null;
+      description?: string | null;
     };
     OverSummaryV1: {
       over?: components["schemas"]["OverV1"];
@@ -1887,6 +2121,9 @@ export interface components {
       venueId?: number | null;
       tossWinner?: string | null;
       tossWinnerElectedTo?: string | null;
+    };
+    StartOppositionBallByBallInningsV1: {
+      batsmanNames?: string[] | null;
     };
     StatsColumnDefinitionV1: {
       headerName?: string | null;
