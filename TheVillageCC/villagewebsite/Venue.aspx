@@ -43,14 +43,19 @@
                     <% } %>
                 </div>
                 
-                <% if (!string.IsNullOrEmpty(VenueMapUrl)) { %>
+                <% if (VenueLatitude.HasValue && VenueLongitude.HasValue) { 
+                    var mapUrl = GetMapUrl();
+                    if (!string.IsNullOrEmpty(mapUrl)) {
+                %>
                 <div class="col-md-6">
                     <h6>Map</h6>
                     <div class="ratio ratio-16x9">
-                        <iframe src="<%= VenueMapUrl %>" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <iframe src="<%= mapUrl %>" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
-                <% } %>
+                <% 
+                    }
+                } %>
             </div>
         </div>
     </div>
